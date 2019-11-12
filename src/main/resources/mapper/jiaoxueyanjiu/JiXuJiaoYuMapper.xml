@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jiaoxueyanjiu.jixujiaoyu.mapper.JiXuJiaoYuMapper">
+
+    <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jixujiaoyu.domian.JiXuJiaoYu">
+        <choose>
+            <when test="shenHeUserId != null and shenHeUserId != ''"><!-- 审核列表 -->
+                SELECT j.*
+                ,(case when  ur.role_id = is_back then '退回' when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                from (
+                    SELECT j.code,j.batch_num
+                    ,count(sn.node_code) total_num
+                    ,count(item.node_code) exec_num
+                    ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+                    from V_JXYJ_JXJY_SHENHE j
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+                    left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+                    GROUP BY j.code,j.batch_num
+                )t
+                left join V_JXYJ_JXJY_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
+                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
+                <where>1=1
+                    and exec_num >= exec_level-1
+                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
+                    and ur.user_id = #{shenHeUserId}
+                    <if test="shenheStatus != null and shenheStatus != ''">
+                        <choose>
+                            <when test="shenheStatus == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatus == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                            <when test="shenheStatus == '退回'">
+                                and ur.role_id = is_back
+                            </when>
+                        </choose>
+                    </if>
+                    <include refid="queryCondition"/>
+                </where>
+                ORDER BY shenhe_status DESC
+            </when>
+            <otherwise><!-- 提交列表 -->
+                SELECT j.*
+                ,(case when shenhe_code is not null then '已提交' else '未提交' end ) is_submit
+                from V_JXYJ_JXJY j
+                <where>1=1
+                    <if test="isSubmit != null and isSubmit != ''">
+                        <choose>
+                            <when test="isSubmit == '已提交'">
+                                and shenhe_code is not null
+                            </when>
+                            <when test="isSubmit == '未提交'">
+                                and shenhe_code is null
+                            </when>
+                            <otherwise>
+                                and 1>1
+                            </otherwise>
+                        </choose>
+                    </if>
+                    <if test="status != null and status != ''">
+                        and status = #{status}
+                    </if>
+                    <include refid="queryCondition"/>
+                </where>
+                ORDER BY is_submit DESC,create_date DESC
+            </otherwise>
+        </choose>
+    </select>
+    <sql id="queryCondition">
+        <if test="userId != null and userId != ''">
+            and j.user_id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            and j.user_name = #{userName}
+        </if>
+        <if test="peixunName != null and peixunName != ''">
+            and peixun_name = #{peixunName}
+        </if>
+        <if test="peixunDept != null and peixunDept != ''">
+            and peixun_dept = #{peixunDept}
+        </if>
+    </sql>
+
+    <select id="getNotShenHeNum" resultType="int">
+        SELECT count(0) from (
+            SELECT j.code,j.batch_num
+            ,count(sn.node_code) total_num
+            ,count(item.node_code) exec_num
+            ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+            from V_JXYJ_JXJY_SHENHE j
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+            GROUP BY j.code,j.batch_num
+        )t
+        left join V_JXYJ_JXJY_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
+        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+        left join sys_user_role ur on ur.role_id = sn.role_id
+        where 1=1
+        and exec_num >= exec_level-1
+        AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
+        AND exec_level > exec_num
+        and ur.user_id = #{shenHeUserId}
+    </select>
+
+    <insert id="insert">
+          insert into JXYJ_JXJY
+          (code,peixun_name,peixun_style,peixun_start_time,peixun_end_time,peixun_class_hour,peixun_content,peixun_address,peixun_dept,user_id,user_name,create_date)
+          values
+          (#{code},#{peixunName},#{peixunStyle},#{peixunStartTime},#{peixunEndTime},#{peixunClassHour},#{peixunContent},#{peixunAddress},#{peixunDept},#{userId},#{userName},sysdate)
+    </insert>
+
+    <update id="update">
+        update JXYJ_JXJY
+        <set>
+            <if test="peixunName != null and peixunName != ''">
+                peixun_name = #{peixunName}
+            </if>
+            <if test="peixunStyle != null and peixunStyle != ''">
+                , peixun_style = #{peixunStyle}
+            </if>
+            <if test="peixunStartTime != null"><!-- 如果拿传入的时间类型参数与空字符串‘‘进行对比判断则会引发异常.，所以应该去掉该判断, 只保留非空判断就正常了 -->
+                , peixun_start_time = #{peixunStartTime}
+            </if>
+            <if test="peixunEndTime != null">
+                , peixun_end_time = #{peixunEndTime}
+            </if>
+            <if test="peixunClassHour != null and peixunClassHour != ''">
+                , peixun_class_hour = #{peixunClassHour}
+            </if>
+            <if test="peixunContent != null and peixunContent != ''">
+                , peixun_content = #{peixunContent}
+            </if>
+            <if test="peixunAddress != null and peixunAddress != ''">
+                , peixun_address = #{peixunAddress}
+            </if>
+            <if test="peixunDept != null and peixunDept != ''">
+                , peixun_dept = #{peixunDept}
+            </if>
+        </set>
+        where code = #{code}
+    </update>
+
+    <update id="batchSubimt">
+        insert all
+        <foreach collection ="jiXuJiaoYuList" item="obj" index= "idx">
+            into COMMON_SHENHE
+            (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
+            values
+            (#{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},sysdate)
+        </foreach>
+        select 1 from dual
+    </update>
+
+    <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
+        SELECT sn.*
+        from V_JXYJ_JXJY_SHENHE j
+        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = j.shenhe_code
+        LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
+        where code = #{relationCode} and ur.user_id = #{userId}
+    </select>
+
+    <select id="isShenhePass" resultType="int">
+        SELECT (case when total_num = exec_num then 1 else 0 end) isPass
+        from (
+            SELECT j.code,j.batch_num
+            ,count(sn.node_code) total_num
+            ,count(item.node_code) exec_num
+            from V_JXYJ_JXJY_SHENHE j
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+            WHERE j.code = #{relationCode} and j.batch_num = #{batchNum}
+            GROUP BY j.code,j.batch_num
+        )t
+    </select>
+</mapper>

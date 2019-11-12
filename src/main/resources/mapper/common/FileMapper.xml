@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.common.file.mapper.FileMapper">
+
+    <insert id="saveFileInfo">
+        insert into COMMON_FILE
+        (code,relation_code,file_name,file_size,file_category,file_type,file_path,user_id,user_name,create_date)
+        values
+        (#{code},#{relationCode},#{fileName},#{fileSize},#{fileCategory},#{fileType},#{filePath},#{userId},#{userName},sysdate)
+    </insert>
+
+    <delete id="deleteFileInfo">
+        DELETE FROM COMMON_FILE
+        <where>1=1
+            <if test="code != null and code != ''">
+                and code = #{code}
+            </if>
+            <if test="relationCode != null and relationCode != ''">
+                and relation_code = #{relationCode}
+            </if>
+        </where>
+    </delete>
+</mapper>
+

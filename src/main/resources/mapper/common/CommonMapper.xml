@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.common.common.mapper.CommonMapper">
+
+    <select id="getAuthority" resultType="map">
+            SELECT sum(CASE when m.menu_name = '提交' then 1 else 0 end) "isSubmit"
+            ,sum(CASE when m.menu_name = '审核' then 1 else 0 end) "isShenhe"
+            from sys_user_role ur
+            LEFT JOIN sys_role_menu rm ON rm.role_id = ur.role_id
+            LEFT JOIN sys_menu m on m.menu_id = rm.menu_id
+            WHERE m.pid = #{menuId}
+            and ur.user_id = #{userId}
+    </select>
+</mapper>

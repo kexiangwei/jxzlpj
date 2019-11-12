@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.system.user.mapper.UserMapper">
+
+    <select id="getUserList" resultType="com.mycode.system.user.domain.User">
+        select * from (
+            select u.*,t.COLLEGE_NAME
+            from sys_user u
+            LEFT JOIN DATA_TEACHER t on t.CODE = u.USER_ID where u.ACCOUNT_TYPE = '老师'
+            UNION
+            select u.*,s.COLLEGE_NAME
+            from sys_user u
+            LEFT JOIN DATA_STUDENT s on s.CODE = u.USER_ID where u.ACCOUNT_TYPE = '学生'
+        )
+        <where>1=1
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and user_name = #{userName}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="accountType != null and accountType != ''">
+                and account_type = #{accountType}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUserDetail" resultType="map">
+        <if test="accountType == '老师'">
+            SELECT * from DATA_TEACHER where CODE = #{userId}
+        </if>
+        <if test="accountType == '学生'">
+            SELECT * from DATA_STUDENT where CODE = #{userId}
+        </if>
+    </select>
+
+    <update id="updateUser">
+        update sys_user
+        <set>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName}
+            </if>
+            <if test="password != null and password != ''">
+                , password = #{password}
+            </if>
+            <if test="phone != null and phone != ''">
+                , phone = #{phone}
+            </if>
+            <if test="accountType != null and accountType != ''">
+                , account_type = #{accountType}
+            </if>
+            <if test="remark != null and remark != ''">
+                , remark = #{remark}
+            </if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <insert id="grant">
+        insert all
+        <foreach collection="roleIdArr" index="idx" item="obj">
+            into sys_user_role(user_id,role_id)
+            values (#{userId},#{obj})
+        </foreach>
+        select * from dual
+    </insert>
+
+    <select id="getUserMenu" resultType="com.mycode.system.menu.domain.Menu">
+        SELECT DISTINCT sm.*
+        from sys_user_role sur
+        LEFT JOIN sys_role_menu srm on srm.role_id = sur.role_id
+        LEFT JOIN sys_menu sm on sm.menu_id = srm.menu_id
+        WHERE user_id = #{userId}
+        order by pid
+    </select>
+</mapper>
+

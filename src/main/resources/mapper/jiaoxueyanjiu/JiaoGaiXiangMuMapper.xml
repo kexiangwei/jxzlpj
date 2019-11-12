@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMapper">
+
+    <select id="getList" resultType="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu">
+select * from JXYJ_JIAOGAIXIANGMU
+    </select>
+
+    <insert id="insert">
+          insert into JXYJ_JIAOGAIXIANGMU
+          (code,xmType,xmName,sqMoney
+          ,user_id,user_name,title,collegeDept,major,mainTeachWork,mainTeachAchievement
+          ,currentAndBackground,questionAndTarget,expectAndResult,planAndProcess,budgetMoney
+          ,is_submit,shenhe_code,batch_num,status,create_date)
+          values
+          (
+          #{code},#{xmType},#{xmName},#{sqMoney}
+          ,#{userId},#{userName},#{title},#{collegeDept},#{major},#{mainTeachWork},#{mainTeachAchievement}
+          ,#{currentAndBackground},#{questionAndTarget},#{expectAndResult},#{planAndProcess},#{budgetMoney}
+           ,"未提交" ,#{shenheCode} ,#{batchNum},#{status},NOW()
+          )
+    </insert>
+
+</mapper>
+
