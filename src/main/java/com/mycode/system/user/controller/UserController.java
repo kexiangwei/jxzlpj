@@ -1,12 +1,8 @@
 package com.mycode.system.user.controller;
 
-import com.mycode.system.menu.domain.Menu;
-import com.mycode.system.user.domain.User;
-import com.mycode.system.user.service.UserService;
-import com.mycode.util.JsonResult;
-import com.mycode.util.RedisUtil;
-import com.wf.captcha.Captcha;
-import com.wf.captcha.SpecCaptcha;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,13 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.mycode.system.menu.domain.Menu;
+import com.mycode.system.user.domain.User;
+import com.mycode.system.user.service.UserService;
+import com.mycode.util.JsonResult;
 
 /**
  * @auther kexiangwei
