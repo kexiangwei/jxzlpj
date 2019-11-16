@@ -109,22 +109,18 @@
     </insert>
 
     <delete id="batchDelete">
-        delete from COMMON_SHENHE_SET
-        where 1>1
-        or shenhe_code in
-        <if test="codeArr !=null and codeArr.length>0" >
-            <foreach collection="codeArr" index="idx" item="code" open="(" separator="," close=")">
-                #{code}
-            </foreach>
-        </if>
-        ;delete from COMMON_SHENHE_NODE
-        where 1>1
-        or shenhe_code in
-        <if test="codeArr !=null and codeArr.length>0" >
-            <foreach collection="codeArr" index="idx" item="code" open="(" separator="," close=")">
-                #{code}
-            </foreach>
-        </if>
+        delete from COMMON_SHENHE_SET <include refid="batchDelete_condition"/>
+        ;delete from COMMON_SHENHE_NODE <include refid="batchDelete_condition"/>
     </delete>
+    <sql id="batchDelete_condition">
+        <where>1>1
+            <if test="codeArr !=null and codeArr.length>0" >
+                or shenhe_code in
+                <foreach collection="codeArr" index="idx" item="code" open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+        </where>
+    </sql>
 </mapper>
 
