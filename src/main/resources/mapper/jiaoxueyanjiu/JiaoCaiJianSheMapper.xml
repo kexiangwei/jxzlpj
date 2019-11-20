@@ -129,16 +129,16 @@
             <if test="isbn != null and isbn != ''">
                 , isbn = #{isbn}
             </if>
-            <if test="publishers != null and publishers != ''">
+            <if test="publishers !=null and publishers !=''">
                 , publishers = #{publishers}
             </if>
-            <if test="publishingTime != null">
+            <if test="publishingTime !=null">
                 , publishing_time = #{publishingTime}
             </if>
-            <if test="selected != null and selected != ''">
+            <if test="selected !=null and selected !=''">
                 , selected = #{selected}
             </if>
-            <if test="selectedTime != null'">
+            <if test="selectedTime !=null">
                 , selected_time = #{selectedTime}
             </if>
         </set>

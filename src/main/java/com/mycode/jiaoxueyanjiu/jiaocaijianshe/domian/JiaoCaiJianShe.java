@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -27,11 +28,12 @@ public class JiaoCaiJianShe {
             ,participationType //参与形式：主编、副主编、参编
             ,isbn
             ,publishers //出版社
-            ,publishingTime //出版时间
-            ,selected //教材入选情况：国家规划教材、省部级规划教材、国家级精品教材、省部级精品教材、其他
-            ,selectedTime; //入选时间
+            ,selected; //教材入选情况：国家规划教材、省部级规划教材、国家级精品教材、省部级精品教材、其他
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    private Date createDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date publishingTime //出版时间
+            ,selectedTime //入选时间
+            ,createDate; //创建时间
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId;

@@ -5,16 +5,17 @@
     <select id="getShenHeList" resultType="com.mycode.common.shenhe.domain.ShenHeSet">
         select sh.*
         ,m.menu_name
---         ,GROUP_CONCAT(DISTINCT t.role_name ORDER BY t.exec_level SEPARATOR ' > ') roleStr
         ,role_str
-        ,(case when t.shenhe_code is not null then 1 else 0 end) is_delete
+        ,(case when cs.shenhe_code is not null then 1 else 0 end) is_delete /*当流程有审核数据时，列表的删除按钮置为灰色，即为不可删除状态*/
         from COMMON_SHENHE_SET sh
         LEFT JOIN sys_menu m on m.menu_id = sh.menu_id
         LEFT JOIN (
-            SELECT SHENHE_CODE,listagg(role_name,'>') within group(order by exec_level) role_str
-            FROM COMMON_SHENHE_NODE sn
-            LEFT JOIN sys_role r ON r.role_id = sn.role_id GROUP BY SHENHE_CODE
-        ) t on t.shenhe_code = sh.shenhe_code
+        SELECT SHENHE_CODE,listagg(role_name,'>') within group(order by exec_level) role_str
+        FROM COMMON_SHENHE_NODE sn
+        LEFT JOIN sys_role r ON r.role_id = sn.role_id
+        GROUP BY SHENHE_CODE
+        ) csn on csn.shenhe_code = sh.shenhe_code
+        LEFT JOIN (SELECT DISTINCT shenhe_code from COMMON_SHENHE) cs on cs.shenhe_code = sh.shenhe_code
         <where>
             <if test="menuParentId != null and menuParentId != ''">
                 and m.pid = #{menuParentId}
@@ -23,7 +24,6 @@
                 and m.menu_id = #{menuId}
             </if>
         </where>
---         GROUP BY sh.shenhe_code
         ORDER BY sh.create_date desc
     </select>
 
