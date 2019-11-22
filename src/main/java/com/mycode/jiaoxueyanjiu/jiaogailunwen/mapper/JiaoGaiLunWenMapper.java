@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 教学研究-教改论文
@@ -19,6 +20,8 @@ public interface JiaoGaiLunWenMapper {
     List<JiaoGaiLunWen> getPageList(JiaoGaiLunWen jiaoGaiLunWen);
 
     int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+
+    JiaoGaiLunWen get(JiaoGaiLunWen jiaoGaiLunWen);
 
     boolean insert(JiaoGaiLunWen jiaoGaiLunWen);
 

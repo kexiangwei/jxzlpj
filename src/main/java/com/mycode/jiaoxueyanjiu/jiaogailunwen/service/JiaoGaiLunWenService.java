@@ -15,6 +15,8 @@ public interface JiaoGaiLunWenService {
 
     Map<String, Object> getPageList(JiaoGaiLunWen jiaoGaiLunWen);
 
+    JiaoGaiLunWen get(JiaoGaiLunWen jiaoGaiLunWen);
+
     boolean insert(JiaoGaiLunWen jiaoGaiLunWen);
 
     boolean update(JiaoGaiLunWen jiaoGaiLunWen);

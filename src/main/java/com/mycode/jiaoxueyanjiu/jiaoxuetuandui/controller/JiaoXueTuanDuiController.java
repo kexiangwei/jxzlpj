@@ -1,10 +1,10 @@
-package com.mycode.jiaoxueyanjiu.jiaogaixiangmu.controller;
+package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
-import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
-import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.service.JiaoGaiXiangMuService;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service.JiaoXueTuanDuiService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,31 +18,31 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 教学研究-教改项目
+ * 教学研究-教学团队
  * @auther kexiangwei
  * @date 2019/11/13
  */
 @CrossOrigin
 @Controller
-@RequestMapping("/jiaoGaiXiangMu")
-public class JiaoGaiXiangMuController {
+@RequestMapping("/jiaoXueTuanDui")
+public class JiaoXueTuanDuiController {
 
     @Autowired
-    private JiaoGaiXiangMuService jiaoGaiXiangMuService;
+    private JiaoXueTuanDuiService jiaoXueTuanDuiService;
     @Autowired
     private ShenHeService shenHeService;
 
     @ResponseBody
     @RequestMapping("/getPageList.do")
-    public JsonResult<Object> getPageList(JiaoGaiXiangMu jiaoGaiXiangMu){
-        Map<String, Object> resultMap = jiaoGaiXiangMuService.getPageList(jiaoGaiXiangMu);
+    public JsonResult<Object> getPageList(JiaoXueTuanDui jiaoXueTuanDui){
+        Map<String, Object> resultMap = jiaoXueTuanDuiService.getPageList(jiaoXueTuanDui);
         return JsonResult.success(resultMap);
     }
 
     @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(JiaoGaiXiangMu jiaoGaiXiangMu){
-        boolean bool = jiaoGaiXiangMuService.insert(jiaoGaiXiangMu);
+    public JsonResult<Object> insert(JiaoXueTuanDui jiaoXueTuanDui){
+        boolean bool = jiaoXueTuanDuiService.insert(jiaoXueTuanDui);
         if(!bool){
             return JsonResult.error();
         }
@@ -51,8 +51,8 @@ public class JiaoGaiXiangMuController {
 
     @ResponseBody
     @RequestMapping("/update.do")
-    public JsonResult<Object> update(JiaoGaiXiangMu jiaoGaiXiangMu){
-        boolean bool = jiaoGaiXiangMuService.update(jiaoGaiXiangMu);
+    public JsonResult<Object> update(JiaoXueTuanDui jiaoXueTuanDui){
+        boolean bool = jiaoXueTuanDuiService.update(jiaoXueTuanDui);
         if(!bool){
             return JsonResult.error();
         }
@@ -62,7 +62,7 @@ public class JiaoGaiXiangMuController {
     @ResponseBody
     @RequestMapping("/delete.do")
     public JsonResult<Object> delete(@RequestParam("code") String code){
-        boolean bool = jiaoGaiXiangMuService.delete(code);
+        boolean bool = jiaoXueTuanDuiService.delete(code);
         if(!bool){
             return JsonResult.error();
         }
@@ -82,8 +82,8 @@ public class JiaoGaiXiangMuController {
         if(StringUtils.isEmpty(activeShenheCode)){
             return JsonResult.error("未设置审核流程");
         }
-        List<JiaoGaiXiangMu> jiaoGaiXiangMuList = JSON.parseArray(jsonStr, JiaoGaiXiangMu.class);
-        boolean bool = jiaoGaiXiangMuService.toSubimt(activeShenheCode,jiaoGaiXiangMuList);
+        List<JiaoXueTuanDui> jiaoXueTuanDuiList = JSON.parseArray(jsonStr, JiaoXueTuanDui.class);
+        boolean bool = jiaoXueTuanDuiService.toSubimt(activeShenheCode,jiaoXueTuanDuiList);
         if(!bool){
             return JsonResult.error("提交失败");
         }
@@ -98,8 +98,8 @@ public class JiaoGaiXiangMuController {
     @ResponseBody
     @RequestMapping("/toShenhe.do")
     public JsonResult<Object> toShenhe(ShenHeItem item,@RequestParam("jsonStr") String jsonStr){
-        List<JiaoGaiXiangMu> jiaoGaiXiangMuList = JSON.parseArray(jsonStr, JiaoGaiXiangMu.class);
-        boolean bool = jiaoGaiXiangMuService.toShenhe(item,jiaoGaiXiangMuList);
+        List<JiaoXueTuanDui> jiaoXueTuanDuiList = JSON.parseArray(jsonStr, JiaoXueTuanDui.class);
+        boolean bool = jiaoXueTuanDuiService.toShenhe(item,jiaoXueTuanDuiList);
         if(!bool){
             return JsonResult.error();
         }

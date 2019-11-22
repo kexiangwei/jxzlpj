@@ -4,45 +4,54 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
- * 教改项目
+ * 教学研究-教改项目
  * @auther kexiangwei
- * @date 2019/8/19
+ * @date 2019/11/13
  */
 @Getter
 @Setter
 public class JiaoGaiXiangMu {
 
+    //分页参数
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-
+    //业务字段
     private String code
-            ,xmType //项目类型【重点、一般】
-            ,xmName; //项目名称
-    private Double sqMoney;
-    private String userId
-            ,userName
-            ,title //职称
-            ,collegeDept //学院（部门）
-            ,major //专业
-            ,mainTeachWork //主要教学工作
-            ,mainTeachAchievement //主要教学成果
-            ,currentAndBackground
-            ,questionAndTarget
-            ,expectAndResult
-            ,planAndProcess
-            ,budgetMoney;
-    private String isSubmit
-            ,shenheCode
-            ,status;
-    private Integer batchNum;
-
+            ,xmName //项目名称
+            ,xmType //项目类型：下拉选择框（重点、一般）
+            ,leader //项目主持人
+            ,leaderId //项目主持人工号
+            ,title //职称：下拉选择框（教授、副教授、讲师、研究员、副研究员、助理研究员等）
+            ,collegeOrDept //学院或部门
+            ,major; //专业：提示若是职能部门，可以不填写。
+    private List<Map<String,Object>> memberList; //主要成员情况
+    private String mainTeachWork //主要教学工作简历
+            ,mainTeachAchievement //主要教育教学研究领域及成果
+            ,currentAndBackground //现状与背景分析（包括已有研究实践基础）
+            ,questionAndTarget //研究内容、目标、要解决的问题和主要特色
+            ,expectAndResult //预期效果与具体成果
+            ,planAndProcess; //具体安排及进度
+    private List<Map<String,Object>> budgetList; //经费预算
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createDate;
+    //
+    private Integer shenHeUserId //获取审核列表参数
+            ,userId;
+    private String userName;
+    //逻辑字段
+    private String isSubmit //提交状态【已提交 | 未提交】
+            ,shenheCode;//审核编号
+    private Integer batchNum; //提交批次
+    private String status //数据状态：【审核中 | 通过 | 退回】
+            ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
+
+
+
 }

@@ -47,6 +47,11 @@ public class JiaoGaiLunWenServiceImpl implements JiaoGaiLunWenService {
     }
 
     @Override
+    public JiaoGaiLunWen get(JiaoGaiLunWen jiaoGaiLunWen) {
+        return jiaoGaiLunWenMapper.get(jiaoGaiLunWen);
+    }
+
+    @Override
     public boolean insert(JiaoGaiLunWen jiaoGaiLunWen) {
         return jiaoGaiLunWenMapper.insert(jiaoGaiLunWen);
     }

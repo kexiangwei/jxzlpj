@@ -40,6 +40,13 @@ public class JiaoGaiLunWenController {
     }
 
     @ResponseBody
+    @RequestMapping("/get.do")
+    public JsonResult<Object> get(JiaoGaiLunWen jiaoGaiLunWen){
+        jiaoGaiLunWen = jiaoGaiLunWenService.get(jiaoGaiLunWen);
+        return JsonResult.success(jiaoGaiLunWen);
+    }
+
+    @ResponseBody
     @RequestMapping("/insert.do")
     public JsonResult<Object> insert(JiaoGaiLunWen jiaoGaiLunWen){
         boolean bool = jiaoGaiLunWenService.insert(jiaoGaiLunWen);
