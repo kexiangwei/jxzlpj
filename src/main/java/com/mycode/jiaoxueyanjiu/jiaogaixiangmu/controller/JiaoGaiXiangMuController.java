@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.service.JiaoGaiXiangMuService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +101,31 @@ public class JiaoGaiXiangMuController {
     public JsonResult<Object> toShenhe(ShenHeItem item,@RequestParam("jsonStr") String jsonStr){
         List<JiaoGaiXiangMu> jiaoGaiXiangMuList = JSON.parseArray(jsonStr, JiaoGaiXiangMu.class);
         boolean bool = jiaoGaiXiangMuService.toShenhe(item,jiaoGaiXiangMuList);
+        if(!bool){
+            return JsonResult.error();
+        }
+        return JsonResult.success();
+    }
+
+    @ResponseBody
+    @RequestMapping("/getMemberList.do")
+    public JsonResult<Object> getMemberList(@RequestParam("xmCode") String xmCode){
+        List<Member> memberList = jiaoGaiXiangMuService.getMemberList(xmCode);
+        return JsonResult.success(memberList);
+    }
+    @ResponseBody
+    @RequestMapping("/insertMember.do")
+    public JsonResult<Object> insertMember(Member member){
+        boolean bool = jiaoGaiXiangMuService.insertMember(member);
+        if(!bool){
+            return JsonResult.error();
+        }
+        return JsonResult.success();
+    }
+    @ResponseBody
+    @RequestMapping("/deleteMember.do")
+    public JsonResult<Object> deleteMember(Member member){
+        boolean bool = jiaoGaiXiangMuService.deleteMember(member);
         if(!bool){
             return JsonResult.error();
         }

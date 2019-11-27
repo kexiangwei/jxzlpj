@@ -22,7 +22,7 @@ public class JiaoGaiXiangMu {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-    //业务字段
+    //业务字段code,xmName,xmType,leader,leaderId,title,collegeOrDept,major,mainTeachWork,mainTeachAchievement,currentAndBackground,questionAndTarget,expectAndResult,planAndProcess,fundBudgetEstimate
     private String code
             ,xmName //项目名称
             ,xmType //项目类型：下拉选择框（重点、一般）
@@ -37,8 +37,9 @@ public class JiaoGaiXiangMu {
             ,currentAndBackground //现状与背景分析（包括已有研究实践基础）
             ,questionAndTarget //研究内容、目标、要解决的问题和主要特色
             ,expectAndResult //预期效果与具体成果
-            ,planAndProcess; //具体安排及进度
-    private List<Map<String,Object>> budgetList; //经费预算
+            ,planAndProcess //具体安排及进度
+            ,fundBudgetEstimate; //经费概算
+    private List<Map<String,Object>> fundBudgetList; //经费预算
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     private Date createDate;
     //

@@ -8,6 +8,7 @@ import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -100,6 +101,21 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
             }
         }
         return bool;
+    }
+
+    @Override
+    public List<Member> getMemberList(String xmCode) {
+        return jiaoGaiXiangMuMapper.getMemberList(xmCode);
+    }
+
+    @Override
+    public boolean insertMember(Member member) {
+        return jiaoGaiXiangMuMapper.insertMember(member);
+    }
+
+    @Override
+    public boolean deleteMember(Member member) {
+        return jiaoGaiXiangMuMapper.deleteMember(member);
     }
 
 }

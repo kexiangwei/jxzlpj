@@ -2,6 +2,7 @@ package com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper;
 
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +32,10 @@ public interface JiaoGaiXiangMuMapper {
     ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") Integer userId);
 
     int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
+
+    List<Member> getMemberList(@Param("xmCode") String xmCode);
+
+    boolean insertMember(Member member);
+
+    boolean deleteMember(Member member);
 }

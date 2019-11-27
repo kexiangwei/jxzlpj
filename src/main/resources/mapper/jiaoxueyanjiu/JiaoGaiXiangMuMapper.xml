@@ -109,37 +109,58 @@
 
     <insert id="insert">
           insert into JXYJ_JGXM
-          (code,name,category,participation_type,isbn,publishers,publishing_time,selected,selected_time,user_id,user_name,create_date)
+          (code,xm_name,xm_type,leader,leader_id,title,college_or_dept,major,main_teach_work,main_teach_achievement
+          ,current_and_background,question_and_target,expect_and_result,plan_and_process,fund_budget_estimate,user_id,user_name,create_date)
           values
-          (#{code},#{name},#{category},#{participationType},#{isbn},#{publishers},#{publishingTime},#{selected},#{selectedTime},#{userId},#{userName},sysdate)
+          (#{code},#{xmName},#{xmType},#{leader},#{leaderId},#{title},#{collegeOrDept},#{major},#{mainTeachWork,jdbcType=VARCHAR},#{mainTeachAchievement,jdbcType=VARCHAR}
+          ,#{currentAndBackground,jdbcType=VARCHAR},#{questionAndTarget,jdbcType=VARCHAR},#{expectAndResult,jdbcType=VARCHAR},#{planAndProcess,jdbcType=VARCHAR},#{fundBudgetEstimate,jdbcType=VARCHAR}
+          ,#{userId},#{userName},sysdate)
     </insert>
 
     <update id="update">
         update JXYJ_JGXM
         <set>
-            <if test="name != null and name != ''">
-                name = #{name}
+            <if test="xmName != null and xmName != ''">
+                xm_name = #{xmName}
             </if>
-            <if test="category != null and category != ''">
-                , category = #{category}
+            <if test="xmType != null and xmType != ''">
+                , xm_type = #{xmType}
             </if>
-            <if test="participationType != null and participationType != ''">
-                , participation_type = #{participationType}
+            <if test="leader != null and leader != ''">
+                , leader = #{leader}
             </if>
-            <if test="isbn != null and isbn != ''">
-                , isbn = #{isbn}
+            <if test="leaderId != null and leaderId != ''">
+                , leader_id = #{leaderId}
             </if>
-            <if test="publishers !=null and publishers !=''">
-                , publishers = #{publishers}
+            <if test="title !=null and title !=''">
+                , title = #{title}
             </if>
-            <if test="publishingTime !=null">
-                , publishing_time = #{publishingTime}
+            <if test="collegeOrDept !=null and collegeOrDept !=''">
+                , college_or_dept = #{collegeOrDept}
             </if>
-            <if test="selected !=null and selected !=''">
-                , selected = #{selected}
+            <if test="major !=null and major !=''">
+                , major = #{major}
             </if>
-            <if test="selectedTime !=null">
-                , selected_time = #{selectedTime}
+            <if test="mainTeachWork !=null and mainTeachWork !=''">
+                , main_teach_work = #{mainTeachWork}
+            </if>
+            <if test="mainTeachAchievement !=null and mainTeachAchievement !=''">
+                , main_teach_achievement = #{mainTeachAchievement}
+            </if>
+            <if test="currentAndBackground !=null and currentAndBackground !=''">
+                , current_and_background = #{currentAndBackground}
+            </if>
+            <if test="questionAndTarget !=null and questionAndTarget !=''">
+                , question_and_target = #{questionAndTarget}
+            </if>
+            <if test="expectAndResult !=null and expectAndResult !=''">
+                , expect_and_result = #{expectAndResult}
+            </if>
+            <if test="planAndProcess !=null and planAndProcess !=''">
+                , plan_and_process = #{planAndProcess}
+            </if>
+            <if test="fundBudgetEstimate !=null and fundBudgetEstimate !=''">
+                , fund_budget_estimate = #{fundBudgetEstimate}
             </if>
         </set>
         where code = #{code}
@@ -181,4 +202,23 @@
             GROUP BY j.code,j.batch_num
         )t
     </select>
+    <select id="getMemberList" resultType="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member">
+        SELECT * FROM JXYJ_JGXM_MEMBER WHERE XM_CODE = #{xmCode}
+    </select>
+    <insert id="insertMember">
+        insert into JXYJ_JGXM_MEMBER (XM_CODE,USER_ID,USER_NAME,TASK)
+        values (#{xmCode},#{userId},#{userName},#{task})
+    </insert>
+    <delete id="deleteMember">
+        delete from JXYJ_JGXM_MEMBER
+        <where>1=1
+            <if test="xmCode !=null and xmCode !='' and userId !=null and userId !=''">
+                and XM_CODE = #{xmCode}
+                and USER_ID = #{userId}
+            </if>
+            <if test="xmCode !=null and xmCode !=''">
+                and XM_CODE = #{xmCode}
+            </if>
+        </where>
+    </delete>
 </mapper>

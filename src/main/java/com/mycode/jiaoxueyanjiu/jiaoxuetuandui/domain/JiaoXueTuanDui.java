@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 教学研究-教学团队
@@ -22,18 +24,21 @@ public class JiaoXueTuanDui {
     private Integer pageIndex=1
             ,pageSize=10;
     //业务字段
-    private String code //编号
-            ,name //名称
-            ,category //类别：教材，专著（专著、译著、辞书）
-            ,participationType //参与形式：主编、副主编、参编
-            ,isbn
-            ,publishers //出版社
-            ,selected; //教材入选情况：国家规划教材、省部级规划教材、国家级精品教材、省部级精品教材、其他
+    private String code //团队编号，此项用户输入
+            ,name //团队名称
+            ,leader //团队负责人姓名
+            ,leaderId ; //团队负责人工号
+    private List<Map<String,Object>> memberList; //团队成员信息【{工号：“”，姓名：“”}】
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date publishingTime //出版时间
-            ,selectedTime //入选时间
-            ,createDate; //创建时间
+    private Date createTime //团队建立时间
+            ,createDate; //数据提交时间
+    //
+    private String declarationBook //申报书
+            ,interimReport //中期报告
+            ,summaryReport //总结报告
+            ,interimAssessmentResults //中期考核结果
+            ,finalAssessmentResult; //最终考核结果
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId;
