@@ -3,6 +3,7 @@ package com.mycode.jiaoxueyanjiu.jiaogaixiangmu.controller;
 import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.service.JiaoGaiXiangMuService;
@@ -126,6 +127,31 @@ public class JiaoGaiXiangMuController {
     @RequestMapping("/deleteMember.do")
     public JsonResult<Object> deleteMember(Member member){
         boolean bool = jiaoGaiXiangMuService.deleteMember(member);
+        if(!bool){
+            return JsonResult.error();
+        }
+        return JsonResult.success();
+    }
+
+    @ResponseBody
+    @RequestMapping("/getFundBudgetList.do")
+    public JsonResult<Object> getFundBudgetList(@RequestParam("xmCode") String xmCode){
+        List<FundBudget> fundBudgetList = jiaoGaiXiangMuService.getFundBudgetList(xmCode);
+        return JsonResult.success(fundBudgetList);
+    }
+    @ResponseBody
+    @RequestMapping("/insertFundBudget.do")
+    public JsonResult<Object> insertFundBudget(FundBudget fundBudget){
+        boolean bool = jiaoGaiXiangMuService.insertFundBudget(fundBudget);
+        if(!bool){
+            return JsonResult.error();
+        }
+        return JsonResult.success();
+    }
+    @ResponseBody
+    @RequestMapping("/deleteFundBudget.do")
+    public JsonResult<Object> deleteFundBudget(FundBudget fundBudget){
+        boolean bool = jiaoGaiXiangMuService.deleteFundBudget(fundBudget);
         if(!bool){
             return JsonResult.error();
         }

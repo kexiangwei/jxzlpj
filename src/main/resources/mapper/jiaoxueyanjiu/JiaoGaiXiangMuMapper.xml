@@ -221,4 +221,24 @@
             </if>
         </where>
     </delete>
+
+    <select id="getFundBudgetList" resultType="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget">
+        SELECT * FROM JXYJ_JGXM_FUND_BUDGET WHERE XM_CODE = #{xmCode}
+    </select>
+    <insert id="insertFundBudget">
+        insert into JXYJ_JGXM_FUND_BUDGET (XM_CODE,SUBJECT,BUDGET_AMOUNT)
+        values (#{xmCode},#{subject},#{budgetAmount})
+    </insert>
+    <delete id="deleteFundBudget">
+        delete from JXYJ_JGXM_FUND_BUDGET
+        <where>1=1
+            <if test="xmCode !=null and xmCode !='' and subject !=null and subject !=''">
+                and XM_CODE = #{xmCode}
+                and SUBJECT = #{subject}
+            </if>
+            <if test="xmCode !=null and xmCode !=''">
+                and XM_CODE = #{xmCode}
+            </if>
+        </where>
+    </delete>
 </mapper>

@@ -1,6 +1,7 @@
 package com.mycode.jiaoxueyanjiu.jiaogaixiangmu.service;
 
 import com.mycode.common.shenhe.domain.ShenHeItem;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 
@@ -31,4 +32,10 @@ public interface JiaoGaiXiangMuService {
     boolean insertMember(Member member);
 
     boolean deleteMember(Member member);
+
+    List<FundBudget> getFundBudgetList(String xmCode);
+
+    boolean insertFundBudget(FundBudget fundBudget);
+
+    boolean deleteFundBudget(FundBudget fundBudget);
 }

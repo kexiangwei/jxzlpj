@@ -7,6 +7,7 @@ import com.mycode.common.file.mapper.FileMapper;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuMapper;
@@ -116,6 +117,21 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
     @Override
     public boolean deleteMember(Member member) {
         return jiaoGaiXiangMuMapper.deleteMember(member);
+    }
+
+    @Override
+    public List<FundBudget> getFundBudgetList(String xmCode) {
+        return jiaoGaiXiangMuMapper.getFundBudgetList(xmCode);
+    }
+
+    @Override
+    public boolean insertFundBudget(FundBudget fundBudget) {
+        return jiaoGaiXiangMuMapper.insertFundBudget(fundBudget);
+    }
+
+    @Override
+    public boolean deleteFundBudget(FundBudget fundBudget) {
+        return jiaoGaiXiangMuMapper.deleteFundBudget(fundBudget);
     }
 
 }

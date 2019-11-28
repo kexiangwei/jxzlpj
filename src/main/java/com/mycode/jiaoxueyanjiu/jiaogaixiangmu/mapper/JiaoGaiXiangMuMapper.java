@@ -1,6 +1,7 @@
 package com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper;
 
 import com.mycode.common.shenhe.domain.ShenHeNode;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 import org.apache.ibatis.annotations.Delete;
@@ -38,4 +39,10 @@ public interface JiaoGaiXiangMuMapper {
     boolean insertMember(Member member);
 
     boolean deleteMember(Member member);
+
+    List<FundBudget> getFundBudgetList(String xmCode);
+
+    boolean insertFundBudget(FundBudget fundBudget);
+
+    boolean deleteFundBudget(FundBudget fundBudget);
 }
