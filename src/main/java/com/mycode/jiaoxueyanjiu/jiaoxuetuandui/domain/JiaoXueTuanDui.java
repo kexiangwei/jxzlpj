@@ -23,22 +23,23 @@ public class JiaoXueTuanDui {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
+    private String memberIds,memberNames;
     //业务字段
     private String code //团队编号，此项用户输入
             ,name //团队名称
-            ,leader //团队负责人姓名
-            ,leaderId ; //团队负责人工号
+            ,teamLeader //团队负责人姓名
+            ,teamLeaderId ; //团队负责人工号
     private List<Map<String,Object>> memberList; //团队成员信息【{工号：“”，姓名：“”}】
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime //团队建立时间
             ,createDate; //数据提交时间
     //
-    private String declarationBook //申报书
-            ,interimReport //中期报告
-            ,summaryReport //总结报告
-            ,interimAssessmentResults //中期考核结果
-            ,finalAssessmentResult; //最终考核结果
+    private String sbs //申报书
+            ,middleReport //中期报告
+            ,finalReport //总结报告
+            ,middleResult //中期考核结果
+            ,finalResult; //最终考核结果
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId;
@@ -49,7 +50,5 @@ public class JiaoXueTuanDui {
     private Integer batchNum; //提交批次
     private String status //数据状态：【审核中 | 通过 | 退回】
             ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
-
-
 
 }

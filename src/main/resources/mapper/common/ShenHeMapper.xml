@@ -10,10 +10,10 @@
         from COMMON_SHENHE_SET sh
         LEFT JOIN sys_menu m on m.menu_id = sh.menu_id
         LEFT JOIN (
-        SELECT SHENHE_CODE,listagg(role_name,'>') within group(order by exec_level) role_str
-        FROM COMMON_SHENHE_NODE sn
-        LEFT JOIN sys_role r ON r.role_id = sn.role_id
-        GROUP BY SHENHE_CODE
+            SELECT SHENHE_CODE,listagg(role_name,'>') within group(order by exec_level) role_str
+            FROM COMMON_SHENHE_NODE sn
+            LEFT JOIN sys_role r ON r.role_id = sn.role_id
+            GROUP BY SHENHE_CODE
         ) csn on csn.shenhe_code = sh.shenhe_code
         LEFT JOIN (SELECT DISTINCT shenhe_code from COMMON_SHENHE) cs on cs.shenhe_code = sh.shenhe_code
         <where>
@@ -103,9 +103,9 @@
 
     <insert id="toShenhe">
         insert into COMMON_SHENHE_ITEM
-        (relation_code,batch_num,status,opinion,node_code,node_name,user_id,user_name,create_date)
+        (relation_code,batch_num,status,opinion,node_code,node_name,user_id,user_name,create_date,shenhe_type)
         values
-        (#{relationCode},#{batchNum},#{status},#{opinion},#{nodeCode},#{nodeName},#{userId},#{userName},sysdate)
+        (#{relationCode},#{batchNum},#{status},#{opinion},#{nodeCode},#{nodeName},#{userId},#{userName},sysdate,#{shenheType,jdbcType=VARCHAR})
     </insert>
 
     <delete id="batchDelete">

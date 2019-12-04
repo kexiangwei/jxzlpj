@@ -1,11 +1,13 @@
 package com.mycode.jiaoxueyanjiu.jiaogaixiangmu.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.mycode.common.shenhe.domain.ShenHe;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.ZjshItem;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.service.JiaoGaiXiangMuService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +108,18 @@ public class JiaoGaiXiangMuController {
             return JsonResult.error();
         }
         return JsonResult.success();
+    }
+
+    /**
+     * 根据xmCode 获取校外专家审核意见
+     * @param xmCode
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getZjshProcess.do")
+    public JsonResult<Object> getZjshProcess(@RequestParam("xmCode") String xmCode,@RequestParam("batchNum") Integer batchNum){
+        List<ZjshItem> zjshItemList = jiaoGaiXiangMuService.getZjshProcess(xmCode,batchNum);
+        return JsonResult.success(zjshItemList);
     }
 
     @ResponseBody

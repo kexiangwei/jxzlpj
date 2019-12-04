@@ -51,8 +51,12 @@ public class JiaoGaiXiangMu {
             ,shenheCode;//审核编号
     private Integer batchNum; //提交批次
     private String status //数据状态：【审核中 | 通过 | 退回】
-            ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
-
-
+            ,shenheStatus //审核状态：【已审核 | 待审核 | 退回】
+            ,shenheStatusFirst //审核状态-初审：【已审核 | 待审核 | 退回】
+            ,shenheStatusFinal; //审核状态-终审：【已审核 | 待审核 | 退回 | 待审核（未初审）】
+    private Integer isJwcGly //是否教务处管理员
+            ,isZjshAccount //是否校外专家审核账号
+            ,isZjshAll; //校外专家是否已审核（全部）
+    private List<ZjshItem> zjshItemList;
 
 }

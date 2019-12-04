@@ -22,8 +22,9 @@ public class ShenHeItem {
                 ,opinion; // 审核意见
     private Integer userId;
     private String userName;
-    @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss", locale="zh", timezone="GMT+8")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createDate;
-
+    private String shenheType; //审核类别：【初审，终审】
+    private Integer isZjshAccount; //是否校外专家审核账号
 }

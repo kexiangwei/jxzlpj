@@ -4,6 +4,7 @@ import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.ZjshItem;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ public interface JiaoGaiXiangMuService {
     boolean toSubimt(String activeShenheCode, List<JiaoGaiXiangMu> jiaoGaiXiangMuList);
 
     boolean toShenhe(ShenHeItem item, List<JiaoGaiXiangMu> jiaoGaiXiangMuList);
+
+    List<ZjshItem> getZjshProcess(String xmCode, Integer batchNum);
 
     List<Member> getMemberList(String xmCode);
 
