@@ -2,11 +2,10 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper;
 
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 教学研究-教学团队
@@ -24,7 +23,7 @@ public interface JiaoXueTuanDuiMapper {
 
     boolean update(JiaoXueTuanDui jiaoXueTuanDui);
 
-    @Delete("delete from JXYJ_JCJS where code = #{code}")
+    @Delete("delete from JXYJ_JXTD where code = #{code}")
     boolean delete(@Param("code") String code);
 
     boolean batchSubimt(@Param("jiaoXueTuanDuiList") List<JiaoXueTuanDui> jiaoXueTuanDuiList);
@@ -32,4 +31,13 @@ public interface JiaoXueTuanDuiMapper {
     ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") Integer userId);
 
     int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
+
+    @Select("SELECT * FROM JXYJ_JXTD_MEMBER WHERE RELATION_CODE = #{relationCode}")
+    List<Map<String, Object>> getMemberList(@Param("relationCode") String relationCode);
+
+    @Insert("insert into JXYJ_JXTD_MEMBER (RELATION_CODE,USER_ID,USER_NAME) values (#{relationCode},#{userId},#{userName})")
+    boolean insertMember(@Param("relationCode") String relationCode, @Param("userId") String userId, @Param("userName") String userName);
+
+    @Delete("delete from JXYJ_JXTD_MEMBER WHERE RELATION_CODE = #{relationCode} and USER_ID = #{userId} ")
+    boolean deleteMember(@Param("relationCode") String relationCode, @Param("userId") String userId);
 }

@@ -37,6 +37,11 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
         Map<String, Object> resultMap = new HashMap<>();
         Page<Object> pageInfo = PageHelper.startPage(jiaoXueTuanDui.getPageIndex(), jiaoXueTuanDui.getPageSize());
         List<JiaoXueTuanDui> list = jiaoXueTuanDuiMapper.getPageList(jiaoXueTuanDui);
+        if(list !=null && list.size() >0){
+            list.forEach(jxtd -> {
+                jxtd.setMemberList(jiaoXueTuanDuiMapper.getMemberList(jxtd.getCode()));
+            });
+        }
         if(!StringUtils.isEmpty(jiaoXueTuanDui.getShenHeUserId())){
             int unShenHeNum = jiaoXueTuanDuiMapper.getNotShenHeNum(jiaoXueTuanDui.getShenHeUserId());//获取未审核数
             resultMap.put("unShenHeNum", unShenHeNum);
@@ -100,6 +105,21 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
             }
         }
         return bool;
+    }
+
+    @Override
+    public List<Map<String, Object>> getMemberList(String relationCode) {
+        return jiaoXueTuanDuiMapper.getMemberList(relationCode);
+    }
+
+    @Override
+    public boolean insertMember(String relationCode, String userId, String userName) {
+        return jiaoXueTuanDuiMapper.insertMember(relationCode,userId,userName);
+    }
+
+    @Override
+    public boolean deleteMember(String relationCode, String userId) {
+        return jiaoXueTuanDuiMapper.deleteMember(relationCode,userId);
     }
 
 }

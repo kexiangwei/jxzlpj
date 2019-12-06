@@ -7,6 +7,7 @@
             <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
                 SELECT j.*
                 ,(case when  ur.role_id = is_back then '退回' when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                ,memberIds,memberNames
                 from (
                     SELECT j.code,j.batch_num
                     ,count(sn.node_code) total_num
@@ -20,6 +21,13 @@
                 left join V_JXYJ_JXTD_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
                 left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
                 left join sys_user_role ur on ur.role_id = sn.role_id
+                LEFT JOIN (
+                    SELECT relation_code
+                    ,listagg(user_name,',') within group(order by user_id) memberNames
+                    ,listagg(user_id,',') within group(order by user_id) memberIds
+                    FROM JXYJ_JXTD_MEMBER
+                    GROUP BY relation_code
+                ) m on m.relation_code = j.code
                 <where>1=1
                     and exec_num >= exec_level-1
                     AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
@@ -47,12 +55,12 @@
                 ,memberIds,memberNames
                 from V_JXYJ_JXTD j
                 LEFT JOIN (
-                    SELECT team_code
+                    SELECT relation_code
                     ,listagg(user_name,',') within group(order by user_id) memberNames
                     ,listagg(user_id,',') within group(order by user_id) memberIds
                     FROM JXYJ_JXTD_MEMBER
-                    GROUP BY team_code
-                ) m on m.team_code = j.code
+                    GROUP BY relation_code
+                ) m on m.relation_code = j.code
                 <where>1=1
                     <if test="isSubmit != null and isSubmit != ''">
                         <choose>
@@ -78,16 +86,16 @@
     </select>
     <sql id="queryCondition">
         <if test="userId != null and userId != '' and userId !=999999">
-            and j.user_id = #{userId}
+            and J.USER_ID = #{userId}
         </if>
         <if test="userName != null and userName != ''">
-            and j.user_name = #{userName}
+            and J.USER_NAME = #{userName}
         </if>
-        <if test="code != null and code != ''">
-            and code = #{code}
+        <if test="teamCode != null and teamCode != ''">
+            and TEAM_CODE = #{teamCode}
         </if>
-        <if test="name != null and name != ''">
-            and name = #{name}
+        <if test="teamName != null and teamName != ''">
+            and TEAM_NAME = #{teamName}
         </if>
         <if test="teamLeader != null and teamLeader != ''">
             and TEAM_LEADER = #{teamLeader}
@@ -117,37 +125,37 @@
 
     <insert id="insert">
           insert into JXYJ_JXTD
-          (code,name,category,participation_type,isbn,publishers,publishing_time,selected,selected_time,user_id,user_name,create_date)
+          (code,team_code,team_name,create_time,team_leader,team_leader_id,sbs,middle_report,final_report,user_id,user_name,create_date)
           values
-          (#{code},#{name},#{category},#{participationType},#{isbn},#{publishers},#{publishingTime},#{selected},#{selectedTime},#{userId},#{userName},sysdate)
+          (#{code},#{teamCode},#{teamName},#{createTime},#{teamLeader},#{teamLeaderId},#{sbs},#{middleReport},#{finalReport},#{userId},#{userName},CURRENT_DATE)
     </insert>
 
     <update id="update">
-        update JXYJ_JCJS
+        update JXYJ_JXTD
         <set>
-            <if test="name != null and name != ''">
-                name = #{name}
+            <if test="teamCode != null and teamCode != ''">
+                team_code = #{teamCode}
             </if>
-            <if test="category != null and category != ''">
-                , category = #{category}
+            <if test="teamName != null and teamName != ''">
+                , team_name = #{teamName}
             </if>
-            <if test="participationType != null and participationType != ''">
-                , participation_type = #{participationType}
+            <if test="createTime != null">
+                , create_time = #{createTime}
             </if>
-            <if test="isbn != null and isbn != ''">
-                , isbn = #{isbn}
+            <if test="teamLeader != null and teamLeader != ''">
+                , team_leader = #{teamLeader}
             </if>
-            <if test="publishers !=null and publishers !=''">
-                , publishers = #{publishers}
+            <if test="teamLeaderId !=null and teamLeaderId !=''">
+                , team_leader_id = #{teamLeaderId}
             </if>
-            <if test="publishingTime !=null">
-                , publishing_time = #{publishingTime}
+            <if test="sbs !=null">
+                , sbs = #{sbs}
             </if>
-            <if test="selected !=null and selected !=''">
-                , selected = #{selected}
+            <if test="middleReport !=null and middleReport !=''">
+                , middle_report = #{middleReport}
             </if>
-            <if test="selectedTime !=null">
-                , selected_time = #{selectedTime}
+            <if test="finalReport !=null and finalReport !=''">
+                , final_report = #{finalReport}
             </if>
         </set>
         where code = #{code}
@@ -159,7 +167,7 @@
             into COMMON_SHENHE
             (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
             values
-            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},sysdate)
+            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},CURRENT_DATE)
         </foreach>
         select 1 from dual
     </update>

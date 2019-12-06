@@ -3,6 +3,7 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.controller;
 import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service.JiaoXueTuanDuiService;
 import com.mycode.util.JsonResult;
@@ -100,6 +101,34 @@ public class JiaoXueTuanDuiController {
     public JsonResult<Object> toShenhe(ShenHeItem item,@RequestParam("jsonStr") String jsonStr){
         List<JiaoXueTuanDui> jiaoXueTuanDuiList = JSON.parseArray(jsonStr, JiaoXueTuanDui.class);
         boolean bool = jiaoXueTuanDuiService.toShenhe(item,jiaoXueTuanDuiList);
+        if(!bool){
+            return JsonResult.error();
+        }
+        return JsonResult.success();
+    }
+
+    @ResponseBody
+    @RequestMapping("/getMemberList.do")
+    public JsonResult<Object> getMemberList(@RequestParam("relationCode") String relationCode){
+        List<Map<String,Object>> memberList = jiaoXueTuanDuiService.getMemberList(relationCode);
+        return JsonResult.success(memberList);
+    }
+    @ResponseBody
+    @RequestMapping("/insertMember.do")
+    public JsonResult<Object> insertMember(@RequestParam("relationCode") String relationCode
+            ,@RequestParam("userId") String userId
+            ,@RequestParam("userName") String userName){
+        boolean bool = jiaoXueTuanDuiService.insertMember(relationCode,userId,userName);
+        if(!bool){
+            return JsonResult.error();
+        }
+        return JsonResult.success();
+    }
+    @ResponseBody
+    @RequestMapping("/deleteMember.do")
+    public JsonResult<Object> deleteMember(@RequestParam("relationCode") String relationCode
+            ,@RequestParam("userId") String userId){
+        boolean bool = jiaoXueTuanDuiService.deleteMember(relationCode,userId);
         if(!bool){
             return JsonResult.error();
         }

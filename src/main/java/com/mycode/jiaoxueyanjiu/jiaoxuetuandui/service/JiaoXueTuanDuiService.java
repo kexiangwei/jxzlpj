@@ -24,4 +24,10 @@ public interface JiaoXueTuanDuiService {
     boolean toSubimt(String activeShenheCode, List<JiaoXueTuanDui> jiaoXueTuanDuiList);
 
     boolean toShenhe(ShenHeItem item, List<JiaoXueTuanDui> jiaoXueTuanDuiList);
+
+    List<Map<String, Object>> getMemberList(String relationCode);
+
+    boolean insertMember(String relationCode, String userId, String userName);
+
+    boolean deleteMember(String relationCode, String userId);
 }
