@@ -36,19 +36,22 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
     @Override
     public Map<String, Object> getPageList(JiaoXueTuanDui jiaoXueTuanDui) {
         Map<String, Object> resultMap = new HashMap<>();
+        //
+        if(!StringUtils.isEmpty(jiaoXueTuanDui.getShenHeUserId())){
+            //判断是否为评审账号
+            Integer isPsAccount = jiaoXueTuanDuiMapper.isPsAccount(jiaoXueTuanDui.getShenHeUserId());
+            jiaoXueTuanDui.setIsPsAccount(isPsAccount);
+//            resultMap.put("isPsAccount", isPsAccount);
+            //获取未审核数
+            resultMap.put("unShenHeNum", jiaoXueTuanDuiMapper.getNotShenHeNum(jiaoXueTuanDui.getShenHeUserId()));
+        }
+        //
         Page<Object> pageInfo = PageHelper.startPage(jiaoXueTuanDui.getPageIndex(), jiaoXueTuanDui.getPageSize());
         List<JiaoXueTuanDui> pageList = jiaoXueTuanDuiMapper.getPageList(jiaoXueTuanDui);
         if(pageList !=null && pageList.size() >0){
             pageList.forEach(jxtd -> {
                 jxtd.setMemberList(jiaoXueTuanDuiMapper.getMemberList(jxtd.getCode()));
             });
-        }
-        if(!StringUtils.isEmpty(jiaoXueTuanDui.getShenHeUserId())){
-            //判断是否为评审账号
-            Integer isPsAccount = jiaoXueTuanDuiMapper.isPsAccount(jiaoXueTuanDui.getShenHeUserId());
-            jiaoXueTuanDui.setIsPsAccount(isPsAccount);
-            resultMap.put("isPsAccount", isPsAccount);
-            resultMap.put("unShenHeNum", jiaoXueTuanDuiMapper.getNotShenHeNum(jiaoXueTuanDui.getShenHeUserId())); //获取未审核数
         }
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);

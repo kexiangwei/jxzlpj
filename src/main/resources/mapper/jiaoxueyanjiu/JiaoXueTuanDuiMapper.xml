@@ -4,71 +4,73 @@
 
     <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui">
         <choose>
-            <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
-                SELECT j.*
-                ,(case when  ur.role_id = is_back then '退回' when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
-                ,memberIds,memberNames
-                ,(case when ps.relation_code is not null and ps.middleResult = 1 then '已填写' else '未填写' end ) middleResult
-                ,(case when ps.relation_code is not null and ps.finalResult = 1 then '已填写' else '未填写' end ) finalResult
-                from (
-                    SELECT j.code,j.batch_num
-                    ,count(sn.node_code) total_num
-                    ,count(item.node_code) exec_num
-                    ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-                    from V_JXYJ_JXTD_SHENHE j
-                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-                    left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-                    GROUP BY j.code,j.batch_num
-                )t
-                left join V_JXYJ_JXTD_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
-                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-                left join sys_user_role ur on ur.role_id = sn.role_id
-                LEFT JOIN (
-                    SELECT relation_code
-                    ,listagg(user_name,',') within group(order by user_id) memberNames
-                    ,listagg(user_id,',') within group(order by user_id) memberIds
-                    FROM JXYJ_JXTD_MEMBER
-                    GROUP BY relation_code
-                ) m on m.relation_code = j.code
-                left join (
-                    SELECT RELATION_CODE,max(batch_num) batch_num
-                    ,max(case when pingshen_type = '中期考核' then 1 else 0 end ) middleResult
-                    ,max(case when pingshen_type = '最终考核' then 1 else 0 end ) finalResult
-                    from JXYJ_JXTD_PS
-                    GROUP BY RELATION_CODE
-                ) ps on ps.relation_code = j.code and ps.batch_num = j.batch_num
+            <when test="shenHeUserId !=null and shenHeUserId !='' and isPsAccount == 1"><!-- 审核列表 -->
+                select * from (
+                    SELECT v.*
+                ,(case when item.relation_code is not null then '已审核' else '未审核' end) shenhe_status
+                    ,memberIds,memberNames
+                    ,(case when ps.relation_code is not null and ps.middleResult = 1 then '已填写' else '未填写' end ) middleResult
+                    ,(case when ps.relation_code is not null and ps.finalResult = 1 then '已填写' else '未填写' end ) finalResult
+                    from V_JXYJ_JXTD_SHENHE v
+                LEFT JOIN (SELECT * FROM COMMON_SHENHE_ITEM where USER_ID = #{shenHeUserId}) item on item.relation_code = v.code and item.batch_num = v.batch_num
+                    LEFT JOIN (
+                        SELECT relation_code
+                        ,listagg(user_name,',') within group(order by user_id) memberNames
+                        ,listagg(user_id,',') within group(order by user_id) memberIds
+                        FROM JXYJ_JXTD_MEMBER
+                        GROUP BY relation_code
+                    ) m on m.relation_code = v.code
+                    left join (
+                        SELECT RELATION_CODE,max(batch_num) batch_num
+                        ,max(case when pingshen_type = '中期考核' then 1 else 0 end ) middleResult
+                        ,max(case when pingshen_type = '最终考核' then 1 else 0 end ) finalResult
+                        from JXYJ_JXTD_PS
+                        WHERE USER_ID = #{shenHeUserId}
+                        GROUP BY RELATION_CODE
+                    ) ps on ps.relation_code = v.code and ps.batch_num = v.batch_num
+
+                  <include refid="queryCondition"/>
+                )
                 <where>1=1
-                    and exec_num >= exec_level-1
-                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
-                    and ur.user_id = #{shenHeUserId}
                     <if test="shenheStatus != null and shenheStatus != ''">
-                        <choose>
-                            <when test="shenheStatus == '已审核'">
-                                and exec_num >= exec_level
-                            </when>
-                            <when test="shenheStatus == '未审核'">
-                                and exec_level > exec_num
-                            </when>
-                            <when test="shenheStatus == '退回'">
-                                and ur.role_id = is_back
-                            </when>
-                        </choose>
+                        and shenhe_status = #{shenheStatus}
                     </if>
-                    <include refid="queryCondition"/>
                 </where>
                 ORDER BY shenhe_status DESC
             </when>
+            <when test="shenHeUserId !=null and shenHeUserId !=''">
+                SELECT v.*
+                ,(case when exec_num <![CDATA[ < ]]> total_num then '待审核' when item.relation_code is not null then '已审核' else '未审核' end) shenhe_status
+                from V_JXYJ_JXTD_SHENHE v
+                LEFT JOIN (SELECT * FROM COMMON_SHENHE_ITEM where USER_ID = #{shenHeUserId}) item on item.relation_code = v.code and item.batch_num = v.batch_num
+                LEFT JOIN(
+                SELECT v.CODE,v.BATCH_NUM
+                ,max(total_num) total_num
+                ,count(item.user_id) exec_num
+                from V_JXYJ_JXTD_SHENHE v
+                left join (
+                SELECT shenhe_code,count(ur.user_id)-1 total_num
+                from COMMON_SHENHE_NODE sn left join sys_user_role ur on ur.role_id = sn.role_id
+
+                GROUP BY shenhe_code
+                ) t on t.shenhe_code = v.shenhe_code
+                LEFT JOIN COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num
+                GROUP BY v.CODE,v.BATCH_NUM
+                )t on t.code = v.code and t.batch_num = v.batch_num
+                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id where ur.user_id = #{shenHeUserId}
+            </when>
             <otherwise><!-- 提交列表 -->
-                SELECT j.*
+                SELECT v.*
                 ,(case when shenhe_code is not null then '已提交' else '未提交' end ) is_submit
                 ,memberIds,memberNames
-                from V_JXYJ_JXTD j
+                from V_JXYJ_JXTD v
                 LEFT JOIN (
                     SELECT relation_code
                     ,listagg(user_name,',') within group(order by user_id) memberNames
                     ,listagg(user_id,',') within group(order by user_id) memberIds
                     FROM JXYJ_JXTD_MEMBER GROUP BY relation_code
-                ) m on m.relation_code = j.code
+                ) m on m.relation_code = v.code
                 <where>1=1
                     <if test="isSubmit != null and isSubmit != ''">
                         <choose>
@@ -88,47 +90,35 @@
                     </if>-->
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY is_submit DESC,j.create_date DESC
+                ORDER BY is_submit DESC,v.create_date DESC
             </otherwise>
         </choose>
     </select>
     <sql id="queryCondition">
         <if test="userId != null and userId != '' and userId !=999999">
-            and J.USER_ID = #{userId}
+            and v.USER_ID = #{userId}
         </if>
         <if test="userName != null and userName != ''">
-            and J.USER_NAME = #{userName}
+            and v.USER_NAME = #{userName}
         </if>
         <if test="teamCode != null and teamCode != ''">
-            and TEAM_CODE = #{teamCode}
+            and v.TEAM_CODE = #{teamCode}
         </if>
         <if test="teamName != null and teamName != ''">
-            and TEAM_NAME = #{teamName}
+            and v.TEAM_NAME = #{teamName}
         </if>
         <if test="teamLeader != null and teamLeader != ''">
-            and TEAM_LEADER = #{teamLeader}
+            and v.TEAM_LEADER = #{teamLeader}
         </if>
     </sql>
 
     <select id="getNotShenHeNum" resultType="int">
-        SELECT count(0) from (
-            SELECT j.code,j.batch_num
-            ,count(sn.node_code) total_num
-            ,count(item.node_code) exec_num
-            ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-            from V_JXYJ_JXTD_SHENHE j
-            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-            left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-            GROUP BY j.code,j.batch_num
-        )t
-        left join V_JXYJ_JXTD_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
-        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+        SELECT count(0)
+        from V_JXYJ_JXTD_SHENHE v
+        LEFT JOIN (SELECT * FROM COMMON_SHENHE_ITEM where USER_ID = #{shenHeUserId}) item on item.relation_code = v.code and item.batch_num = v.batch_num
+        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
         left join sys_user_role ur on ur.role_id = sn.role_id
-        where 1=1
-        and exec_num >= exec_level-1
-        AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
-        AND exec_level > exec_num
-        and ur.user_id = #{shenHeUserId}
+        where item.relation_code is null and ur.user_id = #{shenHeUserId}
     </select>
 
     <insert id="insert">
