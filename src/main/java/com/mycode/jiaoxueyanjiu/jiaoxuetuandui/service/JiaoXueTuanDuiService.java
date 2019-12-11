@@ -2,6 +2,7 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service;
 
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ public interface JiaoXueTuanDuiService {
     boolean toSubimt(String activeShenheCode, List<JiaoXueTuanDui> jiaoXueTuanDuiList);
 
     boolean toShenhe(ShenHeItem item, List<JiaoXueTuanDui> jiaoXueTuanDuiList);
+
+    List<PingShenTemplate> getPingShenTemplate();
 
     List<Map<String, Object>> getMemberList(String relationCode);
 

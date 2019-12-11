@@ -19,15 +19,21 @@ import java.util.Map;
 @Setter
 public class PingShen {
 
-    private String code //业务编号，系统自动生成
-            ,taamCode; //团队编号
+    private String relationCode; //业务编号
+    Integer batchNum; //提交批次
+    private String pingshenType; //审核类别【中期考核、最终考核】
+    private String teamCode //团队编号
+            ,teamName //团队名称
+            ,teamLeader //团队负责人姓名
+            ,teamLeaderId ; //团队负责人工号
     //业务字段
-    private String teamCompose //团队组成
-            ,teamLeader //团队负责人
-            ,jxgz //教学工作
-            ,jxyj //教学研究
-            ,cxcy //创新创业
-            ,jspy; //教师培养
+    private String targetTeamBuildingPlan  //团队建设规划
+            ,targetTeamCompose //团队组成
+            ,targetTeamLeader //团队负责人
+            ,targetTeachingWork //教学工作
+            ,targetTeachingResearch//教学研究
+            ,targetInnovationAndEntrepre  //创新创业
+            ,targetTeacherTraining; //教师培养
     private Double totalScore; //总分
     private String pingshenOpinion; //评审意见
     //

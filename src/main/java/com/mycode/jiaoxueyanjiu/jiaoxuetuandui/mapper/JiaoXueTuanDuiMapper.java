@@ -2,6 +2,7 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper;
 
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -16,6 +17,10 @@ import java.util.Map;
 public interface JiaoXueTuanDuiMapper {
 
     List<JiaoXueTuanDui> getPageList(JiaoXueTuanDui jiaoXueTuanDui);
+
+    @ResultType(Integer.class)
+    @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 654321 AND USER_ID = #{shenHeUserId}")
+    Integer isPsAccount(@Param("shenHeUserId") Integer shenHeUserId);
 
     int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
 
@@ -32,6 +37,10 @@ public interface JiaoXueTuanDuiMapper {
 
     int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 
+    @ResultType(PingShenTemplate.class)
+    @Select("SELECT * FROM JXYJ_JXTD_PS_SET")
+    List<PingShenTemplate> getPingShenTemplate();
+
     @Select("SELECT * FROM JXYJ_JXTD_MEMBER WHERE RELATION_CODE = #{relationCode}")
     List<Map<String, Object>> getMemberList(@Param("relationCode") String relationCode);
 
@@ -40,4 +49,5 @@ public interface JiaoXueTuanDuiMapper {
 
     @Delete("delete from JXYJ_JXTD_MEMBER WHERE RELATION_CODE = #{relationCode} and USER_ID = #{userId} ")
     boolean deleteMember(@Param("relationCode") String relationCode, @Param("userId") String userId);
+
 }

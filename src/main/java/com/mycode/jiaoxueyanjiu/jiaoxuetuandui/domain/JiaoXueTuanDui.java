@@ -36,9 +36,9 @@ public class JiaoXueTuanDui {
     //
     private String sbs //申报书
             ,middleReport //中期报告
+            ,middleResult //中期考核结果,默认【未审核】，提交后 -> 根据评委评分结果 -> 管理员确认后，结果更新为【已审核】
             ,finalReport //总结报告
-            ,middleResult //中期考核结果
-            ,finalResult; //最终考核结果
+            ,finalResult; //最终考核结果,默认【未审核】，提交后 -> 根据评委评分结果 -> 管理员确认后，结果更新为【已审核】
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime //团队建立时间
@@ -53,5 +53,5 @@ public class JiaoXueTuanDui {
     private Integer batchNum; //提交批次
     private String status //数据状态：【审核中 | 通过 | 退回】
             ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
-
+    private Integer isPsAccount; //是否为评审账号（即拥有评审角色的账号）
 }

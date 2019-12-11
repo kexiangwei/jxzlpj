@@ -30,7 +30,7 @@ public interface JiaoGaiXiangMuMapper {
     @ResultType(Integer.class)
     @Select("SELECT COUNT(0) FROM JXYJ_JGXM_ZJSH WHERE USER_ID = #{shenHeUserId}")
 //    @Select("SELECT COUNT(0) FROM SYS_USER WHERE ACCOUNT_TYPE = '校外专家审核账号' AND USER_ID = #{shenHeUserId}")
-    Integer isZjshAccount(Integer shenHeUserId);
+    Integer isZjshAccount(@Param("shenHeUserId") Integer shenHeUserId);
 
     boolean insert(JiaoGaiXiangMu jiaoGaiXiangMu);
 

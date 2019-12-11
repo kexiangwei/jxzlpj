@@ -8,6 +8,7 @@ import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper.JiaoXueTuanDuiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,18 +37,21 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
     public Map<String, Object> getPageList(JiaoXueTuanDui jiaoXueTuanDui) {
         Map<String, Object> resultMap = new HashMap<>();
         Page<Object> pageInfo = PageHelper.startPage(jiaoXueTuanDui.getPageIndex(), jiaoXueTuanDui.getPageSize());
-        List<JiaoXueTuanDui> list = jiaoXueTuanDuiMapper.getPageList(jiaoXueTuanDui);
-        if(list !=null && list.size() >0){
-            list.forEach(jxtd -> {
+        List<JiaoXueTuanDui> pageList = jiaoXueTuanDuiMapper.getPageList(jiaoXueTuanDui);
+        if(pageList !=null && pageList.size() >0){
+            pageList.forEach(jxtd -> {
                 jxtd.setMemberList(jiaoXueTuanDuiMapper.getMemberList(jxtd.getCode()));
             });
         }
         if(!StringUtils.isEmpty(jiaoXueTuanDui.getShenHeUserId())){
-            int unShenHeNum = jiaoXueTuanDuiMapper.getNotShenHeNum(jiaoXueTuanDui.getShenHeUserId());//获取未审核数
-            resultMap.put("unShenHeNum", unShenHeNum);
+            //判断是否为评审账号
+            Integer isPsAccount = jiaoXueTuanDuiMapper.isPsAccount(jiaoXueTuanDui.getShenHeUserId());
+            jiaoXueTuanDui.setIsPsAccount(isPsAccount);
+            resultMap.put("isPsAccount", isPsAccount);
+            resultMap.put("unShenHeNum", jiaoXueTuanDuiMapper.getNotShenHeNum(jiaoXueTuanDui.getShenHeUserId())); //获取未审核数
         }
         resultMap.put("totalNum",pageInfo.getTotal());
-        resultMap.put("pageList", list);
+        resultMap.put("pageList", pageList);
         return resultMap;
     }
 
@@ -105,6 +109,11 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
             }
         }
         return bool;
+    }
+
+    @Override
+    public List<PingShenTemplate> getPingShenTemplate() {
+        return jiaoXueTuanDuiMapper.getPingShenTemplate();
     }
 
     @Override

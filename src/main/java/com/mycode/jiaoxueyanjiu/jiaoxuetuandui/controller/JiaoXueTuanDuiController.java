@@ -3,8 +3,8 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.controller;
 import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
-import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service.JiaoXueTuanDuiService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +105,13 @@ public class JiaoXueTuanDuiController {
             return JsonResult.error();
         }
         return JsonResult.success();
+    }
+
+    @ResponseBody
+    @RequestMapping("/getPingShenTemplate.do")
+    public JsonResult<Object> getPingShenTemplate(){
+        List<PingShenTemplate> pingShenSets = jiaoXueTuanDuiService.getPingShenTemplate();
+        return JsonResult.success(pingShenSets);
     }
 
     @ResponseBody

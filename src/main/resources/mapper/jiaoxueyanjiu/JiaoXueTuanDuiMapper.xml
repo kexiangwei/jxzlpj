@@ -8,6 +8,8 @@
                 SELECT j.*
                 ,(case when  ur.role_id = is_back then '退回' when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
                 ,memberIds,memberNames
+                ,(case when ps.relation_code is not null and ps.middleResult = 1 then '已填写' else '未填写' end ) middleResult
+                ,(case when ps.relation_code is not null and ps.finalResult = 1 then '已填写' else '未填写' end ) finalResult
                 from (
                     SELECT j.code,j.batch_num
                     ,count(sn.node_code) total_num
@@ -28,6 +30,13 @@
                     FROM JXYJ_JXTD_MEMBER
                     GROUP BY relation_code
                 ) m on m.relation_code = j.code
+                left join (
+                    SELECT RELATION_CODE,max(batch_num) batch_num
+                    ,max(case when pingshen_type = '中期考核' then 1 else 0 end ) middleResult
+                    ,max(case when pingshen_type = '最终考核' then 1 else 0 end ) finalResult
+                    from JXYJ_JXTD_PS
+                    GROUP BY RELATION_CODE
+                ) ps on ps.relation_code = j.code and ps.batch_num = j.batch_num
                 <where>1=1
                     and exec_num >= exec_level-1
                     AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
@@ -58,8 +67,7 @@
                     SELECT relation_code
                     ,listagg(user_name,',') within group(order by user_id) memberNames
                     ,listagg(user_id,',') within group(order by user_id) memberIds
-                    FROM JXYJ_JXTD_MEMBER
-                    GROUP BY relation_code
+                    FROM JXYJ_JXTD_MEMBER GROUP BY relation_code
                 ) m on m.relation_code = j.code
                 <where>1=1
                     <if test="isSubmit != null and isSubmit != ''">
@@ -75,12 +83,12 @@
                             </otherwise>
                         </choose>
                     </if>
-                    <if test="status != null and status != ''">
+                    <!--<if test="status != null and status != ''">
                         and status = #{status}
-                    </if>
+                    </if>-->
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY is_submit DESC,create_date DESC
+                ORDER BY is_submit DESC,j.create_date DESC
             </otherwise>
         </choose>
     </select>
@@ -125,9 +133,9 @@
 
     <insert id="insert">
           insert into JXYJ_JXTD
-          (code,team_code,team_name,create_time,team_leader,team_leader_id,sbs,middle_report,final_report,user_id,user_name,create_date)
+          (code,team_code,team_name,create_time,team_leader,team_leader_id,sbs,middle_report,middle_result,final_report,final_result,user_id,user_name,create_date)
           values
-          (#{code},#{teamCode},#{teamName},#{createTime},#{teamLeader},#{teamLeaderId},#{sbs},#{middleReport},#{finalReport},#{userId},#{userName},CURRENT_DATE)
+          (#{code},#{teamCode},#{teamName},#{createTime},#{teamLeader},#{teamLeaderId},#{sbs},#{middleReport},'未审核',#{finalReport},'未审核',#{userId},#{userName},CURRENT_DATE)
     </insert>
 
     <update id="update">
