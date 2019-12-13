@@ -100,14 +100,32 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
             item.setNodeCode(node.getNodeCode());
             item.setNodeName(node.getNodeName());
             bool = shenHeMapper.toShenhe(item); //提交审核
-            if(bool){
+            if(bool){//审核后续操作
+                //如果审核状态为“通过”
                 if(item.getStatus().equals("通过")){
-                    int isPass = jiaoXueTuanDuiMapper.isShenhePass(item.getRelationCode(), item.getBatchNum());
-                    if(isPass == 1){
-                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"通过");
+                    //首先判断是否为拥有教学团队评审角色的账号
+                    Integer isPsAccount = jiaoXueTuanDuiMapper.isPsAccount(item.getUserId());
+                    if(isPsAccount == 1){//如果是，则判断所有评委是否已全部评审
+                        int isPingshenPass = jiaoXueTuanDuiMapper.isPingshenPass(item.getRelationCode(), item.getBatchNum());
+                        if(isPingshenPass == 1){//若已全部评审，则修改业务数据的评审结果（middleResult，finalResult）字段值为“已评审”
+                            jiaoXueTuanDui.setMiddleResult("已评审");
+                            jiaoXueTuanDui.setFinalResult("已评审");
+                            return jiaoXueTuanDuiMapper.update(jiaoXueTuanDui);
+                        }
+                    } else {
+                        int isShenhePass = jiaoXueTuanDuiMapper.isShenhePass(item.getRelationCode(), item.getBatchNum());
+                        if(isShenhePass == 1){
+                            return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"通过");
+                        }
                     }
                 }else if(item.getStatus().equals("退回")){
-                    return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
+                    boolean isSuccessful = shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
+                    /*if(isSuccessful){
+                        jiaoXueTuanDui.setMiddleResult("未评审");
+                        jiaoXueTuanDui.setFinalResult("未评审");
+                        isSuccessful =  jiaoXueTuanDuiMapper.update(jiaoXueTuanDui);
+                    }*/
+                    return isSuccessful;
                 }
             }
         }

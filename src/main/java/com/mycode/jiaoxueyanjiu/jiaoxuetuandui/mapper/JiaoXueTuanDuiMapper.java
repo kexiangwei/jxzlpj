@@ -37,6 +37,8 @@ public interface JiaoXueTuanDuiMapper {
 
     int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 
+    int isPingshenPass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
+
     @ResultType(PingShenTemplate.class)
     @Select("SELECT * FROM JXYJ_JXTD_PS_SET")
     List<PingShenTemplate> getPingShenTemplate();
@@ -49,5 +51,4 @@ public interface JiaoXueTuanDuiMapper {
 
     @Delete("delete from JXYJ_JXTD_MEMBER WHERE RELATION_CODE = #{relationCode} and USER_ID = #{userId} ")
     boolean deleteMember(@Param("relationCode") String relationCode, @Param("userId") String userId);
-
 }

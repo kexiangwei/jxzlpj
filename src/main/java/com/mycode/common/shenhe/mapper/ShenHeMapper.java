@@ -52,7 +52,7 @@ public interface ShenHeMapper {
     List<ShenHe> getShenheByRelationCode(@Param("relationCode") String relationCode);
 
     @ResultType(ShenHeItem.class)
-    @Select("SELECT * FROM COMMON_SHENHE_ITEM where relation_code = #{relationCode} and batch_num = #{batchNum}")
+    @Select("SELECT * FROM COMMON_SHENHE_ITEM where relation_code = #{relationCode} and batch_num = #{batchNum} ORDER BY CREATE_DATE")
     List<ShenHeItem> getShenheItem(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 
     boolean batchDelete(@Param("codeArr") String[] codeArr);

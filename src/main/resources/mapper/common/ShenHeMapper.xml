@@ -24,7 +24,7 @@
                 and m.menu_id = #{menuId}
             </if>
         </where>
-        ORDER BY sh.create_date desc
+        ORDER BY sh.create_date
     </select>
 
     <select id="getMenuParentList" resultType="com.mycode.system.menu.domain.Menu">
