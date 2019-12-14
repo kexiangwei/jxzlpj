@@ -2,6 +2,7 @@ package com.mycode.system.role.service;
 
 import com.mycode.system.role.domain.Role;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,6 +12,8 @@ import java.util.Map;
 public interface RoleService {
 
     Map<String,Object> getRoleList(Role role);
+
+    List<Role> getRoleListByMenuId(Long menuId);
 
     boolean insertOrUodateRoleMenu(String roleId, String roleName, String[] menuIdArr);
 

@@ -56,6 +56,19 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public List<Role> getRoleListByMenuId(Long menuId) {
+        List<Role> roleList = roleMapper.getRoleListByMenuId(menuId);
+       /* roleList.forEach((role)-> {
+            if (role.getRoleId().equals("1")) {
+                role.setDisabled(true);
+            } else {
+                role.setDisabled(false);
+            }
+        });*/
+        return roleList;
+    }
+
+    @Override
     public boolean insertOrUodateRoleMenu(String roleId, String roleName, String[] menuIdArr) {
         boolean bool =false;
         if(StringUtils.isEmpty(roleId)){

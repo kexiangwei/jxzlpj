@@ -29,6 +29,18 @@ public class ShenHeController {
     @Autowired
     private ShenHeService shenHeService;
 
+    /**
+     * 根据relationCode 获取审核流程
+     * @param relationCode
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getShenheProcess.do")
+    public JsonResult<Object> getShenheProcess(@RequestParam("relationCode") String relationCode){
+        List<ShenHe> statusList = shenHeService.getShenheProcess(relationCode);
+        return JsonResult.success(statusList);
+    }
+
     @ResponseBody
     @RequestMapping("/getShenHeList.do")
     public JsonResult<Object> getShenHeList(ShenHeSet shenHe){
@@ -49,7 +61,6 @@ public class ShenHeController {
         List<Menu> menuList = shenHeService.getMenuListForShenHe();
         return JsonResult.success(menuList);
     }
-
     @ResponseBody
     @RequestMapping("/addShenhe.do")
     public JsonResult<Object> addShenhe(ShenHeSet shenHe){
@@ -59,6 +70,7 @@ public class ShenHeController {
         }
         return JsonResult.success();
     }
+
     @ResponseBody
     @RequestMapping("/updateShenheByCode.do")
     public JsonResult<Object> updateShenheByCode(ShenHeSet shenHe){
@@ -67,65 +79,6 @@ public class ShenHeController {
             return JsonResult.error();
         }
         return JsonResult.success();
-    }
-
-    @ResponseBody
-    @RequestMapping("/getShenHeNodeList.do")
-    public JsonResult<Object> getShenHeNodeList(@RequestParam("shenheCode") String shenheCode){
-        List<ShenHeNode> nodeList = shenHeService.getShenHeNodeList(shenheCode);
-        return JsonResult.success(nodeList);
-    }
-
-    /**
-     * 筛选出拥有当前菜单审核权限的角色
-     * @param menuId 菜单编号
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("/getRoleListByMenuId.do")
-    public JsonResult<Object> getRoleListByMenuId(@RequestParam("menuId") Long menuId){
-        List<Role> roleList = shenHeService.getRoleListByMenuId(menuId);
-        return JsonResult.success(roleList);
-    }
-
-    @ResponseBody
-    @RequestMapping("/addShenHeNode.do")
-    public JsonResult<Object> addShenHeNode(ShenHeNode node){
-        String code = shenHeService.addShenHeNode(node);
-        if(StringUtils.isEmpty(code)){
-            return JsonResult.error();
-        }
-        return JsonResult.success(code);
-    }
-    @ResponseBody
-    @RequestMapping("/updateShenHeNodeByCode.do")
-    public JsonResult<Object> updateShenHeNodeByCode(ShenHeNode node){
-        boolean bool = shenHeService.updateShenHeNodeByCode(node);
-        if(!bool){
-            return JsonResult.error();
-        }
-        return JsonResult.success();
-    }
-    @ResponseBody
-    @RequestMapping("/deleteShenHeNodeByCode.do")
-    public JsonResult<Object> deleteShenHeNodeByCode(@RequestParam("nodeCode") String nodeCode){
-        boolean bool = shenHeService.deleteShenHeNodeByCode(nodeCode);
-        if(!bool){
-            return JsonResult.error();
-        }
-        return JsonResult.success();
-    }
-
-    /**
-     * 根据relationCode 获取审核流程
-     * @param relationCode
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("/getShenheProcess.do")
-    public JsonResult<Object> getShenheProcess(@RequestParam("relationCode") String relationCode){
-        List<ShenHe> statusList = shenHeService.getShenheProcess(relationCode);
-        return JsonResult.success(statusList);
     }
 
     @ResponseBody

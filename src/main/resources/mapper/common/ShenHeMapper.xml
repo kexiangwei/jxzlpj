@@ -64,43 +64,6 @@
         where shenhe_code = #{shenheCode}
     </update>
 
-    <select id="getShenheNodeList" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
-        SELECT sn.*,role_name
-        from COMMON_SHENHE_NODE sn LEFT JOIN sys_role r on r.role_id = sn.role_id
-        WHERE shenhe_code = #{shenheCode}
-        <if test="execLevel != null and execLevel != ''">
-            and exec_level = #{execLevel}
-        </if>
-        ORDER BY exec_level
-    </select>
-
-    <select id="getRoleListByMenuId" resultType="com.mycode.system.role.domain.Role">
-       SELECT DISTINCT r.role_id,r.role_name
-        FROM sys_role_menu rm LEFT JOIN sys_role r ON r.role_id = rm.role_id
-        WHERE rm.menu_id = (SELECT menu_id FROM sys_menu WHERE menu_name = '审核' AND pid = #{menuId})
-        and r.role_id != 1
-    </select>
-
-    <insert id="addShenHeNode">
-        insert into COMMON_SHENHE_NODE (shenhe_code,node_code,node_name,node_task,role_id,exec_level,create_date)
-        values (#{shenheCode},#{nodeCode},#{nodeName},#{nodeTask},#{roleId},#{execLevel},sysdate)
-    </insert>
-    <update id="updateShenHeNodeByCode">
-        update COMMON_SHENHE_NODE
-        <set>
-            <if test="nodeName != null and nodeName != ''">
-                node_name = #{nodeName}
-            </if>
-            <if test="nodeTask != null and nodeTask != ''">
-                , node_task = #{nodeTask}
-            </if>
-            <if test="execLevel != null and execLevel != ''">
-                ,exec_level = ${execLevel}
-            </if>
-        </set>
-        where node_code = #{nodeCode}
-    </update>
-
     <insert id="toShenhe">
         insert into COMMON_SHENHE_ITEM
         (relation_code,batch_num,status,opinion,node_code,node_name,user_id,user_name,create_date,shenhe_type)

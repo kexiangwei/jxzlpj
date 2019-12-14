@@ -29,6 +29,21 @@ public class ShenHeServiceImpl implements ShenHeService {
     private ShenHeMapper shenHeMapper;
 
     @Override
+    public List<ShenHe> getShenheProcess(String relationCode) {
+        List<ShenHe> shenHeList = shenHeMapper.getShenheByRelationCode(relationCode);
+        for (ShenHe shenHe : shenHeList) {
+            List<ShenHeItem> shenHeItemList = shenHeMapper.getShenheItem(shenHe.getRelationCode(),shenHe.getBatchNum());
+            shenHe.setShenHeItemList(shenHeItemList);
+        }
+        return shenHeList;
+    }
+
+    @Override
+    public String getActiveShenheCode(Integer menuId) {
+        return shenHeMapper.getActiveShenheCode(menuId);
+    }
+
+    @Override
     public Map<String, Object> getShenHeList(ShenHeSet shenHe) {
         Map<String, Object> resultMap = new HashMap<>();
         Page<Object> pageInfo = PageHelper.startPage(shenHe.getPageIndex(), shenHe.getPageSize());
@@ -63,21 +78,13 @@ public class ShenHeServiceImpl implements ShenHeService {
     }
 
     @Override
-    public List<ShenHeNode> getShenHeNodeList(String shenheCode) {
-        return shenHeMapper.getShenheNodeList(shenheCode,null);
+    public boolean batchDelete(String[] codeArr) {
+        return shenHeMapper.batchDelete(codeArr);
     }
 
     @Override
-    public List<Role> getRoleListByMenuId(Long menuId) {
-        List<Role> roleList = shenHeMapper.getRoleListByMenuId(menuId);
-       /* roleList.forEach((role)-> {
-            if (role.getRoleId().equals("1")) {
-                role.setDisabled(true);
-            } else {
-                role.setDisabled(false);
-            }
-        });*/
-        return roleList;
+    public List<ShenHeNode> getShenHeNodeList(String shenheCode) {
+        return shenHeMapper.getShenheNodeList(shenheCode,null);
     }
 
     @Override
@@ -125,25 +132,5 @@ public class ShenHeServiceImpl implements ShenHeService {
             bool = shenHeMapper.deleteShenHeNodeByCode(nodeCode);
         }
         return bool;
-    }
-
-    @Override
-    public List<ShenHe> getShenheProcess(String relationCode) {
-        List<ShenHe> shenHeList = shenHeMapper.getShenheByRelationCode(relationCode);
-        for (ShenHe shenHe : shenHeList) {
-            List<ShenHeItem> shenHeItemList = shenHeMapper.getShenheItem(shenHe.getRelationCode(),shenHe.getBatchNum());
-            shenHe.setShenHeItemList(shenHeItemList);
-        }
-        return shenHeList;
-    }
-
-    @Override
-    public boolean batchDelete(String[] codeArr) {
-        return shenHeMapper.batchDelete(codeArr);
-    }
-
-    @Override
-    public String getActiveShenheCode(Integer menuId) {
-        return shenHeMapper.getActiveShenheCode(menuId);
     }
 }

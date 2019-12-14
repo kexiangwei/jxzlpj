@@ -15,6 +15,11 @@ import java.util.Map;
  */
 public interface ShenHeService {
 
+    List<ShenHe> getShenheProcess(String relationCode);
+
+    String getActiveShenheCode(Integer menuId);
+
+    //
     Map<String, Object> getShenHeList(ShenHeSet shenHe);
 
     List<Menu> getMenuParentList(Long menuId);
@@ -25,19 +30,14 @@ public interface ShenHeService {
 
     boolean updateShenheByCode(ShenHeSet shenHe);
 
-    List<ShenHeNode> getShenHeNodeList(String shenheCode);
+    boolean batchDelete(String[] codeArr);
 
-    List<Role> getRoleListByMenuId(Long menuId);
+    //
+    List<ShenHeNode> getShenHeNodeList(String shenheCode);
 
     String addShenHeNode(ShenHeNode node);
 
     boolean updateShenHeNodeByCode(ShenHeNode node);
 
     boolean deleteShenHeNodeByCode(String nodeCode);
-
-    List<ShenHe> getShenheProcess(String relationCode);
-
-    boolean batchDelete(String[] codeArr);
-
-    String getActiveShenheCode(Integer menuId);
 }

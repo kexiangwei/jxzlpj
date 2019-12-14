@@ -15,19 +15,11 @@
         order by MENU_ID
     </select>
 
-    <select id="getMenuColInfo" resultType="com.mycode.system.menu.domain.MenuCol">
-        SELECT *
-        FROM SYS_MENU_COL
-        where TAB_NAME=(
-          SELECT TAB_NAME from SYS_MENU where MENU_ID = #{menuId}
-        )
-        order by col_idx
-    </select>
-
     <insert id="insertMenu">
         insert into SYS_MENU (MENU_ID,MENU_NAME,ICON)
         values (#{menuId},#{menuName},'layui-icon-template-1')
     </insert>
+
     <insert id="insertMenuTab">
         insert into SYS_MENU (PID,MENU_ID,MENU_NAME,URL,ICON,TAB_NAME)
         values (#{pid},#{menuId},#{menuName},'page/system/menu.html',null,#{tabName})
@@ -41,6 +33,15 @@
             REMARK VARCHAR2(255 char) NULL
         )
     </insert>
+
+    <select id="getMenuColInfo" resultType="com.mycode.system.menu.domain.MenuCol">
+        SELECT *
+        FROM SYS_MENU_COL
+        where TAB_NAME=(
+          SELECT TAB_NAME from SYS_MENU where MENU_ID = #{menuId}
+        )
+        order by col_idx
+    </select>
     <insert id="insertMenuCol">
         insert all
             into sys_menu_col(tab_name ,col_idx,col_name,data_type,data_length,is_null,is_edit,is_show,comm)

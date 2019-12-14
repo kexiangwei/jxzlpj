@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +29,18 @@ public class RoleController {
     public JsonResult<Object> getRoleList(Role role){
         Map<String,Object> resultMap = roleService.getRoleList(role);
         return JsonResult.success(resultMap);
+    }
+
+    /**
+     * 筛选出拥有当前菜单审核权限的角色
+     * @param menuId 菜单编号
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getRoleListByMenuId.do")
+    public JsonResult<Object> getRoleListByMenuId(@RequestParam("menuId") Long menuId){
+        List<Role> roleList = roleService.getRoleListByMenuId(menuId);
+        return JsonResult.success(roleList);
     }
 
     @ResponseBody

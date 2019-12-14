@@ -23,18 +23,20 @@ public interface ShenHeMapper {
 
     List<Menu> getMenuListForShenHe();
 
-    @Update("update COMMON_SHENHE_SET set status = 0 where menu_id = #{menuId}")
-    boolean updateShenheByMenuId(@Param("menuId") Long menuId);
-
     boolean addShenhe(ShenHeSet shenHe);
 
     boolean updateShenheByCode(ShenHeSet shenHe);
 
-    List<ShenHeNode> getShenheNodeList(@Param("shenheCode") String shenheCode, @Param("execLevel") Integer execLevel);
+    @Update("update COMMON_SHENHE_SET set status = 0 where menu_id = #{menuId}")
+    boolean updateShenheByMenuId(@Param("menuId") Long menuId);
 
-    List<Role> getRoleListByMenuId(@Param("menuId") Long menuId);
+    @ResultType(ShenHe.class)
+    @Select("SELECT * from COMMON_SHENHE where relation_code = #{relationCode}")
+    List<ShenHe> getShenheByRelationCode(@Param("relationCode") String relationCode);
 
-    boolean addShenHeNode(ShenHeNode node);
+    @ResultType(ShenHeItem.class)
+    @Select("SELECT * FROM COMMON_SHENHE_ITEM where relation_code = #{relationCode} and batch_num = #{batchNum} ORDER BY CREATE_DATE")
+    List<ShenHeItem> getShenheItem(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
     /*
     获取当前处于激活状态的审核流程编号
      */
@@ -47,20 +49,16 @@ public interface ShenHeMapper {
     @Update("update COMMON_SHENHE set status = #{status} where relation_code = #{relationCode} and batch_num = #{batchNum}")
     boolean changeStatus(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum, @Param("status") String status);
 
-    @ResultType(ShenHe.class)
-    @Select("SELECT * from COMMON_SHENHE where relation_code = #{relationCode}")
-    List<ShenHe> getShenheByRelationCode(@Param("relationCode") String relationCode);
-
-    @ResultType(ShenHeItem.class)
-    @Select("SELECT * FROM COMMON_SHENHE_ITEM where relation_code = #{relationCode} and batch_num = #{batchNum} ORDER BY CREATE_DATE")
-    List<ShenHeItem> getShenheItem(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
-
     boolean batchDelete(@Param("codeArr") String[] codeArr);
-
-    boolean updateShenHeNodeByCode(ShenHeNode node);
+    //
+    List<ShenHeNode> getShenheNodeList(@Param("shenheCode") String shenheCode, @Param("execLevel") Integer execLevel);
 
     @Select("SELECT * from COMMON_SHENHE_NODE where node_code = #{nodeCode}")
     ShenHeNode getShenHeNodeByCode(@Param("nodeCode") String nodeCode);
+
+    boolean addShenHeNode(ShenHeNode node);
+
+    boolean updateShenHeNodeByCode(ShenHeNode node);
 
     @Update("update COMMON_SHENHE_NODE set exec_level = exec_level-1 where shenhe_code = #{shenheCode} and exec_level > #{execLevel}")
     boolean batchUpdateShenHeNode(ShenHeNode dbNode);

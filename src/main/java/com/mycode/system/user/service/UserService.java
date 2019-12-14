@@ -12,11 +12,11 @@ import java.util.Map;
  */
 public interface UserService {
 
-    User getUserById(String userId);
-
     Map<String, Object> getUserList(User user);
 
     Map<String, Object> getUserDetail(String userId);
+
+    User getUserById(String userId);
 
     boolean updateUser(User user);
 

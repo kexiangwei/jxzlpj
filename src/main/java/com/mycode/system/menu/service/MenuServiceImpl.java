@@ -29,6 +29,16 @@ public class MenuServiceImpl implements MenuService {
     private MenuMapper menuMapper;
 
     @Override
+    public Map<String, Object> getMenuList(Menu menu) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Page<Object> pageInfo = PageHelper.startPage(menu.getPageIndex(), menu.getPageSize());
+        List<Menu> pageList = menuMapper.getMenuList(menu);
+        resultMap.put("totalNum",pageInfo.getTotal());
+        resultMap.put("pageList", pageList);
+        return resultMap;
+    }
+
+    @Override
     public List<Menu> getMenuTree() {
         List<Menu> menuList = menuMapper.getMenuTree();
         return getMenuTree(menuList);
@@ -51,29 +61,9 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public Map<String, Object> getMenuList(Menu menu) {
-        Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(menu.getPageIndex(), menu.getPageSize());
-        List<Menu> pageList = menuMapper.getMenuList(menu);
-        resultMap.put("totalNum",pageInfo.getTotal());
-        resultMap.put("pageList", pageList);
-        return resultMap;
-    }
-
-    @Override
-    public List<MenuCol> getMenuColInfo(Long menuId) {
-        return menuMapper.getMenuColInfo(menuId);
-    }
-
-    @Override
     public boolean insertMenu(Menu menu) {
         menu.setMenuId(Long.valueOf(CodeUtil.randomChar(16,true)));
         return menuMapper.insertMenu(menu);
-    }
-
-    @Override
-    public List<Role> getRoleListByMenuId(String menuId) {
-        return menuMapper.getRoleListByMenuId(menuId);
     }
 
     @Override
@@ -93,6 +83,16 @@ public class MenuServiceImpl implements MenuService {
             return null;
         }
         return menuId;
+    }
+
+    @Override
+    public List<MenuCol> getMenuColInfo(Long menuId) {
+        return menuMapper.getMenuColInfo(menuId);
+    }
+
+    @Override
+    public List<Role> getRoleListByMenuId(String menuId) {
+        return menuMapper.getRoleListByMenuId(menuId);
     }
 
 }

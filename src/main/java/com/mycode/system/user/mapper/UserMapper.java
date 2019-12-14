@@ -15,13 +15,13 @@ import java.util.Set;
 @Mapper
 public interface UserMapper {
 
-    @ResultType(User.class)
-    @Select("select * from sys_user where user_id = #{userId}")
-    User getUserById(@Param("userId") String userId);
-
     List<User> getUserList(User user);
 
     Map<String, Object> getUserDetail(User user);
+
+    @ResultType(User.class)
+    @Select("select * from sys_user where user_id = #{userId}")
+    User getUserById(@Param("userId") String userId);
 
     boolean updateUser(User user);
 

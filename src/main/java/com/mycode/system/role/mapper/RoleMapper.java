@@ -15,6 +15,8 @@ public interface RoleMapper {
 
     List<Role> getRoleList(Role role);
 
+    List<Role> getRoleListByMenuId(@Param("menuId") Long menuId);
+
     @Insert("insert into sys_role values (#{roleId},#{roleName})")
     boolean addRole(@Param("roleId") String roleId, @Param("roleName") String roleName);
 

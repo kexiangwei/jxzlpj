@@ -26,11 +26,6 @@ public class UserServiceImpl implements UserService {
     private RoleMapper roleMapper;
 
     @Override
-    public User getUserById(String userId) {
-        return userMapper.getUserById(userId);
-    }
-
-    @Override
     public Map<String, Object> getUserList(User user) {
         Map<String, Object> map = new HashMap<>();
         Page<Object> pageInfo = PageHelper.startPage(user.getPageIndex(), user.getPageSize());
@@ -44,6 +39,11 @@ public class UserServiceImpl implements UserService {
     public Map<String, Object> getUserDetail(String userId) {
         User userById = userMapper.getUserById(userId);
         return userMapper.getUserDetail(userById);
+    }
+
+    @Override
+    public User getUserById(String userId) {
+        return userMapper.getUserById(userId);
     }
 
     @Override

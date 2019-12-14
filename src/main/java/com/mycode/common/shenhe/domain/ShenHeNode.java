@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.util.Date;
 
 /**
- * 审核节点信息
+ * 审核流程节点信息
  * @auther kexiangwei
  * @date 2019/7/27
  */

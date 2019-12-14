@@ -14,17 +14,17 @@ import java.util.Map;
  */
 public interface MenuService {
 
-    List<Menu> getMenuTree();
-
     Map<String, Object> getMenuList(Menu menu);
 
-    List<MenuCol> getMenuColInfo(Long menuId);
+    List<Menu> getMenuTree();
 
     boolean insertMenu(Menu menu);
-
-    List<Role> getRoleListByMenuId(String menuId);
 
     boolean deleteMenu(String menuId);
 
     Long insertMenuTab(MenuTab menuTab);
+
+    List<MenuCol> getMenuColInfo(Long menuId);
+
+    List<Role> getRoleListByMenuId(String menuId);
 }

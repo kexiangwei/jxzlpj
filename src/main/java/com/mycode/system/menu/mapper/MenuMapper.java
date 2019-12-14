@@ -15,17 +15,12 @@ import java.util.List;
 @Mapper
 public interface MenuMapper {
 
+    List<Menu> getMenuList(Menu menu);
+
     @Select("select menu_id,menu_id id,menu_name,menu_name title,pid,url,icon from sys_menu order by MENU_ID")
     List<Menu> getMenuTree();
 
-    List<Menu> getMenuList(Menu menu);
-
-    List<MenuCol> getMenuColInfo(Long menuId);
-
     boolean insertMenu(Menu menu);
-
-    @Select("SELECT r.* FROM sys_role_menu rm LEFT JOIN sys_role r ON r.role_id = rm.role_id WHERE menu_id = #{menuId}")
-    List<Role> getRoleListByMenuId(@Param("menuId") String menuId);
 
     @Delete("delete from SYS_MENU where menu_id = #{menuId}")
     boolean deleteMenu(@Param("menuId") String menuId);
@@ -34,5 +29,10 @@ public interface MenuMapper {
 
     boolean createMenuTab(MenuTab menuTab);
 
+    List<MenuCol> getMenuColInfo(Long menuId);
+
     boolean insertMenuCol(MenuTab menuTab);
+
+    @Select("SELECT r.* FROM sys_role_menu rm LEFT JOIN sys_role r ON r.role_id = rm.role_id WHERE menu_id = #{menuId}")
+    List<Role> getRoleListByMenuId(@Param("menuId") String menuId);
 }

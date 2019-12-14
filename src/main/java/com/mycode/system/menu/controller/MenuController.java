@@ -32,13 +32,6 @@ public class MenuController {
     private MenuService menuService;
 
     @ResponseBody
-    @RequestMapping("/getMenuTree.do")
-    public JsonResult<Object> getMenuTree(){
-        List<Menu> menuList = menuService.getMenuTree();
-        return JsonResult.success(menuList);
-    }
-
-    @ResponseBody
     @RequestMapping("/getMenuList.do")
     public JsonResult<Object> getMenuList(Menu menu){
         Map<String, Object> resultMap = menuService.getMenuList(menu);
@@ -46,10 +39,10 @@ public class MenuController {
     }
 
     @ResponseBody
-    @RequestMapping("/getMenuColInfo.do")
-    public JsonResult<Object> getMenuColInfo(Long menuId){
-        List<MenuCol>  menuColList = menuService.getMenuColInfo(menuId);
-        return JsonResult.success(menuColList);
+    @RequestMapping("/getMenuTree.do")
+    public JsonResult<Object> getMenuTree(){
+        List<Menu> menuList = menuService.getMenuTree();
+        return JsonResult.success(menuList);
     }
 
     @ResponseBody
@@ -61,6 +54,7 @@ public class MenuController {
         }
         return JsonResult.success();
     }
+
     @ResponseBody
     @RequestMapping("/deleteMenu.do")
     public JsonResult<Object> deleteMenu(@RequestParam("menuId") String menuId){
@@ -77,6 +71,7 @@ public class MenuController {
         }
         return JsonResult.success("删除成功");
     }
+
     @ResponseBody
     @RequestMapping("/insertMenuTab.do")
     public JsonResult<Object> insertMenuTab(MenuTab menuTab){
@@ -85,5 +80,12 @@ public class MenuController {
             return JsonResult.error();
         }
         return JsonResult.success(menuId);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getMenuColInfo.do")
+    public JsonResult<Object> getMenuColInfo(Long menuId){
+        List<MenuCol>  menuColList = menuService.getMenuColInfo(menuId);
+        return JsonResult.success(menuColList);
     }
 }
