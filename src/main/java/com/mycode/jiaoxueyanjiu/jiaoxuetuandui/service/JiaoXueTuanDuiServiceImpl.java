@@ -8,6 +8,7 @@ import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper.JiaoXueTuanDuiMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
             //判断是否为评审账号
             Integer isPsAccount = jiaoXueTuanDuiMapper.isPsAccount(jiaoXueTuanDui.getShenHeUserId());
             jiaoXueTuanDui.setIsPsAccount(isPsAccount);
-//            resultMap.put("isPsAccount", isPsAccount);
+            resultMap.put("isPsAccount", isPsAccount);
             //获取未审核数
             resultMap.put("unShenHeNum", jiaoXueTuanDuiMapper.getNotShenHeNum(jiaoXueTuanDui.getShenHeUserId()));
         }
@@ -135,6 +136,23 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
     @Override
     public List<PingShenTemplate> getPingShenTemplate() {
         return jiaoXueTuanDuiMapper.getPingShenTemplate();
+    }
+
+    @Override
+    public List<PingShen> getPingShenInfo(String relationCode, Integer batchNum, String pingshenType, String userId) {
+        return jiaoXueTuanDuiMapper.getPingShenInfo(relationCode,batchNum,pingshenType,userId);
+    }
+
+    @Override
+    public boolean insertPingShenInfo(PingShen pingShen) {
+        List<PingShen> pingShenInfo = jiaoXueTuanDuiMapper.getPingShenInfo(pingShen.getRelationCode(), pingShen.getBatchNum(), pingShen.getPingshenType(), pingShen.getUserId().toString());
+        if(pingShenInfo != null && pingShenInfo.size() >0){
+            boolean bool = jiaoXueTuanDuiMapper.deletePingShenInfo(pingShen.getRelationCode(), pingShen.getBatchNum(), pingShen.getPingshenType(), pingShen.getUserId().toString());
+            if(!bool){
+                return false;
+            }
+        }
+        return jiaoXueTuanDuiMapper.insertPingShenInfo(pingShen);
     }
 
     @Override

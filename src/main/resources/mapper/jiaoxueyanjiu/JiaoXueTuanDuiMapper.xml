@@ -40,7 +40,7 @@
             </when>
             <when test="shenHeUserId !=null and shenHeUserId !=''">
                 SELECT v.*
-                ,(case when exec_num <![CDATA[ < ]]> total_num then '待审核' when item.relation_code is not null then '已审核' else '未审核' end) shenhe_status
+                ,(case when exec_num = total_num-1 then '待审核' when item.relation_code is not null then '已审核' else '未审核' end) shenhe_status
                 from V_JXYJ_JXTD_SHENHE v
                 LEFT JOIN (SELECT * FROM COMMON_SHENHE_ITEM where USER_ID = #{shenHeUserId}) item on item.relation_code = v.code and item.batch_num = v.batch_num
                 LEFT JOIN(
@@ -216,4 +216,28 @@
             GROUP BY v.code,v.batch_num
         )t
     </select>
+
+    <select id="getPingShenInfo" resultType="com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen">
+        SELECT * FROM JXYJ_JXTD_PS
+        WHERE RELATION_CODE = #{relationCode} AND BATCH_NUM =  #{batchNum} AND PINGSHEN_TYPE = #{pingshenType}
+        <if test="userId !=null and userId !=''">
+            AND USER_ID = #{userId}
+        </if>
+        ORDER BY CREATE_DATE
+    </select>
+
+    <insert id="insertPingShenInfo">
+        INSERT into JXYJ_JXTD_PS
+        (RELATION_CODE,BATCH_NUM,PINGSHEN_TYPE,TEAM_CODE,TEAM_NAME,TEAM_LEADER,TEAM_LEADER_ID
+        ,TARGET_TEAM_BUILDING_PLAN,TARGET_TEAM_COMPOSE,TARGET_TEAM_LEADER,TARGET_TEACHING_WORK,TARGET_TEACHING_RESEARCH,TARGET_INNOVATION_AND_ENTREPRE,TARGET_TEACHER_TRAINING,TOTAL_SCORE,PINGSHEN_OPINION
+        ,USER_ID,USER_NAME,CREATE_DATE)
+        VALUES
+        (#{relationCode},#{batchNum},#{pingshenType},#{teamCode},#{teamName},#{teamLeader},#{teamLeaderId }
+        ,#{targetTeamBuildingPlan},#{targetTeamCompose},#{targetTeamLeader},#{targetTeachingWork},#{targetTeachingResearch},#{targetInnovationAndEntrepre},#{targetTeacherTraining},#{totalScore},#{pingshenOpinion}
+        ,#{userId},#{userName},CURRENT_DATE)
+    </insert>
+
+    <delete id="deletePingShenInfo">
+        delete from JXYJ_JXTD_PS WHERE RELATION_CODE = #{relationCode} AND BATCH_NUM =  #{batchNum} AND PINGSHEN_TYPE = #{pingshenType} AND USER_ID = #{userId}
+    </delete>
 </mapper>

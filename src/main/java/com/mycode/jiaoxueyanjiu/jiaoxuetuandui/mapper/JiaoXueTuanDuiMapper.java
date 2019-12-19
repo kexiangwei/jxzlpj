@@ -2,6 +2,7 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper;
 
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
 import org.apache.ibatis.annotations.*;
 
@@ -40,8 +41,16 @@ public interface JiaoXueTuanDuiMapper {
     int isPingshenPass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 
     @ResultType(PingShenTemplate.class)
-    @Select("SELECT * FROM JXYJ_JXTD_PS_SET")
+    @Select("SELECT * FROM JXYJ_JXTD_PS_TEMPLATE")
     List<PingShenTemplate> getPingShenTemplate();
+
+    List<PingShen> getPingShenInfo(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum, @Param("pingshenType") String pingshenType
+            , @Param("userId") String userId);
+
+    boolean insertPingShenInfo(PingShen pingShen);
+
+    boolean deletePingShenInfo(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum, @Param("pingshenType") String pingshenType
+            , @Param("userId") String userId);
 
     @Select("SELECT * FROM JXYJ_JXTD_MEMBER WHERE RELATION_CODE = #{relationCode}")
     List<Map<String, Object>> getMemberList(@Param("relationCode") String relationCode);

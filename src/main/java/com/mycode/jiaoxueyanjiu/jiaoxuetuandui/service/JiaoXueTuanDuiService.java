@@ -2,6 +2,7 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service;
 
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
 
 import java.util.List;
@@ -27,6 +28,10 @@ public interface JiaoXueTuanDuiService {
     boolean toShenhe(ShenHeItem item, List<JiaoXueTuanDui> jiaoXueTuanDuiList);
 
     List<PingShenTemplate> getPingShenTemplate();
+
+    List<PingShen> getPingShenInfo(String relationCode, Integer batchNum, String pingshenType, String userId);
+
+    boolean insertPingShenInfo(PingShen pingShen);
 
     List<Map<String, Object>> getMemberList(String relationCode);
 

@@ -16,6 +16,6 @@ public class PingShenTemplate {
             ,target //指标
             ,targetName //指标名称
             ,targetElement //评审要素
-            ,targetContent ; //评审标准
-
+            ,targetContent //评审标准
+            ,targetScore; //预设分值
 }

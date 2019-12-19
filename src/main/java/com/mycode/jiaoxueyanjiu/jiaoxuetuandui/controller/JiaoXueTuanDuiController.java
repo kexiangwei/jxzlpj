@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service.JiaoXueTuanDuiService;
 import com.mycode.util.JsonResult;
@@ -112,6 +113,24 @@ public class JiaoXueTuanDuiController {
     public JsonResult<Object> getPingShenTemplate(){
         List<PingShenTemplate> pingShenSets = jiaoXueTuanDuiService.getPingShenTemplate();
         return JsonResult.success(pingShenSets);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getPingShenInfo.do")
+    public JsonResult<Object> getPingShen(@RequestParam("relationCode") String relationCode,@RequestParam("batchNum") Integer batchNum
+            ,@RequestParam("pingshenType") String pingshenType,@RequestParam(value = "userId",required = false) String userId){
+        List<PingShen> pingShenInfo = jiaoXueTuanDuiService.getPingShenInfo(relationCode, batchNum, pingshenType, userId);
+        return JsonResult.success(pingShenInfo);
+    }
+
+    @ResponseBody
+    @RequestMapping("/insertPingShenInfo.do")
+    public JsonResult<Object> insertPingShenInfo(PingShen pingShen){
+        boolean isSuccessful = jiaoXueTuanDuiService.insertPingShenInfo(pingShen);
+        if(!isSuccessful){
+            JsonResult.error();
+        }
+        return JsonResult.success();
     }
 
     @ResponseBody
