@@ -160,7 +160,7 @@
         where code = #{code}
     </update>
 
-    <update id="batchSubimt">
+    <insert id="batchSubimt">
         insert all
         <foreach collection ="jiaoXueTuanDuiList" item="obj" index= "idx">
             into COMMON_SHENHE
@@ -169,7 +169,7 @@
             ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},CURRENT_DATE)
         </foreach>
         select 1 from dual
-    </update>
+    </insert>
 
     <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
         SELECT sn.*

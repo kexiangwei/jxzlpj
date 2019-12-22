@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jiaoxuesheji.jxdg.mapper.JxdgMapper">
+
+    <select id="isShenhePass" resultType="java.lang.Integer">
+        SELECT (case when total_num = exec_num then 1 else 0 end) isPass
+        from (
+            SELECT t.COURSE_CODE,t.BATCH_NUM
+            ,count(sn.node_code) total_num
+            ,count(item.node_code) exec_num
+            FROM(
+                SELECT COURSE_CODE,MAX(BATCH_NUM) BATCH_NUM
+                from (SELECT COURSE_CODE from DATA_TEACHER_COURS) c
+                LEFT JOIN COMMON_SHENHE sh on sh.relation_code = c.COURSE_CODE
+                WHERE relation_code is not null /*已提交的信息*/
+                GROUP BY COURSE_CODE
+            ) t LEFT JOIN COMMON_SHENHE sh on sh.RELATION_CODE = t.COURSE_CODE and sh.BATCH_NUM = t.BATCH_NUM
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = sh.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = sh.RELATION_CODE and item.batch_num = sh.BATCH_NUM and item.node_code = sn.node_code
+            WHERE t.COURSE_CODE = #{relationCode} and t.batch_num = #{batchNum}
+            GROUP BY t.COURSE_CODE,t.BATCH_NUM
+        )t
+    </select>
+
+    <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
+        SELECT sn.*
+        from DATA_TEACHER_COURS dtc
+        LEFT JOIN COMMON_SHENHE sh on sh.relation_code = dtc.COURSE_CODE
+        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = sh.shenhe_code
+        LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
+        where dtc.COURSE_CODE = #{relationCode} and ur.user_id = #{userId}
+    </select>
+
+    <insert id="batchSubimt">
+        insert all
+        <foreach collection ="courseList" item="obj" index= "idx">
+            into COMMON_SHENHE
+            (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
+            values
+            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},CURRENT_DATE)
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <select id="getNotShenHeNum" resultType="java.lang.Integer">
+        select 1 from dual
+    </select>
+
+    <select id="getCourseList" resultType="com.mycode.jiaoxuesheji.jxdg.domain.Course">
+        <choose>
+            <when test="shenHeUserId != null and shenHeUserId != ''"><!-- 审核列表 -->
+                SELECT c.*
+                ,(case when ur.role_id = is_back then '退回' when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                FROM (
+                    SELECT t.COURSE_CODE,t.BATCH_NUM
+                    ,count(sn.node_code) total_num
+                    ,count(item.node_code) exec_num
+                    ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+                    FROM(
+                        SELECT COURSE_CODE,MAX(BATCH_NUM) BATCH_NUM
+                        from (SELECT COURSE_CODE from DATA_TEACHER_COURS) c
+                        LEFT JOIN COMMON_SHENHE sh on sh.relation_code = c.COURSE_CODE
+                        WHERE relation_code is not null /*已提交的信息*/
+                        GROUP BY COURSE_CODE
+                    ) t LEFT JOIN COMMON_SHENHE sh on sh.RELATION_CODE = t.COURSE_CODE and sh.BATCH_NUM = t.BATCH_NUM
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = sh.shenhe_code
+                    left join COMMON_SHENHE_ITEM item on item.relation_code = sh.RELATION_CODE and item.batch_num = sh.BATCH_NUM and item.node_code = sn.node_code
+                    GROUP BY t.COURSE_CODE,t.BATCH_NUM
+                )t LEFT JOIN (
+                    SELECT c.*,u.USER_ID,u.USER_NAME,sh.shenhe_code,sh.batch_num,sh.status
+                    from (
+                        SELECT COURSE_CODE,MAX(BATCH_NUM) BATCH_NUM
+                        from (SELECT COURSE_CODE from DATA_TEACHER_COURS) c
+                        LEFT JOIN COMMON_SHENHE sh on sh.relation_code = c.COURSE_CODE
+                        GROUP BY COURSE_CODE
+                    ) t
+                    LEFT JOIN COMMON_SHENHE sh on sh.RELATION_CODE = t.COURSE_CODE and sh.BATCH_NUM = t.BATCH_NUM
+                    LEFT JOIN DATA_COURSE c on c.CODE = t.COURSE_CODE
+                    LEFT JOIN DATA_TEACHER_COURS dtc on dtc.COURSE_CODE = t.COURSE_CODE
+                    LEFT JOIN SYS_USER u on u.USER_ID = dtc.USER_ID
+                   <where> 1=1
+                       <include refid="queryCondition"/>
+                   </where>
+                ) c on c.CODE = t.COURSE_CODE and c.BATCH_NUM = t.BATCH_NUM
+                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = c.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
+                <where>1=1
+                    and exec_num >= exec_level-1
+                    /*AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)*/
+                    and ur.user_id = #{shenHeUserId}
+                    <if test="shenheStatus != null and shenheStatus != ''">
+                        <choose>
+                            <when test="shenheStatus == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatus == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                            <when test="shenheStatus == '退回'">
+                                and ur.role_id = is_back
+                            </when>
+                            <otherwise>
+                                and 1>1
+                            </otherwise>
+                        </choose>
+                    </if>
+                </where>
+                ORDER BY shenhe_status DESC
+            </when>
+            <otherwise><!-- 提交列表 -->
+                SELECT c.*,u.USER_ID,u.USER_NAME,sh.shenhe_code,sh.batch_num,sh.status
+                ,(case when shenhe_code is not null then '已提交' else '未提交' end ) is_submit
+                from (
+                    SELECT COURSE_CODE,MAX(BATCH_NUM) BATCH_NUM
+                    from (SELECT COURSE_CODE from DATA_TEACHER_COURS) c
+                    LEFT JOIN COMMON_SHENHE sh on sh.relation_code = c.COURSE_CODE
+                    GROUP BY COURSE_CODE
+                ) t
+                LEFT JOIN COMMON_SHENHE sh on sh.RELATION_CODE = t.COURSE_CODE and sh.BATCH_NUM = t.BATCH_NUM
+                LEFT JOIN DATA_COURSE c on c.CODE = t.COURSE_CODE
+                LEFT JOIN DATA_TEACHER_COURS dtc on dtc.COURSE_CODE = t.COURSE_CODE
+                LEFT JOIN SYS_USER u on u.USER_ID = dtc.USER_ID
+                <where>1=1
+                    <if test="isSubmit != null and isSubmit != ''">
+                        <choose>
+                            <when test="isSubmit == '已提交'">
+                                and shenhe_code is not null
+                            </when>
+                            <when test="isSubmit == '未提交'">
+                                and shenhe_code is null
+                            </when>
+                            <otherwise>
+                                and 1>1
+                            </otherwise>
+                        </choose>
+                    </if>
+                    <include refid="queryCondition"/>
+                </where>
+                ORDER BY is_submit DESC
+            </otherwise>
+        </choose>
+    </select>
+    <sql id="queryCondition">
+        <if test="userId != null and userId != '' and userId !=999999">
+            and u.USER_ID = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            and u.user_name = #{userName}
+        </if>
+        <if test="courseCode != null and courseCode != ''">
+            and code = #{courseCode}
+        </if>
+        <if test="courseName != null and courseName != ''">
+            and (name_zh like concat(concat('%',#{courseName}),'%') or name_en like concat(concat('%',#{courseName}),'%'))
+        </if>
+    </sql>
+
+</mapper>
