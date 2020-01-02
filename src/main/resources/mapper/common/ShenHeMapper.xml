@@ -66,9 +66,9 @@
 
     <insert id="toShenhe">
         insert into COMMON_SHENHE_ITEM
-        (relation_code,batch_num,status,opinion,node_code,node_name,user_id,user_name,create_date,shenhe_type)
+        (relation_code,batch_num,shenhe_type,status,opinion,node_code,node_name,user_id,user_name,create_date)
         values
-        (#{relationCode},#{batchNum},#{status},#{opinion},#{nodeCode},#{nodeName},#{userId},#{userName},sysdate,#{shenheType,jdbcType=VARCHAR})
+        (#{relationCode},#{batchNum},#{shenheType,jdbcType=VARCHAR},#{status},#{opinion},#{nodeCode},#{nodeName},#{userId},#{userName},sysdate)
     </insert>
 
     <delete id="batchDelete">
