@@ -2,24 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuepingjia.xspj.mapper.XspjMapper">
 
-    <select id="getXspjSetList" resultType="com.mycode.jiaoxuepingjia.xspj.domain.XspjSet">
-        select s.*,t.name as "templateName"
-        from JXPJ_XSPJ_SET s LEFT JOIN JXPJ_XSPJ_TEMPLATE t on t.code = s.TEMPLATE_CODE
-    </select>
-
-    <select id="getXspjTemplateList" resultType="map">
-        select * from JXPJ_XSPJ_TEMPLATE
-    </select>
-
-    <select id="getXspjTargetList" resultType="com.mycode.jiaoxuepingjia.xspj.domain.Target">
-        select * from JXPJ_XSPJ_TARGET
-    </select>
-    <select id="getXspjTargetListByTemplateCode" resultType="com.mycode.jiaoxuepingjia.xspj.domain.Target">
-        SELECT TT.IDX,T.*
-        FROM JXPJ_XSPJ_TEMPLATE_TARGET TT LEFT JOIN JXPJ_XSPJ_TARGET T ON TT.TARGET_CODE = T.CODE
-        WHERE TT.TEMPLATE_CODE = (SELECT TEMPLATE_CODE FROM JXPJ_XSPJ_SET where end_date > SYSDATE)
-    </select>
-
     <select id="getXspjCourseList" resultType="com.mycode.jiaoxuepingjia.xspj.domain.Course">
         SELECT c.*
         from DATA_STUDENT_COURSE sc LEFT JOIN DATA_COURSE c on c.CODE = SC.COURSE_CODE

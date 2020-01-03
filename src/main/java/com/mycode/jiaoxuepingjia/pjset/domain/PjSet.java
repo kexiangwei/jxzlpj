@@ -1,4 +1,4 @@
-package com.mycode.jiaoxuepingjia.xspj.domain;
+package com.mycode.jiaoxuepingjia.pjset.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,12 +9,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 /**
+ * 教学评价-评教设置
  * @auther kexiangwei
  * @date 2019/10/9
  */
 @Getter
 @Setter
-public class XspjSet {
+public class PjSet {
 
     //分页参数
     @JsonIgnore
@@ -24,11 +25,12 @@ public class XspjSet {
     //业务字段
     private String code
             ,name
-        ,templateCode
-        ,templateName
-            ,remark;
+            ,templateCode
+            ,templateName;
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date startDate,endDate,createDate,lastModifyDate;
+    private Date startDate
+            ,endDate
+            ,createDate;
 
 }

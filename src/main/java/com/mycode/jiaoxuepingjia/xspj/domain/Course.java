@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * 教学评价-学生评教-课程
  * @auther kexiangwei
  * @date 2019/10/8
  */
@@ -18,14 +19,16 @@ public class Course {
     private Integer pageIndex=1
             ,pageSize=10;
     //查询字段
-    private String userId;
+    private String userId
+            ,userName;
 
     //业务字段
-    private String code
-            ,nameZh,nameEn
-            ,type
-            ,score
-            ,stuHour
-            ,collegeName;
+    private String code //课程编号
+            ,nameZh //中文名称
+            ,nameEn //英文名称
+            ,score //学分
+            ,stuHour //学时
+            ,type //
+            ,collegeName;  //
 
 }

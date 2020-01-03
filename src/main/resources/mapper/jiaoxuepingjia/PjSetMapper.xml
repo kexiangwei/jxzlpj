@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jiaoxuepingjia.pjset.mapper.PjSetMapper">
+
+    <select id="getPjSetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSet">
+        select pjset.*,tmp.TEMPLATE_NAME
+        from JXPJ_PJSET pjset LEFT JOIN JXPJ_PJSET_TEMPLATE tmp on tmp.TEMPLATE_CODE = pjset.TEMPLATE_CODE
+    </select>
+
+    <select id="getPjSetTemplateList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
+        select * from JXPJ_PJSET_TEMPLATE
+    </select>
+
+    <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
+        select * from JXPJ_PJSET_TARGET
+    </select>
+    <select id="getPjSetTargetListByTemplateCode" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
+        SELECT T.*
+        FROM JXPJ_PJSET_TEMPLATE_TARGET TT LEFT JOIN JXPJ_PJSET_TARGET T ON T.TARGET_CODE = TT.TARGET_CODE
+        WHERE TT.TEMPLATE_CODE = (SELECT TEMPLATE_CODE FROM JXPJ_PJSET where end_date > SYSDATE)
+    </select>
+</mapper>
