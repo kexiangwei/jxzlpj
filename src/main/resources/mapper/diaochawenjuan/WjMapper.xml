@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.diaochawenjuan.mapper.WjMapper">
+
+    <select id="getWjQuestionPageList" resultType="com.mycode.diaochawenjuan.domian.WjQuestion">
+        select * from DCWJ_WJSET_QUESTION
+        <where>1=1
+            <if test="wjCode !=null and wjCode !=''">
+                and WJ_CODE = #{wjCode}
+            </if>
+        </where>
+    </select>
+</mapper>
