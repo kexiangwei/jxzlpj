@@ -70,7 +70,7 @@ public class FileController {
                 }
             }
         }
-        return JsonResult.success("上传成功",code);
+        return JsonResult.success("上传成功",fileInfo);
     }
 
     @ResponseBody
