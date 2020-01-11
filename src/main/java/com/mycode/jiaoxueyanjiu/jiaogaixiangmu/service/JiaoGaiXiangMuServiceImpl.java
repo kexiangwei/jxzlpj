@@ -54,7 +54,9 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
         for (JiaoGaiXiangMu xiangMu : pageList) {
             xiangMu.setMemberList(jiaoGaiXiangMuMapper.getMemberList(xiangMu.getCode())); //项目成员列表
             xiangMu.setFundBudgetList(jiaoGaiXiangMuMapper.getFundBudgetList(xiangMu.getCode())); //经费预算列表
-            xiangMu.setZjshItemList(jiaoGaiXiangMuMapper.getZjshProcess(xiangMu.getCode(),xiangMu.getBatchNum()));
+            if(!StringUtils.isEmpty(xiangMu.getShenheCode())){//若数据未提交，则不执行此查询
+                xiangMu.setZjshItemList(jiaoGaiXiangMuMapper.getZjshProcess(xiangMu.getCode(),xiangMu.getBatchNum()));//专家审核意见
+            }
         }
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);

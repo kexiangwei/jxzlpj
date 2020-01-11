@@ -175,10 +175,10 @@
     <insert id="insert">
           insert into JXYJ_JGXM
           (code,xm_name,xm_type,leader,leader_id,title,college_or_dept,major,main_teach_work,main_teach_achievement
-          ,current_and_background,question_and_target,expect_and_result,plan_and_process,fund_budget_estimate,user_id,user_name,create_date)
+          ,current_and_background,question_and_target,expect_and_result,plan_and_process,user_id,user_name,create_date)
           values
           (#{code},#{xmName},#{xmType},#{leader},#{leaderId},#{title},#{collegeOrDept},#{major},#{mainTeachWork,jdbcType=VARCHAR},#{mainTeachAchievement,jdbcType=VARCHAR}
-          ,#{currentAndBackground,jdbcType=VARCHAR},#{questionAndTarget,jdbcType=VARCHAR},#{expectAndResult,jdbcType=VARCHAR},#{planAndProcess,jdbcType=VARCHAR},#{fundBudgetEstimate,jdbcType=VARCHAR}
+          ,#{currentAndBackground,jdbcType=VARCHAR},#{questionAndTarget,jdbcType=VARCHAR},#{expectAndResult,jdbcType=VARCHAR},#{planAndProcess,jdbcType=VARCHAR}
           ,#{userId},#{userName},sysdate)
     </insert>
 
@@ -223,9 +223,6 @@
             </if>
             <if test="planAndProcess !=null and planAndProcess !=''">
                 , plan_and_process = #{planAndProcess}
-            </if>
-            <if test="fundBudgetEstimate !=null and fundBudgetEstimate !=''">
-                , fund_budget_estimate = #{fundBudgetEstimate}
             </if>
         </set>
         where code = #{code}
