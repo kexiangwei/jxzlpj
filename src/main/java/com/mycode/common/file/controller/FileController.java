@@ -27,7 +27,7 @@ public class FileController {
     private FileService fileService;
 
     /**
-     * 根据教学事件编号获取文件列表
+     * 根据关联数据编号获取文件列表
      * @param relationCode 关联的信息编号
      * @return
      * @throws Exception

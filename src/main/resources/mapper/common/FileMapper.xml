@@ -12,11 +12,11 @@
     <delete id="deleteFileInfo">
         DELETE FROM COMMON_FILE
         <where>1=1
-            <if test="code != null and code != ''">
-                and code = #{code}
-            </if>
             <if test="relationCode != null and relationCode != ''">
                 and relation_code = #{relationCode}
+            </if>
+            <if test="code != null and code != ''">
+                and code = #{code}
             </if>
         </where>
     </delete>
