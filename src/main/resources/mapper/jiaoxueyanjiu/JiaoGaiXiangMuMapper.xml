@@ -6,18 +6,18 @@
         <choose>
             <when test="shenHeUserId !=null and shenHeUserId !='' and isZjshAccount == 1"><!-- 校外专家审核列表 -->
                 SELECT j.*
-                ,(case when item2.xm_code is not null then '已审核' else '未审核' end) shenhe_status
+                ,(case when zjsh.xm_code is not null then '已审核' else '未审核' end) shenhe_status
                 from  v_JXYJ_JGXM_SHENHE j
                 left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num
-                LEFT JOIN JXYJ_JGXM_ZJSH_ITEM item2 on item2.xm_code = j.code and item2.batch_num = j.batch_num and item2.user_id = #{shenHeUserId}
-                where j.STATUS = '审核中' and item.shenhe_type is not null
+                LEFT JOIN JXYJ_JGXM_ZJSH zjsh on zjsh.xm_code = j.code and zjsh.batch_num = j.batch_num and zjsh.user_id = #{shenHeUserId}
+                where item.shenhe_type = '初审' and item.STATUS = '通过'
                 <if test="shenheStatus != null and shenheStatus != ''">
                     <choose>
                         <when test="shenheStatus == '已审核'">
-                            and item2.xm_code is not null
+                            and zjsh.xm_code is not null
                         </when>
                         <when test="shenheStatus == '未审核'">
-                            and item2.xm_code is null
+                            and zjsh.xm_code is null
                         </when>
                     </choose>
                 </if>
@@ -27,18 +27,20 @@
                 SELECT j.*
                 ,(case when  ur.role_id = is_back then '退回' when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
                 ,(case when  ur.role_id = is_back then '退回' when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status_first
-                ,(case when  ur.role_id = is_back then '退回'
-                      when  shenhe_type = '初审' and exec_num >= exec_level then '未审核'
-                      when  shenhe_type = '终审' and exec_num >= exec_level then '已审核' else '待审核' end ) shenhe_status_final
+                ,(case when  ur.role_id = is_back then '退回' when exec_num > exec_level then '已审核'
+                       when exec_num = exec_level and isZjshAll =1 then '未审核' else '待审核' end ) shenhe_status_final
                 from (
                     SELECT j.code,j.batch_num
                     ,count(sn.node_code) total_num
                     ,count(item.node_code) exec_num
                     ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-                    ,max(case when 1=1 then item.SHENHE_TYPE else item.SHENHE_TYPE end) shenhe_type
+,max(case when 1=1 then NVL(isZjshAll, 0) end ) isZjshAll
                     from v_JXYJ_JGXM_SHENHE j
                     left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
                     left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+LEFT JOIN (
+  SELECT xm_code,BATCH_NUM,(case when count(0) = (SELECT count(0) FROM JXYJ_JGXM_ZJ) then 1 else 0 end) isZjshAll from JXYJ_JGXM_ZJSH GROUP BY xm_code,BATCH_NUM
+) zjsh on zjsh.xm_code = j.code and zjsh.batch_num = j.batch_num
                     GROUP BY j.code,j.batch_num
                 )t
                 left join v_JXYJ_JGXM_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
@@ -145,7 +147,7 @@
                 <when test="isZjshAccount == 1">
                     SELECT count(0) from  v_JXYJ_JGXM_SHENHE j
                     left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num
-                    LEFT JOIN JXYJ_JGXM_ZJSH_ITEM item2 on item2.xm_code = j.code and item2.batch_num = j.batch_num
+                    LEFT JOIN JXYJ_JGXM_ZJSH item2 on item2.xm_code = j.code and item2.batch_num = j.batch_num
                     where j.STATUS = '审核中' and item.shenhe_type is not null and item2.xm_code is null
                 </when>
                 <otherwise>
@@ -265,8 +267,13 @@
         )t
     </select>
 
+    <select id="isZjshAll" resultType="java.lang.Integer">
+        SELECT case when count(ZJSH.USER_ID) = count(ZJ.USER_ID) then 1 else 0 end as isZjshAll
+        FROM JXYJ_JGXM_ZJ zj
+        LEFT JOIN (SELECT * FROM JXYJ_JGXM_ZJSH where XM_CODE = #{relationCode} AND BATCH_NUM = #{batchNum}) zjsh on ZJSH.USER_ID = ZJ.USER_ID
+    </select>
     <insert id="toZjShenhe">
-        INSERT INTO JXYJ_JGXM_ZJSH_ITEM
+        INSERT INTO JXYJ_JGXM_ZJSH
         (XM_CODE,BATCH_NUM,STATUS,OPINION,USER_ID,USER_NAME,CREATE_DATE)
         VALUES
         (#{relationCode},#{batchNum},#{status},#{opinion},#{userId},#{userName},sysdate)

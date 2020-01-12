@@ -28,7 +28,7 @@ public interface JiaoGaiXiangMuMapper {
     Integer isJwcGly(@Param("shenHeUserId") Integer shenHeUserId);
 
     @ResultType(Integer.class)
-    @Select("SELECT COUNT(0) FROM JXYJ_JGXM_ZJSH WHERE USER_ID = #{shenHeUserId}")
+    @Select("SELECT COUNT(0) FROM JXYJ_JGXM_ZJ WHERE USER_ID = #{shenHeUserId}")
 //    @Select("SELECT COUNT(0) FROM SYS_USER WHERE ACCOUNT_TYPE = '校外专家审核账号' AND USER_ID = #{shenHeUserId}")
     Integer isZjshAccount(@Param("shenHeUserId") Integer shenHeUserId);
 
@@ -44,10 +44,12 @@ public interface JiaoGaiXiangMuMapper {
 
     int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 
+    Integer isZjshAll(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
+
     boolean toZjShenhe(ShenHeItem item);
 
     @ResultType(ZjshItem.class)
-    @Select("SELECT * FROM JXYJ_JGXM_ZJSH_ITEM WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}")
+    @Select("SELECT * FROM JXYJ_JGXM_ZJSH WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}")
     List<ZjshItem> getZjshProcess(@Param("xmCode") String xmCode, @Param("batchNum") Integer batchNum);
 
     List<Member> getMemberList(@Param("xmCode") String xmCode);
