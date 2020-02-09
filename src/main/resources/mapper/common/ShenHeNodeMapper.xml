@@ -32,5 +32,13 @@
         </set>
         where node_code = #{nodeCode}
     </update>
+
+    <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
+        SELECT sn.*
+        from ${v_tab_shenhe} v
+        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
+        LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
+        where code = #{relationCode} and ur.user_id = #{userId}
+    </select>
 </mapper>
 

@@ -1,5 +1,6 @@
 package com.mycode.common.shenhe.mapper;
 
+import com.mycode.jiaoxuejiangcheng.jyjxcgj.domian.Jyjxcgj;
 import com.mycode.system.menu.domain.Menu;
 import com.mycode.system.role.domain.Role;
 import com.mycode.common.shenhe.domain.ShenHe;
@@ -65,4 +66,10 @@ public interface ShenHeMapper {
 
     @Delete("delete from COMMON_SHENHE_NODE where node_code = #{nodeCode}")
     boolean deleteShenHeNodeByCode(@Param("nodeCode") String nodeCode);
+
+    boolean batchSubimt(@Param("objList") List<Jyjxcgj> objList);
+
+    ShenHeNode getShenheNode(@Param("v_tab_shenhe") String v_tab_shenhe, @Param("relationCode") String relationCode, @Param("userId") Integer userId);
+
+    int isShenhePass(@Param("v_tab_shenhe") String v_tab_shenhe, @Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 }

@@ -44,7 +44,7 @@ public class FileController {
     public JsonResult<Object> uploadFileInfo(FileInfo fileInfo, @RequestParam("file") MultipartFile[] multipartFiles) throws Exception{
         String code=null;
         if(multipartFiles.length>0){
-            StringBuffer filePath = new StringBuffer("/jxzlpj/files/"+fileInfo.getFileCategory()+"/"+fileInfo.getFileType()+"/");
+            StringBuffer filePath = new StringBuffer("/jxzlpj/files/upfile/"+fileInfo.getFileCategory()+"/"+fileInfo.getFileType()+"/");
             File file = new File(filePath.toString());
             if(!file.exists()){
                 file.mkdirs();
@@ -63,7 +63,7 @@ public class FileController {
                 fileInfo.setCode(code);
                 fileInfo.setFileName(multipartFile.getOriginalFilename());
                 fileInfo.setFileSize(Double.valueOf(multipartFile.getSize())/1024);
-                fileInfo.setFilePath(new StringBuffer("/files/"+fileInfo.getFileCategory()+"/"+fileInfo.getFileType()+"/").append(newFileName).toString());
+                fileInfo.setFilePath(new StringBuffer("/files/upfile/"+fileInfo.getFileCategory()+"/"+fileInfo.getFileType()+"/").append(newFileName).toString());
                 boolean bool = fileService.saveFileInfo(fileInfo);
                 if(!bool){
                     return JsonResult.error("上传失败");

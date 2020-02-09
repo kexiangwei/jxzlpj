@@ -85,5 +85,30 @@
             </if>
         </where>
     </sql>
+
+    <update id="batchSubimt">
+        insert all
+        <foreach collection ="objList" item="obj" index= "idx">
+            into COMMON_SHENHE
+            (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
+            values
+            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},'审核中',#{obj.userId},#{obj.userName},sysdate)
+        </foreach>
+        select 1 from dual
+    </update>
+
+    <select id="isShenhePass" resultType="int">
+        SELECT (case when total_num = exec_num then 1 else 0 end) isPass
+        from (
+            SELECT v.code,v.batch_num
+            ,count(sn.node_code) total_num
+            ,count(item.node_code) exec_num
+            from ${v_tab_shenhe} v
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+            WHERE v.code = #{relationCode} and v.batch_num = #{batchNum}
+            GROUP BY v.code,v.batch_num
+        )t
+    </select>
 </mapper>
 
