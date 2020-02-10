@@ -54,18 +54,24 @@
                         <choose>
                             <when test="isSubmit == '已提交'">
                                 and shenhe_code is not null
+                                and status != '退回'
                             </when>
                             <when test="isSubmit == '未提交'">
-                                and shenhe_code is null
+                                and (shenhe_code is null or status = '退回')
                             </when>
                             <otherwise>
                                 and 1>1
                             </otherwise>
                         </choose>
                     </if>
-                    <if test="status != null and status != ''">
-                        and status = #{status}
-                    </if>
+                    <choose>
+                        <when test="status != null and status != '' and status == '待审核'">
+                            and shenhe_code is null
+                        </when>
+                        <when test="status != null and status != ''">
+                            and status = #{status}
+                        </when>
+                    </choose>
                     <include refid="queryCondition"/>
                 </where>
                 ORDER BY is_submit DESC,create_date DESC

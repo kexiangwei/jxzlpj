@@ -41,9 +41,11 @@ public class Jyjxcgj {
             ,level_2 //奖项，二级下拉框[特等奖|一等奖|二等奖|三等奖]
             ,certificateCode //获奖证书编号
             ,grantUnit; //授予单位
+    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private Date prizeTime; //获奖时间
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date prizeTime //获奖时间
-            ,createDate; //业务数据录入时间
+    private Date createDate; //业务数据录入时间
 
 }
