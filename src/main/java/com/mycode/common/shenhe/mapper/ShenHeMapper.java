@@ -67,7 +67,7 @@ public interface ShenHeMapper {
     @Delete("delete from COMMON_SHENHE_NODE where node_code = #{nodeCode}")
     boolean deleteShenHeNodeByCode(@Param("nodeCode") String nodeCode);
 
-    boolean batchSubimt(@Param("objList") List<Jyjxcgj> objList);
+    boolean batchSubimt(@Param("objList") List<?> objList);
 
     ShenHeNode getShenheNode(@Param("v_tab_shenhe") String v_tab_shenhe, @Param("relationCode") String relationCode, @Param("userId") Integer userId);
 
