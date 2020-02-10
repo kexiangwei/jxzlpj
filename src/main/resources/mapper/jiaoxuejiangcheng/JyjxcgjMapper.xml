@@ -11,7 +11,7 @@
         <choose>
             <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
                 SELECT v.*
-                ,(case when  ur.role_id = is_back then '退回' when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                ,(case /*when ur.role_id = is_back then '退回'*/ when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
                 from (
                     SELECT v.code,v.batch_num
                     ,count(sn.node_code) total_num
@@ -37,9 +37,9 @@
                             <when test="shenheStatus == '未审核'">
                                 and exec_level > exec_num
                             </when>
-                            <when test="shenheStatus == '退回'">
+                            <!--<when test="shenheStatus == '退回'">
                                 and ur.role_id = is_back
-                            </when>
+                            </when>-->
                         </choose>
                     </if>
                     <include refid="queryCondition"/>
