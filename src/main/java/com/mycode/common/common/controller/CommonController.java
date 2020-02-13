@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +33,21 @@ public class CommonController {
     @ResponseBody
     @RequestMapping("/getAuthority.do")
     public JsonResult<Object> getAuthority(@RequestParam("menuId") String menuId,@RequestParam("userId") String userId){
-        Map<String, Integer> map = commonService.getAuthority(menuId,userId);
-        return JsonResult.success(map);
+        Map<String, Integer> resultMap = commonService.getAuthority(menuId,userId);
+        return JsonResult.success(resultMap);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getCollege.do")
+    public JsonResult<Object> getCollege(){
+        List<Map<String, Object>> maps = commonService.getCollege();
+        return JsonResult.success(maps);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getMajor.do")
+    public JsonResult<Object> getMajor(@RequestParam("collegeCode") String collegeCode){
+        List<Map<String, Object>> maps = commonService.getMajor(collegeCode);
+        return JsonResult.success(maps);
     }
 }
