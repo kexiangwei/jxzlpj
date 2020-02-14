@@ -8,6 +8,7 @@ import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate;
 import com.mycode.jiaoxuepingjia.pjset.mapper.PjSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,13 +63,17 @@ public class PjSetServiceImpl implements PjSetService {
     }
 
     @Override
-    public Map<String, Object> getXspjTemplate(PjSetTarget pjSetTarget) {
+    public Map<String, Object> getXspjTemplate() {
         Map<String, Object> resultMap = new HashMap<>();
-        List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode();
-        List<PjSetTarget> teacherTargets = pjSetTargetList.stream().filter(t -> t.getTargetType().equals("teacher")).collect(Collectors.toList());
-        List<PjSetTarget> studentTargets = pjSetTargetList.stream().filter(t -> t.getTargetType().equals("student")).collect(Collectors.toList());
-        resultMap.put("teacherTargets",teacherTargets);
-        resultMap.put("studentTargets",studentTargets);
+        String templateCode = pjSetMapper.isPj();
+        boolean isPj = false;
+        List<PjSetTarget> pjSetTargetList = null;
+        if(!StringUtils.isEmpty(templateCode)){
+            isPj = true;
+            pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(templateCode);
+        }
+        resultMap.put("isPj",isPj);
+        resultMap.put("targetList",pjSetTargetList);
         return resultMap;
     }
 }

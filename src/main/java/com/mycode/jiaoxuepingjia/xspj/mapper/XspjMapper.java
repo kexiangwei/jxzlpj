@@ -7,11 +7,9 @@ import java.util.List;
 
 /**
  * 教学评价-学生评教
- * @auther kexiangwei
- * @date 2019/10/8
  */
 @Mapper
 public interface XspjMapper {
 
-    List<Course> getXspjCourseList(Course course);
+    List<Course> getCourseList(Course course);
 }

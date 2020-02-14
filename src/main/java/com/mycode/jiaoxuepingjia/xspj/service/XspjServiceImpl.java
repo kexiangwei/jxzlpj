@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 
 /**
  * 教学评价-学生评教
- * @auther kexiangwei
- * @date 2019/10/8
  */
 @Service
 public class XspjServiceImpl implements XspjService {
@@ -24,10 +22,10 @@ public class XspjServiceImpl implements XspjService {
     private XspjMapper xspjMapper;
 
     @Override
-    public Map<String, Object> getXspjCourseList(Course course) {
+    public Map<String, Object> getCourseList(Course course) {
         Map<String, Object> resultMap = new HashMap<>();
         Page<Object> pageInfo = PageHelper.startPage(course.getPageIndex(), course.getPageSize());
-        List<Course> pageList = xspjMapper.getXspjCourseList(course);
+        List<Course> pageList = xspjMapper.getCourseList(course);
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;

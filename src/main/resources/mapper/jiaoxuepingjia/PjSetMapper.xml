@@ -14,9 +14,17 @@
     <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
         select * from JXPJ_PJSET_TARGET
     </select>
+
+    <!-- 查看当前是否有可用的学生评教模板信息-->
+    <select id="isPj" resultType="java.lang.String">
+        select template_code
+        from jxpj_pjset
+        where end_date > sysdate
+    </select>
+    <!-- 根据模板编号获取学生评教模板信息 -->
     <select id="getPjSetTargetListByTemplateCode" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
-        SELECT T.*
-        FROM JXPJ_PJSET_TEMPLATE_TARGET TT LEFT JOIN JXPJ_PJSET_TARGET T ON T.TARGET_CODE = TT.TARGET_CODE
-        WHERE TT.TEMPLATE_CODE = (SELECT TEMPLATE_CODE FROM JXPJ_PJSET where end_date > SYSDATE)
+        select t.*
+        from jxpj_pjset_template_target tt left join jxpj_pjset_target t on t.target_code = tt.target_code
+        where tt.template_code = #{templateCode}
     </select>
 </mapper>

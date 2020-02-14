@@ -13,20 +13,19 @@ import java.util.Map;
 
 /**
  * 教学评价-学生评教
- * @auther kexiangwei
- * @date 2019/10/8
  */
 @CrossOrigin
 @Controller
+@RequestMapping("/xspj")
 public class XspjController {
 
     @Autowired
     private XspjService xspjService;
 
     @ResponseBody
-    @RequestMapping("/getXspjCourseList.do")
-    public JsonResult<Object> getXspjCourseList(Course course){
-        Map<String, Object> resultMap = xspjService.getXspjCourseList(course);
+    @RequestMapping("/getCourseList.do")
+    public JsonResult<Object> getCourseList(Course course){
+        Map<String, Object> resultMap = xspjService.getCourseList(course);
         return JsonResult.success(resultMap);
     }
 

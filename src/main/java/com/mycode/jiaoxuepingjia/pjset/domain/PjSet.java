@@ -10,8 +10,6 @@ import java.util.Date;
 
 /**
  * 教学评价-评教设置
- * @auther kexiangwei
- * @date 2019/10/9
  */
 @Getter
 @Setter

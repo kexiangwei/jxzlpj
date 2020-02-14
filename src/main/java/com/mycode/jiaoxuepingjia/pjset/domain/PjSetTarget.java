@@ -4,9 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 教学评价-评教设置-指标
- * @auther kexiangwei
- * @date 2019/10/8
+ * 教学评价-评教设置
  */
 
 @Getter

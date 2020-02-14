@@ -17,8 +17,6 @@ import java.util.Map;
 
 /**
  * 教学评价-评教设置
- * @auther kexiangwei
- * @date 2019/10/8
  */
 @CrossOrigin
 @Controller
@@ -55,10 +53,14 @@ public class PjSetController {
         return JsonResult.success(resultMap);
     }
 
+    /**
+     * 获取学生评教模板信息
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getXspjTemplate.do")
-    public JsonResult<Object> getXspjTemplate(PjSetTarget pjSetTarget){
-        Map<String, Object> resultMap = pjSetService.getXspjTemplate(pjSetTarget);
+    public JsonResult<Object> getXspjTemplate(){
+        Map<String, Object> resultMap = pjSetService.getXspjTemplate();
         return JsonResult.success(resultMap);
     }
 }

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuepingjia.xspj.mapper.XspjMapper">
 
-    <select id="getXspjCourseList" resultType="com.mycode.jiaoxuepingjia.xspj.domain.Course">
+    <select id="getCourseList" resultType="com.mycode.jiaoxuepingjia.xspj.domain.Course">
         SELECT c.*
-        from DATA_STUDENT_COURSE sc LEFT JOIN DATA_COURSE c on c.CODE = SC.COURSE_CODE
-        where STUDENT_CODE = #{userId}
+        FROM DATA_STUDENT_COURSE sc LEFT JOIN DATA_COURSE c on c.CODE = sc.COURSE_CODE
+        WHERE STUDENT_CODE = #{userId}
     </select>
 </mapper>

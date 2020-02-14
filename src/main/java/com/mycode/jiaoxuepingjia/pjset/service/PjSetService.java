@@ -22,5 +22,5 @@ public interface PjSetService {
 
     Map<String, Object> getThpjTemplate(PjSetTarget pjSetTarget);
 
-    Map<String, Object> getXspjTemplate(PjSetTarget pjSetTarget);
+    Map<String, Object> getXspjTemplate();
 }
