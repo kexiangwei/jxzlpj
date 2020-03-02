@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.shaungchuangjiaoyu.xkzybs.mapper.XkzybsMapper">
+
+    <select id="getNotShenHeNum" resultType="int">
+        SELECT count(0) from (
+            SELECT v.code,v.batch_num
+            ,count(sn.node_code) total_num
+            ,count(item.node_code) exec_num
+            ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+            from V_SCJY_XKZYBS_SHENHE v
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+            GROUP BY v.code,v.batch_num
+        )t
+        left join V_SCJY_XKZYBS_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
+        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+        left join sys_user_role ur on ur.role_id = sn.role_id
+        where 1=1
+        and exec_num >= exec_level-1
+        AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
+        AND exec_level > exec_num
+        and ur.user_id = #{shenHeUserId}
+    </select>
+
+    <select id="getPageList" resultType="com.mycode.shaungchuangjiaoyu.xkzybs.domian.Xkzybs">
+        <choose>
+            <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
+                SELECT v.*
+                ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                from (
+                    SELECT v.code,v.batch_num
+                    ,count(sn.node_code) total_num
+                    ,count(item.node_code) exec_num
+                    ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+                    from V_SCJY_XKZYBS_SHENHE v
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                    left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                    GROUP BY v.code,v.batch_num
+                ) t
+                left join V_SCJY_XKZYBS_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
+                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
+                <where>1=1
+                    and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
+                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END) -- 排除上一级状态值为‘退回’的数据
+                    and ur.user_id = #{shenHeUserId}
+                    <if test="shenheStatus != null and shenheStatus != ''">
+                        <choose>
+                            <when test="shenheStatus == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatus == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <include refid="queryCondition"/>
+                </where>
+                ORDER BY shenhe_status DESC
+            </when>
+            <otherwise><!-- 提交列表 -->
+                SELECT *
+                from V_SCJY_XKZYBS v
+                <where>1=1
+                    <if test="isSubmit != null and isSubmit != ''">
+                        <choose>
+                            <when test="isSubmit == '已提交'">
+                                and shenhe_code is not null
+                                and status != '退回'
+                            </when>
+                            <when test="isSubmit == '未提交'">
+                                and (shenhe_code is null or status = '退回')
+                            </when>
+                            <otherwise>
+                                and 1>1
+                            </otherwise>
+                        </choose>
+                    </if>
+                    <choose>
+                        <when test="status != null and status != '' and status == '待审核'">
+                            and shenhe_code is null
+                        </when>
+                        <when test="status != null and status != ''">
+                            and status = #{status}
+                        </when>
+                    </choose>
+                    <include refid="queryCondition"/>
+                </where>
+                ORDER BY is_submit ASC,create_date DESC
+            </otherwise>
+        </choose>
+    </select>
+    <sql id="queryCondition">
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="grantUnit != null and grantUnit != ''">
+            and grant_unit = #{grantUnit}
+        </if>
+        <if test="userId != null and userId != '' and userId !=999999">
+            and v.user_id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            and v.user_name = #{userName}
+        </if>
+    </sql>
+
+    <insert id="insert">
+          insert into SCJY_XKZYBS
+          (code,name,hj_level1,hj_level2,grant_unit,grant_date,user_id,user_name,create_date)
+          values
+          (#{code},#{name},#{hjLevel1},#{hjLevel2},#{grantUnit},#{grantDate},#{userId},#{userName},sysdate)
+    </insert>
+
+    <update id="update">
+        update SCJY_XKZYBS
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name}
+            </if>
+            <if test="hjLevel1 != null and hjLevel1 != ''">
+                , hj_level1 = #{hjLevel1}
+            </if>
+            <if test="hjLevel2 != null and hjLevel2 != ''">
+                , hj_level2 = #{hjLevel2}
+            </if>
+            <if test="grantUnit !=null and grantUnit !=''">
+                , grant_unit = #{grantUnit}
+            </if>
+            <if test="grantDate !=null">
+                , grant_date = #{grantDate}
+            </if>
+        </set>
+        where code = #{code}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM SCJY_XKZYBS WHERE CODE = #{objCode}
+    </delete>
+
+    <select id="getStuInfo" resultType="com.mycode.shaungchuangjiaoyu.Stu">
+        SELECT RELATION_CODE,STU_CODE,STU_NAME,c.name college,m.name major
+        FROM SCJY_XKZYBS_STUDENT s LEFT JOIN DATA_COLLEGE c on c.code = s.college LEFT JOIN DATA_MAJOR m on m.code = s.major
+        where RELATION_CODE = #{relationCode}
+    </select>
+    <insert id="addStuInfo">
+        insert into SCJY_XKZYBS_STUDENT (relation_code,stu_code,stu_name,college,major)
+        values (#{relationCode},#{stuCode},#{stuName},#{college},#{major})
+    </insert>
+    <delete id="delStuInfo">
+        DELETE FROM SCJY_XKZYBS_STUDENT
+        where RELATION_CODE = #{relationCode}
+        <if test="stuCode !=null and stuCode !=''">
+            and STU_CODE = #{stuCode}
+        </if>
+    </delete>
+</mapper>

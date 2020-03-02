@@ -39,14 +39,14 @@ public class CommonController {
 
     @ResponseBody
     @RequestMapping("/getCollege.do")
-    public JsonResult<Object> getCollege(){
-        List<Map<String, Object>> maps = commonService.getCollege();
+    public JsonResult<Object> getCollege(@RequestParam(value = "stuCode",required = false) String stuCode){
+        List<Map<String, Object>> maps = commonService.getCollege(stuCode);
         return JsonResult.success(maps);
     }
 
     @ResponseBody
     @RequestMapping("/getMajor.do")
-    public JsonResult<Object> getMajor(@RequestParam("collegeCode") String collegeCode){
+    public JsonResult<Object> getMajor(@RequestParam(value = "collegeCode",required = false) String collegeCode){
         List<Map<String, Object>> maps = commonService.getMajor(collegeCode);
         return JsonResult.success(maps);
     }

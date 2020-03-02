@@ -13,9 +13,14 @@
     </select>
 
     <select id="getCollege" resultType="java.util.Map">
-        SELECT NAME FROM DATA_COLLEGE
+        SELECT code,name FROM DATA_COLLEGE
     </select>
     <select id="getMajor" resultType="java.util.Map">
-        SELECT m.NAME FROM DATA_MAJOR m LEFT JOIN DATA_COLLEGE c on c.CODE = m.COLLEGE_CODE WHERE COLLEGE_CODE = #{collegeCode}
+        SELECT m.code,m.name FROM DATA_MAJOR m LEFT JOIN DATA_COLLEGE c on c.CODE = m.COLLEGE_CODE
+        <where>1=1
+            <if test="collegeCode !=null and collegeCode !=''">
+                and COLLEGE_CODE = #{collegeCode}
+            </if>
+        </where>
     </select>
 </mapper>

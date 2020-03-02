@@ -24,8 +24,8 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public List<Map<String, Object>> getCollege() {
-        return commonMapper.getCollege();
+    public List<Map<String, Object>> getCollege(String stuCode) {
+        return commonMapper.getCollege(stuCode);
     }
 
     @Override
