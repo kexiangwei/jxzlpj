@@ -37,8 +37,8 @@ public class Xkzybs {
     //业务字段
     private String code //业务数据编号
             ,name //赛事名称
-            ,hjLevel1 //获奖等级，一级下拉框【国家级、省部级、校级】
-            ,hjLevel2 //获得奖项，二级下拉框【特等奖、一等奖（金奖）、二等奖（银奖）、三等奖（铜奖）、优秀奖】
+            ,level1 //获奖等级，一级下拉框【国家级、省部级、校级】
+            ,level2 //获得奖项，二级下拉框【特等奖、一等奖（金奖）、二等奖（银奖）、三等奖（铜奖）、优秀奖】
             ,grantUnit; //证书授予单位
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")

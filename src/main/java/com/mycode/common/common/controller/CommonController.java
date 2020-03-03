@@ -50,4 +50,5 @@ public class CommonController {
         List<Map<String, Object>> maps = commonService.getMajor(collegeCode);
         return JsonResult.success(maps);
     }
+
 }

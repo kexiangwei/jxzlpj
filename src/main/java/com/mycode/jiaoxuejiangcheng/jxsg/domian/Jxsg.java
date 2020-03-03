@@ -24,8 +24,8 @@ public class Jxsg {
             ,isAdmin; //是否教务处管理员
     //业务字段
     private String code //业务数据编号
-            ,teacherCollege //教师信息-学院
-            ,teacherMajor //教师信息-专业
+            ,teacherCollege,collegeName //教师信息-学院
+            ,teacherMajor,majorName //教师信息-专业
             ,teacherId //教师信息-工号
             ,teacherName //教师信息-姓名
             ,event //事件

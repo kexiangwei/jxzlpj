@@ -35,8 +35,8 @@ public class Jxjl {
     //业务字段 code,objname,personrank,unitrank,level,levelprize,prizetime,certificatecode,grantunit,userId,userName,createdate
     private String code //业务数据编号
             ,objName //奖项名称
-            ,level_1 //奖项级别，一级下拉框【国家级|北京市级|校级】
-            ,level_2 //获得奖项，二级下拉框[一等奖|二等奖|三等奖|其他]
+            ,level1 //奖项级别，一级下拉框【国家级|北京市级|校级】
+            ,level2 //获得奖项，二级下拉框[一等奖|二等奖|三等奖|其他]
             ,grantUnit; //证书授予机构
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")

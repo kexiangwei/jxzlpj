@@ -2,11 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuejiangcheng.jxms.mapper.JxmsMapper">
 
-    <resultMap id="objResultMap" type="com.mycode.jiaoxuejiangcheng.jxms.domian.Jxms">
-        <result column="LEVEL_1" jdbcType="VARCHAR" property="level_1" />
-    </resultMap>
-
-    <select id="getPageList" resultMap="objResultMap">
+    <select id="getPageList" resultType="com.mycode.jiaoxuejiangcheng.jxms.domian.Jxms">
         <choose>
             <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
                 SELECT v.*
@@ -109,16 +105,16 @@
 
     <insert id="insert">
           insert into JXJC_JXMS
-          (code,level_1,grant_unit,award_date,user_id,user_name,create_date)
+          (code,level1,grant_unit,award_date,user_id,user_name,create_date)
           values
-          (#{code},#{level_1},#{grantUnit},#{awardDate},#{userId},#{userName},sysdate)
+          (#{code},#{level1},#{grantUnit},#{awardDate},#{userId},#{userName},sysdate)
     </insert>
 
     <update id="update">
         update JXJC_JXMS
         <set>
-            <if test="level_1 != null and level_1 != ''">
-                level_1 = #{level_1}
+            <if test="level1 != null and level1 != ''">
+                level1 = #{level1}
             </if>
             <if test="grantUnit !=null and grantUnit !=''">
                 , grant_unit = #{grantUnit}

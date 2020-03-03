@@ -37,8 +37,8 @@ public class Jyjxcgj {
             ,objName //成果名称
             ,personRank //本人排名
             ,unitRank //完成单位排名
-            ,level_1 //级别，一级下拉框【国家级|北京市级|校级】
-            ,level_2 //奖项，二级下拉框[特等奖|一等奖|二等奖|三等奖]
+            ,level1 //级别，一级下拉框【国家级|北京市级|校级】
+            ,level2 //奖项，二级下拉框[特等奖|一等奖|二等奖|三等奖]
             ,certificateCode //获奖证书编号
             ,grantUnit; //授予单位
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")

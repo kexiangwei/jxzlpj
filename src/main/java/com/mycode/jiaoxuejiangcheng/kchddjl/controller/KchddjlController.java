@@ -42,9 +42,9 @@ public class KchddjlController {
     public JsonResult<Object> insert(Kchddjl obj){
         boolean bool = kchddjlService.insert(obj);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("新增成功",null);
     }
 
     @ResponseBody
@@ -52,9 +52,9 @@ public class KchddjlController {
     public JsonResult<Object> update(Kchddjl obj){
         boolean bool = kchddjlService.update(obj);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("修改失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("修改成功",null);
     }
 
     @ResponseBody
@@ -62,9 +62,9 @@ public class KchddjlController {
     public JsonResult<Object> delete(@RequestParam("objCode") String objCode){
         boolean bool = kchddjlService.delete(objCode);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("删除失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("删除成功",null);
     }
 
     /**
@@ -99,8 +99,8 @@ public class KchddjlController {
         List<Kchddjl> objList = JSON.parseArray(jsonStr, Kchddjl.class);
         boolean bool = kchddjlService.toShenhe(item,objList);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("审核失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("审核成功",null);
     }
 }
