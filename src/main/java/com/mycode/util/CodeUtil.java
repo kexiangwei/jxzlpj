@@ -10,8 +10,8 @@ public class CodeUtil {
 	 * @param isNumeric 是否仅使用数字生成随机字符
 	 * @return
 	 **/
-	public static String randomChar(int length, boolean isNumeric) {
-		String base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+	public static String guid(int length, boolean isNumeric) {
+		String base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 		if (isNumeric) {
 			base = "1234567890";
 		}
@@ -20,6 +20,11 @@ public class CodeUtil {
 		for (int i = 0; i < length; i++) {
 			buffer.append(base.charAt(random.nextInt(base.length())));
 		}
-		return buffer.toString();
+		//判断首位是不是0，若是重新生成一个
+		String code = buffer.toString();
+		if(code.matches("^0.*")){
+			return guid(length,isNumeric);
+		}
+		return code;
 	}
 }

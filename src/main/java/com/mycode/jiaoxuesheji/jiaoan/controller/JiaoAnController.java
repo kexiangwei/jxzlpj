@@ -44,9 +44,9 @@ public class JiaoAnController {
     public JsonResult<Object> insert(JiaoAn jiaoAn){
         boolean bool = jiaoAnService.insert(jiaoAn);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("新增成功",null);
     }
 
     @ResponseBody
@@ -54,9 +54,9 @@ public class JiaoAnController {
     public JsonResult<Object> update(JiaoAn jiaoAn){
         boolean bool = jiaoAnService.update(jiaoAn);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("修改失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("修改成功",null);
     }
 
     @ResponseBody
@@ -64,9 +64,9 @@ public class JiaoAnController {
     public JsonResult<Object> delete(@RequestParam("code") String code){
         boolean bool = jiaoAnService.delete(code);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("删除失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("删除成功",null);
     }
 
     /**
@@ -89,7 +89,7 @@ public class JiaoAnController {
         if(!bool){
             return JsonResult.error("提交失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("提交成功",null);
     }
 
     /**
@@ -103,8 +103,8 @@ public class JiaoAnController {
         List<JiaoAn> jiaoAnList = JSON.parseArray(jsonStr, JiaoAn.class);
         boolean bool = jiaoAnService.toShenhe(item,jiaoAnList);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("审核失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("审核成功",null);
     }
 }

@@ -44,9 +44,9 @@ public class SkjhController {
     public JsonResult<Object> insert(Skjh skjh){
         boolean bool = skjhService.insert(skjh);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("新增成功",null);
     }
 
     @ResponseBody
@@ -54,9 +54,9 @@ public class SkjhController {
     public JsonResult<Object> update(Skjh skjh){
         boolean bool = skjhService.update(skjh);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("修改失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("修改成功",null);
     }
 
     @ResponseBody
@@ -64,9 +64,9 @@ public class SkjhController {
     public JsonResult<Object> delete(@RequestParam("code") String code){
         boolean bool = skjhService.delete(code);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("删除失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("删除成功",null);
     }
 
     /**
@@ -89,7 +89,7 @@ public class SkjhController {
         if(!bool){
             return JsonResult.error("提交失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("提交成功",null);
     }
 
     /**
@@ -103,8 +103,8 @@ public class SkjhController {
         List<Skjh> skjhList = JSON.parseArray(jsonStr, Skjh.class);
         boolean bool = skjhService.toShenhe(item,skjhList);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("审核失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("审核成功",null);
     }
 }

@@ -62,7 +62,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public boolean insertMenu(Menu menu) {
-        menu.setMenuId(Long.valueOf(CodeUtil.randomChar(16,true)));
+        menu.setMenuId(Long.valueOf(CodeUtil.guid(16,true)));
         return menuMapper.insertMenu(menu);
     }
 
@@ -73,7 +73,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Long insertMenuTab(MenuTab menuTab) {
-        Long menuId = Long.valueOf(CodeUtil.randomChar(8,true));
+        Long menuId = Long.valueOf(CodeUtil.guid(8,true));
         menuTab.setMenuId(menuId);
         boolean bool = menuMapper.insertMenuTab(menuTab);
         if(bool){

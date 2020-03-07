@@ -10,8 +10,6 @@ import java.util.Date;
 
 /**
  * 教学评价-同行评教
- * @auther kexiangwei
- * @date 2019/12/31
  */
 @Getter
 @Setter
@@ -21,6 +19,7 @@ public class Thpj {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
+
     //业务字段
     private String code //业务编号
             ,testName
@@ -28,9 +27,7 @@ public class Thpj {
     //
     private Integer userId;
     private String userName;
-    //
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     private Date createDate; //业务数据录入时间
 
 }

@@ -14,8 +14,6 @@ import java.util.Map;
 
 /**
  * 教学评价-同行评教
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @CrossOrigin
 @Controller

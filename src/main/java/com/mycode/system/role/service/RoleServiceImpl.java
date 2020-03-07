@@ -72,7 +72,7 @@ public class RoleServiceImpl implements RoleService {
     public boolean insertOrUodateRoleMenu(String roleId, String roleName, String[] menuIdArr) {
         boolean bool =false;
         if(StringUtils.isEmpty(roleId)){
-            roleId = CodeUtil.randomChar(16,true);
+            roleId = CodeUtil.guid(16,true);
             bool = roleMapper.addRole(roleId,roleName);
             if(bool){
                 bool = roleMapper.addRoleMenu(roleId,menuIdArr);

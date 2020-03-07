@@ -89,7 +89,7 @@ public class ShenHeServiceImpl implements ShenHeService {
 
     @Override
     public String addShenHeNode(ShenHeNode node) {
-        String code = CodeUtil.randomChar(16, false);
+        String code = CodeUtil.guid(16, false);
         node.setNodeCode(code);
         List<ShenHeNode> shenheNodeList = shenHeMapper.getShenheNodeList(node.getShenheCode(),null);
         if(shenheNodeList!=null){
