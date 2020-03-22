@@ -7,7 +7,6 @@ import com.mycode.common.file.mapper.FileMapper;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
-import com.mycode.shaungchuangjiaoyu.Stu;
 import com.mycode.shaungchuangjiaoyu.xkzybs.domian.Xkzybs;
 import com.mycode.shaungchuangjiaoyu.xkzybs.mapper.XkzybsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,21 +97,6 @@ public class XkzybsServiceImpl implements XkzybsService {
             }
         }
         return bool;
-    }
-
-    @Override
-    public List<Stu> getStuInfo(String relationCode) {
-        return xkzybsMapper.getStuInfo(relationCode);
-    }
-
-    @Override
-    public boolean addStuInfo(Stu stu) {
-        return xkzybsMapper.addStuInfo(stu);
-    }
-
-    @Override
-    public boolean delStuInfo(String relationCode, String stuCode) {
-        return xkzybsMapper.delStuInfo(relationCode, stuCode);
     }
 
 }

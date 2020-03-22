@@ -7,8 +7,7 @@ import com.mycode.system.menu.domain.MenuTab;
 import com.mycode.system.menu.mapper.MenuMapper;
 import com.mycode.system.menu.domain.Menu;
 import com.mycode.system.role.domain.Role;
-import com.mycode.util.CodeUtil;
-import org.mybatis.logging.Logger;
+import com.mycode.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -62,7 +61,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public boolean insertMenu(Menu menu) {
-        menu.setMenuId(Long.valueOf(CodeUtil.guid(16,true)));
+        menu.setMenuId(Long.valueOf(StringUtil.guid(16,true)));
         return menuMapper.insertMenu(menu);
     }
 
@@ -73,7 +72,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Long insertMenuTab(MenuTab menuTab) {
-        Long menuId = Long.valueOf(CodeUtil.guid(8,true));
+        Long menuId = Long.valueOf(StringUtil.guid(8,true));
         menuTab.setMenuId(menuId);
         boolean bool = menuMapper.insertMenuTab(menuTab);
         if(bool){

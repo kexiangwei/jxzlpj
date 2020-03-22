@@ -3,7 +3,6 @@ package com.mycode.shaungchuangjiaoyu.bkssqzl.controller;
 import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
-import com.mycode.shaungchuangjiaoyu.Stu;
 import com.mycode.shaungchuangjiaoyu.bkssqzl.domian.Bkssqzl;
 import com.mycode.shaungchuangjiaoyu.bkssqzl.service.BkssqzlService;
 import com.mycode.util.JsonResult;

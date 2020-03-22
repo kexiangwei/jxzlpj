@@ -1,7 +1,6 @@
 package com.mycode.shaungchuangjiaoyu.wtbs.service;
 
 import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.shaungchuangjiaoyu.Stu;
 import com.mycode.shaungchuangjiaoyu.wtbs.domian.Wtbs;
 
 import java.util.List;
@@ -24,9 +23,4 @@ public interface WtbsService {
 
     boolean toShenhe(ShenHeItem item, List<Wtbs> objList);
 
-    List<Stu> getStuInfo(String relationCode);
-
-    boolean addStuInfo(Stu stu);
-
-    boolean delStuInfo(String relationCode, String stuCode);
 }

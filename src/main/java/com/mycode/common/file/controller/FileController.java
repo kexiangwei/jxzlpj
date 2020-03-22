@@ -2,7 +2,7 @@ package com.mycode.common.file.controller;
 
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.service.FileService;
-import com.mycode.util.CodeUtil;
+import com.mycode.util.StringUtil;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,7 +51,7 @@ public class FileController {
             }
             for (MultipartFile multipartFile : multipartFiles) {
                 // 写入文件到服务器
-                code = CodeUtil.guid(20,false);
+                code = StringUtil.guid(32,false);
                 StringBuffer newFileName = new StringBuffer(code);
                 newFileName.append(multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().lastIndexOf(".")));
                 filePath.append(newFileName);

@@ -7,7 +7,6 @@ import com.mycode.common.file.mapper.FileMapper;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
-import com.mycode.shaungchuangjiaoyu.Stu;
 import com.mycode.shaungchuangjiaoyu.bkssqzl.domian.Bkssqzl;
 import com.mycode.shaungchuangjiaoyu.bkssqzl.mapper.BkssqzlMapper;
 import org.springframework.beans.factory.annotation.Autowired;

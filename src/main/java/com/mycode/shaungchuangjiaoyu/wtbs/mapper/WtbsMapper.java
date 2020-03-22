@@ -1,6 +1,5 @@
 package com.mycode.shaungchuangjiaoyu.wtbs.mapper;
 
-import com.mycode.shaungchuangjiaoyu.Stu;
 import com.mycode.shaungchuangjiaoyu.wtbs.domian.Wtbs;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -23,9 +22,4 @@ public interface WtbsMapper {
 
     boolean delete(@Param("objCode") String objCode);
 
-    List<Stu> getStuInfo(@Param("relationCode") String relationCode);
-
-    boolean addStuInfo(Stu stu);
-
-    boolean delStuInfo(@Param("relationCode") String relationCode, @Param("stuCode") String stuCode);
 }

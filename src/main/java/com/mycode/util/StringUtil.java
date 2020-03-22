@@ -2,7 +2,7 @@ package com.mycode.util;
 
 import java.util.Random;
 
-public class CodeUtil {
+public class StringUtil {
 
 	/**
 	 * 生成随机字符
@@ -11,7 +11,7 @@ public class CodeUtil {
 	 * @return
 	 **/
 	public static String guid(int length, boolean isNumeric) {
-		String base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		String base = "abcdefghijklmnopqrstuvwxyz1234567890";
 		if (isNumeric) {
 			base = "1234567890";
 		}

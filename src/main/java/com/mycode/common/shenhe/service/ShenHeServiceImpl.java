@@ -3,13 +3,12 @@ package com.mycode.common.shenhe.service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.system.menu.domain.Menu;
-import com.mycode.system.role.domain.Role;
 import com.mycode.common.shenhe.domain.ShenHe;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeSet;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
-import com.mycode.util.CodeUtil;
+import com.mycode.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -89,7 +88,7 @@ public class ShenHeServiceImpl implements ShenHeService {
 
     @Override
     public String addShenHeNode(ShenHeNode node) {
-        String code = CodeUtil.guid(16, false);
+        String code = StringUtil.guid(16, false);
         node.setNodeCode(code);
         List<ShenHeNode> shenheNodeList = shenHeMapper.getShenheNodeList(node.getShenheCode(),null);
         if(shenheNodeList!=null){

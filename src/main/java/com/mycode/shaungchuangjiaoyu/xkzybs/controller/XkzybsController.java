@@ -3,7 +3,6 @@ package com.mycode.shaungchuangjiaoyu.xkzybs.controller;
 import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
-import com.mycode.shaungchuangjiaoyu.Stu;
 import com.mycode.shaungchuangjiaoyu.xkzybs.domian.Xkzybs;
 import com.mycode.shaungchuangjiaoyu.xkzybs.service.XkzybsService;
 import com.mycode.util.JsonResult;
@@ -103,33 +102,6 @@ public class XkzybsController {
             return JsonResult.error("审核失败");
         }
         return JsonResult.success("审核成功",null);
-    }
-
-    @ResponseBody
-    @RequestMapping("/getStuInfo.do")
-    public JsonResult<Object> getStuInfo(@RequestParam("relationCode") String relationCode){
-        List<Stu> mapList = xkzybsService.getStuInfo(relationCode);
-        return JsonResult.success(mapList);
-    }
-
-    @ResponseBody
-    @RequestMapping("/addStuInfo.do")
-    public JsonResult<Object> addStuInfo(Stu stu){
-        boolean bool = xkzybsService.addStuInfo(stu);
-        if(!bool){
-            return JsonResult.error("新增失败");
-        }
-        return JsonResult.success("新增成功",null);
-    }
-
-    @ResponseBody
-    @RequestMapping("/delStuInfo.do")
-    public JsonResult<Object> delStuInfo(@RequestParam("relationCode") String relationCode, @RequestParam("stuCode") String stuCode){
-        boolean bool = xkzybsService.delStuInfo(relationCode, stuCode);
-        if(!bool){
-            return JsonResult.error("删除失败");
-        }
-        return JsonResult.success("删除成功",null);
     }
 
 }

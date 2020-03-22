@@ -1,7 +1,6 @@
 package com.mycode.shaungchuangjiaoyu.bkssqzl.service;
 
 import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.shaungchuangjiaoyu.Stu;
 import com.mycode.shaungchuangjiaoyu.bkssqzl.domian.Bkssqzl;
 
 import java.util.List;

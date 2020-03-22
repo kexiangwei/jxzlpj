@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.shaungchuangjiaoyu.teacher.mapper.TeacherMapper">
+
+    <select id="getTeacherInfo" resultType="com.mycode.shaungchuangjiaoyu.teacher.domain.Teacher">
+        select * from scjy_teacher where relation_code = #{relationCode}
+    </select>
+    <insert id="addTeacherInfo">
+        insert into scjy_teacher (relation_code,teacher_code,teacher_name,teacher_unit)
+        values (#{relationCode},#{teacherCode},#{teacherName},#{teacherUnit})
+    </insert>
+    <delete id="delTeacherInfo">
+        delete from scjy_teacher
+        where relation_code = #{relationCode}
+        <if test="teacherCode !=null and teacherCode !=''">
+            and teacher_code = #{teacherCode}
+        </if>
+    </delete>
+</mapper>

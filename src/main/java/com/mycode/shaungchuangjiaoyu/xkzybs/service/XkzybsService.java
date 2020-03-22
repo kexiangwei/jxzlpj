@@ -1,7 +1,6 @@
 package com.mycode.shaungchuangjiaoyu.xkzybs.service;
 
 import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.shaungchuangjiaoyu.Stu;
 import com.mycode.shaungchuangjiaoyu.xkzybs.domian.Xkzybs;
 
 import java.util.List;
@@ -24,9 +23,4 @@ public interface XkzybsService {
 
     boolean toShenhe(ShenHeItem item, List<Xkzybs> objList);
 
-    List<Stu> getStuInfo(String relationCode);
-
-    boolean addStuInfo(Stu stu);
-
-    boolean delStuInfo(String relationCode, String stuCode);
 }

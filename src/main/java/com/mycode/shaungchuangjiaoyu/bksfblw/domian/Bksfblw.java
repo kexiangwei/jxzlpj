@@ -2,13 +2,11 @@ package com.mycode.shaungchuangjiaoyu.bksfblw.domian;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mycode.shaungchuangjiaoyu.Stu;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 双创教育-本科生发表论文
@@ -25,8 +23,8 @@ public class Bksfblw {
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId; //指导教师信息-工号
-    private String userName; //指导教师信息-姓名
-
+    private String userName
+            ,userUnit; //指导教师信息-姓名
 
     //逻辑字段
     private String isSubmit //提交状态【已提交 | 未提交】
@@ -37,15 +35,12 @@ public class Bksfblw {
 
     //业务字段
     private String code //业务数据编号
-            ,thesisTitle //论文题目
-            ,periodicalName //期刊名称
-            ,publishTime //发表时间：xx年xx期
+            ,lwTitle //论文题目
+            ,qkName //期刊名称
+            ,publishYear //发表时间：xx年
+            ,publishIssue //发表时间：xx期
             ,includStatus; //收录情况【SCI、SSCI、EI、CPCI、A&HCI、CSCD、CSSCI、北大中文核心期刊、其他期刊】
 
-    private String college,collegeName //在校本科学生信息-学院
-            ,major,majorName  //在校本科学生信息-专业
-            ,stuCode //在校本科学生信息-学号
-            ,stuName; //在校本科学生信息-姓名
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate; //业务数据录入时间

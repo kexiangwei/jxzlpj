@@ -19,11 +19,16 @@ public class Zdxscy {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-
+    //表头查询字段
+    @JsonIgnore
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private Date registDateStart
+            ,registDateEnd;
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId; //指导教师信息-工号
-    private String userName; //指导教师信息-姓名
+    private String userName //指导教师信息-姓名
+            ,userUnit; //指导教师信息-单位
 
 
     //逻辑字段
@@ -34,12 +39,13 @@ public class Zdxscy {
             ,shenheStatus; //审核状态：【已审核 | 未审核】
 
     //业务字段
-    private String college,collegeName //在校本科学生信息-学院
+    /*private String college,collegeName //在校本科学生信息-学院
             ,major,majorName  //在校本科学生信息-专业
             ,stuCode //在校本科学生信息-学号
-            ,stuName; //在校本科学生信息-姓名
+            ,stuName; //在校本科学生信息-姓名*/
     private String code //业务数据编号
-            ,companyName; //公司名称
+            ,companyName //公司名称
+            , businessScope ; //经营范围
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date registDate; //注册时间
