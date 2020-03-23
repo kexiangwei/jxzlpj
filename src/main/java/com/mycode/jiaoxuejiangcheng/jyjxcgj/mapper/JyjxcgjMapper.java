@@ -1,8 +1,6 @@
 package com.mycode.jiaoxuejiangcheng.jyjxcgj.mapper;
 
-import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.jiaoxuejiangcheng.jyjxcgj.domian.Jyjxcgj;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

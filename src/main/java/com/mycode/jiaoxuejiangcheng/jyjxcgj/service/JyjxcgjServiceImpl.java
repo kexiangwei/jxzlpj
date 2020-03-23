@@ -9,6 +9,7 @@ import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxuejiangcheng.jyjxcgj.domian.Jyjxcgj;
 import com.mycode.jiaoxuejiangcheng.jyjxcgj.mapper.JyjxcgjMapper;
+import com.mycode.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -33,12 +34,12 @@ public class JyjxcgjServiceImpl implements JyjxcgjService {
     @Override
     public Map<String, Object> getPageList(Jyjxcgj obj) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
-        List<Jyjxcgj> pageList = mapper.getPageList(obj);
-        if(!StringUtils.isEmpty(obj.getShenHeUserId())){
+        if(StringUtil.isNotEmpty(obj.getShenHeUserId())){
             int unShenHeNum = mapper.getNotShenHeNum(obj.getShenHeUserId());//获取未审核数
             resultMap.put("unShenHeNum", unShenHeNum);
         }
+        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
+        List<Jyjxcgj> pageList = mapper.getPageList(obj);
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
