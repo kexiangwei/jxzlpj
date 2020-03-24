@@ -21,12 +21,6 @@ public class JiXuJiaoYu {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-    //业务字段
-    private String code,peixunName,peixunStyle,peixunContent,peixunAddress,peixunDept;
-    private Integer peixunClassHour;
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date peixunStartTime,peixunEndTime,createDate;
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId;
@@ -38,6 +32,17 @@ public class JiXuJiaoYu {
     private String status //数据状态：【审核中 | 通过 | 退回】
             ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
 
-
-
+    //业务字段
+    private String code
+            ,peixunName
+            ,peixunStyle
+            ,peixunContent
+            ,peixunAddress
+            ,peixunDept;
+    private Integer peixunClassHour;
+    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private Date peixunStartTime
+            ,peixunEndTime
+            ,createDate;
 }

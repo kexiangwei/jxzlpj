@@ -8,8 +8,6 @@ import java.util.Map;
 
 /**
  * 教学研究-继续教育
- * @auther kexiangwei
- * @date 2019/7/13
  */
 public interface JiXuJiaoYuService {
 

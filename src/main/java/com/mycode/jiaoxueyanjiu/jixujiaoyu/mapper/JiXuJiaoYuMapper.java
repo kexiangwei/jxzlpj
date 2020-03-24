@@ -16,15 +16,14 @@ import java.util.List;
 @Mapper
 public interface JiXuJiaoYuMapper {
 
-    List<JiXuJiaoYu> getPageList(JiXuJiaoYu jiXuJiaoYu);
-
     int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+
+    List<JiXuJiaoYu> getPageList(JiXuJiaoYu jiXuJiaoYu);
 
     boolean insert(JiXuJiaoYu jiXuJiaoYu);
 
     boolean update(JiXuJiaoYu jiXuJiaoYu);
 
-    @Delete("delete from JXYJ_JXJY where code = #{code}")
     boolean delete(@Param("code") String code);
 
     boolean batchSubimt(@Param("jiXuJiaoYuList") List<JiXuJiaoYu> jiXuJiaoYuList);
