@@ -6,11 +6,11 @@
         select * from (
             select u.*,t.COLLEGE_NAME
             from sys_user u
-            LEFT JOIN DATA_TEACHER t on t.CODE = u.USER_ID where u.ACCOUNT_TYPE = '老师'
+            LEFT JOIN DATA_TEACHER t on t.CODE = u.USER_ID where u.account_level = '老师'
             UNION
             select u.*,s.COLLEGE_NAME
             from sys_user u
-            LEFT JOIN DATA_STUDENT s on s.CODE = u.USER_ID where u.ACCOUNT_TYPE = '学生'
+            LEFT JOIN DATA_STUDENT s on s.CODE = u.USER_ID where u.account_level = '学生'
         )
         <where>1=1
             <if test="userId != null and userId != ''">
@@ -22,17 +22,17 @@
             <if test="phone != null and phone != ''">
                 and phone = #{phone}
             </if>
-            <if test="accountType != null and accountType != ''">
-                and account_type = #{accountType}
+            <if test="accountLevel != null and accountLevel != ''">
+                and account_level = #{accountLevel}
             </if>
         </where>
     </select>
 
     <select id="getUserDetail" resultType="map">
-        <if test="accountType == '老师'">
+        <if test="accountLevel == '老师'">
             SELECT * from DATA_TEACHER where CODE = #{userId}
         </if>
-        <if test="accountType == '学生'">
+        <if test="accountLevel == '学生'">
             SELECT * from DATA_STUDENT where CODE = #{userId}
         </if>
     </select>
@@ -49,8 +49,8 @@
             <if test="phone != null and phone != ''">
                 , phone = #{phone}
             </if>
-            <if test="accountType != null and accountType != ''">
-                , account_type = #{accountType}
+            <if test="accountLevel != null and accountLevel != ''">
+                , account_level = #{accountLevel}
             </if>
             <if test="remark != null and remark != ''">
                 , remark = #{remark}

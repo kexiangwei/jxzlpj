@@ -17,8 +17,7 @@ public class User {
             ,pageSize=10;
     //业务字段
     private String userId,userName,password
-            ,accountType //账号类别【管理员、老师、学生、其他】
-//            ,accountLevel //账号级别
+            ,accountLevel //账号级别【管理员、老师、学生、其他】
 //            ,accountStatus //账号状态【激活|禁用】
             ,headImg //头像地址
             ,phone;
