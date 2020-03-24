@@ -23,7 +23,8 @@ public class Jxms {
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId; //获取信息列表|查询参数
-    private String userName;
+    private String userName
+            ,userUnit;
 
     //逻辑字段
     private String isSubmit //提交状态【已提交 | 未提交】
@@ -35,10 +36,10 @@ public class Jxms {
     //业务字段 code,objname,personrank,unitrank,level,levelprize,prizetime,certificatecode,grantunit,userId,userName,createdate
     private String code //业务数据编号
             ,level1 //级别，一级下拉框【国家级|北京市级|校级】
-            ,grantUnit; //证书授予机构
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date awardDate; //获奖日期
+            ,title //称号
+            ,grantUnit //证书授予机构
+            ,datetimeYear,datetimeYearStart,datetimeYearEnd; //获奖日期(年)
+
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate; //业务数据录入时间

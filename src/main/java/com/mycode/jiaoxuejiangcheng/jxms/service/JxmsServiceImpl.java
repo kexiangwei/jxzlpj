@@ -9,9 +9,9 @@ import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxuejiangcheng.jxms.domian.Jxms;
 import com.mycode.jiaoxuejiangcheng.jxms.mapper.JxmsMapper;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,12 +33,12 @@ public class JxmsServiceImpl implements JxmsService {
     @Override
     public Map<String, Object> getPageList(Jxms obj) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
-        List<Jxms> pageList = jxmsMapper.getPageList(obj);
-        if(!StringUtils.isEmpty(obj.getShenHeUserId())){
+        if(StringUtils.isNotEmpty(obj.getShenHeUserId())){
             int unShenHeNum = jxmsMapper.getNotShenHeNum(obj.getShenHeUserId());//获取未审核数
             resultMap.put("unShenHeNum", unShenHeNum);
         }
+        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
+        List<Jxms> pageList = jxmsMapper.getPageList(obj);
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;

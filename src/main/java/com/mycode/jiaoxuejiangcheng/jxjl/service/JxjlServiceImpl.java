@@ -9,9 +9,9 @@ import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxuejiangcheng.jxjl.domian.Jxjl;
 import com.mycode.jiaoxuejiangcheng.jxjl.mapper.JxjlMapper;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,12 +33,12 @@ public class JxjlServiceImpl implements JxjlService {
     @Override
     public Map<String, Object> getPageList(Jxjl obj) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
-        List<Jxjl> pageList = jxjlMapper.getPageList(obj);
-        if(!StringUtils.isEmpty(obj.getShenHeUserId())){
+        if(StringUtils.isNotEmpty(obj.getShenHeUserId())){
             int unShenHeNum = jxjlMapper.getNotShenHeNum(obj.getShenHeUserId());//获取未审核数
             resultMap.put("unShenHeNum", unShenHeNum);
         }
+        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
+        List<Jxjl> pageList = jxjlMapper.getPageList(obj);
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;

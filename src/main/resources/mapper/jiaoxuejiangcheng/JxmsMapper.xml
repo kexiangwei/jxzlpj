@@ -2,6 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuejiangcheng.jxms.mapper.JxmsMapper">
 
+    <select id="getNotShenHeNum" resultType="int">
+        SELECT count(0) from (
+            SELECT v.code,v.batch_num
+            ,count(sn.node_code) total_num
+            ,count(item.node_code) exec_num
+            ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+            from V_JXJC_JXMS_SHENHE v
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+            GROUP BY v.code,v.batch_num
+        )t
+        left join V_JXJC_JXMS_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
+        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+        left join sys_user_role ur on ur.role_id = sn.role_id
+        where 1=1
+        and exec_num >= exec_level-1
+        AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
+        AND exec_level > exec_num
+        and ur.user_id = #{shenHeUserId}
+    </select>
+
     <select id="getPageList" resultType="com.mycode.jiaoxuejiangcheng.jxms.domian.Jxms">
         <choose>
             <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
@@ -42,20 +63,6 @@
                 SELECT *
                 from V_JXJC_JXMS v
                 <where>1=1
-                    <if test="isSubmit != null and isSubmit != ''">
-                        <choose>
-                            <when test="isSubmit == '已提交'">
-                                and shenhe_code is not null
-                                and status != '退回'
-                            </when>
-                            <when test="isSubmit == '未提交'">
-                                and (shenhe_code is null or status = '退回')
-                            </when>
-                            <otherwise>
-                                and 1>1
-                            </otherwise>
-                        </choose>
-                    </if>
                     <choose>
                         <when test="status != null and status != '' and status == '待审核'">
                             and shenhe_code is null
@@ -71,43 +78,31 @@
         </choose>
     </select>
     <sql id="queryCondition">
+        <if test="level1 != null and level1 != ''">
+            and level1 = #{level1}
+        </if>
+        <if test="title != null and title != ''">
+            and title = #{title}
+        </if>
+        <if test="datetimeYearStart != null and datetimeYearStart != ''">
+            and datetime_year >= #{datetimeYearStart}
+        </if>
+        <if test="datetimeYearEnd != null and datetimeYearEnd != ''">
+            and datetime_year &lt;= #{datetimeYearEnd}
+        </if>
         <if test="userId != null and userId != '' and userId !=999999">
             and v.user_id = #{userId}
         </if>
         <if test="userName != null and userName != ''">
             and v.user_name = #{userName}
         </if>
-        <if test="grantUnit != null and grantUnit != ''">
-            and grant_unit = #{grantUnit}
-        </if>
     </sql>
-
-    <select id="getNotShenHeNum" resultType="int">
-        SELECT count(0) from (
-            SELECT v.code,v.batch_num
-            ,count(sn.node_code) total_num
-            ,count(item.node_code) exec_num
-            ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-            from V_JXJC_JXMS_SHENHE v
-            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
-            GROUP BY v.code,v.batch_num
-        )t
-        left join V_JXJC_JXMS_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
-        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-        left join sys_user_role ur on ur.role_id = sn.role_id
-        where 1=1
-        and exec_num >= exec_level-1
-        AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
-        AND exec_level > exec_num
-        and ur.user_id = #{shenHeUserId}
-    </select>
 
     <insert id="insert">
           insert into JXJC_JXMS
-          (code,level1,grant_unit,award_date,user_id,user_name,create_date)
+          (code,level1,title,grant_unit,datetime_year,user_id,user_name,user_unit,create_date)
           values
-          (#{code},#{level1},#{grantUnit},#{awardDate},#{userId},#{userName},sysdate)
+          (#{code},#{level1},#{title},#{grantUnit},#{datetimeYear},#{userId},#{userName},#{userUnit},sysdate)
     </insert>
 
     <update id="update">
@@ -116,11 +111,14 @@
             <if test="level1 != null and level1 != ''">
                 level1 = #{level1}
             </if>
+            <if test="title != null and title != ''">
+                , title = #{title}
+            </if>
             <if test="grantUnit !=null and grantUnit !=''">
                 , grant_unit = #{grantUnit}
             </if>
-            <if test="awardDate !=null">
-                , award_date = #{awardDate}
+            <if test="datetimeYear !=null and datetimeYear !=''">
+                , datetime_year = #{datetimeYear}
             </if>
         </set>
         where code = #{code}
