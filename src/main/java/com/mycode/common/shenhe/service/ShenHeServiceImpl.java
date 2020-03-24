@@ -8,10 +8,9 @@ import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeSet;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
-import com.mycode.util.StringUtil;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +87,7 @@ public class ShenHeServiceImpl implements ShenHeService {
 
     @Override
     public String addShenHeNode(ShenHeNode node) {
-        String code = StringUtil.guid(16, false);
+        String code = StringUtils.guid(16, false);
         node.setNodeCode(code);
         List<ShenHeNode> shenheNodeList = shenHeMapper.getShenheNodeList(node.getShenheCode(),null);
         if(shenheNodeList!=null){
@@ -106,7 +105,7 @@ public class ShenHeServiceImpl implements ShenHeService {
     @Override
     public boolean updateShenHeNodeByCode(ShenHeNode node) {
         Integer execLevel = null;
-        if(!StringUtils.isEmpty(node.getSortType())){
+        if(!org.springframework.util.StringUtils.isEmpty(node.getSortType())){
             if(node.getSortType().trim().equalsIgnoreCase("up")){
                 execLevel = node.getExecLevel()-1;
             }

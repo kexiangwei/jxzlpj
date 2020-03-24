@@ -5,10 +5,9 @@ import com.github.pagehelper.PageHelper;
 import com.mycode.system.role.mapper.RoleMapper;
 import com.mycode.system.menu.domain.Menu;
 import com.mycode.system.role.domain.Role;
-import com.mycode.util.StringUtil;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +44,7 @@ public class RoleServiceImpl implements RoleService {
             map.put(menu.getMenuId(),menu);
         }
         for (Menu menu : menuList) {
-            if(StringUtils.isEmpty(menu.getPid())){
+            if(org.springframework.util.StringUtils.isEmpty(menu.getPid())){
                 resultMenuList.add(menu);
             }else{
                 Menu parent = map.get(menu.getPid());
@@ -71,8 +70,8 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public boolean insertOrUodateRoleMenu(String roleId, String roleName, String[] menuIdArr) {
         boolean bool =false;
-        if(StringUtils.isEmpty(roleId)){
-            roleId = StringUtil.guid(16,true);
+        if(org.springframework.util.StringUtils.isEmpty(roleId)){
+            roleId = StringUtils.guid(16,true);
             bool = roleMapper.addRole(roleId,roleName);
             if(bool){
                 bool = roleMapper.addRoleMenu(roleId,menuIdArr);

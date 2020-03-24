@@ -9,10 +9,9 @@ import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxuejiangcheng.jyjxcgj.domian.Jyjxcgj;
 import com.mycode.jiaoxuejiangcheng.jyjxcgj.mapper.JyjxcgjMapper;
-import com.mycode.util.StringUtil;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ public class JyjxcgjServiceImpl implements JyjxcgjService {
     @Override
     public Map<String, Object> getPageList(Jyjxcgj obj) {
         Map<String, Object> resultMap = new HashMap<>();
-        if(StringUtil.isNotEmpty(obj.getShenHeUserId())){
+        if(StringUtils.isNotEmpty(obj.getShenHeUserId())){
             int unShenHeNum = mapper.getNotShenHeNum(obj.getShenHeUserId());//获取未审核数
             resultMap.put("unShenHeNum", unShenHeNum);
         }
@@ -71,7 +70,7 @@ public class JyjxcgjServiceImpl implements JyjxcgjService {
     public boolean toSubimt(String activeShenheCode, List<Jyjxcgj> objList) {
         for (Jyjxcgj obj : objList) {
             obj.setShenheCode(activeShenheCode);
-            obj.setBatchNum(StringUtils.isEmpty(obj.getBatchNum())?1:obj.getBatchNum()+1);//提交批次，每提交一次加1
+            obj.setBatchNum(org.springframework.util.StringUtils.isEmpty(obj.getBatchNum())?1:obj.getBatchNum()+1);//提交批次，每提交一次加1
         }
         return shenHeMapper.batchSubimt(objList);
     }

@@ -2,7 +2,7 @@ package com.mycode.common.hjLevel.service;
 
 
 import com.mycode.common.hjLevel.mapper.HjLevelMapper;
-import com.mycode.util.StringUtil;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +55,7 @@ public class HjLevelServiceImpl implements HjLevelService {
 
     @Override
     public boolean insertHjLevel(String name) {
-        return hjLevelMapper.insertHjLevel(StringUtil.guid(16,true), name);
+        return hjLevelMapper.insertHjLevel(StringUtils.guid(16,true), name);
     }
 
     @Override

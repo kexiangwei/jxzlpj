@@ -9,9 +9,9 @@ import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxuejiangcheng.kchddjl.domian.Kchddjl;
 import com.mycode.jiaoxuejiangcheng.kchddjl.mapper.KchddjlMapper;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,12 +33,12 @@ public class KchddjlServiceImpl implements KchddjlService {
     @Override
     public Map<String, Object> getPageList(Kchddjl obj) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
-        List<Kchddjl> pageList = kchddjlMapper.getPageList(obj);
-        if(!StringUtils.isEmpty(obj.getShenHeUserId())){
+        if(StringUtils.isNotEmpty(obj.getShenHeUserId())){
             int unShenHeNum = kchddjlMapper.getNotShenHeNum(obj.getShenHeUserId());//获取未审核数
             resultMap.put("unShenHeNum", unShenHeNum);
         }
+        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
+        List<Kchddjl> pageList = kchddjlMapper.getPageList(obj);
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
@@ -70,7 +70,7 @@ public class KchddjlServiceImpl implements KchddjlService {
     public boolean toSubimt(String activeShenheCode, List<Kchddjl> objList) {
         for (Kchddjl obj : objList) {
             obj.setShenheCode(activeShenheCode);
-            obj.setBatchNum(StringUtils.isEmpty(obj.getBatchNum())?1:obj.getBatchNum()+1);//提交批次，每提交一次加1
+            obj.setBatchNum(org.springframework.util.StringUtils.isEmpty(obj.getBatchNum())?1:obj.getBatchNum()+1);//提交批次，每提交一次加1
         }
         return shenHeMapper.batchSubimt(objList);
     }

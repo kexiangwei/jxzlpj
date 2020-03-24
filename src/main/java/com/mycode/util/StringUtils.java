@@ -4,7 +4,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.Random;
 
-public class StringUtil {
+public class StringUtils {
 
 	/**
 	 * 生成随机字符
