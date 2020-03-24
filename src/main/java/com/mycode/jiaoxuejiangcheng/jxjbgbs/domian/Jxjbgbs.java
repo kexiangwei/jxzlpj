@@ -19,11 +19,11 @@ public class Jxjbgbs {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId; //获取信息列表|查询参数
-    private String userName;
+    private String userName
+            ,userUnit;
 
     //逻辑字段
     private String isSubmit //提交状态【已提交 | 未提交】
@@ -36,10 +36,9 @@ public class Jxjbgbs {
     private String code //业务数据编号
             ,level1 //级别，一级下拉框【国家级|北京市级|校级】
             ,level2 //奖项，二级下拉框[一等奖|二等奖|三等奖|其他]
-            ,grantUnit; //证书授予机构
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date awardDate; //获奖日期
+            ,grantUnit //证书授予机构
+            ,datetimeYear,datetimeYearStart,datetimeYearEnd; //获奖日期(年)
+
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate; //业务数据录入时间
