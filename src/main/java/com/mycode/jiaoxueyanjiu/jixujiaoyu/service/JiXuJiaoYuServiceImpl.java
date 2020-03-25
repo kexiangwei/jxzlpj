@@ -38,9 +38,9 @@ public class JiXuJiaoYuServiceImpl implements JiXuJiaoYuService {
             map.put("unShenHeNum", unShenHeNum);
         }
         Page<Object> pageInfo = PageHelper.startPage(jiXuJiaoYu.getPageIndex(), jiXuJiaoYu.getPageSize());
-        List<JiXuJiaoYu> list = jiXuJiaoYuMapper.getPageList(jiXuJiaoYu);
+        List<JiXuJiaoYu> pageList = jiXuJiaoYuMapper.getPageList(jiXuJiaoYu);
         map.put("totalNum",pageInfo.getTotal());
-        map.put("pageList", list);
+        map.put("pageList", pageList);
         return map;
     }
 
