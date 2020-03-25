@@ -76,7 +76,6 @@
                     </choose>
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY is_submit DESC,create_date DESC
             </otherwise>
         </choose>
     </select>

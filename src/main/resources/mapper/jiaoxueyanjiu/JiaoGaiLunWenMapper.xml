@@ -23,6 +23,9 @@
         and ur.user_id = #{shenHeUserId}
     </select>
 
+    <!-- ORDER BY is_submit ASC,create_date DESC 踩坑记录
+        返回的数据列表中字段值重复
+    -->
     <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaogailunwen.domian.JiaoGaiLunWen">
         <choose>
             <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
@@ -75,7 +78,6 @@
                     </choose>
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY is_submit ASC,create_date DESC
             </otherwise>
         </choose>
     </select>

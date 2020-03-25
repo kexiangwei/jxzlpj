@@ -28,18 +28,23 @@ public class JiaoGaiLunWen {
     private String isSubmit //提交状态【已提交 | 未提交】
             ,shenheCode;//审核编号
     private Integer batchNum; //提交批次
-    private String status //数据状态：【审核中 | 通过 | 退回】
-            ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
+    private String status //提交列表审核状态
+            ,shenheStatus; //审核列表审核状态
 
     //业务字段
-    private String code,lwTitle
-            ,qkName,qkType
-            ,dyAuthorCode,dyAuthorName
-            ,txAuthorCode,txAuthorName
-            ,fbTime //发表时间,格式：xx年xx期
+    private String code
+            ,lwTitle
+            ,qkName
+            ,qkType
+            ,dyAuthorCode
+            ,dyAuthorName
+            ,txAuthorCode
+            ,txAuthorName
+            ,fbTime //发表时间,格式：publishYear年publishIssue期
             ,publishYear //发表时间：xx年
             ,publishIssue; //发表时间：xx期
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     private Date createDate;
 
 }
