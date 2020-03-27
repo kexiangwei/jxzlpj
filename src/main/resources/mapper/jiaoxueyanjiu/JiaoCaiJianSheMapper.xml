@@ -2,90 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxueyanjiu.jiaocaijianshe.mapper.JiaoCaiJianSheMapper">
 
-    <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaocaijianshe.domian.JiaoCaiJianShe">
-        <choose>
-            <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
-                SELECT j.*
-                ,(case when  ur.role_id = is_back then '退回' when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
-                from (
-                    SELECT j.code,j.batch_num
-                    ,count(sn.node_code) total_num
-                    ,count(item.node_code) exec_num
-                    ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-                    from V_JXYJ_JCJS_SHENHE j
-                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-                    left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-                    GROUP BY j.code,j.batch_num
-                )t
-                left join V_JXYJ_JCJS_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
-                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-                left join sys_user_role ur on ur.role_id = sn.role_id
-                <where>1=1
-                    and exec_num >= exec_level-1
-                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
-                    and ur.user_id = #{shenHeUserId}
-                    <if test="shenheStatus != null and shenheStatus != ''">
-                        <choose>
-                            <when test="shenheStatus == '已审核'">
-                                and exec_num >= exec_level
-                            </when>
-                            <when test="shenheStatus == '未审核'">
-                                and exec_level > exec_num
-                            </when>
-                            <when test="shenheStatus == '退回'">
-                                and ur.role_id = is_back
-                            </when>
-                        </choose>
-                    </if>
-                    <include refid="queryCondition"/>
-                </where>
-                ORDER BY shenhe_status DESC
-            </when>
-            <otherwise><!-- 提交列表 -->
-                SELECT j.*
-                ,(case when shenhe_code is not null then '已提交' else '未提交' end ) is_submit
-                from V_JXYJ_JCJS j
-                <where>1=1
-                    <if test="isSubmit != null and isSubmit != ''">
-                        <choose>
-                            <when test="isSubmit == '已提交'">
-                                and shenhe_code is not null
-                            </when>
-                            <when test="isSubmit == '未提交'">
-                                and shenhe_code is null
-                            </when>
-                            <otherwise>
-                                and 1>1
-                            </otherwise>
-                        </choose>
-                    </if>
-                    <if test="status != null and status != ''">
-                        and status = #{status}
-                    </if>
-                    <include refid="queryCondition"/>
-                </where>
-                ORDER BY is_submit DESC,create_date DESC
-            </otherwise>
-        </choose>
-    </select>
-    <sql id="queryCondition">
-        <if test="userId != null and userId != '' and userId !=999999">
-            and j.user_id = #{userId}
-        </if>
-        <if test="userName != null and userName != ''">
-            and j.user_name = #{userName}
-        </if>
-        <if test="name != null and name != ''">
-            and name = #{name}
-        </if>
-        <if test="category != null and category != ''">
-            and category = #{category}
-        </if>
-        <if test="publishers != null and publishers != ''">
-            and publishers = #{publishers}
-        </if>
-    </sql>
-
     <select id="getNotShenHeNum" resultType="int">
         SELECT count(0) from (
             SELECT j.code,j.batch_num
@@ -106,6 +22,72 @@
         AND exec_level > exec_num
         and ur.user_id = #{shenHeUserId}
     </select>
+
+    <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaocaijianshe.domian.JiaoCaiJianShe">
+        <choose>
+            <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
+                SELECT v.*
+                ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                from (
+                    SELECT v.code,v.batch_num
+                    ,count(sn.node_code) total_num
+                    ,count(item.node_code) exec_num
+                    ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+                    from V_JXYJ_JCJS_SHENHE v
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                    left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                    GROUP BY v.code,v.batch_num
+                ) t
+                left join V_JXYJ_JCJS_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
+                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
+                <where>1=1
+                    and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
+                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END) -- 排除上一级状态值为‘退回’的数据
+                    and ur.user_id = #{shenHeUserId}
+                    <if test="shenheStatus != null and shenheStatus != ''">
+                        <choose>
+                            <when test="shenheStatus == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatus == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <include refid="queryCondition"/>
+                </where>
+                ORDER BY shenhe_status DESC
+            </when>
+            <otherwise><!-- 提交列表 -->
+                SELECT *
+                from V_JXYJ_JCJS v
+                <where>1=1
+                    <choose>
+                        <when test="status != null and status != '' and status == '待审核'">
+                            and shenhe_code is null
+                        </when>
+                        <when test="status != null and status != ''">
+                            and status = #{status}
+                        </when>
+                    </choose>
+                    <include refid="queryCondition"/>
+                </where>
+                ORDER BY is_submit ASC,create_date DESC
+            </otherwise>
+        </choose>
+    </select>
+    <sql id="queryCondition">
+        <if test="userId != null and userId != '' and userId !=999999">
+            and v.user_id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            and v.user_name = #{userName}
+        </if>
+        <if test="name != null and name != ''">
+            and name like concat(concat('%',#{name}),'%')
+        </if>
+    </sql>
 
     <insert id="insert">
           insert into JXYJ_JCJS
@@ -144,6 +126,10 @@
         </set>
         where code = #{code}
     </update>
+
+    <delete id="delete">
+        delete from JXYJ_JCJS where code = #{code}
+    </delete>
 
     <update id="batchSubimt">
         insert all

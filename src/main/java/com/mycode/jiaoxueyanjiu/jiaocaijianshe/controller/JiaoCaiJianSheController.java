@@ -21,8 +21,6 @@ import java.util.Map;
 
 /**
  * 教学研究-教材建设
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @CrossOrigin
 @Controller
@@ -46,9 +44,9 @@ public class JiaoCaiJianSheController {
     public JsonResult<Object> insert(JiaoCaiJianShe jiaoCaiJianShe){
         boolean bool = jiaoCaiJianSheService.insert(jiaoCaiJianShe);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("新增成功",null);
     }
 
     @ResponseBody
@@ -56,9 +54,9 @@ public class JiaoCaiJianSheController {
     public JsonResult<Object> update(JiaoCaiJianShe jiaoCaiJianShe){
         boolean bool = jiaoCaiJianSheService.update(jiaoCaiJianShe);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("修改失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("修改成功",null);
     }
 
     @ResponseBody
@@ -66,9 +64,9 @@ public class JiaoCaiJianSheController {
     public JsonResult<Object> delete(@RequestParam("code") String code){
         boolean bool = jiaoCaiJianSheService.delete(code);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("删除失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("删除成功",null);
     }
 
     /**
@@ -89,7 +87,7 @@ public class JiaoCaiJianSheController {
         if(!bool){
             return JsonResult.error("提交失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("提交成功",null);
     }
 
     /**
@@ -103,8 +101,8 @@ public class JiaoCaiJianSheController {
         List<JiaoCaiJianShe> jiaoCaiJianSheList = JSON.parseArray(jsonStr, JiaoCaiJianShe.class);
         boolean bool = jiaoCaiJianSheService.toShenhe(item,jiaoCaiJianSheList);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("审核失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("审核成功",null);
     }
 }

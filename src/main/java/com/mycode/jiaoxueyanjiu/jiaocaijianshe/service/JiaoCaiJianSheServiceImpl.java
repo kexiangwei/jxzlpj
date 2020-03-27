@@ -9,11 +9,9 @@ import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jiaocaijianshe.domian.JiaoCaiJianShe;
 import com.mycode.jiaoxueyanjiu.jiaocaijianshe.mapper.JiaoCaiJianSheMapper;
-import com.mycode.jiaoxueyanjiu.jiaogailunwen.domian.JiaoGaiLunWen;
-import com.mycode.jiaoxueyanjiu.jiaogailunwen.mapper.JiaoGaiLunWenMapper;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +19,6 @@ import java.util.Map;
 
 /**
  * 教学研究-教材建设
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @Service
 public class JiaoCaiJianSheServiceImpl implements JiaoCaiJianSheService {
@@ -37,12 +33,12 @@ public class JiaoCaiJianSheServiceImpl implements JiaoCaiJianSheService {
     @Override
     public Map<String, Object> getPageList(JiaoCaiJianShe jiaoCaiJianShe) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(jiaoCaiJianShe.getPageIndex(), jiaoCaiJianShe.getPageSize());
-        List<JiaoCaiJianShe> list = jiaoCaiJianSheMapper.getPageList(jiaoCaiJianShe);
-        if(!StringUtils.isEmpty(jiaoCaiJianShe.getShenHeUserId())){
+        if(StringUtils.isNotEmpty(jiaoCaiJianShe.getShenHeUserId())){
             int unShenHeNum = jiaoCaiJianSheMapper.getNotShenHeNum(jiaoCaiJianShe.getShenHeUserId());//获取未审核数
             resultMap.put("unShenHeNum", unShenHeNum);
         }
+        Page<Object> pageInfo = PageHelper.startPage(jiaoCaiJianShe.getPageIndex(), jiaoCaiJianShe.getPageSize());
+        List<JiaoCaiJianShe> list = jiaoCaiJianSheMapper.getPageList(jiaoCaiJianShe);
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", list);
         return resultMap;
@@ -91,13 +87,13 @@ public class JiaoCaiJianSheServiceImpl implements JiaoCaiJianSheService {
             item.setNodeName(node.getNodeName());
             bool = shenHeMapper.toShenhe(item); //提交审核
             if(bool){
-                if(item.getStatus().equals("通过")){
-                    int isPass = jiaoCaiJianSheMapper.isShenhePass(item.getRelationCode(), item.getBatchNum());
-                    if(isPass == 1){
-                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"通过");
-                    }
-                }else if(item.getStatus().equals("退回")){
+                if(item.getStatus().equals("退回")){
                     return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
+                } else { // 通过 | 未通过
+                    int isPass = shenHeMapper.isShenhePass("V_JXYJ_JCJS_SHENHE",item.getRelationCode(), item.getBatchNum());
+                    if(isPass == 1){
+                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),item.getStatus());
+                    }
                 }
             }
         }

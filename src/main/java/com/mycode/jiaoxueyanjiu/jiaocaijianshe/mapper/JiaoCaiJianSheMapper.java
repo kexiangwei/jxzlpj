@@ -11,21 +11,18 @@ import java.util.List;
 
 /**
  * 教学研究-教材建设
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @Mapper
 public interface JiaoCaiJianSheMapper {
 
-    List<JiaoCaiJianShe> getPageList(JiaoCaiJianShe jiaoCaiJianShe);
-
     int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+
+    List<JiaoCaiJianShe> getPageList(JiaoCaiJianShe jiaoCaiJianShe);
 
     boolean insert(JiaoCaiJianShe jiaoCaiJianShe);
 
     boolean update(JiaoCaiJianShe jiaoCaiJianShe);
 
-    @Delete("delete from JXYJ_JCJS where code = #{code}")
     boolean delete(@Param("code") String code);
 
     boolean batchSubimt(@Param("jiaoCaiJianSheList") List<JiaoCaiJianShe> jiaoCaiJianSheList);

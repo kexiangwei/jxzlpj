@@ -9,8 +9,6 @@ import java.util.Map;
 
 /**
  * 教学研究-教材建设
- * @auther kexiangwei
- * @date 2019/11/13
  */
 public interface JiaoCaiJianSheService {
 

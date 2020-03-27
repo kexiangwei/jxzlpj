@@ -10,8 +10,6 @@ import java.util.Date;
 
 /**
  * 教学研究-教材建设
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @Getter
 @Setter
@@ -21,19 +19,6 @@ public class JiaoCaiJianShe {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-    //业务字段
-    private String code //编号
-            ,name //名称
-            ,category //类别：教材，专著（专著、译著、辞书）
-            ,participationType //参与形式：主编、副主编、参编
-            ,isbn
-            ,publishers //出版社
-            ,selected; //教材入选情况：国家规划教材、省部级规划教材、国家级精品教材、省部级精品教材、其他
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date publishingTime //出版时间
-            ,selectedTime //入选时间
-            ,createDate; //创建时间
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId;
@@ -45,6 +30,18 @@ public class JiaoCaiJianShe {
     private String status //数据状态：【审核中 | 通过 | 退回】
             ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
 
-
-
+    //业务字段
+    private String code //编号
+            ,name //名称
+            ,category //类别：教材，专著（专著、译著、辞书）
+            ,participationType //参与形式：主编、副主编、参编
+            ,isbn
+            ,publishers //出版社
+            ,publishingTime //出版时间
+            ,selected //教材入选情况：国家规划教材、省部级规划教材、国家级精品教材、省部级精品教材、其他
+            ,selectedTime; //入选时间
+    //
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createDate; //业务数据录入时间
 }
