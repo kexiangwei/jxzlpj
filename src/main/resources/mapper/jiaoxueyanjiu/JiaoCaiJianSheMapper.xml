@@ -73,7 +73,6 @@
                     </choose>
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY is_submit ASC,create_date DESC
             </otherwise>
         </choose>
     </select>
