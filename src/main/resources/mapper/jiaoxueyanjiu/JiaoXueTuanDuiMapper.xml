@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper.JiaoXueTuanDuiMapper">
 
+    <select id="getNotShenHeNum" resultType="int">
+        SELECT count(0)
+        from V_JXYJ_JXTD_SHENHE v
+        LEFT JOIN (SELECT * FROM COMMON_SHENHE_ITEM where USER_ID = #{shenHeUserId}) item on item.relation_code = v.code and item.batch_num = v.batch_num
+        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+        left join sys_user_role ur on ur.role_id = sn.role_id
+        where item.relation_code is null and ur.user_id = #{shenHeUserId}
+    </select>
+
     <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui">
         <choose>
             <when test="shenHeUserId !=null and shenHeUserId !='' and isPsAccount == 1"><!-- 审核列表 -->
@@ -57,35 +66,18 @@
             </when>
             <otherwise><!-- 提交列表 -->
                 SELECT v.*
-                ,(case when shenhe_code is null or STATUS = '退回' THEN '未提交'  else '已提交' end ) is_submit
-                ,memberIds,memberNames
                 from V_JXYJ_JXTD v
-                LEFT JOIN (
-                    SELECT relation_code
-                    ,listagg(user_name,',') within group(order by user_id) memberNames
-                    ,listagg(user_id,',') within group(order by user_id) memberIds
-                    FROM JXYJ_JXTD_MEMBER GROUP BY relation_code
-                ) m on m.relation_code = v.code
                 <where>1=1
-                    <if test="isSubmit != null and isSubmit != ''">
-                        <choose>
-                            <when test="isSubmit == '已提交'">
-                                and shenhe_code is not null
-                            </when>
-                            <when test="isSubmit == '未提交'">
-                                and shenhe_code is null
-                            </when>
-                            <otherwise>
-                                and 1>1
-                            </otherwise>
-                        </choose>
-                    </if>
-                    <!--<if test="status != null and status != ''">
-                        and status = #{status}
-                    </if>-->
+                    <choose>
+                        <when test="status != null and status != '' and status == '待审核'">
+                            and shenhe_code is null
+                        </when>
+                        <when test="status != null and status != ''">
+                            and status = #{status}
+                        </when>
+                    </choose>
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY is_submit DESC,v.create_date DESC
             </otherwise>
         </choose>
     </select>
@@ -96,50 +88,35 @@
         <if test="userName != null and userName != ''">
             and v.USER_NAME = #{userName}
         </if>
-        <if test="teamCode != null and teamCode != ''">
-            and v.TEAM_CODE = #{teamCode}
-        </if>
         <if test="teamName != null and teamName != ''">
-            and v.TEAM_NAME = #{teamName}
-        </if>
-        <if test="teamLeader != null and teamLeader != ''">
-            and v.TEAM_LEADER = #{teamLeader}
+            and v.TEAM_NAME like concat(concat('%',#{teamName}),'%')
         </if>
     </sql>
 
-    <select id="getNotShenHeNum" resultType="int">
-        SELECT count(0)
-        from V_JXYJ_JXTD_SHENHE v
-        LEFT JOIN (SELECT * FROM COMMON_SHENHE_ITEM where USER_ID = #{shenHeUserId}) item on item.relation_code = v.code and item.batch_num = v.batch_num
-        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-        left join sys_user_role ur on ur.role_id = sn.role_id
-        where item.relation_code is null and ur.user_id = #{shenHeUserId}
-    </select>
-
     <insert id="insert">
           insert into JXYJ_JXTD
-          (code,team_code,team_name,create_time,team_leader,team_leader_id,sbs,middle_report,middle_result,final_report,final_result,user_id,user_name,create_date)
+          (code,team_name,regist_date,team_leader,team_leader_id,team_leader_unit,sbs,middle_report,middle_result,final_report,final_result,user_id,user_name,create_date)
           values
-          (#{code},#{teamCode},#{teamName},#{createTime},#{teamLeader},#{teamLeaderId},#{sbs},#{middleReport},'未评审',#{finalReport},'未评审',#{userId},#{userName},CURRENT_DATE)
+          (#{code},#{teamName},#{registDate},#{teamLeader},#{teamLeaderId},#{teamLeaderUnit},#{sbs},#{middleReport},'未评审',#{finalReport},'未评审',#{userId},#{userName},CURRENT_DATE)
     </insert>
 
     <update id="update">
         update JXYJ_JXTD
         <set>
-            <if test="teamCode != null and teamCode != ''">
-                team_code = #{teamCode}
-            </if>
             <if test="teamName != null and teamName != ''">
                 , team_name = #{teamName}
             </if>
-            <if test="createTime != null">
-                , create_time = #{createTime}
+            <if test="registDate != null">
+                , regist_date = #{registDate}
             </if>
             <if test="teamLeader != null and teamLeader != ''">
                 , team_leader = #{teamLeader}
             </if>
             <if test="teamLeaderId !=null and teamLeaderId !=''">
                 , team_leader_id = #{teamLeaderId}
+            </if>
+            <if test="teamLeaderUnit !=null and teamLeaderUnit !=''">
+                , team_leader_unit = #{teamLeaderUnit}
             </if>
             <if test="sbs !=null">
                 , sbs = #{sbs}
@@ -159,6 +136,10 @@
         </set>
         where code = #{code}
     </update>
+
+    <delete id="delete">
+        delete from JXYJ_JXTD where code = #{code}
+    </delete>
 
     <insert id="batchSubimt">
         insert all
@@ -228,11 +209,11 @@
 
     <insert id="insertPingShenInfo">
         INSERT into JXYJ_JXTD_PS
-        (RELATION_CODE,BATCH_NUM,PINGSHEN_TYPE,TEAM_CODE,TEAM_NAME,TEAM_LEADER,TEAM_LEADER_ID
+        (RELATION_CODE,BATCH_NUM,PINGSHEN_TYPE,TEAM_NAME,TEAM_LEADER,TEAM_LEADER_ID
         ,TARGET_TEAM_BUILDING_PLAN,TARGET_TEAM_COMPOSE,TARGET_TEAM_LEADER,TARGET_TEACHING_WORK,TARGET_TEACHING_RESEARCH,TARGET_INNOVATION_AND_ENTREPRE,TARGET_TEACHER_TRAINING,TOTAL_SCORE,PINGSHEN_OPINION
         ,USER_ID,USER_NAME,CREATE_DATE)
         VALUES
-        (#{relationCode},#{batchNum},#{pingshenType},#{teamCode},#{teamName},#{teamLeader},#{teamLeaderId }
+        (#{relationCode},#{batchNum},#{pingshenType},#{teamName},#{teamLeader},#{teamLeaderId }
         ,#{targetTeamBuildingPlan},#{targetTeamCompose},#{targetTeamLeader},#{targetTeachingWork},#{targetTeachingResearch},#{targetInnovationAndEntrepre},#{targetTeacherTraining},#{totalScore},#{pingshenOpinion}
         ,#{userId},#{userName},CURRENT_DATE)
     </insert>
@@ -240,4 +221,5 @@
     <delete id="deletePingShenInfo">
         delete from JXYJ_JXTD_PS WHERE RELATION_CODE = #{relationCode} AND BATCH_NUM =  #{batchNum} AND PINGSHEN_TYPE = #{pingshenType} AND USER_ID = #{userId}
     </delete>
+
 </mapper>

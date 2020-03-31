@@ -11,9 +11,9 @@ import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper.JiaoXueTuanDuiMapper;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +21,6 @@ import java.util.Map;
 
 /**
  * 教学研究-教学团队
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @Service
 public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
@@ -38,7 +36,7 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
     public Map<String, Object> getPageList(JiaoXueTuanDui jiaoXueTuanDui) {
         Map<String, Object> resultMap = new HashMap<>();
         //
-        if(!StringUtils.isEmpty(jiaoXueTuanDui.getShenHeUserId())){
+        if(StringUtils.isNotEmpty(jiaoXueTuanDui.getShenHeUserId())){
             //判断是否为评审账号
             Integer isPsAccount = jiaoXueTuanDuiMapper.isPsAccount(jiaoXueTuanDui.getShenHeUserId());
             jiaoXueTuanDui.setIsPsAccount(isPsAccount);
@@ -49,11 +47,6 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
         //
         Page<Object> pageInfo = PageHelper.startPage(jiaoXueTuanDui.getPageIndex(), jiaoXueTuanDui.getPageSize());
         List<JiaoXueTuanDui> pageList = jiaoXueTuanDuiMapper.getPageList(jiaoXueTuanDui);
-        if(pageList !=null && pageList.size() >0){
-            pageList.forEach(jxtd -> {
-                jxtd.setMemberList(jiaoXueTuanDuiMapper.getMemberList(jxtd.getCode()));
-            });
-        }
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
@@ -153,21 +146,6 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
             }
         }
         return jiaoXueTuanDuiMapper.insertPingShenInfo(pingShen);
-    }
-
-    @Override
-    public List<Map<String, Object>> getMemberList(String relationCode) {
-        return jiaoXueTuanDuiMapper.getMemberList(relationCode);
-    }
-
-    @Override
-    public boolean insertMember(String relationCode, String userId, String userName) {
-        return jiaoXueTuanDuiMapper.insertMember(relationCode,userId,userName);
-    }
-
-    @Override
-    public boolean deleteMember(String relationCode, String userId) {
-        return jiaoXueTuanDuiMapper.deleteMember(relationCode,userId);
     }
 
 }

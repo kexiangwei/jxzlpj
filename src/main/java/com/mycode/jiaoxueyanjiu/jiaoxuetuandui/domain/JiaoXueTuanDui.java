@@ -12,8 +12,6 @@ import java.util.Map;
 
 /**
  * 教学研究-教学团队
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @Getter
 @Setter
@@ -23,26 +21,8 @@ public class JiaoXueTuanDui {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-
-    //业务字段
-    private String code //业务编号
-            ,teamCode //团队编号
-            ,teamName //团队名称
-            ,teamLeader //团队负责人姓名
-            ,teamLeaderId ; //团队负责人工号
-    private String memberIds
-            ,memberNames;
-    private List<Map<String,Object>> memberList; //团队成员信息【{工号：“”，姓名：“”}】
     //
-    private String sbs //申报书
-            ,middleReport //中期报告
-            ,middleResult //中期考核结果,默认【未审核】，提交后 -> 根据评委评分结果 -> 管理员确认后，结果更新为【已审核】
-            ,finalReport //总结报告
-            ,finalResult; //最终考核结果,默认【未审核】，提交后 -> 根据评委评分结果 -> 管理员确认后，结果更新为【已审核】
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date createTime //团队建立时间
-            ,createDate; //数据提交时间
+    private Integer isPsAccount; //是否为评审账号（即拥有评审角色的账号）
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId;
@@ -53,5 +33,22 @@ public class JiaoXueTuanDui {
     private Integer batchNum; //提交批次
     private String status //数据状态：【审核中 | 通过 | 退回】
             ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
-    private Integer isPsAccount; //是否为评审账号（即拥有评审角色的账号）
+
+    //业务字段
+    private String code //业务编号
+            ,teamName //团队名称
+            ,teamLeader //团队负责人姓名
+            ,teamLeaderId //团队负责人工号
+            ,teamLeaderUnit; //团队负责人单位
+    //
+    private String sbs //申报书
+            ,middleReport //中期报告
+            ,middleResult //中期考核结果,默认【未审核】，提交后 -> 根据评委评分结果 -> 管理员确认后，结果更新为【已审核】
+            ,finalReport //总结报告
+            ,finalResult; //最终考核结果,默认【未审核】，提交后 -> 根据评委评分结果 -> 管理员确认后，结果更新为【已审核】
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date registDate //团队建立时间
+            ,createDate; //数据提交时间
+
 }

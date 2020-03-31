@@ -10,8 +10,6 @@ import java.util.Map;
 
 /**
  * 教学研究-教学团队
- * @auther kexiangwei
- * @date 2019/11/13
  */
 public interface JiaoXueTuanDuiService {
 
@@ -33,9 +31,4 @@ public interface JiaoXueTuanDuiService {
 
     boolean insertPingShenInfo(PingShen pingShen);
 
-    List<Map<String, Object>> getMemberList(String relationCode);
-
-    boolean insertMember(String relationCode, String userId, String userName);
-
-    boolean deleteMember(String relationCode, String userId);
 }

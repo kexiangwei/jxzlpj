@@ -21,8 +21,6 @@ import java.util.Map;
 
 /**
  * 教学研究-教学团队
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @CrossOrigin
 @Controller
@@ -129,34 +127,6 @@ public class JiaoXueTuanDuiController {
         boolean isSuccessful = jiaoXueTuanDuiService.insertPingShenInfo(pingShen);
         if(!isSuccessful){
             JsonResult.error();
-        }
-        return JsonResult.success();
-    }
-
-    @ResponseBody
-    @RequestMapping("/getMemberList.do")
-    public JsonResult<Object> getMemberList(@RequestParam("relationCode") String relationCode){
-        List<Map<String,Object>> memberList = jiaoXueTuanDuiService.getMemberList(relationCode);
-        return JsonResult.success(memberList);
-    }
-    @ResponseBody
-    @RequestMapping("/insertMember.do")
-    public JsonResult<Object> insertMember(@RequestParam("relationCode") String relationCode
-            ,@RequestParam("userId") String userId
-            ,@RequestParam("userName") String userName){
-        boolean bool = jiaoXueTuanDuiService.insertMember(relationCode,userId,userName);
-        if(!bool){
-            return JsonResult.error();
-        }
-        return JsonResult.success();
-    }
-    @ResponseBody
-    @RequestMapping("/deleteMember.do")
-    public JsonResult<Object> deleteMember(@RequestParam("relationCode") String relationCode
-            ,@RequestParam("userId") String userId){
-        boolean bool = jiaoXueTuanDuiService.deleteMember(relationCode,userId);
-        if(!bool){
-            return JsonResult.error();
         }
         return JsonResult.success();
     }
