@@ -22,7 +22,7 @@ public class JiaoXueTuanDui {
     private Integer pageIndex=1
             ,pageSize=10;
     //
-    private Integer isPsAccount; //是否为评审账号（即拥有评审角色的账号）
+    private Integer isPsAccount; //是否为专家评审账号（即拥有专家评审角色的账号）
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId;
@@ -43,10 +43,10 @@ public class JiaoXueTuanDui {
     //
     private String sbs //申报书
             ,middleReport //中期报告
-            ,middleResult //中期考核结果,默认【未审核】，提交后 -> 根据评委评分结果 -> 管理员确认后，结果更新为【已审核】
+            ,middleResult //中期考核结果,默认【未审核】，提交后 -> 根据专家评审结果 -> 教务处管理员确认后，结果更新为【已审核】
             ,finalReport //总结报告
-            ,finalResult; //最终考核结果,默认【未审核】，提交后 -> 根据评委评分结果 -> 管理员确认后，结果更新为【已审核】
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
+            ,finalResult; //最终考核结果,默认【未审核】，提交后 -> 根据专家评审结果 -> 教务处管理员确认后，结果更新为【已审核】
+    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date registDate //团队建立时间
             ,createDate; //数据提交时间
