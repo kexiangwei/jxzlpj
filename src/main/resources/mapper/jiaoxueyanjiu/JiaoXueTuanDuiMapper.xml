@@ -90,7 +90,7 @@
           insert into JXYJ_JXTD
           (code,team_name,regist_date,team_leader,team_leader_id,team_leader_unit,sbs,middle_report,middle_result,final_report,final_result,user_id,user_name,create_date)
           values
-          (#{code},#{teamName},#{registDate},#{teamLeader},#{teamLeaderId},#{teamLeaderUnit},#{sbs},#{middleReport},'未评审',#{finalReport},'未评审',#{userId},#{userName},CURRENT_DATE)
+          (#{code},#{teamName},#{registDate},#{teamLeader},#{teamLeaderId},#{teamLeaderUnit},#{sbs,jdbcType=VARCHAR},#{middleReport,jdbcType=VARCHAR},'未评审',#{finalReport,jdbcType=VARCHAR},'未评审',#{userId},#{userName},CURRENT_DATE)
     </insert>
 
     <update id="update">
