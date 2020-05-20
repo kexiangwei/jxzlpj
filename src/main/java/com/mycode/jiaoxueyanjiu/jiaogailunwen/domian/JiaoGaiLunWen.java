@@ -38,11 +38,13 @@ public class JiaoGaiLunWen {
             ,qkType
             ,dyAuthorCode
             ,dyAuthorName
+            ,dyAuthorUnit
             ,txAuthorCode
             ,txAuthorName
-            ,fbTime //发表时间,格式：publishYear年publishIssue期
-            ,publishYear //发表时间：xx年
-            ,publishIssue; //发表时间：xx期
+            ,txAuthorUnit
+//            ,fbTime //发表时间,格式：publishYear年publishIssue期
+            ,publishYear; //发表时间：xx年
+//            ,publishIssue; //发表时间：xx期
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     private Date createDate;

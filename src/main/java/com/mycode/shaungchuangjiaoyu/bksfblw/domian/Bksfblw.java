@@ -38,7 +38,7 @@ public class Bksfblw {
             ,lwTitle //论文题目
             ,qkName //期刊名称
             ,publishYear //发表时间：xx年
-            ,publishIssue //发表时间：xx期
+//            ,publishIssue //发表时间：xx期
             ,includStatus; //收录情况【SCI、SSCI、EI、CPCI、A&HCI、CSCD、CSSCI、北大中文核心期刊、其他期刊】
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
