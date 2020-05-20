@@ -7,11 +7,9 @@ import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxuesheji.jxdg.domain.Course;
 import com.mycode.jiaoxuesheji.jxdg.mapper.JxdgMapper;
-import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
-import com.mycode.jiaoxueyanjiu.jixujiaoyu.domian.JiXuJiaoYu;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +31,7 @@ public class JxdgServiceImpl implements JxdgService {
     @Override
     public Map<String, Object> getCourseList(Course course) {
         Map<String, Object> resultMap = new HashMap<>();
-        if(!StringUtils.isEmpty(course.getShenHeUserId())){
+        if(StringUtils.isNotEmpty(course.getShenHeUserId())){
             resultMap.put("unShenHeNum", jxdgMapper.getNotShenHeNum(course.getShenHeUserId())); //获取未审核数
         }
         Page<Object> pageInfo = PageHelper.startPage(course.getPageIndex(), course.getPageSize());

@@ -15,9 +15,9 @@ import java.util.List;
 @Mapper
 public interface JxdgMapper {
 
-    List<Course> getCourseList(Course course);
-
     Integer getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
+
+    List<Course> getCourseList(Course course);
 
     boolean batchSubimt(@Param("courseList") List<Course> courseList);
 

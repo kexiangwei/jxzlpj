@@ -21,6 +21,12 @@ public class Course {
     private String shenHeUserId
             ,userId,userName
             ,courseCode,courseName;
+    //逻辑字段
+    private String isSubmit //提交状态【已提交 | 未提交】
+            ,shenheCode;//审核编号
+    private Integer batchNum; //提交批次
+    private String status //数据状态：【审核中 | 通过 | 退回】
+            ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
 
     //业务字段
     private String code
@@ -29,12 +35,5 @@ public class Course {
             ,score
             ,stuHour
             ,collegeName;
-
-    //逻辑字段
-    private String isSubmit //提交状态【已提交 | 未提交】
-            ,shenheCode;//审核编号
-    private Integer batchNum; //提交批次
-    private String status //数据状态：【审核中 | 通过 | 退回】
-            ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
 
 }
