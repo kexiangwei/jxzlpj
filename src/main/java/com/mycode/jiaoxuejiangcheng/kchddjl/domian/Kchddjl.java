@@ -35,6 +35,7 @@ public class Kchddjl {
 
     //业务字段
     private String code //业务数据编号
+            ,courseName //课程名称
             ,objName //奖项名称
             ,level1 //奖励级别，一级下拉框【国家级|北京市级|校级】
             ,level2 //获得奖项，二级下拉框[特等奖|一等奖|二等奖|三等奖|其他]

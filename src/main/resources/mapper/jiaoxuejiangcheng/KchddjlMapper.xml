@@ -94,16 +94,19 @@
 
     <insert id="insert">
           insert into JXJC_KCHDDJL
-          (code,obj_name,level1,level2,grant_unit,datetime_year,user_id,user_name,user_unit,create_date)
+          (code,course_name,obj_name,level1,level2,grant_unit,datetime_year,user_id,user_name,user_unit,create_date)
           values
-          (#{code},#{objName},#{level1},#{level2},#{grantUnit},#{datetimeYear},#{userId},#{userName},#{userUnit},sysdate)
+          (#{code},#{courseName},#{objName},#{level1},#{level2},#{grantUnit},#{datetimeYear},#{userId},#{userName},#{userUnit},sysdate)
     </insert>
 
     <update id="update">
         update JXJC_KCHDDJL
         <set>
+            <if test="courseName != null and courseName != ''">
+                course_name = #{courseName}
+            </if>
             <if test="objName != null and objName != ''">
-                obj_name = #{objName}
+                , obj_name = #{objName}
             </if>
             <if test="level1 != null and level1 != ''">
                 , level1 = #{level1}
