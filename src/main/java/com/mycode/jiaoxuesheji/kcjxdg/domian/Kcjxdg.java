@@ -20,15 +20,15 @@ public class Kcjxdg {
     private Integer pageIndex=1
             ,pageSize=10;
     //
-    private Integer userId; //获取业务数据列表参数
+    private Integer shenHeUserId //获取审核数据列表参数
+            ,userId; //获取业务数据列表参数
     private String userName;
-    private String isSubmit; //提交状态【已提交 | 未提交】
+
+    private String isSubmit //提交状态【已提交 | 未提交】
+            ,shenheCode; //审核编号
     private Integer batchNum; //提交批次
-    private String status; //数据状态：【审核中 | 通过 | 退回】
-    //
-    private Integer shenHeUserId; //获取审核数据列表参数
-    private String shenheCode;//审核编号
-    private String shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
+    private String status //数据状态：【审核中 | 通过 | 退回】
+            ,shenheStatus; //审核状态：【已审核 | 待审核 | 退回】
 
     //业务字段
     private String code //业务数据编号

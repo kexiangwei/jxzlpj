@@ -1,4 +1,4 @@
-package com.mycode.jiaoxuexiaoguo.sjfx.domian;
+package com.mycode.jiaoxuexiaoguo.kcxj.domian;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class Sjfx {
+public class Kcxj {
 
     //分页参数
     @JsonIgnore

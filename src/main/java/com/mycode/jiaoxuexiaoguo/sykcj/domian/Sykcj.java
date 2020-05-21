@@ -1,4 +1,4 @@
-package com.mycode.jiaoxuexiaoguo.sjfx.domian;
+package com.mycode.jiaoxuexiaoguo.sykcj.domian;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class Sjfx {
+public class Sykcj {
 
     //分页参数
     @JsonIgnore
@@ -33,6 +33,7 @@ public class Sjfx {
             , major //适用专业
             , courseCode //课程编号
             , courseName; //课程名称
+    private Double score; //实验课成绩
     //
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

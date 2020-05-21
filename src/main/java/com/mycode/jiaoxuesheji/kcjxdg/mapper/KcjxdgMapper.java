@@ -22,6 +22,4 @@ public interface KcjxdgMapper {
 
     boolean delete(@Param("code") String code);
 
-    boolean batchSubimt(@Param("objList") List<?> objList);
-
 }

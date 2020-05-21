@@ -92,7 +92,7 @@
             into COMMON_SHENHE
             (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
             values
-            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},'审核中',#{obj.userId},#{obj.userName},sysdate)
+            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},'审核中',#{obj.userId},#{obj.userName},CURRENT_DATE)
         </foreach>
         select 1 from dual
     </update>

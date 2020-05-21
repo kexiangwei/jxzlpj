@@ -1,4 +1,4 @@
-package com.mycode.jiaoxuesheji.kcjxdg.service;
+package com.mycode.jiaoxuexiaoguo.kcxj.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -7,10 +7,8 @@ import com.mycode.common.file.mapper.FileMapper;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
-import com.mycode.jiaoxuesheji.kcjxdg.domian.Kcjxdg;
-import com.mycode.jiaoxuesheji.kcjxdg.mapper.KcjxdgMapper;
-import com.mycode.jiaoxueyanjiu.jiaocaijianshe.domian.JiaoCaiJianShe;
-import com.mycode.jiaoxueyanjiu.jiaocaijianshe.mapper.JiaoCaiJianSheMapper;
+import com.mycode.jiaoxuexiaoguo.kcxj.domian.Kcxj;
+import com.mycode.jiaoxuexiaoguo.kcxj.mapper.KcxjMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,47 +17,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 教学设计-课程教学大纲
- */
 @Service
-public class KcjxdgServiceImpl implements KcjxdgService {
+public class KcxjServiceImpl implements KcxjService {
 
     @Autowired
-    private KcjxdgMapper kcjxdgMapper;
+    private KcxjMapper kcxjMapper;
     @Autowired
     private ShenHeMapper shenHeMapper;
     @Autowired
     private FileMapper fileMapper;
 
     @Override
-    public Map<String, Object> getPageList(Kcjxdg kcjxdg) {
+    public Map<String, Object> getPageList(Kcxj kcxj) {
         Map<String, Object> resultMap = new HashMap<>();
         //获取未审核数
-        if(StringUtils.isNotEmpty(kcjxdg.getShenHeUserId())){
-            resultMap.put("unShenHeNum", kcjxdgMapper.getNotShenHeNum(kcjxdg.getShenHeUserId()));
+        if(StringUtils.isNotEmpty(kcxj.getShenHeUserId())){
+            resultMap.put("unShenHeNum", kcxjMapper.getNotShenHeNum(kcxj.getShenHeUserId()));
         }
         //获取分页列表
-        Page<Object> pageInfo = PageHelper.startPage(kcjxdg.getPageIndex(), kcjxdg.getPageSize());
-        List<Kcjxdg> pageList = kcjxdgMapper.getPageList(kcjxdg);
+        Page<Object> pageInfo = PageHelper.startPage(kcxj.getPageIndex(), kcxj.getPageSize());
+        List<Kcxj> pageList = kcxjMapper.getPageList(kcxj);
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
     }
 
     @Override
-    public boolean insert(Kcjxdg kcjxdg) {
-        return kcjxdgMapper.insert(kcjxdg);
+    public boolean insert(Kcxj kcxj) {
+        return kcxjMapper.insert(kcxj);
     }
 
     @Override
-    public boolean update(Kcjxdg kcjxdg) {
-        return kcjxdgMapper.update(kcjxdg);
+    public boolean update(Kcxj kcxj) {
+        return kcxjMapper.update(kcxj);
     }
 
     @Override
     public boolean delete(String code) {
-        boolean bool = kcjxdgMapper.delete(code);
+        boolean bool = kcxjMapper.delete(code);
         if(bool){
             List<FileInfo> fileList = fileMapper.getFileListByRelationCode(code);
             if(!fileList.isEmpty()){
@@ -70,22 +65,22 @@ public class KcjxdgServiceImpl implements KcjxdgService {
     }
 
     @Override
-    public boolean toSubimt(String activeShenheCode, List<Kcjxdg> kcjxdgList) {
-        for (Kcjxdg kcjxdg : kcjxdgList) {
-            kcjxdg.setShenheCode(activeShenheCode);
-            kcjxdg.setBatchNum(StringUtils.isEmpty(kcjxdg.getBatchNum())?1:kcjxdg.getBatchNum()+1);//提交批次，每提交一次加1
-            kcjxdg.setStatus("审核中");
+    public boolean toSubimt(String activeShenheCode, List<Kcxj> kcxjList) {
+        for (Kcxj kcxj : kcxjList) {
+            kcxj.setShenheCode(activeShenheCode);
+            kcxj.setBatchNum(StringUtils.isEmpty(kcxj.getBatchNum())?1:kcxj.getBatchNum()+1);//提交批次，每提交一次加1
+            kcxj.setStatus("审核中");
         }
-        return shenHeMapper.batchSubimt(kcjxdgList);
+        return shenHeMapper.batchSubimt(kcxjList);
     }
 
     @Override
-    public boolean toShenhe(ShenHeItem item, List<Kcjxdg> kcjxdgList) {
+    public boolean toShenhe(ShenHeItem item, List<Kcxj> kcxjList) {
         boolean bool = false;
-        for (Kcjxdg kcjxdg : kcjxdgList) {
-            item.setRelationCode(kcjxdg.getCode());
-            item.setBatchNum(kcjxdg.getBatchNum());
-            ShenHeNode node = shenHeMapper.getShenheNode("V_JXSJ_KCJXDG_SHENHE",item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
+        for (Kcxj kcxj : kcxjList) {
+            item.setRelationCode(kcxj.getCode());
+            item.setBatchNum(kcxj.getBatchNum());
+            ShenHeNode node = shenHeMapper.getShenheNode("V_JXXG_KCXJ_SHENHE",item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
             item.setNodeCode(node.getNodeCode());
             item.setNodeName(node.getNodeName());
             bool = shenHeMapper.toShenhe(item); //提交审核
@@ -93,7 +88,7 @@ public class KcjxdgServiceImpl implements KcjxdgService {
                 if(item.getStatus().equals("退回")){
                     return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
                 } else { // 通过 | 未通过
-                    int isPass = shenHeMapper.isShenhePass("V_JXSJ_KCJXDG_SHENHE",item.getRelationCode(), item.getBatchNum());
+                    int isPass = shenHeMapper.isShenhePass("V_JXXG_KCXJ_SHENHE",item.getRelationCode(), item.getBatchNum());
                     if(isPass == 1){
                         return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),item.getStatus());
                     }

@@ -117,15 +117,4 @@
     <delete id="delete">
         delete from JXSJ_KCJXDG where code = #{code}
     </delete>
-
-    <update id="batchSubimt">
-        insert all
-        <foreach collection ="objList" item="obj" index= "idx">
-            into COMMON_SHENHE
-            (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
-            values
-            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},CURRENT_DATE)
-        </foreach>
-        select 1 from dual
-    </update>
 </mapper>

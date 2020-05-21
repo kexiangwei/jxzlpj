@@ -1,21 +1,21 @@
-package com.mycode.jiaoxuexiaoguo.sjfx.mapper;
+package com.mycode.jiaoxuexiaoguo.kcxj.mapper;
 
-import com.mycode.jiaoxuexiaoguo.sjfx.domian.Sjfx;
+import com.mycode.jiaoxuexiaoguo.kcxj.domian.Kcxj;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
-public interface SjfxMapper {
+public interface KcxjMapper {
 
     int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
 
-    List<Sjfx> getPageList(Sjfx sjfx);
+    List<Kcxj> getPageList(Kcxj kcxj);
 
-    boolean insert(Sjfx sjfx);
+    boolean insert(Kcxj kcxj);
 
-    boolean update(Sjfx sjfx);
+    boolean update(Kcxj kcxj);
 
     boolean delete(@Param("code") String code);
 

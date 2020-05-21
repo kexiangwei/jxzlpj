@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.mycode.jiaoxuexiaoguo.sjfx.mapper.SjfxMapper">
+<mapper namespace="com.mycode.jiaoxuexiaoguo.kcxj.mapper.KcxjMapper">
 
     <select id="getNotShenHeNum" resultType="int">
         SELECT count(0) from (
@@ -8,12 +8,12 @@
             ,count(sn.node_code) total_num
             ,count(item.node_code) exec_num
             ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-            from V_JXXG_SJFX_SHENHE j
+            from V_JXXG_KCXJ_SHENHE j
             left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
             left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
             GROUP BY j.code,j.batch_num
         )t
-        left join V_JXXG_SJFX_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
+        left join V_JXXG_KCXJ_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
         left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
         left join sys_user_role ur on ur.role_id = sn.role_id
         where 1=1
@@ -23,7 +23,7 @@
         and ur.user_id = #{shenHeUserId}
     </select>
 
-    <select id="getPageList" resultType="com.mycode.jiaoxuexiaoguo.sjfx.domian.Sjfx">
+    <select id="getPageList" resultType="com.mycode.jiaoxuexiaoguo.kcxj.domian.Kcxj">
         <choose>
             <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
                 SELECT v.*
@@ -33,12 +33,12 @@
                 ,count(sn.node_code) total_num
                 ,count(item.node_code) exec_num
                 ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-                from V_JXXG_SJFX_SHENHE v
+                from V_JXXG_KCXJ_SHENHE v
                 left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
                 left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
                 GROUP BY v.code,v.batch_num
                 ) t
-                left join V_JXXG_SJFX_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
+                left join V_JXXG_KCXJ_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
                 left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
                 left join sys_user_role ur on ur.role_id = sn.role_id
                 <where>1=1
@@ -61,7 +61,7 @@
             </when>
             <otherwise><!-- 提交列表 -->
                 SELECT *
-                from V_JXXG_SJFX v
+                from V_JXXG_KCXJ v
                 <where>1=1
                     <choose>
                         <when test="status != null and status != '' and status == '待审核'">
@@ -89,14 +89,14 @@
     </sql>
 
     <insert id="insert">
-          insert into JXXG_SJFX
+          insert into JXXG_KCXJ
           (code,college,major,course_code,course_name,user_id,user_name,create_date)
           values
           (#{code},#{college},#{major},#{courseCode},#{courseName},#{userId},#{userName},sysdate)
     </insert>
 
     <update id="update">
-        update JXXG_SJFX
+        update JXXG_KCXJ
         <set>
             <if test="college != null and college != ''">
                 college = #{college}
@@ -115,7 +115,7 @@
     </update>
 
     <delete id="delete">
-        delete from JXXG_SJFX where code = #{code}
+        delete from JXXG_KCXJ where code = #{code}
     </delete>
 
 </mapper>
