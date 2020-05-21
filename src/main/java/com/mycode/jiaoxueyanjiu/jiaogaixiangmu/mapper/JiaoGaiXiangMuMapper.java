@@ -11,34 +11,26 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 教学研究-教改项目
- * @auther kexiangwei
- * @date 2019/11/13
- */
 @Mapper
 public interface JiaoGaiXiangMuMapper {
 
-    List<JiaoGaiXiangMu> getPageList(JiaoGaiXiangMu jiaoGaiXiangMu);
-
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId,@Param("isZjshAccount") Integer isZjshAccount);
-
     @ResultType(Integer.class)
-    @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 2 AND USER_ID = #{shenHeUserId}")
+    @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 1 AND USER_ID = #{shenHeUserId}")
     Integer isJwcGly(@Param("shenHeUserId") Integer shenHeUserId);
 
     @ResultType(Integer.class)
-    @Select("SELECT COUNT(0) FROM JXYJ_JGXM_ZJ WHERE USER_ID = #{shenHeUserId}")
-//    @Select("SELECT COUNT(0) FROM SYS_USER WHERE account_level = '校外专家审核账号' AND USER_ID = #{shenHeUserId}")
+    @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 7 AND USER_ID = #{shenHeUserId}")
     Integer isZjshAccount(@Param("shenHeUserId") Integer shenHeUserId);
+
+    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId,@Param("isZjshAccount") Integer isZjshAccount);
+
+    List<JiaoGaiXiangMu> getPageList(JiaoGaiXiangMu jiaoGaiXiangMu);
 
     boolean insert(JiaoGaiXiangMu jiaoGaiXiangMu);
 
     boolean update(JiaoGaiXiangMu jiaoGaiXiangMu);
 
     boolean delete(@Param("code") String code);
-
-    boolean batchSubimt(@Param("jiaoGaiXiangMuList") List<JiaoGaiXiangMu> jiaoGaiXiangMuList);
 
     ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") Integer userId);
 

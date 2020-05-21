@@ -8,10 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @auther kexiangwei
- * @date 2019/6/24
- */
 @Mapper
 public interface UserMapper {
 

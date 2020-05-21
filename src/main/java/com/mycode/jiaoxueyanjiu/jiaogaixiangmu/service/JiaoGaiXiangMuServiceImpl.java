@@ -12,19 +12,14 @@ import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.ZjshItem;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuMapper;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 教学研究-教改项目
- * @auther kexiangwei
- * @date 2019/11/13
- */
 @Service
 public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
 
@@ -39,13 +34,14 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
     public Map<String, Object> getPageList(JiaoGaiXiangMu jiaoGaiXiangMu) {
         Map<String, Object> resultMap = new HashMap<>();
         Integer jwcGly = 0;
-        if(!StringUtils.isEmpty(jiaoGaiXiangMu.getShenHeUserId())){
+        if(StringUtils.isNotEmpty(jiaoGaiXiangMu.getShenHeUserId())){
             //是否教务处管理员
             jwcGly = jiaoGaiXiangMuMapper.isJwcGly(jiaoGaiXiangMu.getShenHeUserId());
+//            jiaoGaiXiangMu.setIsJwcGly(jwcGly);
             resultMap.put("isJwcGly", jwcGly);
             //判断是否为校外专家审核账号
             Integer isZjshAccount = jiaoGaiXiangMuMapper.isZjshAccount(jiaoGaiXiangMu.getShenHeUserId());
-            jiaoGaiXiangMu.setIsZjshAccount(isZjshAccount);
+//            jiaoGaiXiangMu.setIsZjshAccount(isZjshAccount);
             resultMap.put("isZjshAccount", isZjshAccount);
             //获取未审核数
             resultMap.put("unShenHeNum", jiaoGaiXiangMuMapper.getNotShenHeNum(jiaoGaiXiangMu.getShenHeUserId(),isZjshAccount));
@@ -98,7 +94,7 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
             jiaoGaiXiangMu.setBatchNum(StringUtils.isEmpty(jiaoGaiXiangMu.getBatchNum())?1:jiaoGaiXiangMu.getBatchNum()+1);//提交批次，每提交一次加1
             jiaoGaiXiangMu.setStatus("审核中");
         }
-        return jiaoGaiXiangMuMapper.batchSubimt(jiaoGaiXiangMuList);
+        return shenHeMapper.batchSubimt(jiaoGaiXiangMuList);
     }
 
     @Override

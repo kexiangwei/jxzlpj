@@ -21,11 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 教学研究-教改项目
- * @auther kexiangwei
- * @date 2019/11/13
- */
 @CrossOrigin
 @Controller
 @RequestMapping("/jiaoGaiXiangMu")

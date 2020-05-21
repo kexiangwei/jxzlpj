@@ -7,13 +7,7 @@ import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-/**
- * 教学研究-教改项目
- * @auther kexiangwei
- * @date 2019/11/13
- */
 @Getter
 @Setter
 public class JiaoGaiXiangMu {
@@ -22,25 +16,6 @@ public class JiaoGaiXiangMu {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-    //业务字段code,xmName,xmType,leader,leaderId,title,collegeOrDept,major,mainTeachWork,mainTeachAchievement,currentAndBackground,questionAndTarget,expectAndResult,planAndProcess
-    private String code
-            ,xmName //项目名称
-            ,xmType //项目类型：下拉选择框（重点、一般）
-            ,leader //项目主持人
-            ,leaderId //项目主持人工号
-            ,title //职称：下拉选择框（教授、副教授、讲师、研究员、副研究员、助理研究员等）
-            ,collegeOrDept //学院或部门
-            ,major; //专业：提示若是职能部门，可以不填写。
-    private List<Member> memberList; //主要成员情况
-    private String mainTeachWork //主要教学工作简历
-            ,mainTeachAchievement //主要教育教学研究领域及成果
-            ,currentAndBackground //现状与背景分析（包括已有研究实践基础）
-            ,questionAndTarget //研究内容、目标、要解决的问题和主要特色
-            ,expectAndResult //预期效果与具体成果
-            ,planAndProcess; //进度安排
-    private List<FundBudget> fundBudgetList; //经费预算
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    private Date createDate;
     //
     private Integer shenHeUserId //获取审核列表参数
             ,userId;
@@ -56,6 +31,33 @@ public class JiaoGaiXiangMu {
     private Integer isJwcGly //是否教务处管理员
             ,isZjshAccount //是否校外专家审核账号
             ,isZjshAll; //校外专家是否已审核（全部）
+    //
     private List<ZjshItem> zjshItemList;
+
+    //
+    private String code
+            ,xmNum //项目编号
+            ,xmName //项目名称
+            ,xmType //项目类型：下拉选择框（重点、一般）
+
+            ,leader //项目主持人
+            ,leaderId //项目主持人工号
+            ,title //职称：下拉选择框（教授、副教授、讲师、研究员、副研究员、助理研究员等）
+            ,collegeOrDept //学院或部门
+            ,major //专业：提示若是职能部门，可以不填写。
+            ,mainTeachWork //主要教学工作简历
+            ,mainTeachAchievement; //主要教育教学研究领域及成果
+
+    private List<Member> memberList; //主要成员情况
+
+    private String currentAndBackground //现状与背景分析（包括已有研究实践基础）
+            ,questionAndTarget //研究内容、目标、要解决的问题和主要特色
+            ,expectAndResult //预期效果与具体成果
+            ,planAndProcess; //进度安排
+
+    private List<FundBudget> fundBudgetList; //经费预算
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
+    private Date createDate;
 
 }

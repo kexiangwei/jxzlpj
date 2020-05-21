@@ -20,10 +20,6 @@ import com.mycode.util.RedisUtil;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 
-/**
- * @auther kexiangwei
- * @date 2019/6/24
- */
 @CrossOrigin
 @Controller
 public class AccountController {
@@ -57,8 +53,10 @@ public class AccountController {
 
     @ResponseBody
     @RequestMapping("/login.do")
-    public JsonResult<Object> login(@RequestParam("userId") String userId, @RequestParam("password") String password
-            , @RequestParam("token") String token, @RequestParam("verityCode") String verityCode, HttpServletRequest request){
+    public JsonResult<Object> login(@RequestParam("userId") String userId
+            , @RequestParam("password") String password
+            , @RequestParam("token") String token
+            , @RequestParam("verityCode") String verityCode, HttpServletRequest request){
         //
 /*        boolean hasKey = redisUtil.hasKey(token);
         if (!hasKey) {

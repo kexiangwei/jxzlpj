@@ -2,6 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuMapper">
 
+    <select id="getNotShenHeNum" resultType="int">
+        <if test="isZjshAccount !=null"><!-- 此处不能做isZjshAccount !=''的判断，isZjshAccount 值为0 时会被识别为空字符串''-->
+            <choose>
+                <when test="isZjshAccount == 1">
+                    SELECT count(0) from  v_JXYJ_JGXM_SHENHE j
+                    left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num
+                    LEFT JOIN JXYJ_JGXM_ZJSH item2 on item2.xm_code = j.code and item2.batch_num = j.batch_num
+                    where j.STATUS = '审核中' and item.shenhe_type is not null and item2.xm_code is null
+                </when>
+                <otherwise>
+                    SELECT count(0) from (
+                    SELECT j.code,j.batch_num
+                    ,count(sn.node_code) total_num
+                    ,count(item.node_code) exec_num
+                    ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+                    from v_JXYJ_JGXM_SHENHE j
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+                    left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+                    GROUP BY j.code,j.batch_num
+                    )t
+                    left join v_JXYJ_JGXM_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+                    left join sys_user_role ur on ur.role_id = sn.role_id
+                    where 1=1
+                    and exec_num >= exec_level-1
+                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
+                    AND exec_level > exec_num
+                    and ur.user_id = #{shenHeUserId}
+                </otherwise>
+            </choose>
+        </if>
+    </select>
+
     <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu">
         <choose>
             <when test="shenHeUserId !=null and shenHeUserId !='' and isZjshAccount == 1"><!-- 校外专家审核列表 -->
@@ -141,39 +174,6 @@ LEFT JOIN (
         </if>
     </sql>
 
-    <select id="getNotShenHeNum" resultType="int">
-        <if test="isZjshAccount !=null"><!-- 此处不能做isZjshAccount !=''的判断，isZjshAccount 值为0 时会被识别为空字符串''-->
-            <choose>
-                <when test="isZjshAccount == 1">
-                    SELECT count(0) from  v_JXYJ_JGXM_SHENHE j
-                    left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num
-                    LEFT JOIN JXYJ_JGXM_ZJSH item2 on item2.xm_code = j.code and item2.batch_num = j.batch_num
-                    where j.STATUS = '审核中' and item.shenhe_type is not null and item2.xm_code is null
-                </when>
-                <otherwise>
-                    SELECT count(0) from (
-                        SELECT j.code,j.batch_num
-                        ,count(sn.node_code) total_num
-                        ,count(item.node_code) exec_num
-                        ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-                        from v_JXYJ_JGXM_SHENHE j
-                        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-                        left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-                        GROUP BY j.code,j.batch_num
-                    )t
-                    left join v_JXYJ_JGXM_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
-                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-                    left join sys_user_role ur on ur.role_id = sn.role_id
-                    where 1=1
-                    and exec_num >= exec_level-1
-                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
-                    AND exec_level > exec_num
-                    and ur.user_id = #{shenHeUserId}
-                </otherwise>
-            </choose>
-        </if>
-    </select>
-
     <insert id="insert">
           insert into JXYJ_JGXM
           (code,xm_name,xm_type,leader,leader_id,title,college_or_dept,major,main_teach_work,main_teach_achievement
@@ -233,17 +233,6 @@ LEFT JOIN (
     <delete id="delete">
         delete from JXYJ_JGXM where code = #{code}
     </delete>
-
-    <update id="batchSubimt">
-        insert all
-        <foreach collection ="jiaoGaiXiangMuList" item="obj" index= "idx">
-            into COMMON_SHENHE
-            (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
-            values
-            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},sysdate)
-        </foreach>
-        select 1 from dual
-    </update>
 
     <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
         SELECT sn.*

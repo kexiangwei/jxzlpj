@@ -6,10 +6,6 @@ import com.mycode.system.user.domain.User;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 public interface UserService {
 
     Map<String, Object> getUserList(User user);

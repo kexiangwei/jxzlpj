@@ -15,10 +15,6 @@ import com.mycode.system.user.domain.User;
 import com.mycode.system.user.service.UserService;
 import com.mycode.util.JsonResult;
 
-/**
- * @auther kexiangwei
- * @date 2019/6/24
- */
 @CrossOrigin
 @Controller
 public class UserController {
@@ -29,9 +25,10 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/getUserList.do")
     public JsonResult<Object> getUserList(User user){
-        Map<String, Object> map = userService.getUserList(user);
-        return JsonResult.success(map);
+        Map<String, Object> resultMap = userService.getUserList(user);
+        return JsonResult.success(resultMap);
     }
+
     @ResponseBody
     @RequestMapping("/getUserDetail.do")
     public JsonResult<Object> getUserDetail(@RequestParam("userId") String userId){

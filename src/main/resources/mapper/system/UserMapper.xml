@@ -3,15 +3,11 @@
 <mapper namespace="com.mycode.system.user.mapper.UserMapper">
 
     <select id="getUserList" resultType="com.mycode.system.user.domain.User">
-        select * from (
-            select u.*,t.COLLEGE_NAME
-            from sys_user u
-            LEFT JOIN DATA_TEACHER t on t.CODE = u.USER_ID where u.account_level = '老师'
-            UNION
-            select u.*,s.COLLEGE_NAME
-            from sys_user u
-            LEFT JOIN DATA_STUDENT s on s.CODE = u.USER_ID where u.account_level = '学生'
-        )
+        SELECT u.USER_ID,USER_NAME,PHONE,account_level
+        FROM SYS_USER u
+        LEFT JOIN (
+        SELECT user_id,wm_concat(role_name) account_level FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
+        ) t on t.USER_ID = u.USER_ID
         <where>1=1
             <if test="userId != null and userId != ''">
                 and user_id = #{userId}
@@ -19,11 +15,11 @@
             <if test="userName != null and userName != ''">
                 and user_name = #{userName}
             </if>
+            <if test="accountLevel != null and accountLevel != ''">
+                and account_level like concat(concat('%',#{accountLevel}),'%')
+            </if>
             <if test="phone != null and phone != ''">
                 and phone = #{phone}
-            </if>
-            <if test="accountLevel != null and accountLevel != ''">
-                and account_level = #{accountLevel}
             </if>
         </where>
     </select>

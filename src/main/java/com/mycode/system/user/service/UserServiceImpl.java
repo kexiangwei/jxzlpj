@@ -13,10 +13,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -30,8 +26,8 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> map = new HashMap<>();
         Page<Object> pageInfo = PageHelper.startPage(user.getPageIndex(), user.getPageSize());
         List<User> pageList = userMapper.getUserList(user);
-        map.put("pageList", pageList);
         map.put("totalNum",pageInfo.getTotal());
+        map.put("pageList", pageList);
         return map;
     }
 
