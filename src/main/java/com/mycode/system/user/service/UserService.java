@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface UserService {
 
-    Map<String, Object> getUserList(User user);
+    Map<String, Object> getUserPageList(User user);
 
     Map<String, Object> getUserDetail(String userId);
 

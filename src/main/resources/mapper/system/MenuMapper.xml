@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.system.menu.mapper.MenuMapper">
 
-    <select id="getMenuList" resultType="com.mycode.system.menu.domain.Menu">
+    <select id="getMenuPageList" resultType="com.mycode.system.menu.domain.Menu">
         SELECT * from SYS_MENU
         <where> 1=1
             <if test="pid !=null">
@@ -15,46 +15,17 @@
         order by MENU_ID
     </select>
 
-    <insert id="insertMenu">
-        insert into SYS_MENU (MENU_ID,MENU_NAME,ICON)
-        values (#{menuId},#{menuName},'layui-icon-template-1')
-    </insert>
-
-    <insert id="insertMenuTab">
-        insert into SYS_MENU (PID,MENU_ID,MENU_NAME,URL,ICON,TAB_NAME)
-        values (#{pid},#{menuId},#{menuName},'page/system/menu.html',null,#{tabName})
-    </insert>
-    <insert id="createMenuTab">
-        CREATE TABLE ${tabName} (
-            GLOBAL_ID NUMBER(16) NOT NULL ,
-            USER_ID NUMBER(20) NOT NULL ,
-            CREATE_DATE DATE NULL ,
-            LAST_MODIFY_DATE DATE NULL ,
-            REMARK VARCHAR2(255 char) NULL
-        )
-    </insert>
-
-    <select id="getMenuColInfo" resultType="com.mycode.system.menu.domain.MenuCol">
-        SELECT *
-        FROM SYS_MENU_COL
-        where TAB_NAME=(
-          SELECT TAB_NAME from SYS_MENU where MENU_ID = #{menuId}
-        )
-        order by col_idx
+    <select id="getMenuTree" resultType="com.mycode.system.menu.domain.Menu">
+        select pid,menu_id,menu_id id,menu_name,menu_name title,url,icon
+        from sys_menu
+        order by MENU_ID
     </select>
-    <insert id="insertMenuCol">
-        insert all
-            into sys_menu_col(tab_name ,col_idx,col_name,data_type,data_length,is_null,is_edit,is_show,comm)
-            values(#{tabName},1,'global_id','单行文本'，16，'N','N','N','全局ID')
-            into sys_menu_col(tab_name ,col_idx,col_name,data_type,data_length,is_null,is_edit,is_show,comm)
-            values(#{tabName},2,'user_id','单行文本'，16，'N','N','N','用户编号')
-            into sys_menu_col(tab_name ,col_idx,col_name,data_type,data_length,is_null,is_edit,is_show,comm)
-            values(#{tabName},3,'create_date','日期'，16，'N','N','N','创建时间')
-            into sys_menu_col(tab_name ,col_idx,col_name,data_type,data_length,is_null,is_edit,is_show,comm)
-            values(#{tabName},4,'last_modify_date','日期'，16，'N','N','N','最后修改时间')
-            into sys_menu_col(tab_name ,col_idx,col_name,data_type,data_length,is_null,is_edit,is_show,comm)
-            values(#{tabName},5,'remark','多行文本'，16，'N','N','N','备注')
-        select * from dual
-    </insert>
+
+    <select id="getRoleListByMenuId" resultType="com.mycode.system.role.domain.Role">
+       SELECT DISTINCT r.role_id,r.role_name
+        FROM sys_role_menu rm LEFT JOIN sys_role r ON r.role_id = rm.role_id
+        WHERE rm.menu_id = (SELECT menu_id FROM sys_menu WHERE menu_name = '审核' AND pid = #{menuId})
+        and r.role_id != 999999
+    </select>
 </mapper>
 

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,7 +43,7 @@ public class AccountController {
         SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, len);
         specCaptcha.setCharType(Captcha.TYPE_ONLY_NUMBER);
         //存储到redis，有效时间为3分钟
-        String token = UUID.randomUUID().toString().replaceAll("-", "");
+        String token = StringUtils.guid(32,false);
         redisUtil.set(token,specCaptcha.text(),180);
         //封装结果集
         Map<String,Object> resultMap = new HashMap<>();
@@ -53,27 +54,28 @@ public class AccountController {
 
     @ResponseBody
     @RequestMapping("/login.do")
-    public JsonResult<Object> login(@RequestParam("userId") String userId
-            , @RequestParam("password") String password
-            , @RequestParam("token") String token
-            , @RequestParam("verityCode") String verityCode, HttpServletRequest request){
+    public JsonResult<Object> login(@RequestParam("token") String token
+            , @RequestParam("verifyCode") String verifyCode
+            , @RequestParam("userId") String userId
+            , @RequestParam("password") String password, HttpServletRequest request){
         //
-/*        boolean hasKey = redisUtil.hasKey(token);
-        if (!hasKey) {
-            return JsonResult.error(401," 验证码已超时，请重新获取！");
-        }else{
-            if(!redisUtil.get(token).toString().equals(verityCode)){
-                return JsonResult.error(401,"验证码输入有误！");
+        /*boolean hasKey = redisUtil.hasKey(token);
+        if (hasKey) {
+            if(!redisUtil.get(token).toString().equals(verifyCode)){
+                return JsonResult.error(400,"验证码输入有误！");
             }
+        }else{
+            return JsonResult.error(404," 验证码已超时，请重新获取！");
         }*/
         //
-        User user = userService.getUserById(userId);
+        User user = null;
         try{
-            if(user==null){
-                return JsonResult.error(401,userId+" 账号未注册！");
+            user = userService.getUserById(userId);
+            if(user == null){
+                return JsonResult.error(404,userId+" 账号未注册！");
             }else{
                 if(!user.getUserId().equals(userId) || !user.getPassword().equals(password)){
-                    return JsonResult.error(402,"账号或密码错误！");
+                    return JsonResult.error(400,"账号或密码错误！");
                 }
             }
         } catch (Exception e){

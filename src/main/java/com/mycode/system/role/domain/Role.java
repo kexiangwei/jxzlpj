@@ -8,10 +8,6 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/27
- */
 @Getter
 @Setter
 public class Role {
@@ -21,11 +17,11 @@ public class Role {
     private Integer pageIndex=1
             ,pageSize=10;
     //业务字段
-    private String roleId
-            ,roleName;
+    private Long roleId;
+    private String roleName;
     private List<Menu> menuList = new ArrayList<>();
     //
-    private Boolean selected
-            ,disabled;
+    /*private Boolean selected
+            ,disabled;*/
 
 }

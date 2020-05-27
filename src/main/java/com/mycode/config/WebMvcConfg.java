@@ -11,10 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/8
- */
 //@Configuration
 public class WebMvcConfg implements WebMvcConfigurer {
 

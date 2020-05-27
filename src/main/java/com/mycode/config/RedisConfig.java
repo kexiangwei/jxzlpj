@@ -11,10 +11,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 import java.net.UnknownHostException;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/12
- */
 @EnableRedisHttpSession
 @Configuration
 public class RedisConfig {

@@ -2,33 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.system.user.mapper.UserMapper">
 
-    <select id="getUserList" resultType="com.mycode.system.user.domain.User">
-        SELECT u.USER_ID,USER_NAME,PHONE,account_level
+    <select id="getUserPageList" resultType="com.mycode.system.user.domain.User">
+        SELECT u.USER_ID,USER_NAME,PHONE,user_group
         FROM SYS_USER u
         LEFT JOIN (
-        SELECT user_id,wm_concat(role_name) account_level FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
+        SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
         ) t on t.USER_ID = u.USER_ID
         <where>1=1
             <if test="userId != null and userId != ''">
-                and user_id = #{userId}
+                and u.user_id = #{userId}
             </if>
             <if test="userName != null and userName != ''">
                 and user_name = #{userName}
             </if>
-            <if test="accountLevel != null and accountLevel != ''">
-                and account_level like concat(concat('%',#{accountLevel}),'%')
+            <if test="userGroup != null and userGroup != ''">
+                and user_group like concat(concat('%',#{userGroup}),'%')
             </if>
-            <if test="phone != null and phone != ''">
+            <!--<if test="phone != null and phone != ''">
                 and phone = #{phone}
-            </if>
+            </if>-->
         </where>
     </select>
 
+    <select id="getUserById" resultType="com.mycode.system.user.domain.User">
+        select * from sys_user where user_id = #{userId}
+    </select>
+
     <select id="getUserDetail" resultType="map">
-        <if test="accountLevel == '老师'">
+        <if test="userGroup == '老师'">
             SELECT * from DATA_TEACHER where CODE = #{userId}
         </if>
-        <if test="accountLevel == '学生'">
+        <if test="userGroup == '学生'">
             SELECT * from DATA_STUDENT where CODE = #{userId}
         </if>
     </select>
@@ -42,27 +46,33 @@
             <if test="password != null and password != ''">
                 , password = #{password}
             </if>
+            <if test="headImg != null and headImg != ''">
+                , head_img = #{headImg}
+            </if>
             <if test="phone != null and phone != ''">
                 , phone = #{phone}
-            </if>
-            <if test="accountLevel != null and accountLevel != ''">
-                , account_level = #{accountLevel}
-            </if>
-            <if test="remark != null and remark != ''">
-                , remark = #{remark}
             </if>
         </set>
         where user_id = #{userId}
     </update>
 
+
+    <select id="getRoleByUserId" resultType="java.lang.String">
+        select role_id from sys_user_role where user_id = #{userId}
+    </select>
+
     <insert id="grant">
         insert all
-        <foreach collection="roleIdArr" index="idx" item="obj">
+        <foreach collection="roleIdArr" index="idx" item="rid">
             into sys_user_role(user_id,role_id)
-            values (#{userId},#{obj})
+            values (#{userId},#{rid})
         </foreach>
         select * from dual
     </insert>
+
+    <delete id="deleteRoleByUserId">
+        delete from sys_user_role where user_id = #{userId}
+    </delete>
 
     <select id="getUserMenu" resultType="com.mycode.system.menu.domain.Menu">
         SELECT DISTINCT sm.*

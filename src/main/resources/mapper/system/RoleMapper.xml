@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.system.role.mapper.RoleMapper">
 
-    <select id="getRoleList" resultType="com.mycode.system.role.domain.Role">
+    <select id="getRolePageList" resultType="com.mycode.system.role.domain.Role">
         select * from sys_role
         <where>
             <if test="roleName != null and roleName != ''">
@@ -11,11 +11,18 @@
         </where>
     </select>
 
-    <select id="getRoleListByMenuId" resultType="com.mycode.system.role.domain.Role">
-       SELECT DISTINCT r.role_id,r.role_name
-        FROM sys_role_menu rm LEFT JOIN sys_role r ON r.role_id = rm.role_id
-        WHERE rm.menu_id = (SELECT menu_id FROM sys_menu WHERE menu_name = '审核' AND pid = #{menuId})
-        and r.role_id != 1
+    <insert id="addRole">
+        insert into sys_role values (#{roleId},#{roleName})
+    </insert>
+
+    <update id="updateRole">
+        update sys_role set role_name = #{roleName} where role_id = #{roleId}
+    </update>
+
+    <select id="getMenuListByRoleId" resultType="com.mycode.system.menu.domain.Menu">
+        select DISTINCT m.*
+        from sys_role_menu rm LEFT JOIN sys_menu m on m.menu_id = rm.menu_id
+        WHERE role_id = #{roleId}
     </select>
 
     <insert id="addRoleMenu">
@@ -26,5 +33,9 @@
         </foreach>
         select * from dual
     </insert>
+
+    <delete id="deleteRoleMenuByRoleId">
+        delete from sys_role_menu where role_id = #{roleId}
+    </delete>
 </mapper>
 

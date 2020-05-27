@@ -23,9 +23,9 @@ public class UserController {
     private UserService userService;
 
     @ResponseBody
-    @RequestMapping("/getUserList.do")
-    public JsonResult<Object> getUserList(User user){
-        Map<String, Object> resultMap = userService.getUserList(user);
+    @RequestMapping("/getUserPageList.do")
+    public JsonResult<Object> getUserPageList(User user){
+        Map<String, Object> resultMap = userService.getUserPageList(user);
         return JsonResult.success(resultMap);
     }
 

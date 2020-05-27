@@ -11,23 +11,18 @@ import java.util.Set;
 @Mapper
 public interface UserMapper {
 
-    List<User> getUserList(User user);
+    List<User> getUserPageList(User user);
+
+    User getUserById(@Param("userId") String userId);
 
     Map<String, Object> getUserDetail(User user);
 
-    @ResultType(User.class)
-    @Select("select * from sys_user where user_id = #{userId}")
-    User getUserById(@Param("userId") String userId);
-
     boolean updateUser(User user);
+
+    Set<String> getRoleByUserId(@Param("userId") String userId);
 
     boolean grant(@Param("userId") String userId, @Param("roleIdArr") String[] roleIdArr);
 
-    @ResultType(String.class)
-    @Select("select role_id from sys_user_role where user_id = #{userId}")
-    Set<String> getRoleByUserId(@Param("userId") String userId);
-
-    @Delete("delete from sys_user_role where user_id = #{userId}")
     boolean deleteRoleByUserId(@Param("userId") String userId);
 
     List<Menu> getUserMenu(@Param("userId") String userId);

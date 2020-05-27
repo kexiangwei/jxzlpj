@@ -5,16 +5,10 @@ import com.mycode.system.role.domain.Role;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 public interface RoleService {
 
-    Map<String,Object> getRoleList(Role role);
+    Map<String,Object> getRolePageList(Role role);
 
-    List<Role> getRoleListByMenuId(Long menuId);
-
-    boolean insertOrUodateRoleMenu(String roleId, String roleName, String[] menuIdArr);
+    boolean insertOrUpdateRoleMenu(Long roleId, String roleName, String[] menuIdArr);
 
 }

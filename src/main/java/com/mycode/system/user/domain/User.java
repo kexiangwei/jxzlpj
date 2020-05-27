@@ -12,16 +12,17 @@ public class User {
     private Integer pageIndex=1
             ,pageSize=10;
     //
-    private String classCode,className //班级
+    /*private String classCode,className //班级
             ,majorCode,majorName //专业
-            ,collegeCode,collegeName; //院系（部门）
+            ,collegeCode,collegeName; //院系（部门）*/
 
+    private String collegeOrDept //学院或部门
+            ,userGroup; //用户组
     //业务字段
     private String userId
             ,userName
-            ,password
-            ,accountLevel //账号级别
             ,headImg //头像地址
             ,phone;
-
+    @JsonIgnore
+    private String password;
 }
