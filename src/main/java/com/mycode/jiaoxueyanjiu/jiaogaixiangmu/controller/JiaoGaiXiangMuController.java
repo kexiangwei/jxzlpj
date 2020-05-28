@@ -109,61 +109,12 @@ public class JiaoGaiXiangMuController {
      * 根据xmCode 获取校外专家审核意见
      * @param xmCode
      * @return
-     */
+     *//*
     @ResponseBody
     @RequestMapping("/getZjshProcess.do")
     public JsonResult<Object> getZjshProcess(@RequestParam("xmCode") String xmCode,@RequestParam("batchNum") Integer batchNum){
         List<ZjshItem> zjshItemList = jiaoGaiXiangMuService.getZjshProcess(xmCode,batchNum);
         return JsonResult.success(zjshItemList);
-    }
+    }*/
 
-    @ResponseBody
-    @RequestMapping("/getMemberList.do")
-    public JsonResult<Object> getMemberList(@RequestParam("xmCode") String xmCode){
-        List<Member> memberList = jiaoGaiXiangMuService.getMemberList(xmCode);
-        return JsonResult.success(memberList);
-    }
-    @ResponseBody
-    @RequestMapping("/insertMember.do")
-    public JsonResult<Object> insertMember(Member member){
-        boolean bool = jiaoGaiXiangMuService.insertMember(member);
-        if(!bool){
-            return JsonResult.error();
-        }
-        return JsonResult.success();
-    }
-    @ResponseBody
-    @RequestMapping("/deleteMember.do")
-    public JsonResult<Object> deleteMember(Member member){
-        boolean bool = jiaoGaiXiangMuService.deleteMember(member);
-        if(!bool){
-            return JsonResult.error();
-        }
-        return JsonResult.success();
-    }
-
-    @ResponseBody
-    @RequestMapping("/getFundBudgetList.do")
-    public JsonResult<Object> getFundBudgetList(@RequestParam("xmCode") String xmCode){
-        List<FundBudget> fundBudgetList = jiaoGaiXiangMuService.getFundBudgetList(xmCode);
-        return JsonResult.success(fundBudgetList);
-    }
-    @ResponseBody
-    @RequestMapping("/insertFundBudget.do")
-    public JsonResult<Object> insertFundBudget(FundBudget fundBudget){
-        boolean bool = jiaoGaiXiangMuService.insertFundBudget(fundBudget);
-        if(!bool){
-            return JsonResult.error();
-        }
-        return JsonResult.success();
-    }
-    @ResponseBody
-    @RequestMapping("/deleteFundBudget.do")
-    public JsonResult<Object> deleteFundBudget(FundBudget fundBudget){
-        boolean bool = jiaoGaiXiangMuService.deleteFundBudget(fundBudget);
-        if(!bool){
-            return JsonResult.error();
-        }
-        return JsonResult.success();
-    }
 }

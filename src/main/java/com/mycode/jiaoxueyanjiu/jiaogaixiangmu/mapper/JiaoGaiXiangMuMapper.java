@@ -32,24 +32,28 @@ public interface JiaoGaiXiangMuMapper {
 
     boolean delete(@Param("code") String code);
 
+    //
     ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") Integer userId);
 
     int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
+
+    //专家评审
+    @ResultType(ZjshItem.class)
+    @Select("SELECT * FROM JXYJ_JGXM_ZJSH WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}")
+    List<ZjshItem> getZjshProcess(@Param("xmCode") String xmCode, @Param("batchNum") Integer batchNum);
 
     Integer isZjshAll(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 
     boolean toZjShenhe(ShenHeItem item);
 
-    @ResultType(ZjshItem.class)
-    @Select("SELECT * FROM JXYJ_JGXM_ZJSH WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}")
-    List<ZjshItem> getZjshProcess(@Param("xmCode") String xmCode, @Param("batchNum") Integer batchNum);
-
+    //Member
     List<Member> getMemberList(@Param("xmCode") String xmCode);
 
     boolean insertMember(Member member);
 
     boolean deleteMember(Member member);
 
+    //FundBudget
     List<FundBudget> getFundBudgetList(String xmCode);
 
     boolean insertFundBudget(FundBudget fundBudget);

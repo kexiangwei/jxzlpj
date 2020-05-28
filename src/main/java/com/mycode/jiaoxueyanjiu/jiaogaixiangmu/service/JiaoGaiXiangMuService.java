@@ -23,14 +23,16 @@ public interface JiaoGaiXiangMuService {
 
     boolean toShenhe(ShenHeItem item, List<JiaoGaiXiangMu> jiaoGaiXiangMuList);
 
-    List<ZjshItem> getZjshProcess(String xmCode, Integer batchNum);
+    /*List<ZjshItem> getZjshProcess(String xmCode, Integer batchNum);*/
 
+    //Member
     List<Member> getMemberList(String xmCode);
 
     boolean insertMember(Member member);
 
     boolean deleteMember(Member member);
 
+    //FundBudget
     List<FundBudget> getFundBudgetList(String xmCode);
 
     boolean insertFundBudget(FundBudget fundBudget);

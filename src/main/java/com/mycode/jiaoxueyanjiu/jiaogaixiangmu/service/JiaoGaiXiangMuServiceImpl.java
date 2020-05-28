@@ -41,7 +41,7 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
             resultMap.put("isJwcGly", jwcGly);
             //判断是否为校外专家审核账号
             Integer isZjshAccount = jiaoGaiXiangMuMapper.isZjshAccount(jiaoGaiXiangMu.getShenHeUserId());
-//            jiaoGaiXiangMu.setIsZjshAccount(isZjshAccount);
+            jiaoGaiXiangMu.setIsZjshAccount(isZjshAccount);
             resultMap.put("isZjshAccount", isZjshAccount);
             //获取未审核数
             resultMap.put("unShenHeNum", jiaoGaiXiangMuMapper.getNotShenHeNum(jiaoGaiXiangMu.getShenHeUserId(),isZjshAccount));
@@ -49,18 +49,20 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
         //
         Page<Object> pageInfo = PageHelper.startPage(jiaoGaiXiangMu.getPageIndex(), jiaoGaiXiangMu.getPageSize());
         List<JiaoGaiXiangMu> pageList = jiaoGaiXiangMuMapper.getPageList(jiaoGaiXiangMu);
-        for (JiaoGaiXiangMu xiangMu : pageList) {
-            xiangMu.setMemberList(jiaoGaiXiangMuMapper.getMemberList(xiangMu.getCode())); //项目成员列表
-            xiangMu.setFundBudgetList(jiaoGaiXiangMuMapper.getFundBudgetList(xiangMu.getCode())); //经费预算列表
-            //
-            if(!StringUtils.isEmpty(xiangMu.getShenheCode())){//若数据未提交，则不执行此查询
-                xiangMu.setZjshItemList(jiaoGaiXiangMuMapper.getZjshProcess(xiangMu.getCode(),xiangMu.getBatchNum()));//专家审核意见
-                if(jwcGly == 1){
-                    xiangMu.setIsZjshAll(jiaoGaiXiangMuMapper.isZjshAll(xiangMu.getCode(),xiangMu.getBatchNum()));
+        if(pageList !=null && pageList.size() >0){
+            for (JiaoGaiXiangMu xiangMu : pageList) {
+                xiangMu.setMemberList(jiaoGaiXiangMuMapper.getMemberList(xiangMu.getCode())); //项目成员列表
+                xiangMu.setFundBudgetList(jiaoGaiXiangMuMapper.getFundBudgetList(xiangMu.getCode())); //经费预算列表
+                //
+                if(StringUtils.isNotEmpty(xiangMu.getShenheCode())){//若数据未提交，则不执行此查询
+                    xiangMu.setZjshItemList(jiaoGaiXiangMuMapper.getZjshProcess(xiangMu.getCode(),xiangMu.getBatchNum()));//专家审核意见
+                    if(jwcGly == 1){
+                        xiangMu.setIsZjshAll(jiaoGaiXiangMuMapper.isZjshAll(xiangMu.getCode(),xiangMu.getBatchNum()));
+                    }
                 }
             }
         }
-        resultMap.put("totalNum",pageInfo.getTotal());
+        resultMap.put("totalNum", pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
     }
@@ -92,7 +94,6 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
         for (JiaoGaiXiangMu jiaoGaiXiangMu : jiaoGaiXiangMuList) {
             jiaoGaiXiangMu.setShenheCode(activeShenheCode);
             jiaoGaiXiangMu.setBatchNum(StringUtils.isEmpty(jiaoGaiXiangMu.getBatchNum())?1:jiaoGaiXiangMu.getBatchNum()+1);//提交批次，每提交一次加1
-            jiaoGaiXiangMu.setStatus("审核中");
         }
         return shenHeMapper.batchSubimt(jiaoGaiXiangMuList);
     }
@@ -122,10 +123,10 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
         return bool;
     }
 
-    @Override
+    /*@Override
     public List<ZjshItem> getZjshProcess(String xmCode, Integer batchNum) {
         return jiaoGaiXiangMuMapper.getZjshProcess(xmCode,batchNum);
-    }
+    }*/
 
     @Override
     public List<Member> getMemberList(String xmCode) {

@@ -39,7 +39,6 @@ public class JiaoGaiXiangMu {
             ,xmNum //项目编号
             ,xmName //项目名称
             ,xmType //项目类型：下拉选择框（重点、一般）
-
             ,leader //项目主持人
             ,leaderId //项目主持人工号
             ,title //职称：下拉选择框（教授、副教授、讲师、研究员、副研究员、助理研究员等）
@@ -47,14 +46,12 @@ public class JiaoGaiXiangMu {
             ,major //专业：提示若是职能部门，可以不填写。
             ,mainTeachWork //主要教学工作简历
             ,mainTeachAchievement; //主要教育教学研究领域及成果
-
-    private List<Member> memberList; //主要成员情况
-
     private String currentAndBackground //现状与背景分析（包括已有研究实践基础）
             ,questionAndTarget //研究内容、目标、要解决的问题和主要特色
             ,expectAndResult //预期效果与具体成果
             ,planAndProcess; //进度安排
 
+    private List<Member> memberList; //主要成员情况
     private List<FundBudget> fundBudgetList; //经费预算
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
