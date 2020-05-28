@@ -2,24 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.common.hjLevel.mapper.HjLevelMapper">
 
-    <select id="getParentMenuList" resultType="java.util.Map">
-        SELECT M2.MENU_ID,M2.MENU_NAME FROM COMMON_HJLEVEL_MENU M1 LEFT JOIN SYS_MENU M2 ON M2.MENU_ID = M1.MENU_ID WHERE PID IS NULL
-    </select>
-    <select id="getMenuListByPid" resultType="java.util.Map">
-        SELECT M2.MENU_ID,M2.MENU_NAME FROM COMMON_HJLEVEL_MENU M1 LEFT JOIN SYS_MENU M2 ON M2.MENU_ID = M1.MENU_ID
-        WHERE PID  = #{pid}
-    </select>
-    <select id="getHjLevelSet" resultType="java.util.Map">
-        SELECT t2.* FROM COMMON_HJLEVEL_SET t1 LEFT JOIN COMMON_HJLEVEL t2 on t2.CODE = T1.HJLEVEL_CODE
-        WHERE MENU_ID = #{menuId}
-    </select>
-    <insert id="addHjLevelSet">
-        INSERT INTO COMMON_HJLEVEL_SET (MENU_ID,HJLEVEL_CODE) VALUES (#{menuId},#{hjLevelCode})
-    </insert>
-    <delete id="delHjLevelSet">
-        DELETE FROM COMMON_HJLEVEL_SET where MENU_ID = #{menuId} and HJLEVEL_CODE = #{hjLevelCode}
-    </delete>
-
+    <!-- HjLevel -->
     <select id="getHjLevelList" resultType="java.util.Map">
         SELECT * FROM COMMON_HJLEVEL
     </select>
@@ -34,6 +17,24 @@
     </update>
     <delete id="deleteHjLevel">
         DELETE FROM COMMON_HJLEVEL where CODE = #{code}
+    </delete>
+
+    <!-- HjLevelSet -->
+    <select id="getParentMenuList" resultType="java.util.Map">
+        SELECT M2.MENU_ID,M2.MENU_NAME FROM COMMON_HJLEVEL_MENU M1 LEFT JOIN SYS_MENU M2 ON M2.MENU_ID = M1.MENU_ID WHERE PID IS NULL
+    </select>
+    <select id="getMenuListByPid" resultType="java.util.Map">
+        SELECT M2.MENU_ID,M2.MENU_NAME FROM COMMON_HJLEVEL_MENU M1 LEFT JOIN SYS_MENU M2 ON M2.MENU_ID = M1.MENU_ID WHERE PID  = #{pid}
+    </select>
+    <select id="getHjLevelSet" resultType="java.util.Map">
+        SELECT t2.* FROM COMMON_HJLEVEL_SET t1 LEFT JOIN COMMON_HJLEVEL t2 on t2.CODE = T1.HJLEVEL_CODE
+        WHERE MENU_ID = #{menuId}
+    </select>
+    <insert id="addHjLevelSet">
+        INSERT INTO COMMON_HJLEVEL_SET (MENU_ID,HJLEVEL_CODE) VALUES (#{menuId},#{hjLevelCode})
+    </insert>
+    <delete id="delHjLevelSet">
+        DELETE FROM COMMON_HJLEVEL_SET where MENU_ID = #{menuId} and HJLEVEL_CODE = #{hjLevelCode}
     </delete>
 
 </mapper>

@@ -7,10 +7,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/16
- */
 @Getter
 @Setter
 public class FileInfo {

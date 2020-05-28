@@ -16,70 +16,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 @Service
 public class ShenHeServiceImpl implements ShenHeService {
 
     @Autowired
     private ShenHeMapper shenHeMapper;
 
+    //ShenHeSet
     @Override
-    public List<ShenHe> getShenheProcess(String relationCode) {
-        List<ShenHe> shenHeList = shenHeMapper.getShenheByRelationCode(relationCode);
-        for (ShenHe shenHe : shenHeList) {
-            List<ShenHeItem> shenHeItemList = shenHeMapper.getShenheItem(shenHe.getRelationCode(),shenHe.getBatchNum());
-            shenHe.setShenHeItemList(shenHeItemList);
-        }
-        return shenHeList;
-    }
-
-    @Override
-    public String getActiveShenheCode(Integer menuId) {
-        return shenHeMapper.getActiveShenheCode(menuId);
-    }
-
-    @Override
-    public Map<String, Object> getShenHeList(ShenHeSet shenHe) {
+    public Map<String, Object> getShenHeSetPageList(ShenHeSet shenHeSet) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(shenHe.getPageIndex(), shenHe.getPageSize());
-        List<ShenHeSet> pageList = shenHeMapper.getShenHeList(shenHe);
-        resultMap.put("totalNum",pageInfo.getTotal());
+        Page<Object> pageInfo = PageHelper.startPage(shenHeSet.getPageIndex(), shenHeSet.getPageSize());
+        List<ShenHeSet> pageList = shenHeMapper.getShenHeSetPageList(shenHeSet);
+        resultMap.put("totalNum", pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
     }
 
     @Override
-    public List<Menu> getMenuParentList(Long menuId) {
-        return shenHeMapper.getMenuParentList(menuId);
-    }
-
-    @Override
-    public List<Menu> getMenuListForShenHe() {
-        return shenHeMapper.getMenuListForShenHe();
-    }
-
-    @Override
-    public boolean addShenhe(ShenHeSet shenHe) {
-        List<ShenHeSet> shenHeList = shenHeMapper.getShenHeList(shenHe);
-        if(shenHeList!=null&&shenHeList.size()>0){
-            shenHeMapper.updateShenheByMenuId(shenHe.getMenuId());
+    public boolean addShenheSet(ShenHeSet shenHeSet) {
+        List<ShenHeSet> shenHeSetPageList = shenHeMapper.getShenHeSetPageList(shenHeSet);
+        if(shenHeSetPageList != null && shenHeSetPageList.size() > 0){ //如果该业务模块已经设置了审核流程
+            shenHeMapper.updateShenheSetStatusByMenuId(shenHeSet.getMenuId()); //则把之前的审核流程状态设置为“已禁用”
         }
-        return shenHeMapper.addShenhe(shenHe);
+        return shenHeMapper.addShenheSet(shenHeSet);
     }
 
     @Override
-    public boolean updateShenheByCode(ShenHeSet shenHe) {
-        return shenHeMapper.updateShenheByCode(shenHe);
+    public boolean updateShenheSetByCode(ShenHeSet shenHeSet) {
+        return shenHeMapper.updateShenheSetByCode(shenHeSet);
     }
 
     @Override
-    public boolean batchDelete(String[] codeArr) {
-        return shenHeMapper.batchDelete(codeArr);
+    public boolean batchDeleteShenHeSet(String[] codeArr) {
+        int execNum = shenHeMapper.batchDeleteShenHeSet(codeArr); //mybatis一次对多条数据进行操作成功后返回值为 -1
+        return execNum < 0;
     }
 
+    //ShenHeNode
     @Override
     public List<ShenHeNode> getShenHeNodeList(String shenheCode) {
         return shenHeMapper.getShenheNodeList(shenheCode,null);
@@ -87,10 +61,10 @@ public class ShenHeServiceImpl implements ShenHeService {
 
     @Override
     public String addShenHeNode(ShenHeNode node) {
-        String code = StringUtils.guid(16, false);
+        String code = StringUtils.guid(16, true);
         node.setNodeCode(code);
         List<ShenHeNode> shenheNodeList = shenHeMapper.getShenheNodeList(node.getShenheCode(),null);
-        if(shenheNodeList!=null){
+        if(shenheNodeList != null && shenheNodeList.size() > 0){
             node.setExecLevel(shenheNodeList.size()+1);
         }else{
             node.setExecLevel(1);
@@ -103,32 +77,52 @@ public class ShenHeServiceImpl implements ShenHeService {
     }
 
     @Override
-    public boolean updateShenHeNodeByCode(ShenHeNode node) {
+    public boolean updateShenHeNodeByCode(ShenHeNode shenHeNode) {
         Integer execLevel = null;
-        if(!org.springframework.util.StringUtils.isEmpty(node.getSortType())){
-            if(node.getSortType().trim().equalsIgnoreCase("up")){
-                execLevel = node.getExecLevel()-1;
+        if(StringUtils.isNotEmpty(shenHeNode.getSortType())){
+            if(shenHeNode.getSortType().trim().equalsIgnoreCase("up")){
+                execLevel = shenHeNode.getExecLevel()-1;
             }
-            if(node.getSortType().trim().equalsIgnoreCase("down")){
-                execLevel = node.getExecLevel()+1;
+            if(shenHeNode.getSortType().trim().equalsIgnoreCase("down")){
+                execLevel = shenHeNode.getExecLevel()+1;
             }
-            ShenHeNode dbNode = shenHeMapper.getShenheNodeList(node.getShenheCode(),execLevel).get(0);
-            dbNode.setExecLevel(node.getExecLevel());
-            boolean bool = shenHeMapper.updateShenHeNodeByCode(dbNode);
+            ShenHeNode node = shenHeMapper.getShenheNodeList(shenHeNode.getShenheCode(),execLevel).get(0);
+            node.setExecLevel(shenHeNode.getExecLevel());
+            boolean bool = shenHeMapper.updateShenHeNodeByCode(node);
             if(bool){
-                node.setExecLevel(execLevel);
+                shenHeNode.setExecLevel(execLevel);
             }
         }
-        return shenHeMapper.updateShenHeNodeByCode(node);
+        return shenHeMapper.updateShenHeNodeByCode(shenHeNode);
     }
 
     @Override
     public boolean deleteShenHeNodeByCode(String nodeCode) {
-        ShenHeNode dbNode = shenHeMapper.getShenHeNodeByCode(nodeCode);
-        boolean bool = shenHeMapper.batchUpdateShenHeNode(dbNode);
+        ShenHeNode shenHeNode = shenHeMapper.getShenHeNodeByCode(nodeCode);
+        boolean bool = shenHeMapper.batchUpdateShenHeNodeExecLevel(shenHeNode); //同一个审核流程中，执行级别大于当前（待删除）节点的数据，执行级别依次递减
         if(bool){
             bool = shenHeMapper.deleteShenHeNodeByCode(nodeCode);
         }
         return bool;
     }
+
+    //
+    @Override
+    public List<ShenHe> getShenheProcess(String relationCode) {
+        List<ShenHe> shenHeList = shenHeMapper.getShenheByRelationCode(relationCode);
+        if(shenHeList != null && shenHeList.size() >0){
+            for (ShenHe shenHe : shenHeList) {
+                List<ShenHeItem> shenHeItemList = shenHeMapper.getShenheItem(shenHe.getRelationCode(),shenHe.getBatchNum());
+                shenHe.setShenHeItemList(shenHeItemList);
+            }
+        }
+        return shenHeList;
+    }
+
+    //
+    @Override
+    public String getActiveShenheCode(Integer menuId) {
+        return shenHeMapper.getActiveShenheCode(menuId);
+    }
+
 }

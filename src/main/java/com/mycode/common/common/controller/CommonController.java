@@ -14,8 +14,6 @@ import java.util.Map;
 
 /**
  * 通用模块
- * @auther kexiangwei
- * @date 2019/7/13
  */
 @CrossOrigin
 @Controller
@@ -37,6 +35,11 @@ public class CommonController {
         return JsonResult.success(resultMap);
     }
 
+    /**
+     *
+     * @param stuCode
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getCollege.do")
     public JsonResult<Object> getCollege(@RequestParam(value = "stuCode",required = false) String stuCode){
@@ -44,6 +47,11 @@ public class CommonController {
         return JsonResult.success(maps);
     }
 
+    /**
+     *
+     * @param collegeCode
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getMajor.do")
     public JsonResult<Object> getMajor(@RequestParam(value = "collegeCode",required = false) String collegeCode){

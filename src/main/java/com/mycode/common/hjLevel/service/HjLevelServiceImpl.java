@@ -19,6 +19,31 @@ public class HjLevelServiceImpl implements HjLevelService {
     private HjLevelMapper hjLevelMapper;
 
     @Override
+    public List<Map<String, Object>> getHjLevelList() {
+        return hjLevelMapper.getHjLevelList();
+    }
+
+    @Override
+    public Map<String, Object> getHjLevelByName(String name) {
+        return hjLevelMapper.getHjLevelByName(name);
+    }
+
+    @Override
+    public boolean insertHjLevel(String name) {
+        return hjLevelMapper.insertHjLevel(StringUtils.guid(16,true), name);
+    }
+
+    @Override
+    public boolean updateHjLevel(String code, String name) {
+        return hjLevelMapper.updateHjLevel(code,name);
+    }
+
+    @Override
+    public boolean deleteHjLevel(String code) {
+        return hjLevelMapper.deleteHjLevel(code);
+    }
+
+    @Override
     public List<Map<String, Object>> getParentMenuList() {
         return hjLevelMapper.getParentMenuList();
     }
@@ -43,28 +68,4 @@ public class HjLevelServiceImpl implements HjLevelService {
         return hjLevelMapper.delHjLevelSet(menuId,hjLevelCode);
     }
 
-    @Override
-    public List<Map<String, Object>> getHjLevelList() {
-        return hjLevelMapper.getHjLevelList();
-    }
-
-    @Override
-    public Map<String, Object> getHjLevelByName(String name) {
-        return hjLevelMapper.getHjLevelByName(name);
-    }
-
-    @Override
-    public boolean insertHjLevel(String name) {
-        return hjLevelMapper.insertHjLevel(StringUtils.guid(16,true), name);
-    }
-
-    @Override
-    public boolean updateHjLevel(String code, String name) {
-        return hjLevelMapper.updateHjLevel(code,name);
-    }
-
-    @Override
-    public boolean deleteHjLevel(String code) {
-        return hjLevelMapper.deleteHjLevel(code);
-    }
 }

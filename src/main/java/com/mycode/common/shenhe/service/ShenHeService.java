@@ -9,35 +9,29 @@ import com.mycode.common.shenhe.domain.ShenHeNode;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 public interface ShenHeService {
 
-    List<ShenHe> getShenheProcess(String relationCode);
+    //ShenHeSet
+    Map<String, Object> getShenHeSetPageList(ShenHeSet shenHeSet);
 
-    String getActiveShenheCode(Integer menuId);
+    boolean addShenheSet(ShenHeSet shenHeSet);
 
-    //
-    Map<String, Object> getShenHeList(ShenHeSet shenHe);
+    boolean updateShenheSetByCode(ShenHeSet shenHeSet);
 
-    List<Menu> getMenuParentList(Long menuId);
+    boolean batchDeleteShenHeSet(String[] codeArr);
 
-    List<Menu> getMenuListForShenHe();
-
-    boolean addShenhe(ShenHeSet shenHe);
-
-    boolean updateShenheByCode(ShenHeSet shenHe);
-
-    boolean batchDelete(String[] codeArr);
-
-    //
+    //ShenHeNode
     List<ShenHeNode> getShenHeNodeList(String shenheCode);
 
-    String addShenHeNode(ShenHeNode node);
+    String addShenHeNode(ShenHeNode shenHeNode);
 
-    boolean updateShenHeNodeByCode(ShenHeNode node);
+    boolean updateShenHeNodeByCode(ShenHeNode shenHeNode);
 
     boolean deleteShenHeNodeByCode(String nodeCode);
+
+    //根据relationCode 获取审核流程
+    List<ShenHe> getShenheProcess(String relationCode);
+    //根据业务模块编号menuId 获取当前处于激活状态的审核流程编号
+    String getActiveShenheCode(Integer menuId);
+
 }

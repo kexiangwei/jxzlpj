@@ -14,6 +14,10 @@ public interface MenuMapper {
 
     List<Menu> getMenuTree();
 
+    List<Menu> getParentMenuList(@Param("menuId") Long menuId);
+
+    List<Menu> getChildMenuList();
+
     List<Role> getRoleListByMenuId(@Param("menuId") Long menuId);
 
 }

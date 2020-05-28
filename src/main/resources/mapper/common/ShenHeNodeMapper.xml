@@ -14,7 +14,7 @@
 
     <insert id="addShenHeNode">
         insert into COMMON_SHENHE_NODE (shenhe_code,node_code,node_name,node_task,role_id,exec_level,create_date)
-        values (#{shenheCode},#{nodeCode},#{nodeName},#{nodeTask},#{roleId},#{execLevel},sysdate)
+        values (#{shenheCode},#{nodeCode},#{nodeName},#{nodeTask},#{roleId},#{execLevel},CURRENT_DATE)
     </insert>
 
     <update id="updateShenHeNodeByCode">
@@ -33,12 +33,14 @@
         where node_code = #{nodeCode}
     </update>
 
-    <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
-        SELECT sn.*
-        from ${v_tab_shenhe} v
-        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
-        LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
-        where code = #{relationCode} and ur.user_id = #{userId}
-    </select>
+    <update id="batchUpdateShenHeNodeExecLevel">
+        update COMMON_SHENHE_NODE set exec_level = exec_level-1
+        where shenhe_code = #{shenheCode} and exec_level > #{execLevel}
+    </update>
+
+    <delete id="deleteShenHeNodeByCode">
+        delete from COMMON_SHENHE_NODE where node_code = #{nodeCode}
+    </delete>
+
 </mapper>
 

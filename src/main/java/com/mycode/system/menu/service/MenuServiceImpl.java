@@ -35,6 +35,16 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    public List<Menu> getParentMenuList(Long menuId) {
+        return menuMapper.getParentMenuList(menuId);
+    }
+
+    @Override
+    public List<Menu> getChildMenuList() {
+        return menuMapper.getChildMenuList();
+    }
+
+    @Override
     public List<Role> getRoleListByMenuId(Long menuId) {
         List<Role> roleList = menuMapper.getRoleListByMenuId(menuId);
        /* roleList.forEach((role)-> {

@@ -15,10 +15,6 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.util.List;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/16
- */
 @CrossOrigin
 @Controller
 public class FileController {
@@ -51,7 +47,7 @@ public class FileController {
             }
             for (MultipartFile multipartFile : multipartFiles) {
                 // 写入文件到服务器
-                code = StringUtils.guid(32,false);
+                code = StringUtils.guidForDate();
                 StringBuffer newFileName = new StringBuffer(code);
                 newFileName.append(multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().lastIndexOf(".")));
                 filePath.append(newFileName);
@@ -99,15 +95,15 @@ public class FileController {
 
     /**
      * 删除文件
-     * @param code 根据文件编号删除
      * @param relationCode 根据关联的信息编号删除
+     * @param code 根据文件编号删除
      * @return
      * @throws Exception
      */
     @ResponseBody
     @RequestMapping(value="/deleteFileInfo.do")
-    public JsonResult<Object> deleteFileInfo(@RequestParam(value="code",required = false) String code
-            ,@RequestParam(value="relationCode",required = false) String relationCode) throws Exception{
+    public JsonResult<Object> deleteFileInfo(@RequestParam(value="relationCode",required = false) String relationCode
+            ,@RequestParam(value="code",required = false) String code) throws Exception{
         boolean bool = fileService.deleteFileInfo(code,relationCode);
         if(!bool){
             JsonResult.error("删除失败！");

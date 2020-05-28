@@ -36,9 +36,32 @@ public class MenuController {
     }
 
     /**
-     * 筛选出拥有当前菜单审核权限的角色
+     *
+     * @param menuId
+     * @return 通用设置-审核流程-一级菜单下拉选项
+     */
+    @ResponseBody
+    @RequestMapping("/getParentMenuList.do")
+    public JsonResult<Object> getParentMenuList(@RequestParam(value = "menuId",required = false) Long menuId){
+        List<Menu> menuList = menuService.getParentMenuList(menuId);
+        return JsonResult.success(menuList);
+    }
+
+    /**
+     *
+     * @return 通用设置-审核流程-二级菜单下拉选项
+     */
+    @ResponseBody
+    @RequestMapping("/getChildMenuList.do")
+    public JsonResult<Object> getChildMenuList(){
+        List<Menu> menuList = menuService.getChildMenuList();
+        return JsonResult.success(menuList);
+    }
+
+    /**
+     *
      * @param menuId 菜单编号
-     * @return
+     * @return 通用设置-审核流程-节点设置-拥有当前菜单审核权限的用户组下拉选项
      */
     @ResponseBody
     @RequestMapping("/getRoleListByMenuId.do")

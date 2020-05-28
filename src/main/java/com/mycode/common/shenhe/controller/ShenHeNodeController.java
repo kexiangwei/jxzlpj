@@ -18,10 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @auther kexiangwei
- * @date 2019/6/24
- */
 @CrossOrigin
 @Controller
 public class ShenHeNodeController {
@@ -38,22 +34,24 @@ public class ShenHeNodeController {
 
     @ResponseBody
     @RequestMapping("/addShenHeNode.do")
-    public JsonResult<Object> addShenHeNode(ShenHeNode node){
-        String code = shenHeService.addShenHeNode(node);
+    public JsonResult<Object> addShenHeNode(ShenHeNode shenHeNode){
+        String code = shenHeService.addShenHeNode(shenHeNode);
         if(StringUtils.isEmpty(code)){
             return JsonResult.error();
         }
         return JsonResult.success(code);
     }
+
     @ResponseBody
     @RequestMapping("/updateShenHeNodeByCode.do")
-    public JsonResult<Object> updateShenHeNodeByCode(ShenHeNode node){
-        boolean bool = shenHeService.updateShenHeNodeByCode(node);
+    public JsonResult<Object> updateShenHeNodeByCode(ShenHeNode shenHeNode){
+        boolean bool = shenHeService.updateShenHeNodeByCode(shenHeNode);
         if(!bool){
             return JsonResult.error();
         }
         return JsonResult.success();
     }
+
     @ResponseBody
     @RequestMapping("/deleteShenHeNodeByCode.do")
     public JsonResult<Object> deleteShenHeNodeByCode(@RequestParam("nodeCode") String nodeCode){

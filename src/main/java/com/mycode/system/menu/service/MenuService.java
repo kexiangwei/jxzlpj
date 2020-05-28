@@ -12,5 +12,9 @@ public interface MenuService {
 
     List<Menu> getMenuTree();
 
+    List<Menu> getParentMenuList(Long menuId);
+
+    List<Menu> getChildMenuList();
+
     List<Role> getRoleListByMenuId(Long menuId);
 }

@@ -9,10 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 @Getter
 @Setter
 public class ShenHe {

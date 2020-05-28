@@ -6,10 +6,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 @Mapper
 public interface CommonMapper {
 

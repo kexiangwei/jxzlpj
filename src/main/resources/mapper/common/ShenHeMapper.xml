@@ -2,90 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.common.shenhe.mapper.ShenHeMapper">
 
-    <select id="getShenHeList" resultType="com.mycode.common.shenhe.domain.ShenHeSet">
-        select sh.*
-        ,m.menu_name
-        ,role_str
-        ,(case when cs.shenhe_code is not null then 1 else 0 end) is_delete /*当流程有审核数据时，列表的删除按钮置为灰色，即为不可删除状态*/
-        from COMMON_SHENHE_SET sh
-        LEFT JOIN sys_menu m on m.menu_id = sh.menu_id
-        LEFT JOIN (
-            SELECT SHENHE_CODE,listagg(role_name,'>') within group(order by exec_level) role_str
-            FROM COMMON_SHENHE_NODE sn
-            LEFT JOIN sys_role r ON r.role_id = sn.role_id
-            GROUP BY SHENHE_CODE
-        ) csn on csn.shenhe_code = sh.shenhe_code
-        LEFT JOIN (SELECT DISTINCT shenhe_code from COMMON_SHENHE) cs on cs.shenhe_code = sh.shenhe_code
-        <where>
-            <if test="menuParentId != null and menuParentId != ''">
-                and m.pid = #{menuParentId}
-            </if>
-            <if test="menuId != null and menuId != ''">
-                and m.menu_id = #{menuId}
-            </if>
-        </where>
-        ORDER BY sh.create_date
-    </select>
-
-    <select id="getMenuParentList" resultType="com.mycode.system.menu.domain.Menu">
-        <choose>
-            <when test="menuId != null and menuId != ''">
-                SELECT * from sys_menu WHERE pid = #{menuId}
-            </when>
-            <otherwise>
-                SELECT * from sys_menu WHERE pid is null and menu_name != '系统设置'
-            </otherwise>
-        </choose>
-    </select>
-    <select id="getMenuListForShenHe" resultType="com.mycode.system.menu.domain.Menu">
-        SELECT * from sys_menu
-        WHERE pid in (
-          SELECT menu_id from sys_menu WHERE pid is null and menu_name != '系统设置'
-        ) and menu_name not in ('提交','审核')
-    </select>
-
-    <insert id="addShenhe">
-        insert into COMMON_SHENHE_SET
-        (menu_id,shenhe_code,shenhe_name,shenhe_desc,status,create_date)
-        values
-        (#{menuId},#{shenheCode},#{shenheName},#{shenheDesc},1,sysdate)
-    </insert>
-
-    <update id="updateShenheByCode">
-        update COMMON_SHENHE_SET
-        <set>
-            <if test="shenheName != null and shenheName != ''">
-                shenhe_name = #{shenheName}
-            </if>
-            <if test="shenheDesc != null and shenheDesc != ''">
-                , shenhe_desc = #{shenheDesc}
-            </if>
-        </set>
-        where shenhe_code = #{shenheCode}
-    </update>
-
-    <insert id="toShenhe">
-        insert into COMMON_SHENHE_ITEM
-        (relation_code,batch_num,shenhe_type,status,opinion,node_code,node_name,user_id,user_name,create_date)
-        values
-        (#{relationCode},#{batchNum},#{shenheType,jdbcType=VARCHAR},#{status},#{opinion},#{nodeCode},#{nodeName},#{userId},#{userName},sysdate)
-    </insert>
-
-    <delete id="batchDelete">
-        delete from COMMON_SHENHE_SET <include refid="batchDelete_condition"/>
-        ;delete from COMMON_SHENHE_NODE <include refid="batchDelete_condition"/>
-    </delete>
-    <sql id="batchDelete_condition">
-        <where>1>1
-            <if test="codeArr !=null and codeArr.length>0" >
-                or shenhe_code in
-                <foreach collection="codeArr" index="idx" item="code" open="(" separator="," close=")">
-                    #{code}
-                </foreach>
-            </if>
-        </where>
-    </sql>
-
     <update id="batchSubimt">
         insert all
         <foreach collection ="objList" item="obj" index= "idx">
@@ -96,6 +12,21 @@
         </foreach>
         select 1 from dual
     </update>
+
+    <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
+        SELECT sn.*
+        from ${v_tab_shenhe} v
+        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
+        LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
+        where code = #{relationCode} and ur.user_id = #{userId}
+    </select>
+
+    <insert id="toShenhe">
+        insert into COMMON_SHENHE_ITEM
+        (relation_code,batch_num,shenhe_type,status,opinion,node_code,node_name,user_id,user_name,create_date)
+        values
+        (#{relationCode},#{batchNum},#{shenheType,jdbcType=VARCHAR},#{status},#{opinion},#{nodeCode},#{nodeName},#{userId},#{userName},sysdate)
+    </insert>
 
     <select id="isShenhePass" resultType="int">
         SELECT (case when total_num = exec_num then 1 else 0 end) isPass

@@ -8,16 +8,7 @@ import java.util.Map;
  */
 public interface HjLevelService {
 
-    List<Map<String, Object>> getParentMenuList();
-
-    List<Map<String, Object>> getMenuListByPid(String pid);
-
-    List<Map<String, Object>> getHjLevelSet(String menuId);
-
-    boolean addHjLevelSet(String menuId, String hjLevelCode);
-
-    boolean delHjLevelSet(String menuId, String hjLevelCode);
-
+    //HjLevel
     List<Map<String, Object>> getHjLevelList();
 
     Map<String, Object> getHjLevelByName(String name);
@@ -27,4 +18,15 @@ public interface HjLevelService {
     boolean updateHjLevel(String code, String name);
 
     boolean deleteHjLevel(String code);
+
+    //HjLevelSet
+    List<Map<String, Object>> getParentMenuList();
+
+    List<Map<String, Object>> getMenuListByPid(String pid);
+
+    List<Map<String, Object>> getHjLevelSet(String menuId);
+
+    boolean addHjLevelSet(String menuId, String hjLevelCode);
+
+    boolean delHjLevelSet(String menuId, String hjLevelCode);
 }

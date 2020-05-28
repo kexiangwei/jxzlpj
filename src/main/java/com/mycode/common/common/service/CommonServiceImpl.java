@@ -8,10 +8,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 @Service
 public class CommonServiceImpl implements CommonService {
 

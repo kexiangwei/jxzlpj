@@ -7,10 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 @Service
 public class FileServiceImpl implements FileService {
 

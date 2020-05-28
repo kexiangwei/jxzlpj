@@ -2,11 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.common.file.mapper.FileMapper">
 
+    <select id="getFileListByRelationCode" resultType="com.mycode.common.file.domain.FileInfo">
+        SELECT * FROM COMMON_FILE WHERE relation_code = #{relationCode}
+    </select>
+
     <insert id="saveFileInfo">
         insert into COMMON_FILE
         (code,relation_code,file_name,file_size,file_category,file_type,file_path,user_id,user_name,create_date)
         values
-        (#{code},#{relationCode},#{fileName},#{fileSize},#{fileCategory},#{fileType},#{filePath},#{userId},#{userName},sysdate)
+        (#{code},#{relationCode},#{fileName},#{fileSize},#{fileCategory},#{fileType},#{filePath},#{userId},#{userName},CURRENT_DATE)
     </insert>
 
     <delete id="deleteFileInfo">
@@ -20,5 +24,6 @@
             </if>
         </where>
     </delete>
+
 </mapper>
 

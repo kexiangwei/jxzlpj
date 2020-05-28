@@ -6,18 +6,18 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-/**
- * @auther kexiangwei
- * @date 2019/7/13
- */
 @Getter
 @Setter
 public class ShenHeItem {
 
+    //
+    private Integer isZjshAccount; //是否校外专家审核账号
+    //
     private String nodeCode
             ,nodeName;
     private String relationCode; // 关联的信息编号
     private Integer batchNum;
+    private String shenheType; //审核类别：【初审，终审】
     private String status // 审核状态【通过 | 退回】
                 ,opinion; // 审核意见
     private Integer userId;
@@ -25,6 +25,5 @@ public class ShenHeItem {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createDate;
-    private String shenheType; //审核类别：【初审，终审】
-    private Integer isZjshAccount; //是否校外专家审核账号
+
 }

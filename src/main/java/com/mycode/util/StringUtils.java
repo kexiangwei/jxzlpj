@@ -2,9 +2,15 @@ package com.mycode.util;
 
 import org.springframework.lang.Nullable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 public class StringUtils {
+
+	public static String guidForDate(){
+		return new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+	}
 
 	/**
 	 * 生成随机字符
