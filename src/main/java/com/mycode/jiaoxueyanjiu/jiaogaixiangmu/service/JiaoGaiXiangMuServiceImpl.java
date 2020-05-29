@@ -2,15 +2,12 @@ package com.mycode.jiaoxueyanjiu.jiaogaixiangmu.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.file.domain.FileInfo;
-import com.mycode.common.file.mapper.FileMapper;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
-import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.ZjshItem;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +24,6 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
     private JiaoGaiXiangMuMapper jiaoGaiXiangMuMapper;
     @Autowired
     private ShenHeMapper shenHeMapper;
-    @Autowired
-    private FileMapper fileMapper;
 
     @Override
     public Map<String, Object> getPageList(JiaoGaiXiangMu jiaoGaiXiangMu) {
@@ -40,7 +35,7 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
 //            jiaoGaiXiangMu.setIsJwcGly(jwcGly);
             resultMap.put("isJwcGly", jwcGly);
             //判断是否为校外专家审核账号
-            Integer isZjshAccount = jiaoGaiXiangMuMapper.isZjshAccount(jiaoGaiXiangMu.getShenHeUserId());
+            Integer isZjshAccount = jiaoGaiXiangMuMapper.isZjAccount(jiaoGaiXiangMu.getShenHeUserId());
             jiaoGaiXiangMu.setIsZjshAccount(isZjshAccount);
             resultMap.put("isZjshAccount", isZjshAccount);
             //获取未审核数
@@ -79,14 +74,7 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
 
     @Override
     public boolean delete(String code) {
-        boolean bool = jiaoGaiXiangMuMapper.delete(code);
-        if(bool){
-            List<FileInfo> fileListByRelationCode = fileMapper.getFileListByRelationCode(code);
-            if(!fileListByRelationCode.isEmpty()){
-                bool = fileMapper.deleteFileInfo(null, code);
-            }
-        }
-        return bool;
+        return jiaoGaiXiangMuMapper.delete(code);
     }
 
     @Override
@@ -107,15 +95,17 @@ public class JiaoGaiXiangMuServiceImpl implements JiaoGaiXiangMuService {
             if(item.getIsZjshAccount()==1){
                 bool = jiaoGaiXiangMuMapper.toZjShenhe(item); //专家审核
             }else{
-                ShenHeNode node = jiaoGaiXiangMuMapper.getShenheNode(item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
+                ShenHeNode node = shenHeMapper.getShenheNode("v_JXYJ_JGXM_SHENHE",item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
                 item.setNodeCode(node.getNodeCode());
                 item.setNodeName(node.getNodeName());
                 bool = shenHeMapper.toShenhe(item); //提交审核
                 if(bool){
-                    if(item.getShenheType().equals("终审")&&item.getStatus().equals("通过")){
-                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"通过");
-                    }else if(item.getStatus().equals("退回")){
+                    if(item.getStatus().equals("退回")){
                         return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
+                    } else { // 通过，未通过
+                        if(item.getShenheType().equals("终审")){
+                            return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),item.getStatus());
+                        }
                     }
                 }
             }

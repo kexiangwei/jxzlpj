@@ -1,29 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuMapper">
+<mapper namespace="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuCityMapper">
 
     <select id="getNotShenHeNum" resultType="int">
         <if test="isZjshAccount !=null"><!-- 此处不能做isZjshAccount !=''的判断，isZjshAccount 值为0 时会被识别为空字符串''-->
             <choose>
                 <when test="isZjshAccount == 1">
                     SELECT NVL(sum(case when ZJ.CREATE_DATE is null then 1 else 0 end), 0)
-                    FROM JXYJ_JGXM ct
+                    FROM JXYJ_JGXM_CITY ct
                     LEFT JOIN COMMON_SHENHE_ITEM it on IT.RELATION_CODE = ct.code
                     LEFT JOIN JXYJ_JGXM_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM  and ZJ.USER_ID = #{shenHeUserId}
                     where IT.SHENHE_TYPE = '初审' and IT.STATUS = '通过'
                 </when>
                 <otherwise>
-                    SELECT count(0) FROM (SELECT v.code, v.batch_num, count(sn.node_code) total_num, count(item.node_code) exec_num
-                    , max(CASE WHEN item.status = '退回' THEN sn.role_id ELSE 0 END) is_back, max(NVL(isZjshAll, 0)) isZjshAll
-
-                    FROM v_JXYJ_JGXM_SHENHE v
+                    SELECT count(0)
+                    FROM (
+                        SELECT v.code, v.batch_num
+                        , count(sn.node_code) total_num
+                        , count(item.node_code) exec_num
+                        , max(CASE WHEN item.status = '退回' THEN sn.role_id ELSE 0 END) is_back
+                        , max(NVL(isZjshAll, 0)) isZjshAll
+                        FROM v_JXYJ_JGXM_CITY_SHENHE v
+                        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
+                        LEFT JOIN COMMON_SHENHE_ITEM item ON item.relation_code = v.code AND item.batch_num = v.batch_num AND item.node_code = sn.node_code
+                        LEFT JOIN (
+                            SELECT xm_code, BATCH_NUM, (CASE WHEN count(0) = (SELECT count(0) FROM SYS_USER_ROLE WHERE role_id = 7) THEN 1 ELSE 0 END) isZjshAll
+                            FROM JXYJ_JGXM_ZJSH GROUP BY xm_code, BATCH_NUM
+                        ) zj ON zj.xm_code = v.code AND zj.batch_num = v.batch_num
+                        GROUP BY v.code, v.batch_num
+                    ) t
+                    LEFT JOIN v_JXYJ_JGXM_CITY_SHENHE v ON v.code = t.code AND v.batch_num = t.batch_num
                     LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
-                    LEFT JOIN COMMON_SHENHE_ITEM item ON item.relation_code = v.code AND item.batch_num = v.batch_num AND item.node_code = sn.node_code
-                    LEFT JOIN (SELECT xm_code, BATCH_NUM, (CASE WHEN count(0) = (SELECT count(0) FROM SYS_USER_ROLE WHERE role_id = 7) THEN 1 ELSE 0 END) isZjshAll
-                    FROM JXYJ_JGXM_ZJSH GROUP BY xm_code, BATCH_NUM) zj ON zj.xm_code = v.code AND zj.batch_num = v.batch_num GROUP BY v.code, v.batch_num) t
-                    LEFT JOIN v_JXYJ_JGXM_SHENHE v ON v.code = t.code AND v.batch_num = t.batch_num LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
                     LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
-
                     WHERE 1 = 1
                     and exec_num >= exec_level-1 /*只显示上一级‘已审核’的数据*/
                     AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END) /*排除上一级状态值为‘退回’的数据*/
@@ -35,12 +43,12 @@
         </if>
     </select>
 
-    <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu">
+    <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMuForCity">
         <choose>
             <when test="shenHeUserId !=null and shenHeUserId !='' and isZjshAccount == 1"><!-- 校外专家审核列表 -->
                 SELECT v.*
                 ,(case when ZJ.CREATE_DATE is not null then '已审核' else '未审核' end) shenhe_status
-                from  v_JXYJ_JGXM_SHENHE v
+                from  v_JXYJ_JGXM_CITY_SHENHE v
                 left join COMMON_SHENHE_ITEM it on it.relation_code = v.code and it.batch_num = v.batch_num
                 LEFT JOIN JXYJ_JGXM_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM and ZJ.user_id = #{shenHeUserId}
                 where it.shenhe_type = '初审' and it.STATUS = '通过'
@@ -68,7 +76,7 @@
                         ,count(item.node_code) exec_num
                         ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
                         ,max(NVL(isZjshAll, 0)) isZjshAll
-                    from v_JXYJ_JGXM_SHENHE v
+                    from v_JXYJ_JGXM_CITY_SHENHE v
                     left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
                     left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
                     LEFT JOIN (
@@ -78,7 +86,7 @@
                         GROUP BY xm_code,BATCH_NUM
                     ) zj on zj.xm_code = v.code and zj.batch_num = v.batch_num
                     GROUP BY v.code,v.batch_num
-                )t left join v_JXYJ_JGXM_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
+                )t left join v_JXYJ_JGXM_CITY_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
                 left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
                 left join sys_user_role ur on ur.role_id = sn.role_id
                 <where>1=1
@@ -124,7 +132,7 @@
             </when>
             <otherwise>
                 SELECT v.*
-                from V_JXYJ_JGXM v
+                from v_JXYJ_JGXM_CITY v
                 <where>1=1
                     <choose>
                         <when test="status != null and status != '' and status == '待审核'">
@@ -146,88 +154,51 @@
         <if test="userName != null and userName != ''">
             and v.user_name = #{userName}
         </if>
-        <if test="xmName != null and xmName != ''">
-            and xm_name like concat(concat('%',#{xmName}),'%')
+        <if test="projectName != null and projectName != ''">
+            and project_name like concat(concat('%',#{projectName}),'%')
         </if>
-        <if test="xmType != null and xmType != ''">
-            and xm_type = #{xmType}
-        </if>
-        <if test="leader != null and leader != ''">
-            and leader = #{leader}
+        <if test="projectLevel != null and projectLevel != ''">
+            and project_level = #{projectLevel}
         </if>
     </sql>
 
     <insert id="insert">
-          insert into JXYJ_JGXM
-          (code,xm_name,xm_type,leader,leader_id,title,college_or_dept,major,main_teach_work,main_teach_achievement
-          ,current_and_background,question_and_target,expect_and_result,plan_and_process,user_id,user_name,create_date)
+          insert into JXYJ_JGXM_CITY
+          (code,project_name,project_num,project_level,project_start_time,project_end_time,fund,member_num,user_id,user_name,user_unit,create_date)
           values
-          (#{code},#{xmName},#{xmType},#{leader},#{leaderId},#{title},#{collegeOrDept},#{major},#{mainTeachWork,jdbcType=VARCHAR},#{mainTeachAchievement,jdbcType=VARCHAR}
-          ,#{currentAndBackground,jdbcType=VARCHAR},#{questionAndTarget,jdbcType=VARCHAR},#{expectAndResult,jdbcType=VARCHAR},#{planAndProcess,jdbcType=VARCHAR}
-          ,#{userId},#{userName},sysdate)
+          (#{code},#{projectName},#{projectNum},#{projectLevel},#{projectStartTime},#{projectEndTime},#{fund},#{memberNum},#{userId},#{userName},#{userUnit},CURRENT_DATE)
     </insert>
 
     <update id="update">
-        update JXYJ_JGXM
+        update JXYJ_JGXM_CITY
         <set>
-            <if test="xmName != null and xmName != ''">
-                xm_name = #{xmName}
+            <if test="projectName != null and projectName != ''">
+                project_name = #{projectName}
             </if>
-            <if test="xmType != null and xmType != ''">
-                , xm_type = #{xmType}
+            <if test="projectNum != null and projectNum != ''">
+                , project_num = #{projectNum}
             </if>
-            <if test="leader != null and leader != ''">
-                , leader = #{leader}
+            <if test="projectLevel != null and projectLevel != ''">
+                , project_level = #{projectLevel}
             </if>
-            <if test="leaderId != null and leaderId != ''">
-                , leader_id = #{leaderId}
+            <if test="projectStartTime != null">
+                , project_start_time = #{projectStartTime}
             </if>
-            <if test="title !=null and title !=''">
-                , title = #{title}
+            <if test="projectEndTime !=null">
+                , project_end_time = #{projectEndTime}
             </if>
-            <if test="collegeOrDept !=null and collegeOrDept !=''">
-                , college_or_dept = #{collegeOrDept}
+            <if test="fund !=null">
+                , fund = #{fund}
             </if>
-            <if test="major !=null and major !=''">
-                , major = #{major}
-            </if>
-            <if test="mainTeachWork !=null and mainTeachWork !=''">
-                , main_teach_work = #{mainTeachWork}
-            </if>
-            <if test="mainTeachAchievement !=null and mainTeachAchievement !=''">
-                , main_teach_achievement = #{mainTeachAchievement}
-            </if>
-            <if test="currentAndBackground !=null and currentAndBackground !=''">
-                , current_and_background = #{currentAndBackground}
-            </if>
-            <if test="questionAndTarget !=null and questionAndTarget !=''">
-                , question_and_target = #{questionAndTarget}
-            </if>
-            <if test="expectAndResult !=null and expectAndResult !=''">
-                , expect_and_result = #{expectAndResult}
-            </if>
-            <if test="planAndProcess !=null and planAndProcess !=''">
-                , plan_and_process = #{planAndProcess}
+            <if test="memberNum !=null">
+                , member_num = #{memberNum}
             </if>
         </set>
         where code = #{code}
     </update>
 
     <delete id="delete">
-        delete from JXYJ_JGXM where code = #{code}
+        delete from JXYJ_JGXM_CITY where code = #{code}
     </delete>
-
-
-    <select id="isZjshAll" resultType="java.lang.Integer">
-        SELECT case when count(ZJSH.USER_ID) = count(ZJ.USER_ID) then 1 else 0 end as isZjshAll
-        FROM (SELECT * FROM SYS_USER_ROLE where role_id = 7) zj
-        LEFT JOIN (SELECT * FROM JXYJ_JGXM_ZJSH where XM_CODE = #{relationCode} AND BATCH_NUM = #{batchNum}) zjsh on ZJSH.USER_ID = ZJ.USER_ID
-    </select>
-    <insert id="toZjShenhe">
-        INSERT INTO JXYJ_JGXM_ZJSH
-        (XM_CODE,BATCH_NUM,STATUS,OPINION,USER_ID,USER_NAME,CREATE_DATE)
-        VALUES
-        (#{relationCode},#{batchNum},#{status},#{opinion},#{userId},#{userName},CURRENT_DATE)
-    </insert>
 
 </mapper>

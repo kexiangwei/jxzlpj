@@ -20,7 +20,7 @@ public interface JiaoGaiXiangMuMapper {
 
     @ResultType(Integer.class)
     @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 7 AND USER_ID = #{shenHeUserId}")
-    Integer isZjshAccount(@Param("shenHeUserId") Integer shenHeUserId);
+    Integer isZjAccount(@Param("shenHeUserId") Integer shenHeUserId);
 
     int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId,@Param("isZjshAccount") Integer isZjshAccount);
 
@@ -31,11 +31,6 @@ public interface JiaoGaiXiangMuMapper {
     boolean update(JiaoGaiXiangMu jiaoGaiXiangMu);
 
     boolean delete(@Param("code") String code);
-
-    //
-    ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") Integer userId);
-
-    int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 
     //专家评审
     @ResultType(ZjshItem.class)
