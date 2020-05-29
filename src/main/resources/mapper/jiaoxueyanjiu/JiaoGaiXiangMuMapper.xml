@@ -11,24 +11,23 @@
                     where IT.SHENHE_TYPE = '初审' and IT.STATUS = '通过'
                 </when>
                 <otherwise>
-                    SELECT count(0) from (
-                        SELECT j.code,j.batch_num
-                            ,count(sn.node_code) total_num
-                            ,count(item.node_code) exec_num
-                            ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-                        from v_JXYJ_JGXM_SHENHE j
-                        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-                        left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-                        GROUP BY j.code,j.batch_num
-                    )t
-                    left join v_JXYJ_JGXM_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
-                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-                    left join sys_user_role ur on ur.role_id = sn.role_id
-                    where 1=1
-                    and exec_num >= exec_level-1
-                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
-                    AND exec_level > exec_num
-                    and ur.user_id = #{shenHeUserId}
+                    SELECT count(0) FROM (SELECT v.code, v.batch_num, count(sn.node_code) total_num, count(item.node_code) exec_num
+                    , max(CASE WHEN item.status = '退回' THEN sn.role_id ELSE 0 END) is_back, max(NVL(isZjshAll, 0)) isZjshAll
+
+                    FROM v_JXYJ_JGXM_SHENHE v
+                    LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
+                    LEFT JOIN COMMON_SHENHE_ITEM item ON item.relation_code = v.code AND item.batch_num = v.batch_num AND item.node_code = sn.node_code
+                    LEFT JOIN (SELECT xm_code, BATCH_NUM, (CASE WHEN count(0) = (SELECT count(0) FROM SYS_USER_ROLE WHERE role_id = 7) THEN 1 ELSE 0 END) isZjshAll
+                    FROM JXYJ_JGXM_ZJSH GROUP BY xm_code, BATCH_NUM) zj ON zj.xm_code = v.code AND zj.batch_num = v.batch_num GROUP BY v.code, v.batch_num) t
+                    LEFT JOIN v_JXYJ_JGXM_SHENHE v ON v.code = t.code AND v.batch_num = t.batch_num LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
+                    LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
+
+                    WHERE 1 = 1
+                    and exec_num >= exec_level-1 /*只显示上一级‘已审核’的数据*/
+                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END) /*排除上一级状态值为‘退回’的数据*/
+                    and (exec_level > exec_num or (exec_num = exec_level and isZjshAll =1))
+                    AND ur.user_id = #{shenHeUserId}
+
                 </otherwise>
             </choose>
         </if>
@@ -91,6 +90,29 @@
                             </when>
                             <when test="shenheStatus == '未审核'">
                                 and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <if test="shenheStatusFirst != null and shenheStatusFirst != ''">
+                        <choose>
+                            <when test="shenheStatusFirst == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatusFirst == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <if test="shenheStatusFinal != null and shenheStatusFinal != ''">
+                        <choose>
+                            <when test="shenheStatusFinal == '已审核'">
+                                and exec_num > exec_level
+                            </when>
+                            <when test="shenheStatusFinal == '未审核'">
+                                and exec_num = exec_level and isZjshAll =1
+                            </when>
+                            <when test="shenheStatusFinal == '待审核'">
+                                and exec_num &lt;= exec_level and isZjshAll !=1
                             </when>
                         </choose>
                     </if>
