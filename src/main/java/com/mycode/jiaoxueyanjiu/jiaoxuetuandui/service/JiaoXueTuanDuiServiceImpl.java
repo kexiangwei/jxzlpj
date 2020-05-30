@@ -7,6 +7,8 @@ import com.mycode.common.file.mapper.FileMapper;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.common.shenhe.mapper.ShenHeMapper;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
+import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMuForCity;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
@@ -29,24 +31,38 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
     private JiaoXueTuanDuiMapper jiaoXueTuanDuiMapper;
     @Autowired
     private ShenHeMapper shenHeMapper;
-    @Autowired
-    private FileMapper fileMapper;
 
     @Override
     public Map<String, Object> getPageList(JiaoXueTuanDui jiaoXueTuanDui) {
         Map<String, Object> resultMap = new HashMap<>();
         //
+        Integer isJwcGly = 0;
         if(StringUtils.isNotEmpty(jiaoXueTuanDui.getShenHeUserId())){
-            //判断是否为评审账号
-            Integer isPsAccount = jiaoXueTuanDuiMapper.isPsAccount(jiaoXueTuanDui.getShenHeUserId());
-            jiaoXueTuanDui.setIsPsAccount(isPsAccount);
-            resultMap.put("isPsAccount", isPsAccount);
+            //是否教务处管理员
+            isJwcGly = jiaoXueTuanDuiMapper.isJwcGly(jiaoXueTuanDui.getShenHeUserId());
+            resultMap.put("isJwcGly", isJwcGly);
+            //是否专家评审账号
+            Integer isZjshAccount = jiaoXueTuanDuiMapper.isZjAccount(jiaoXueTuanDui.getShenHeUserId());
+            jiaoXueTuanDui.setIsZjshAccount(isZjshAccount);
+            resultMap.put("isZjshAccount", isZjshAccount);
             //获取未审核数
-            resultMap.put("unShenHeNum", jiaoXueTuanDuiMapper.getNotShenHeNum(jiaoXueTuanDui.getShenHeUserId()));
+            int notShenHeNum = jiaoXueTuanDuiMapper.getNotShenHeNum(jiaoXueTuanDui);
+            resultMap.put("unShenHeNum", notShenHeNum);
         }
         //
         Page<Object> pageInfo = PageHelper.startPage(jiaoXueTuanDui.getPageIndex(), jiaoXueTuanDui.getPageSize());
         List<JiaoXueTuanDui> pageList = jiaoXueTuanDuiMapper.getPageList(jiaoXueTuanDui);
+        if(pageList !=null && pageList.size() >0){
+            for (JiaoXueTuanDui jiaoXueTuanDui1 : pageList) {
+                //
+                if(StringUtils.isNotEmpty(jiaoXueTuanDui1.getShenheCode())){ //若数据未提交，则不执行此查询
+                    jiaoXueTuanDui1.setZjshItemList(jiaoXueTuanDuiMapper.getZjshProcess(jiaoXueTuanDui1.getCode(),jiaoXueTuanDui1.getBatchNum()));//专家审核意见
+                    if(isJwcGly == 1){
+                        jiaoXueTuanDui1.setIsZjshAll(jiaoXueTuanDuiMapper.isZjshAll(jiaoXueTuanDui1.getCode(),jiaoXueTuanDui1.getBatchNum()));
+                    }
+                }
+            }
+        }
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
@@ -64,14 +80,7 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
 
     @Override
     public boolean delete(String code) {
-        boolean bool = jiaoXueTuanDuiMapper.delete(code);
-        if(bool){
-            List<FileInfo> fileListByRelationCode = fileMapper.getFileListByRelationCode(code);
-            if(!fileListByRelationCode.isEmpty()){
-                bool = fileMapper.deleteFileInfo(null, code);
-            }
-        }
-        return bool;
+        return jiaoXueTuanDuiMapper.delete(code);
     }
 
     @Override
@@ -79,47 +88,31 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
         for (JiaoXueTuanDui jiaoXueTuanDui : jiaoXueTuanDuiList) {
             jiaoXueTuanDui.setShenheCode(activeShenheCode);
             jiaoXueTuanDui.setBatchNum(StringUtils.isEmpty(jiaoXueTuanDui.getBatchNum())?1:jiaoXueTuanDui.getBatchNum()+1);//提交批次，每提交一次加1
-            jiaoXueTuanDui.setStatus("审核中");
         }
-        return jiaoXueTuanDuiMapper.batchSubimt(jiaoXueTuanDuiList);
+        return shenHeMapper.batchSubimt(jiaoXueTuanDuiList);
     }
 
     @Override
-    public boolean toShenhe(ShenHeItem item, List<JiaoXueTuanDui> jiaoXueTuanDuiList) {
+    public boolean toShenhe(ShenHeItem item, List<JiaoXueTuanDui> jiaoGaiXiangMuList) {
         boolean bool = false;
-        for (JiaoXueTuanDui jiaoXueTuanDui : jiaoXueTuanDuiList) {
-            item.setRelationCode(jiaoXueTuanDui.getCode());
-            item.setBatchNum(jiaoXueTuanDui.getBatchNum());
-            ShenHeNode node = jiaoXueTuanDuiMapper.getShenheNode(item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
-            item.setNodeCode(node.getNodeCode());
-            item.setNodeName(node.getNodeName());
-            bool = shenHeMapper.toShenhe(item); //提交审核
-            if(bool){//审核后续操作
-                //如果审核状态为“通过”
-                if(item.getStatus().equals("通过")){
-                    //首先判断是否为拥有教学团队评审角色的账号
-                    Integer isPsAccount = jiaoXueTuanDuiMapper.isPsAccount(item.getUserId());
-                    if(isPsAccount == 1){//如果是，则判断所有评委是否已全部评审
-                        int isPingshenPass = jiaoXueTuanDuiMapper.isPingshenPass(item.getRelationCode(), item.getBatchNum());
-                        if(isPingshenPass == 1){//若已全部评审，则修改业务数据的评审结果（middleResult，finalResult）字段值为“已评审”
-                            jiaoXueTuanDui.setMiddleResult("已评审");
-                            jiaoXueTuanDui.setFinalResult("已评审");
-                            return jiaoXueTuanDuiMapper.update(jiaoXueTuanDui);
-                        }
-                    } else {
-                        int isShenhePass = jiaoXueTuanDuiMapper.isShenhePass(item.getRelationCode(), item.getBatchNum());
-                        if(isShenhePass == 1){
-                            return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"通过");
+        for (JiaoXueTuanDui jiaoGaiXiangMu : jiaoGaiXiangMuList) {
+            item.setRelationCode(jiaoGaiXiangMu.getCode());
+            item.setBatchNum(jiaoGaiXiangMu.getBatchNum());
+            if(item.getIsZjshAccount()==1){
+                bool = jiaoXueTuanDuiMapper.toZjShenhe(item); //专家审核
+            }else{
+                ShenHeNode node = shenHeMapper.getShenheNode("V_JXYJ_JXTD_SHENHE",item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
+                item.setNodeCode(node.getNodeCode());
+                item.setNodeName(node.getNodeName());
+                bool = shenHeMapper.toShenhe(item); //提交审核
+                if(bool){
+                    if(item.getStatus().equals("退回")){
+                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
+                    } else { // 通过，未通过
+                        if(item.getShenheType().equals("终审")){
+                            return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),item.getStatus());
                         }
                     }
-                }else if(item.getStatus().equals("退回")){
-                    boolean isSuccessful = shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
-                    /*if(isSuccessful){
-                        jiaoXueTuanDui.setMiddleResult("未评审");
-                        jiaoXueTuanDui.setFinalResult("未评审");
-                        isSuccessful =  jiaoXueTuanDuiMapper.update(jiaoXueTuanDui);
-                    }*/
-                    return isSuccessful;
                 }
             }
         }
@@ -130,17 +123,16 @@ public class JiaoXueTuanDuiServiceImpl implements JiaoXueTuanDuiService {
     public List<PingShenTemplate> getPingShenTemplate() {
         return jiaoXueTuanDuiMapper.getPingShenTemplate();
     }
-
     @Override
-    public List<PingShen> getPingShenInfo(String relationCode, Integer batchNum, String pingshenType, String userId) {
-        return jiaoXueTuanDuiMapper.getPingShenInfo(relationCode,batchNum,pingshenType,userId);
+    public List<PingShen> getPingShenInfo(String relationCode, Integer batchNum, String userId) {
+        return jiaoXueTuanDuiMapper.getPingShenInfo(relationCode,batchNum,userId);
     }
 
     @Override
     public boolean insertPingShenInfo(PingShen pingShen) {
-        List<PingShen> pingShenInfo = jiaoXueTuanDuiMapper.getPingShenInfo(pingShen.getRelationCode(), pingShen.getBatchNum(), pingShen.getPingshenType(), pingShen.getUserId().toString());
+        List<PingShen> pingShenInfo = jiaoXueTuanDuiMapper.getPingShenInfo(pingShen.getRelationCode(), pingShen.getBatchNum(), pingShen.getUserId().toString());
         if(pingShenInfo != null && pingShenInfo.size() >0){
-            boolean bool = jiaoXueTuanDuiMapper.deletePingShenInfo(pingShen.getRelationCode(), pingShen.getBatchNum(), pingShen.getPingshenType(), pingShen.getUserId().toString());
+            boolean bool = jiaoXueTuanDuiMapper.deletePingShenInfo(pingShen.getRelationCode(), pingShen.getBatchNum(), pingShen.getUserId().toString());
             if(!bool){
                 return false;
             }

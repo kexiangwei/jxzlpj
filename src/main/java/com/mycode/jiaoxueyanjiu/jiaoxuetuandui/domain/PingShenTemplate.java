@@ -5,8 +5,6 @@ import lombok.Setter;
 
 /**
  * 教学研究-教学团队-评审设置
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @Getter
 @Setter

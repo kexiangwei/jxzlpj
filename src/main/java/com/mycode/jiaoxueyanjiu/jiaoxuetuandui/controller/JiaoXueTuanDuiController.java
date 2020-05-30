@@ -109,25 +109,25 @@ public class JiaoXueTuanDuiController {
     @ResponseBody
     @RequestMapping("/getPingShenTemplate.do")
     public JsonResult<Object> getPingShenTemplate(){
-        List<PingShenTemplate> pingShenSets = jiaoXueTuanDuiService.getPingShenTemplate();
-        return JsonResult.success(pingShenSets);
+        List<PingShenTemplate> pingShenTemplate = jiaoXueTuanDuiService.getPingShenTemplate();
+        return JsonResult.success(pingShenTemplate);
     }
 
     @ResponseBody
     @RequestMapping("/getPingShenInfo.do")
     public JsonResult<Object> getPingShen(@RequestParam("relationCode") String relationCode,@RequestParam("batchNum") Integer batchNum
-            ,@RequestParam("pingshenType") String pingshenType,@RequestParam(value = "userId",required = false) String userId){
-        List<PingShen> pingShenInfo = jiaoXueTuanDuiService.getPingShenInfo(relationCode, batchNum, pingshenType, userId);
+            ,@RequestParam(value = "userId",required = false) String userId){
+        List<PingShen> pingShenInfo = jiaoXueTuanDuiService.getPingShenInfo(relationCode, batchNum, userId);
         return JsonResult.success(pingShenInfo);
     }
 
     @ResponseBody
     @RequestMapping("/insertPingShenInfo.do")
     public JsonResult<Object> insertPingShenInfo(PingShen pingShen){
-        boolean isSuccessful = jiaoXueTuanDuiService.insertPingShenInfo(pingShen);
-        if(!isSuccessful){
-            JsonResult.error();
+        boolean bool = jiaoXueTuanDuiService.insertPingShenInfo(pingShen);
+        if(!bool){
+            return JsonResult.error("保存失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("保存成功",null);
     }
 }

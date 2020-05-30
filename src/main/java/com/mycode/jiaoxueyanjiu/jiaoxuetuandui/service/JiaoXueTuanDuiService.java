@@ -27,7 +27,7 @@ public interface JiaoXueTuanDuiService {
 
     List<PingShenTemplate> getPingShenTemplate();
 
-    List<PingShen> getPingShenInfo(String relationCode, Integer batchNum, String pingshenType, String userId);
+    List<PingShen> getPingShenInfo(String relationCode, Integer batchNum, String userId);
 
     boolean insertPingShenInfo(PingShen pingShen);
 

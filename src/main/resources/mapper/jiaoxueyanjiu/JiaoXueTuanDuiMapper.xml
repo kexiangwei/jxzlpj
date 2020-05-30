@@ -3,63 +3,141 @@
 <mapper namespace="com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper.JiaoXueTuanDuiMapper">
 
     <select id="getNotShenHeNum" resultType="int">
-        SELECT count(0)
-        from V_JXYJ_JXTD_SHENHE v
-        LEFT JOIN (SELECT * FROM COMMON_SHENHE_ITEM where USER_ID = #{shenHeUserId}) item on item.relation_code = v.code and item.batch_num = v.batch_num
-        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-        left join sys_user_role ur on ur.role_id = sn.role_id
-        where item.relation_code is null and ur.user_id = #{shenHeUserId}
+        <choose>
+            <when test="isZjshAccount == 1">
+                SELECT NVL(sum(case when ZJ.CREATE_DATE is null then 1 else 0 end), 0)
+                FROM JXYJ_JXTD ct
+                LEFT JOIN COMMON_SHENHE_ITEM it on IT.RELATION_CODE = ct.code
+                LEFT JOIN JXYJ_JXTD_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM  and ZJ.USER_ID = #{shenHeUserId}
+                where ct.TYPE = #{type} and IT.SHENHE_TYPE = '初审' and IT.STATUS = '通过'
+            </when>
+            <otherwise>
+                SELECT count(0)
+                FROM (
+                    SELECT v.code, v.batch_num
+                    , count(sn.node_code) total_num
+                    , count(item.node_code) exec_num
+                    , max(CASE WHEN item.status = '退回' THEN sn.role_id ELSE 0 END) is_back
+                    , max(NVL(isZjshAll, 0)) isZjshAll
+                    FROM v_JXYJ_JXTD_SHENHE v
+                    LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
+                    LEFT JOIN COMMON_SHENHE_ITEM item ON item.relation_code = v.code AND item.batch_num = v.batch_num AND item.node_code = sn.node_code
+                    LEFT JOIN (
+                        SELECT xm_code, BATCH_NUM, (CASE WHEN count(0) = (SELECT count(0) FROM SYS_USER_ROLE WHERE role_id = 8) THEN 1 ELSE 0 END) isZjshAll
+                        FROM JXYJ_JXTD_ZJSH GROUP BY xm_code, BATCH_NUM
+                    ) zj ON zj.xm_code = v.code AND zj.batch_num = v.batch_num
+                    GROUP BY v.code, v.batch_num
+                ) t
+                LEFT JOIN v_JXYJ_JXTD_SHENHE v ON v.code = t.code AND v.batch_num = t.batch_num
+                LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
+                LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
+                WHERE 1 = 1
+                and exec_num >= exec_level-1 /*只显示上一级‘已审核’的数据*/
+                AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END) /*排除上一级状态值为‘退回’的数据*/
+                and (exec_level > exec_num or (exec_num = exec_level and isZjshAll =1))
+                AND v.type = #{type} and ur.user_id = #{shenHeUserId}
+
+            </otherwise>
+        </choose>
     </select>
 
     <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui">
         <choose>
-            <when test="shenHeUserId !=null and shenHeUserId !='' and isPsAccount == 1"><!-- 审核列表 -->
-                select * from (
-                    SELECT v.*
-                    ,(case when item.relation_code is not null then '已审核' else '未审核' end) shenhe_status
-                    ,(case when ps.relation_code is not null and ps.middleResult = 1 then '已填写' else '未填写' end ) middleResult
-                    ,(case when ps.relation_code is not null and ps.finalResult = 1 then '已填写' else '未填写' end ) finalResult
-                    from V_JXYJ_JXTD_SHENHE v
-                    LEFT JOIN (
-                        SELECT * FROM COMMON_SHENHE_ITEM where USER_ID = #{shenHeUserId}
-                    ) item on item.relation_code = v.code and item.batch_num = v.batch_num
-                    left join (
-                        SELECT RELATION_CODE,max(batch_num) batch_num
-                        ,max(case when pingshen_type = '中期考核' then 1 else 0 end ) middleResult
-                        ,max(case when pingshen_type = '最终考核' then 1 else 0 end ) finalResult
-                        from JXYJ_JXTD_PS
-                        WHERE USER_ID = #{shenHeUserId}
-                        GROUP BY RELATION_CODE
-                    ) ps on ps.relation_code = v.code and ps.batch_num = v.batch_num
-                  <include refid="queryCondition"/>
-                )
+            <!-- 校外专家审核列表 -->
+            <when test="shenHeUserId !=null and shenHeUserId !='' and isZjshAccount == 1"><!-- 专家只能看到自己的评审结果 -->
+                SELECT v.*
+                ,(case when ZJ.CREATE_DATE is not null then '已审核' else '未审核' end) shenhe_status
+                ,(case when ps.CREATE_DATE is not null then '已填写' else '未填写' end) reportResult
+                from  v_JXYJ_JXTD_SHENHE v
+                left join COMMON_SHENHE_ITEM it on it.relation_code = v.code and it.batch_num = v.batch_num
+                LEFT JOIN JXYJ_JXTD_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM and ZJ.user_id = #{shenHeUserId}
+                LEFT JOIN JXYJ_JXTD_ZJPS ps on ps.relation_code = IT.RELATION_CODE and ps.BATCH_NUM = IT.BATCH_NUM and ps.user_id = #{shenHeUserId}
+                where it.shenhe_type = '初审' and it.STATUS = '通过'
+                <if test="shenheStatus != null and shenheStatus != ''">
+                    <choose>
+                        <when test="shenheStatus == '已审核'">
+                            and ZJ.xm_code is not null
+                        </when>
+                        <when test="shenheStatus == '未审核'">
+                            and ZJ.xm_code is null
+                        </when>
+                    </choose>
+                </if>
+                <include refid="queryCondition"/>
+            </when>
+            <!-- 审核列表 -->
+            <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 专家全部评审后，管理员才可以看到专家评审结果 -->
+                SELECT v.*
+                ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status_first
+                ,(case when exec_num > exec_level then '已审核'
+                        when exec_num = exec_level and isZjshAll =1 then '未审核' else '待审核' end ) shenhe_status_final
+                ,(case when isZjshAll = 1 then '已审核' else '未审核' end ) reportResult
+                from (
+                SELECT v.code,v.batch_num
+                ,count(sn.node_code) total_num
+                ,count(item.node_code) exec_num
+                ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+                ,max(NVL(isZjshAll, 0)) isZjshAll
+                from v_JXYJ_JXTD_SHENHE v
+                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                LEFT JOIN (
+                SELECT xm_code,BATCH_NUM
+                ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = 8) then 1 else 0 end) isZjshAll
+                from JXYJ_JXTD_ZJSH
+                GROUP BY xm_code,BATCH_NUM
+                ) zj on zj.xm_code = v.code and zj.batch_num = v.batch_num
+                GROUP BY v.code,v.batch_num
+                )t left join v_JXYJ_JXTD_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
+                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
                 <where>1=1
+                    and exec_num >= exec_level-1
+                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
+                    and ur.user_id = #{shenHeUserId}
                     <if test="shenheStatus != null and shenheStatus != ''">
-                        and shenhe_status = #{shenheStatus}
+                        <choose>
+                            <when test="shenheStatus == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatus == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
                     </if>
+                    <if test="shenheStatusFirst != null and shenheStatusFirst != ''">
+                        <choose>
+                            <when test="shenheStatusFirst == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatusFirst == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <if test="shenheStatusFinal != null and shenheStatusFinal != ''">
+                        <choose>
+                            <when test="shenheStatusFinal == '已审核'">
+                                and exec_num > exec_level
+                            </when>
+                            <when test="shenheStatusFinal == '未审核'">
+                                and exec_num = exec_level and isZjshAll =1
+                            </when>
+                            <when test="shenheStatusFinal == '待审核'">
+                                and exec_num &lt;= exec_level and isZjshAll !=1
+                            </when>
+                        </choose>
+                    </if>
+                    <include refid="queryCondition"/>
                 </where>
                 ORDER BY shenhe_status DESC
             </when>
-            <when test="shenHeUserId !=null and shenHeUserId !=''">
+            <otherwise><!-- 教务处管理员终审后，普通老师才可以看到专家评审结果 -->
                 SELECT v.*
-                ,(case when exec_num = total_num-1 then '待审核' when item.relation_code is not null then '已审核' else '未审核' end) shenhe_status
-                from V_JXYJ_JXTD_SHENHE v
-                LEFT JOIN (SELECT * FROM COMMON_SHENHE_ITEM where USER_ID = #{shenHeUserId}) item on item.relation_code = v.code and item.batch_num = v.batch_num
-                LEFT JOIN(
-                    SELECT v.code,v.batch_num
-                    ,count(sn.node_code) total_num
-                    ,count(item.node_code) exec_num
-                    from V_JXYJ_JXTD_SHENHE v
-                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-                    left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
-                    GROUP BY v.code,v.batch_num
-                )t on t.code = v.code and t.batch_num = v.batch_num
-                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-                left join sys_user_role ur on ur.role_id = sn.role_id where ur.user_id = #{shenHeUserId}
-            </when>
-            <otherwise><!-- 提交列表 -->
-                SELECT v.*
-                from V_JXYJ_JXTD v
+                ,(case when SH.create_date is not null then '已审核' else '未审核' end ) reportResult
+                from v_JXYJ_JXTD v
+                LEFT JOIN (SELECT * FROM COMMON_SHENHE_ITEM  where SHENHE_TYPE = '终审') sh on SH.RELATION_CODE = v.CODE and SH.BATCH_NUM = v.BATCH_NUM
                 <where>1=1
                     <choose>
                         <when test="status != null and status != '' and status == '待审核'">
@@ -76,55 +154,40 @@
     </select>
     <sql id="queryCondition">
         <if test="userId != null and userId != '' and userId !=999999">
-            and v.USER_ID = #{userId}
+            and v.user_id = #{userId}
         </if>
         <if test="userName != null and userName != ''">
-            and v.USER_NAME = #{userName}
+            and v.user_name = #{userName}
+        </if>
+        <if test="userUnit != null and userUnit != ''">
+            and v.user_unit = #{userUnit}
         </if>
         <if test="teamName != null and teamName != ''">
-            and v.TEAM_NAME like concat(concat('%',#{teamName}),'%')
+            and v.team_name like concat(concat('%',#{teamName}),'%')
+        </if>
+        <if test="type != null and type != ''">
+            and v.type = #{type}
         </if>
     </sql>
 
     <insert id="insert">
           insert into JXYJ_JXTD
-          (code,team_name,regist_date,team_leader,team_leader_id,team_leader_unit,sbs,middle_report,middle_result,final_report,final_result,user_id,user_name,create_date)
+          (code,team_name,regist_date,declare_or_report,user_id,user_name,user_unit,create_date,type)
           values
-          (#{code},#{teamName},#{registDate},#{teamLeader},#{teamLeaderId},#{teamLeaderUnit},#{sbs,jdbcType=VARCHAR},#{middleReport,jdbcType=VARCHAR},'未评审',#{finalReport,jdbcType=VARCHAR},'未评审',#{userId},#{userName},CURRENT_DATE)
+          (#{code},#{teamName},#{registDate},#{declareOrReport},#{userId},#{userName},#{userUnit},CURRENT_DATE,#{type})
     </insert>
 
     <update id="update">
         update JXYJ_JXTD
         <set>
             <if test="teamName != null and teamName != ''">
-                , team_name = #{teamName}
+                team_name = #{teamName}
             </if>
             <if test="registDate != null">
                 , regist_date = #{registDate}
             </if>
-            <if test="teamLeader != null and teamLeader != ''">
-                , team_leader = #{teamLeader}
-            </if>
-            <if test="teamLeaderId !=null and teamLeaderId !=''">
-                , team_leader_id = #{teamLeaderId}
-            </if>
-            <if test="teamLeaderUnit !=null and teamLeaderUnit !=''">
-                , team_leader_unit = #{teamLeaderUnit}
-            </if>
-            <if test="sbs !=null">
-                , sbs = #{sbs}
-            </if>
-            <if test="middleReport !=null and middleReport !=''">
-                , middle_report = #{middleReport}
-            </if>
-            <if test="middleResult !=null and middleResult !=''">
-                , middle_result = #{middleResult}
-            </if>
-            <if test="finalReport !=null and finalReport !=''">
-                , final_report = #{finalReport}
-            </if>
-            <if test="finalResult !=null and finalResult !=''">
-                , final_result = #{finalResult}
+            <if test="declareOrReport !=null">
+                , declare_or_report = #{declareOrReport}
             </if>
         </set>
         where code = #{code}
@@ -134,66 +197,29 @@
         delete from JXYJ_JXTD where code = #{code}
     </delete>
 
-    <insert id="batchSubimt">
-        insert all
-        <foreach collection ="jiaoXueTuanDuiList" item="obj" index= "idx">
-            into COMMON_SHENHE
-            (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
-            values
-            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},CURRENT_DATE)
-        </foreach>
-        select 1 from dual
+
+    <select id="getZjshProcess" resultType="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.ZjshItem">
+        SELECT * FROM JXYJ_JXTD_ZJSH WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}
+    </select>
+
+    <select id="isZjshAll" resultType="java.lang.Integer">
+        SELECT case when count(ZJSH.USER_ID) = count(ZJ.USER_ID) then 1 else 0 end as isZjshAll
+        FROM (SELECT * FROM SYS_USER_ROLE where role_id = 7) zj
+        LEFT JOIN (SELECT * FROM JXYJ_JXTD_ZJSH where XM_CODE = #{relationCode} AND BATCH_NUM = #{batchNum}) zjsh on ZJSH.USER_ID = ZJ.USER_ID
+    </select>
+
+    <insert id="toZjShenhe">
+        INSERT INTO JXYJ_JXTD_ZJSH
+        (XM_CODE,BATCH_NUM,STATUS,OPINION,USER_ID,USER_NAME,CREATE_DATE)
+        VALUES
+        (#{relationCode},#{batchNum},#{status},#{opinion},#{userId},#{userName},CURRENT_DATE)
     </insert>
 
-    <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
-        SELECT sn.*
-        from V_JXYJ_JXTD_SHENHE j
-        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = j.shenhe_code
-        LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
-        where code = #{relationCode} and ur.user_id = #{userId}
-    </select>
-
-    <!-- 验证是否已全部审核
-        totalNum 待审核的数量值
-        execNum 已审核的数量值
-    -->
-    <select id="isShenhePass" resultType="int">
-        SELECT (case when exec_num = total_num then 1 else 0 end) isPass
-        from (
-            SELECT v.code,v.batch_num
-            ,count(sn.node_code) total_num
-            ,count(item.node_code) exec_num
-            from V_JXYJ_JXTD_SHENHE v
-            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
-            WHERE v.code = #{relationCode} and v.batch_num = #{batchNum}
-            GROUP BY v.code,v.batch_num
-        )t
-    </select>
-
-    <!-- 验证是所有评委是否已全部评审
-        totalNum 为拥有教学团队评审角色的人数
-        execNum 为评委已评审的数量值
-    -->
-    <select id="isPingshenPass" resultType="int">
-        SELECT (case when exec_num = totalNum then 1 else 0 end) isPass
-        from (
-            SELECT v.code,v.batch_num
-            ,count(ur.user_id) totalNum
-            ,count(item.user_id) exec_num
-            FROM V_JXYJ_JXTD_SHENHE v
-            LEFT JOIN COMMON_SHENHE_NODE sn on sn.SHENHE_CODE = v.SHENHE_CODE
-            LEFT JOIN SYS_USER_ROLE ur on ur.role_id = sn.ROLE_ID
-            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.user_id = ur.user_id
-            WHERE v.code = #{relationCode} and v.batch_num = #{batchNum}
-            and EXEC_LEVEL = 1 -- 固定值，即“教学团队评审角色执行级别”
-            GROUP BY v.code,v.batch_num
-        )t
-    </select>
-
     <select id="getPingShenInfo" resultType="com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen">
-        SELECT * FROM JXYJ_JXTD_PS
-        WHERE RELATION_CODE = #{relationCode} AND BATCH_NUM =  #{batchNum} AND PINGSHEN_TYPE = #{pingshenType}
+        SELECT *
+        FROM JXYJ_JXTD_ZJPS
+        WHERE RELATION_CODE = #{relationCode}
+        AND BATCH_NUM =  #{batchNum}
         <if test="userId !=null and userId !=''">
             AND USER_ID = #{userId}
         </if>
@@ -201,18 +227,17 @@
     </select>
 
     <insert id="insertPingShenInfo">
-        INSERT into JXYJ_JXTD_PS
-        (RELATION_CODE,BATCH_NUM,PINGSHEN_TYPE,TEAM_NAME,TEAM_LEADER,TEAM_LEADER_ID
+        INSERT into JXYJ_JXTD_ZJPS
+        (RELATION_CODE,BATCH_NUM
         ,TARGET_TEAM_BUILDING_PLAN,TARGET_TEAM_COMPOSE,TARGET_TEAM_LEADER,TARGET_TEACHING_WORK,TARGET_TEACHING_RESEARCH,TARGET_INNOVATION_AND_ENTREPRE,TARGET_TEACHER_TRAINING,TOTAL_SCORE,PINGSHEN_OPINION
         ,USER_ID,USER_NAME,CREATE_DATE)
         VALUES
-        (#{relationCode},#{batchNum},#{pingshenType},#{teamName},#{teamLeader},#{teamLeaderId }
+        (#{relationCode},#{batchNum}
         ,#{targetTeamBuildingPlan},#{targetTeamCompose},#{targetTeamLeader},#{targetTeachingWork},#{targetTeachingResearch},#{targetInnovationAndEntrepre},#{targetTeacherTraining},#{totalScore},#{pingshenOpinion}
         ,#{userId},#{userName},CURRENT_DATE)
     </insert>
 
     <delete id="deletePingShenInfo">
-        delete from JXYJ_JXTD_PS WHERE RELATION_CODE = #{relationCode} AND BATCH_NUM =  #{batchNum} AND PINGSHEN_TYPE = #{pingshenType} AND USER_ID = #{userId}
+        delete from JXYJ_JXTD_ZJPS WHERE RELATION_CODE = #{relationCode} AND BATCH_NUM =  #{batchNum} AND USER_ID = #{userId}
     </delete>
-
 </mapper>
