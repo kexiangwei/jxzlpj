@@ -1,6 +1,6 @@
-package com.mycode.shaungchuangjiaoyu.student.service;
+package com.mycode.common.student.service;
 
-import com.mycode.shaungchuangjiaoyu.student.domian.Student;
+import com.mycode.common.student.domian.Student;
 
 import java.util.List;
 

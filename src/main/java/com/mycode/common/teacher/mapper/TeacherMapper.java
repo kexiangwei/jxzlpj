@@ -1,6 +1,6 @@
-package com.mycode.shaungchuangjiaoyu.teacher.mapper;
+package com.mycode.common.teacher.mapper;
 
-import com.mycode.shaungchuangjiaoyu.teacher.domain.Teacher;
+import com.mycode.common.teacher.domain.Teacher;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

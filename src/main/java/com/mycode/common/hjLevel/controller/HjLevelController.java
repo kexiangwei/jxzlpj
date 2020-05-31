@@ -1,7 +1,6 @@
 package com.mycode.common.hjLevel.controller;
 
 import com.mycode.common.hjLevel.service.HjLevelService;
-import com.mycode.shaungchuangjiaoyu.student.domian.Student;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;

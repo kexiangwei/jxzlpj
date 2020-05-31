@@ -1,7 +1,7 @@
-package com.mycode.shaungchuangjiaoyu.student.service;
+package com.mycode.common.student.service;
 
-import com.mycode.shaungchuangjiaoyu.student.domian.Student;
-import com.mycode.shaungchuangjiaoyu.student.mapper.StudentMapper;
+import com.mycode.common.student.domian.Student;
+import com.mycode.common.student.mapper.StudentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

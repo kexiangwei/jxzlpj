@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.mycode.shaungchuangjiaoyu.student.mapper.StudentMapper">
+<mapper namespace="com.mycode.common.student.mapper.StudentMapper">
 
-    <select id="getStudentInfo" resultType="com.mycode.shaungchuangjiaoyu.student.domian.Student">
+    <select id="getStudentInfo" resultType="com.mycode.common.student.domian.Student">
         select relation_code,student_code,student_name,sorted
         ,c.name college,m.name major
-        from scjy_student s
+        from COMMON_STUDENT s
         left join data_college c on c.code = s.college
         left join data_major m on m.code = s.major
         where relation_code = #{relationCode}
     </select>
     <insert id="addStudentInfo">
-        insert into scjy_student (relation_code,college,major,student_code,student_name,sorted)
+        insert into COMMON_STUDENT (relation_code,college,major,student_code,student_name,sorted)
         values (#{relationCode},#{college},#{major},#{studentCode},#{studentName},#{sorted,jdbcType=VARCHAR})
     </insert>
     <delete id="delStudentInfo">
-        delete from scjy_student
+        delete from COMMON_STUDENT
         where relation_code = #{relationCode}
         <if test="studentCode !=null and studentCode !=''">
             and student_code = #{studentCode}

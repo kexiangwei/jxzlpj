@@ -78,12 +78,6 @@
         </choose>
     </select>
     <sql id="queryCondition">
-        <if test="userId != null and userId != '' and userId !=999999">
-            and v.user_id = #{userId}
-        </if>
-        <if test="userName != null and userName != ''">
-            and v.user_name = #{userName}
-        </if>
         <if test="college != null and college != ''">
             and v.college = #{college}
         </if>
@@ -91,7 +85,13 @@
             and v.course_code = #{courseCode}
         </if>
         <if test="courseName != null and courseName != ''">
-            and COURSE_NAME like concat(concat('%',#{courseName}),'%')
+            and v.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+        </if>
+        <if test="userId != null and userId != '' and userId !=999999">
+            and v.user_id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            and v.user_name = #{userName}
         </if>
     </sql>
 

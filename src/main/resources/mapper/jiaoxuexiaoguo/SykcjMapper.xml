@@ -3,7 +3,8 @@
 <mapper namespace="com.mycode.jiaoxuexiaoguo.sykcj.mapper.SykcjMapper">
 
     <select id="getNotShenHeNum" resultType="int">
-        SELECT count(0) from (
+        SELECT count(0)
+        from (
             SELECT j.code,j.batch_num
             ,count(sn.node_code) total_num
             ,count(item.node_code) exec_num
@@ -77,14 +78,20 @@
         </choose>
     </select>
     <sql id="queryCondition">
+        <if test="college != null and college != ''">
+            and v.college = #{college}
+        </if>
+        <if test="courseCode != null and courseCode != ''">
+            and v.course_code = #{courseCode}
+        </if>
+        <if test="courseName != null and courseName != ''">
+            and v.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+        </if>
         <if test="userId != null and userId != '' and userId !=999999">
             and v.user_id = #{userId}
         </if>
         <if test="userName != null and userName != ''">
             and v.user_name = #{userName}
-        </if>
-        <if test="courseName != null and courseName != ''">
-            and COURSE_NAME like concat(concat('%',#{courseName}),'%')
         </if>
     </sql>
 

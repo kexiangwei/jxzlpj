@@ -1,6 +1,6 @@
-package com.mycode.shaungchuangjiaoyu.teacher.service;
+package com.mycode.common.teacher.service;
 
-import com.mycode.shaungchuangjiaoyu.teacher.domain.Teacher;
+import com.mycode.common.teacher.domain.Teacher;
 
 import java.util.List;
 

@@ -69,7 +69,6 @@ public class SykcjServiceImpl implements SykcjService {
         for (Sykcj sykcj : sykcjList) {
             sykcj.setShenheCode(activeShenheCode);
             sykcj.setBatchNum(StringUtils.isEmpty(sykcj.getBatchNum())?1:sykcj.getBatchNum()+1);//提交批次，每提交一次加1
-            sykcj.setStatus("审核中");
         }
         return shenHeMapper.batchSubimt(sykcjList);
     }

@@ -1,4 +1,4 @@
-package com.mycode.shaungchuangjiaoyu.student.domian;
+package com.mycode.common.student.domian;
 
 import lombok.Getter;
 import lombok.Setter;

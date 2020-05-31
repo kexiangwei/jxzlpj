@@ -1,7 +1,7 @@
-package com.mycode.shaungchuangjiaoyu.student.controller;
+package com.mycode.common.student.controller;
 
-import com.mycode.shaungchuangjiaoyu.student.domian.Student;
-import com.mycode.shaungchuangjiaoyu.student.service.StudentService;
+import com.mycode.common.student.domian.Student;
+import com.mycode.common.student.service.StudentService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/scjx")
+@RequestMapping("/common")
 public class StudentController {
 
     @Autowired

@@ -1,7 +1,7 @@
-package com.mycode.shaungchuangjiaoyu.teacher.service;
+package com.mycode.common.teacher.service;
 
-import com.mycode.shaungchuangjiaoyu.teacher.domain.Teacher;
-import com.mycode.shaungchuangjiaoyu.teacher.mapper.TeacherMapper;
+import com.mycode.common.teacher.domain.Teacher;
+import com.mycode.common.teacher.mapper.TeacherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

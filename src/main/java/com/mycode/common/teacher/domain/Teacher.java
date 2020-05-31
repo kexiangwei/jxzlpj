@@ -1,4 +1,4 @@
-package com.mycode.shaungchuangjiaoyu.teacher.domain;
+package com.mycode.common.teacher.domain;
 
 import lombok.Getter;
 import lombok.Setter;

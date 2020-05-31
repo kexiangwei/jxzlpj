@@ -1,7 +1,7 @@
-package com.mycode.shaungchuangjiaoyu.teacher.controller;
+package com.mycode.common.teacher.controller;
 
-import com.mycode.shaungchuangjiaoyu.teacher.domain.Teacher;
-import com.mycode.shaungchuangjiaoyu.teacher.service.TeacherService;
+import com.mycode.common.teacher.domain.Teacher;
+import com.mycode.common.teacher.service.TeacherService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

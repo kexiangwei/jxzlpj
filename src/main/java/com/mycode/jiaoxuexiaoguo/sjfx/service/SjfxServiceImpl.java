@@ -69,7 +69,6 @@ public class SjfxServiceImpl implements SjfxService {
         for (Sjfx sjfx : sjfxList) {
             sjfx.setShenheCode(activeShenheCode);
             sjfx.setBatchNum(StringUtils.isEmpty(sjfx.getBatchNum())?1:sjfx.getBatchNum()+1);//提交批次，每提交一次加1
-            sjfx.setStatus("审核中");
         }
         return shenHeMapper.batchSubimt(sjfxList);
     }
