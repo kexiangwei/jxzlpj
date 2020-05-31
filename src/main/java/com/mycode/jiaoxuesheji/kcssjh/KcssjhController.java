@@ -1,71 +1,61 @@
-package com.mycode.jiaoxuesheji.skjh.controller;
+package com.mycode.jiaoxuesheji.kcssjh;
 
 import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
-import com.mycode.jiaoxuesheji.skjh.domian.Skjh;
-import com.mycode.jiaoxuesheji.skjh.service.SkjhService;
+import com.mycode.jiaoxuesheji.kcssjh.domian.Kcssjh;
+import com.mycode.jiaoxuesheji.kcssjh.service.KcssjhService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * 教学设计-授课计划
+ * 教学设计-课程实施计划
  */
 @CrossOrigin
-@Controller
-@RequestMapping("/skjh")
-public class SkjhController {
+@RestController
+@RequestMapping("/kcssjh")
+public class KcssjhController {
 
     @Autowired
-    private SkjhService skjhService;
+    private KcssjhService kcssjhService;
     @Autowired
     private ShenHeService shenHeService;
 
-    /**
-     *
-     * @param skjh
-     * @return
-     */
-    @ResponseBody
     @RequestMapping("/getPageList.do")
-    public JsonResult<Object> getPageList(Skjh skjh){
-        Map<String, Object> resultMap = skjhService.getPageList(skjh);
+    public JsonResult<Object> getPageList(Kcssjh kcssjh){
+        Map<String, Object> resultMap = kcssjhService.getPageList(kcssjh);
         return JsonResult.success(resultMap);
     }
 
-    @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(Skjh skjh){
-        boolean bool = skjhService.insert(skjh);
+    public JsonResult<Object> insert(Kcssjh kcssjh){
+        boolean bool = kcssjhService.insert(kcssjh);
         if(!bool){
             return JsonResult.error("新增失败");
         }
         return JsonResult.success("新增成功",null);
     }
 
-    @ResponseBody
     @RequestMapping("/update.do")
-    public JsonResult<Object> update(Skjh skjh){
-        boolean bool = skjhService.update(skjh);
+    public JsonResult<Object> update(Kcssjh kcssjh){
+        boolean bool = kcssjhService.update(kcssjh);
         if(!bool){
             return JsonResult.error("修改失败");
         }
         return JsonResult.success("修改成功",null);
     }
 
-    @ResponseBody
     @RequestMapping("/delete.do")
     public JsonResult<Object> delete(@RequestParam("code") String code){
-        boolean bool = skjhService.delete(code);
+        boolean bool = kcssjhService.delete(code);
         if(!bool){
             return JsonResult.error("删除失败");
         }
@@ -78,17 +68,15 @@ public class SkjhController {
      * @param jsonStr
      * @return
      */
-    @ResponseBody
     @RequestMapping("/toSubimt.do")
-    public JsonResult<Object> toSubimt(@RequestParam("menuId") Integer menuId,@RequestParam("jsonStr") String jsonStr){
-        //
+    public JsonResult<Object> toSubimt(@RequestParam("menuId") Integer menuId
+            , @RequestParam("jsonStr") String jsonStr){
         String activeShenheCode = shenHeService.getActiveShenheCode(menuId);
         if(StringUtils.isEmpty(activeShenheCode)){
             return JsonResult.error("未设置审核流程");
         }
-        //
-        List<Skjh> skjhList = JSON.parseArray(jsonStr, Skjh.class);
-        boolean bool = skjhService.toSubimt(activeShenheCode,skjhList);
+        List<Kcssjh> objList = JSON.parseArray(jsonStr, Kcssjh.class);
+        boolean bool = kcssjhService.toSubimt(activeShenheCode,objList);
         if(!bool){
             return JsonResult.error("提交失败");
         }
@@ -100,11 +88,10 @@ public class SkjhController {
      * @param item
      * @return
      */
-    @ResponseBody
     @RequestMapping("/toShenhe.do")
-    public JsonResult<Object> toShenhe(ShenHeItem item,@RequestParam("jsonStr") String jsonStr){
-        List<Skjh> skjhList = JSON.parseArray(jsonStr, Skjh.class);
-        boolean bool = skjhService.toShenhe(item,skjhList);
+    public JsonResult<Object> toShenhe(ShenHeItem item, @RequestParam("jsonStr") String jsonStr){
+        List<Kcssjh> objList = JSON.parseArray(jsonStr, Kcssjh.class);
+        boolean bool = kcssjhService.toShenhe(item,objList);
         if(!bool){
             return JsonResult.error("审核失败");
         }

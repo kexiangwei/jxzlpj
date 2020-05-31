@@ -11,15 +11,15 @@ import java.util.List;
 
 /**
  * 教学设计-授课计划
- * @auther kexiangwei
- * @date 2019/11/13
  */
 @Mapper
 public interface SkjhMapper {
 
-    List<Skjh> getPageList(Skjh skjh);
-
     int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+
+    List<Skjh> getShenHePageList(Skjh skjh);
+
+    List<Skjh> getPageList(Skjh skjh);
 
     boolean insert(Skjh skjh);
 
@@ -37,4 +37,5 @@ public interface SkjhMapper {
     List<SkjhItem> getSkjhItemList(@Param("relationCode") String relationCode);
 
     boolean deleteSkjhItem(@Param("relationCode") String relationCode, @Param("code") String code);
+
 }

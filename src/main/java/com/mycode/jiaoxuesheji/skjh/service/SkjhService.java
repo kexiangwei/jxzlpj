@@ -8,8 +8,6 @@ import java.util.Map;
 
 /**
  * 教学设计-授课计划
- * @auther kexiangwei
- * @date 2019/11/13
  */
 public interface SkjhService {
 
