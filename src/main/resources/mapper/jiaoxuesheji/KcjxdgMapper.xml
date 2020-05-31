@@ -3,7 +3,8 @@
 <mapper namespace="com.mycode.jiaoxuesheji.kcjxdg.mapper.KcjxdgMapper">
 
     <select id="getNotShenHeNum" resultType="int">
-        SELECT count(DISTINCT j.code) from (
+        SELECT count(DISTINCT j.code)
+        from (
             SELECT j.code,j.batch_num
             ,count(sn.node_code) total_num
             ,count(item.node_code) exec_num
@@ -82,6 +83,12 @@
         </if>
         <if test="userName != null and userName != ''">
             and v.user_name = #{userName}
+        </if>
+        <if test="college != null and college != ''">
+            and v.college = #{college}
+        </if>
+        <if test="courseCode != null and courseCode != ''">
+            and v.course_code = #{courseCode}
         </if>
         <if test="courseName != null and courseName != ''">
             and COURSE_NAME like concat(concat('%',#{courseName}),'%')

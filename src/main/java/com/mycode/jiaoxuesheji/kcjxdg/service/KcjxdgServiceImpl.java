@@ -74,7 +74,6 @@ public class KcjxdgServiceImpl implements KcjxdgService {
         for (Kcjxdg kcjxdg : kcjxdgList) {
             kcjxdg.setShenheCode(activeShenheCode);
             kcjxdg.setBatchNum(StringUtils.isEmpty(kcjxdg.getBatchNum())?1:kcjxdg.getBatchNum()+1);//提交批次，每提交一次加1
-            kcjxdg.setStatus("审核中");
         }
         return shenHeMapper.batchSubimt(kcjxdgList);
     }
