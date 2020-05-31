@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.common.shenhe.service.ShenHeService;
 import com.mycode.jiaoxuesheji.skjh.domian.Skjh;
+import com.mycode.jiaoxuesheji.skjh.domian.SkjhItem;
 import com.mycode.jiaoxuesheji.skjh.service.SkjhService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,15 +45,15 @@ public class SkjhController {
 
     @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(Skjh skjh){
-        boolean bool = skjhService.insert(skjh);
+    public JsonResult<Object> insert(SkjhItem skjhItem){ //必须继承Skjh，用于接收页面传递的父类属性值
+        boolean bool = skjhService.insert(skjhItem);
         if(!bool){
             return JsonResult.error("新增失败");
         }
         return JsonResult.success("新增成功",null);
     }
 
-    @ResponseBody
+    /*@ResponseBody
     @RequestMapping("/update.do")
     public JsonResult<Object> update(Skjh skjh){
         boolean bool = skjhService.update(skjh);
@@ -60,9 +61,9 @@ public class SkjhController {
             return JsonResult.error("修改失败");
         }
         return JsonResult.success("修改成功",null);
-    }
+    }*/
 
-    @ResponseBody
+    /*@ResponseBody
     @RequestMapping("/delete.do")
     public JsonResult<Object> delete(@RequestParam("code") String code){
         boolean bool = skjhService.delete(code);
@@ -70,7 +71,7 @@ public class SkjhController {
             return JsonResult.error("删除失败");
         }
         return JsonResult.success("删除成功",null);
-    }
+    }*/
 
     /**
      * 提交，支持批量提交
@@ -102,7 +103,7 @@ public class SkjhController {
      */
     @ResponseBody
     @RequestMapping("/toShenhe.do")
-    public JsonResult<Object> toShenhe(ShenHeItem item,@RequestParam("jsonStr") String jsonStr){
+    public JsonResult<Object> toShenhe(ShenHeItem item, @RequestParam("jsonStr") String jsonStr){
         List<Skjh> skjhList = JSON.parseArray(jsonStr, Skjh.class);
         boolean bool = skjhService.toShenhe(item,skjhList);
         if(!bool){

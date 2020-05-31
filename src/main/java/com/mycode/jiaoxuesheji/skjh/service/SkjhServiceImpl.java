@@ -44,8 +44,15 @@ public class SkjhServiceImpl implements SkjhService {
     }
 
     @Override
-    public boolean insert(Skjh skjh) {
-        return skjhMapper.insert(skjh);
+    public boolean insert(SkjhItem skjhItem) {
+        Skjh skJhInfoByCode = skjhMapper.getSkJhInfoByCode(skjhItem.getCode());
+        if(skJhInfoByCode == null){
+            boolean bool = skjhMapper.insert(skjhItem); //使用了多态特性
+            if(!bool){
+                return false;
+            }
+        }
+        return skjhMapper.insertSkjhItem(skjhItem);
     }
 
     @Override
@@ -70,15 +77,14 @@ public class SkjhServiceImpl implements SkjhService {
         for (Skjh skjh : skjhList) {
             skjh.setShenheCode(activeShenheCode);
             skjh.setBatchNum(StringUtils.isEmpty(skjh.getBatchNum())?1:skjh.getBatchNum()+1);//提交批次，每提交一次加1
-            skjh.setStatus("审核中");
         }
-        return skjhMapper.batchSubimt(skjhList);
+        return shenHeMapper.batchSubimt(skjhList);
     }
 
     @Override
     public boolean toShenhe(ShenHeItem item, List<Skjh> skjhList) {
         boolean bool = false;
-        for (Skjh skjh : skjhList) {
+        /*for (Skjh skjh : skjhList) {
             item.setRelationCode(skjh.getCode());
             item.setBatchNum(skjh.getBatchNum());
             ShenHeNode node = skjhMapper.getShenheNode(item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
@@ -95,7 +101,7 @@ public class SkjhServiceImpl implements SkjhService {
                     return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
                 }
             }
-        }
+        }*/
         return bool;
     }
 

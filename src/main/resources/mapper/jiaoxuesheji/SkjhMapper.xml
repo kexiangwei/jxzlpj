@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuesheji.skjh.mapper.SkjhMapper">
 
-
     <select id="getNotShenHeNum" resultType="int">
         select 0 from dual
     </select>
@@ -45,93 +44,42 @@
         </if>
     </sql>
 
+    <select id="getSkJhInfoByCode" resultType="com.mycode.jiaoxuesheji.skjh.domian.Skjh">
+        SELECT * from JXSJ_SKJH where code  = #{code}
+    </select>
+
     <insert id="insert">
-          insert into JXSJ_SKJH
-          (code,stu_year,stu_term,college,major,course_code,course_name,teach_class,stu_num,total_hours,theory_hours,test_hours,days,user_id,user_name,create_date)
-          values
-          (#{code},#{stuYear},#{stuTerm},#{college},#{major},#{courseCode},#{courseName},#{teachClass},#{stuNum}
-          ,#{totalHours},#{theoryHours},#{testHours},#{days},#{userId},#{userName},sysdate)
+        insert into JXSJ_SKJH (code,course_code,main_teacher,teach_class,user_id,user_name,create_date)
+        values (#{code},#{courseCode},#{mainTeacher},#{teachClass},#{userId},#{userName},CURRENT_DATE)
     </insert>
 
     <update id="update">
         update JXSJ_SKJH
         <set>
-            <if test="stuYear != null and stuYear != ''">
-                stu_year = #{stuYear}
-            </if>
-            <if test="stuTerm != null and stuTerm != ''">
-                , stu_term = #{stuTerm}
-            </if>
-            <if test="college != null and college != ''">
-                , college = #{college}
-            </if>
-            <if test="major != null and major != ''">
-                , major = #{major}
-            </if>
-            <if test="courseCode != null and courseCode != ''">
-                , course_code = #{courseCode}
-            </if>
-            <if test="courseName != null and courseName != ''">
-                , course_name = #{courseName}
+            <if test="mainTeacher != null and mainTeacher != ''">
+                main_teacher = #{mainTeacher}
             </if>
             <if test="teachClass != null and teachClass != ''">
                 , teach_class = #{teachClass}
-            </if>
-            <if test="stuNum != null and stuNum != ''">
-                , stu_num = #{stuNum}
-            </if>
-            <if test="totalHours != null and totalHours != ''">
-                , total_hours = #{totalHours}
-            </if>
-            <if test="theoryHours != null and theoryHours != ''">
-                , theory_hours = #{theoryHours}
-            </if>
-            <if test="testHours != null and testHours != ''">
-                , test_hours = #{testHours}
-            </if>
-            <if test="days != null and days != ''">
-                , days = #{days}
             </if>
         </set>
         where code = #{code}
     </update>
 
-    <update id="batchSubimt">
-        insert all
-        <foreach collection ="skjhList" item="obj" index= "idx">
-            into COMMON_SHENHE
-            (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
-            values
-            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},sysdate)
-        </foreach>
-        select 1 from dual
-    </update>
-
-    <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
-        SELECT sn.*
-        from V_JXSJ_SKJH_SHENHE j
-        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = j.shenhe_code
-        LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
-        where code = #{relationCode} and ur.user_id = #{userId}
-    </select>
-
-    <select id="isShenhePass" resultType="int">
-        SELECT (case when total_num = exec_num then 1 else 0 end) isPass
-        from (
-            SELECT j.code,j.batch_num
-            ,count(sn.node_code) total_num
-            ,count(item.node_code) exec_num
-            from V_JXSJ_SKJH_SHENHE j
-            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-            left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-            WHERE j.code = #{relationCode} and j.batch_num = #{batchNum}
-            GROUP BY j.code,j.batch_num
-        )t
-    </select>
+    <delete id="delete">
+        delete from JXSJ_SKJH where code = #{code}
+    </delete>
 
     <select id="getSkjhItemList" resultType="com.mycode.jiaoxuesheji.skjh.domian.SkjhItem">
         select * from jxsj_skjh_item where relation_code = #{relationCode}
     </select>
+
+    <insert id="insertSkjhItem">
+          INSERT INTO JXSJ_SKJH_ITEM
+          (RELATION_CODE,ITEM_CODE,WEEK,WEEK_NUM,dates,LESSON_NUM,LESSON_HOUR,TEACHER,TEACH_CHAPTER,TEACH_ADDR,JX_DESIGN,SZ_ELEMENT)
+          VALUES
+          (#{code},#{itemCode},#{week},#{weekNum},#{dates},#{lessonNum},#{lessonHour},#{teacher},#{teachChapter},#{teachAddr},#{jxDesign},#{szElement})
+    </insert>
 
     <delete id="deleteSkjhItem">
          delete from jxsj_skjh_item
@@ -139,9 +87,10 @@
              <if test="relationCode !=null and relationCode!=''">
                  or relation_code = #{relationCode}
              </if>
-             <if test="code !=null and code!=''">
-                or code = #{code}
+             <if test="itemCode !=null and itemCode!=''">
+                or item_code = #{itemCode}
              </if>
          </where>
     </delete>
+
 </mapper>

@@ -21,21 +21,17 @@ public interface SkjhMapper {
 
     List<Skjh> getPageList(Skjh skjh);
 
+    Skjh getSkJhInfoByCode(@Param("code") String code);
+
     boolean insert(Skjh skjh);
 
     boolean update(Skjh skjh);
 
-    @Delete("delete from JXSJ_SKJH where code = #{code}")
     boolean delete(@Param("code") String code);
-
-    boolean batchSubimt(@Param("skjhList") List<Skjh> skjhList);
-
-    ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") Integer userId);
-
-    int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 
     List<SkjhItem> getSkjhItemList(@Param("relationCode") String relationCode);
 
-    boolean deleteSkjhItem(@Param("relationCode") String relationCode, @Param("code") String code);
+    boolean insertSkjhItem(SkjhItem skjhItem);
 
+    boolean deleteSkjhItem(@Param("relationCode") String relationCode, @Param("itemCode") String itemCode);
 }

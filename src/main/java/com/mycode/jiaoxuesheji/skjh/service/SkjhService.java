@@ -2,6 +2,7 @@ package com.mycode.jiaoxuesheji.skjh.service;
 
 import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.jiaoxuesheji.skjh.domian.Skjh;
+import com.mycode.jiaoxuesheji.skjh.domian.SkjhItem;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ public interface SkjhService {
 
     Map<String, Object> getPageList(Skjh skjh);
 
-    boolean insert(Skjh skjh);
+    boolean insert(SkjhItem skjhItem);
 
     boolean update(Skjh skjh);
 
