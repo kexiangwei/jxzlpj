@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface MenuMapper {
@@ -18,6 +19,7 @@ public interface MenuMapper {
 
     List<Menu> getChildMenuList();
 
-    List<Role> getRoleListByMenuId(@Param("menuId") Long menuId);
+    List<Map<String,Object>> getShenHeSetEditFormMenuTree(@Param("menuId") Long menuId);
 
+    List<Role> getRoleListByMenuId(@Param("menuId") Long menuId);
 }

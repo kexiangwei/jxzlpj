@@ -28,7 +28,8 @@ public class Menu {
 
     //菜单树属性
     private Long id;
-    private String title;
+    private String title //layui-tree
+            ,name; //layui-treeSelect
     private List<Menu> children = new ArrayList<>();
     //
     public static List<Menu> getMenuTree(List<Menu> menuList){

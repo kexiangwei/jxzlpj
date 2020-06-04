@@ -45,6 +45,17 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    public List<Map<String,Object>> getShenHeSetEditFormMenuTree() {
+        List<Map<String,Object>> menuList = menuMapper.getShenHeSetEditFormMenuTree(null);
+        for (Map<String,Object> map : menuList) {
+            map.put("open",true);
+            map.put("checked",false);
+            map.put("children", menuMapper.getShenHeSetEditFormMenuTree(Long.valueOf(map.get("id").toString())));
+        }
+        return menuList;
+    }
+
+    @Override
     public List<Role> getRoleListByMenuId(Long menuId) {
         List<Role> roleList = menuMapper.getRoleListByMenuId(menuId);
        /* roleList.forEach((role)-> {

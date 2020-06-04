@@ -24,19 +24,38 @@
     <select id="getParentMenuList" resultType="com.mycode.system.menu.domain.Menu">
         <choose>
             <when test="menuId != null and menuId != ''">
-                SELECT * from sys_menu WHERE pid = #{menuId}
+                select menu_id, menu_name from sys_menu WHERE pid = #{menuId}
             </when>
             <otherwise>
-                SELECT * from sys_menu WHERE menu_name in ('教学研究','教学设计','教学效果','教学评价','教学奖惩','双创教育')
+                select menu_id, menu_name
+                from sys_menu WHERE menu_name in ('教学研究','教学设计','教学效果','教学评价','教学奖惩','双创教育')
             </otherwise>
         </choose>
     </select>
 
     <select id="getChildMenuList" resultType="com.mycode.system.menu.domain.Menu">
-        SELECT * from sys_menu
+        select menu_id, menu_name
+        from sys_menu
         WHERE pid in (
           SELECT menu_id from sys_menu WHERE menu_name in ('教学研究','教学设计','教学效果','教学评价','教学奖惩','双创教育')
         ) and menu_name not in ('提交','审核')
+    </select>
+
+    <select id="getShenHeSetEditFormMenuTree" resultType="java.util.Map">
+        <choose>
+            <when test="menuId != null and menuId != ''">
+                select menu_id as "id", menu_name as "name"
+                from sys_menu
+                WHERE pid = #{menuId} and menu_name not in ('提交','审核')
+            </when>
+            <otherwise>
+                select menu_id as "id", menu_name as "name"
+                from sys_menu
+                WHERE pid in (
+                    SELECT menu_id from sys_menu WHERE menu_name in ('教学研究','教学设计','教学效果','教学评价','教学奖惩','双创教育')
+                ) and menu_name not in ('提交','审核')
+            </otherwise>
+        </choose>
     </select>
 
     <select id="getRoleListByMenuId" resultType="com.mycode.system.role.domain.Role">

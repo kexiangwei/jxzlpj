@@ -16,5 +16,7 @@ public interface MenuService {
 
     List<Menu> getChildMenuList();
 
+    List<Map<String,Object>> getShenHeSetEditFormMenuTree();
+
     List<Role> getRoleListByMenuId(Long menuId);
 }

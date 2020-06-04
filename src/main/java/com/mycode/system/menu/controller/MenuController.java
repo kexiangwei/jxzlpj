@@ -60,6 +60,17 @@ public class MenuController {
 
     /**
      *
+     * @return 通用设置-审核流程-新增&修改页面下拉菜单
+     * @说明：为满足layui-treeSelect 插件的数据格式，写的这个接口
+     */
+    @ResponseBody
+    @RequestMapping("/getShenHeSetEditFormMenuTree.do")
+    public List<Map<String,Object>> getShenHeSetEditFormMenuTree(){
+        return menuService.getShenHeSetEditFormMenuTree();
+    }
+
+    /**
+     *
      * @param menuId 菜单编号
      * @return 通用设置-审核流程-节点设置-拥有当前菜单审核权限的用户组下拉选项
      */
