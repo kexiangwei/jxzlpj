@@ -14,6 +14,8 @@ public interface SkjhService {
 
     Map<String, Object> getPageList(Skjh skjh);
 
+    List<SkjhItem> getSkjhItemList(String relationCode);
+
     boolean insert(SkjhItem skjhItem);
 
     boolean update(Skjh skjh);

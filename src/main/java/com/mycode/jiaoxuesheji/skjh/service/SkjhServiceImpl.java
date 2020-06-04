@@ -44,6 +44,11 @@ public class SkjhServiceImpl implements SkjhService {
     }
 
     @Override
+    public List<SkjhItem> getSkjhItemList(String relationCode) {
+        return skjhMapper.getSkjhItemList(relationCode);
+    }
+
+    @Override
     public boolean insert(SkjhItem skjhItem) {
         Skjh skJhInfoByCode = skjhMapper.getSkJhInfoByCode(skjhItem.getCode());
         if(skJhInfoByCode == null){
@@ -84,24 +89,24 @@ public class SkjhServiceImpl implements SkjhService {
     @Override
     public boolean toShenhe(ShenHeItem item, List<Skjh> skjhList) {
         boolean bool = false;
-        /*for (Skjh skjh : skjhList) {
+        for (Skjh skjh : skjhList) {
             item.setRelationCode(skjh.getCode());
             item.setBatchNum(skjh.getBatchNum());
-            ShenHeNode node = skjhMapper.getShenheNode(item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
+            ShenHeNode node = shenHeMapper.getShenheNode("V_JXSJ_SKJH_SHENHE", item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
             item.setNodeCode(node.getNodeCode());
             item.setNodeName(node.getNodeName());
             bool = shenHeMapper.toShenhe(item); //提交审核
             if(bool){
-                if(item.getStatus().equals("通过")){
-                    int isPass = skjhMapper.isShenhePass(item.getRelationCode(), item.getBatchNum());
-                    if(isPass == 1){
-                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"通过");
-                    }
-                }else if(item.getStatus().equals("退回")){
+                if(item.getStatus().equals("退回")){
                     return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
+                } else { // 通过 | 未通过
+                    int isPass = shenHeMapper.isShenhePass("V_JXSJ_SKJH_SHENHE",item.getRelationCode(), item.getBatchNum());
+                    if(isPass == 1){
+                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),item.getStatus());
+                    }
                 }
             }
-        }*/
+        }
         return bool;
     }
 

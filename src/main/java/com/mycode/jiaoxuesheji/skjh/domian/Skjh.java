@@ -45,7 +45,7 @@ public class Skjh {
             ,mainTeacher //主讲教师
             ,teachClass; //授课班级
     //
-    private List<SkjhItem> itemList;
+    /*private List<SkjhItem> itemList;*/
     //
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

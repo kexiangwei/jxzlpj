@@ -44,6 +44,13 @@ public class SkjhController {
     }
 
     @ResponseBody
+    @RequestMapping("/getSkjhItemList.do")
+    public JsonResult<Object> getSkjhItemList(@RequestParam("relationCode") String relationCode){
+        List<SkjhItem> skjhItemList = skjhService.getSkjhItemList(relationCode);
+        return JsonResult.success(skjhItemList);
+    }
+
+    @ResponseBody
     @RequestMapping("/insert.do")
     public JsonResult<Object> insert(SkjhItem skjhItem){ //必须继承Skjh，用于接收页面传递的父类属性值
         boolean bool = skjhService.insert(skjhItem);

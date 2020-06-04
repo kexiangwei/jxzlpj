@@ -3,30 +3,62 @@
 <mapper namespace="com.mycode.jiaoxuesheji.skjh.mapper.SkjhMapper">
 
     <select id="getNotShenHeNum" resultType="int">
-        select 0 from dual
+        SELECT count(DISTINCT j.code)
+        from (
+            SELECT j.code,j.batch_num
+            ,count(sn.node_code) total_num,count(item.node_code) exec_num,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+            from V_JXSJ_SKJH_SHENHE j
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+            GROUP BY j.code,j.batch_num
+        )t
+        left join V_JXSJ_SKJH_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
+        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+        left join sys_user_role ur on ur.role_id = sn.role_id
+        where 1=1
+        and exec_num >= exec_level-1
+        AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
+        AND exec_level > exec_num
+        and ur.user_id = #{shenHeUserId}
     </select>
 
     <select id="getShenHePageList" resultType="com.mycode.jiaoxuesheji.skjh.domian.Skjh">
-        select null from dual
+        SELECT v.*
+        ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+        from (
+            SELECT v.code,v.batch_num
+            ,count(sn.node_code) total_num,count(item.node_code) exec_num,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+            from V_JXSJ_SKJH_SHENHE v
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+            GROUP BY v.code,v.batch_num
+        ) t
+        left join V_JXSJ_SKJH_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
+        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+        left join sys_user_role ur on ur.role_id = sn.role_id
+        <where>1=1
+            and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
+            AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END) -- 排除上一级状态值为‘退回’的数据
+            and ur.user_id = #{shenHeUserId}
+            <if test="shenheStatus != null and shenheStatus != ''">
+                <choose>
+                    <when test="shenheStatus == '已审核'">
+                        and exec_num >= exec_level
+                    </when>
+                    <when test="shenheStatus == '未审核'">
+                        and exec_level > exec_num
+                    </when>
+                </choose>
+            </if>
+            <include refid="queryCondition"/>
+        </where>
+        ORDER BY shenhe_status DESC
     </select>
 
     <select id="getPageList" resultType="com.mycode.jiaoxuesheji.skjh.domian.Skjh">
-        SELECT j.*
-        ,(case when sh.shenhe_code is not null and sh.status !='退回' then '已提交' else '未提交' end ) is_submit
-        ,sh.shenhe_code,sh.batch_num,sh.status
-        from (
-            SELECT code,c.*,MAIN_TEACHER,TEACH_CLASS,j.USER_ID,j.USER_name,j.create_date
-            FROM DATA_TEACHER_COURSE dtc LEFT JOIN DATA_COURSE c on c.COURSE_CODE = DTC.COURSE_CODE
-            LEFT JOIN JXSJ_SKJH j on j.COURSE_CODE = dtc.COURSE_CODE and j.user_id = dtc.user_id
-            where dtc.USER_ID = #{userId} /*or userId = 999999*/
-        ) j
-        LEFT JOIN (
-            SELECT code,MAX(BATCH_NUM) BATCH_NUM
-            from JXSJ_SKJH j
-            LEFT JOIN COMMON_SHENHE sh on sh.relation_code = j.code
-            GROUP BY code
-        ) t on t.code = j.code LEFT JOIN COMMON_SHENHE sh on sh.RELATION_CODE = t.code and sh.BATCH_NUM = t.BATCH_NUM
-        <where>1=1
+        SELECT *
+        from V_JXSJ_SKJH v
+        <where> user_id = #{userId}
             <choose>
                 <when test="status != null and status != '' and status == '待审核'">
                     and shenhe_code is null
