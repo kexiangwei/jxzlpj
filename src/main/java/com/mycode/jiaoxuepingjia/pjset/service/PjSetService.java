@@ -9,8 +9,6 @@ import java.util.Map;
 
 /**
  * 教学评价-评教设置
- * @auther kexiangwei
- * @date 2019/10/8
  */
 public interface PjSetService {
 
@@ -20,7 +18,5 @@ public interface PjSetService {
 
     List<PjSetTarget> getPjSetTargetList(PjSetTarget pjSetTarget);
 
-    Map<String, Object> getThpjTemplate(PjSetTarget pjSetTarget);
-
-    Map<String, Object> getXspjTemplate();
+    Map<String, Object> getCurrentTemplate(String templateType);
 }

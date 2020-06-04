@@ -7,10 +7,9 @@ import lombok.Setter;
 /**
  * 教学评价-学生评教
  */
-
 @Getter
 @Setter
-public class Course {
+public class Xspj {
 
     //分页参数
     @JsonIgnore
@@ -21,12 +20,8 @@ public class Course {
             ,userName;
 
     //业务字段
-    private String code //课程编号
-            ,nameZh //中文名称
-            ,nameEn //英文名称
-            ,stuScore //学分
-            ,stuHour //学时
-            ,courseType //课程类别
-            ,courseDept; //开课部门
-
+    private String courseCode //课程编号
+            ,courseName //课程名称
+            ,teacherNames; //本课程所有任课教师的姓名
+    private Integer isPj; //评教状态【1已评2未评】
 }

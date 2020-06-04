@@ -1,6 +1,6 @@
 package com.mycode.jiaoxuepingjia.xspj.service;
 
-import com.mycode.jiaoxuepingjia.xspj.domain.Course;
+import com.mycode.jiaoxuepingjia.xspj.domain.Xspj;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +10,6 @@ import java.util.Map;
  */
 public interface XspjService {
 
-    Map<String, Object> getCourseList(Course course);
+    Map<String, Object> getPageList(Xspj xspj);
 
 }

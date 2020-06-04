@@ -46,21 +46,15 @@ public class PjSetController {
         return JsonResult.success(mapList);
     }
 
-    @ResponseBody
-    @RequestMapping("/getThpjTemplate.do")
-    public JsonResult<Object> getThpjTemplate(PjSetTarget pjSetTarget){
-        Map<String, Object> resultMap = pjSetService.getThpjTemplate(pjSetTarget);
-        return JsonResult.success(resultMap);
-    }
-
     /**
-     * 获取学生评教模板信息
+     * 获取当前可执行模板信息
+     * @param templateType 模板类型，可选值【学生评教，同行评教】
      * @return
      */
     @ResponseBody
-    @RequestMapping("/getXspjTemplate.do")
-    public JsonResult<Object> getXspjTemplate(){
-        Map<String, Object> resultMap = pjSetService.getXspjTemplate();
+    @RequestMapping("/getCurrentTemplate.do")
+    public JsonResult<Object> getCurrentTemplate(@RequestParam("templateType") String templateType){
+        Map<String, Object> resultMap = pjSetService.getCurrentTemplate(templateType);
         return JsonResult.success(resultMap);
     }
 }

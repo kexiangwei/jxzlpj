@@ -2,9 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuepingjia.xspj.mapper.XspjMapper">
 
-    <select id="getCourseList" resultType="com.mycode.jiaoxuepingjia.xspj.domain.Course">
-        SELECT c.*
-        FROM DATA_STUDENT_COURSE sc LEFT JOIN DATA_COURSE c on c.CODE = sc.COURSE_CODE
+    <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.xspj.domain.Xspj">
+        SELECT c.COURSE_CODE,c.COURSE_NAME,t.teacher_Names
+        ,(case when pj.COURSE_CODE is not null then 1 else 2 end) is_Pj
+        FROM DATA_STUDENT_COURSE sc
+        LEFT JOIN DATA_COURSE c on c.COURSE_CODE = sc.COURSE_CODE
+        LEFT JOIN (
+                SELECT COURSE_CODE,wm_concat(DISTINCT teacher) teacher_Names
+                FROM JXSJ_SKJH jh
+                LEFT JOIN JXSJ_SKJH_ITEM it on it.relation_code = jh.code
+                GROUP BY COURSE_CODE
+        ) t on t.COURSE_CODE = sc.COURSE_CODE
+        LEFT JOIN JXPJ_XSPJ pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.STUDENT_CODE
         WHERE STUDENT_CODE = #{userId}
     </select>
 </mapper>

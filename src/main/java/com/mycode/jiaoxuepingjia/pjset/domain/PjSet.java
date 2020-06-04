@@ -22,11 +22,11 @@ public class PjSet {
 
     //业务字段
     private String code
-            ,name
             ,templateCode
+            ,templateType
             ,templateName;
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date startDate
             ,endDate
             ,createDate;

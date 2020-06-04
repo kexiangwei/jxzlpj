@@ -10,10 +10,7 @@ import java.util.Date;
 
 /**
  * 教学评价-评教设置-模板
- * @auther kexiangwei
- * @date 2019/10/8
  */
-
 @Getter
 @Setter
 public class PjSetTemplate {
@@ -24,10 +21,11 @@ public class PjSetTemplate {
             ,pageSize=10;
 
     private String templateCode
+            ,templateType
             ,templateName
             ,templateDesc;
-    @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
 }

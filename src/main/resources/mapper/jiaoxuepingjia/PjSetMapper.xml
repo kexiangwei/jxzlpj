@@ -3,8 +3,7 @@
 <mapper namespace="com.mycode.jiaoxuepingjia.pjset.mapper.PjSetMapper">
 
     <select id="getPjSetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSet">
-        select pjset.*,tmp.TEMPLATE_NAME
-        from JXPJ_PJSET pjset LEFT JOIN JXPJ_PJSET_TEMPLATE tmp on tmp.TEMPLATE_CODE = pjset.TEMPLATE_CODE
+        select * from JXPJ_PJSET
     </select>
 
     <select id="getPjSetTemplateList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
@@ -15,13 +14,14 @@
         select * from JXPJ_PJSET_TARGET
     </select>
 
-    <!-- 查看当前是否有可用的学生评教模板信息-->
+    <!-- 查看当前是否有可用的模板信息 -->
     <select id="isPj" resultType="java.lang.String">
         select template_code
         from jxpj_pjset
-        where end_date > sysdate
+        where template_type = #{templateType} and end_date > current_date
     </select>
-    <!-- 根据模板编号获取学生评教模板信息 -->
+
+    <!-- 根据模板编号获取模板信息 -->
     <select id="getPjSetTargetListByTemplateCode" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
         select t.*
         from jxpj_pjset_template_target tt left join jxpj_pjset_target t on t.target_code = tt.target_code

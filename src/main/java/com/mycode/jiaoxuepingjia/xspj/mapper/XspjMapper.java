@@ -1,6 +1,6 @@
 package com.mycode.jiaoxuepingjia.xspj.mapper;
 
-import com.mycode.jiaoxuepingjia.xspj.domain.Course;
+import com.mycode.jiaoxuepingjia.xspj.domain.Xspj;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -11,5 +11,5 @@ import java.util.List;
 @Mapper
 public interface XspjMapper {
 
-    List<Course> getCourseList(Course course);
+    List<Xspj> getPageList(Xspj xspj);
 }
