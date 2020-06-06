@@ -30,4 +30,9 @@ public class XspjServiceImpl implements XspjService {
         return resultMap;
     }
 
+    @Override
+    public boolean insert(Xspj xspj, Map<String,Object> paramMap) {
+        return xspjMapper.insert(xspj, paramMap);
+    }
+
 }

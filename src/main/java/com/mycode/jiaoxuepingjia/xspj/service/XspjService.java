@@ -12,4 +12,5 @@ public interface XspjService {
 
     Map<String, Object> getPageList(Xspj xspj);
 
+    boolean insert(Xspj xspj, Map<String,Object> paramMap);
 }

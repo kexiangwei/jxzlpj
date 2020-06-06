@@ -4,7 +4,7 @@
 
     <update id="batchSubimt">
         insert all
-        <foreach collection ="objList" item="obj" index= "idx">
+        <foreach collection ="objList" index= "idx" item="obj">
             into COMMON_SHENHE
             (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
             values

@@ -13,7 +13,19 @@
                 LEFT JOIN JXSJ_SKJH_ITEM it on it.relation_code = jh.code
                 GROUP BY COURSE_CODE
         ) t on t.COURSE_CODE = sc.COURSE_CODE
-        LEFT JOIN JXPJ_XSPJ pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.STUDENT_CODE
+        LEFT JOIN (
+            SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
+        ) pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.STUDENT_CODE
         WHERE STUDENT_CODE = #{userId}
     </select>
+
+    <insert id="insert">
+        insert all
+        <foreach collection="paramMap" index="key"  item="val">
+            INTO JXPJ_XSPJ (COURSE_CODE,TARGET_CODE,ANSWER,USER_ID,USER_NAME,CREATE_DATE)
+            VALUES(#{xspj.courseCode,jdbcType=VARCHAR},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR}
+            ,#{xspj.userId,jdbcType=VARCHAR},#{xspj.userName,jdbcType=VARCHAR},CURRENT_DATE)
+        </foreach>
+        select 1 from dual
+    </insert>
 </mapper>
