@@ -27,5 +27,6 @@ public class PjSetTemplate {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate;
-
+    //
+    private Integer isExec; //模板是否启用（即是否可执行编辑&删除操作），取值：【1是，2否】
 }

@@ -19,4 +19,12 @@ public interface PjSetService {
     List<PjSetTarget> getPjSetTargetList(PjSetTarget pjSetTarget);
 
     Map<String, Object> getCurrentTemplate(String templateType);
+
+    Boolean insertOrUpdateTemplate(PjSetTemplate template,String[] targetCodes);
+
+    Boolean deleteTemplate(String templateCode);
+
+    Boolean insertOrUpdateTarget(PjSetTarget target);
+
+    Boolean deleteTarget(String targetCode);
 }

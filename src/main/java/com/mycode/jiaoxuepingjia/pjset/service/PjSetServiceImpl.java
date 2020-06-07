@@ -62,4 +62,47 @@ public class PjSetServiceImpl implements PjSetService {
         resultMap.put("targetList",pjSetTargetList);
         return resultMap;
     }
+
+    @Override
+    public Boolean insertOrUpdateTemplate(PjSetTemplate template, String[] targetCodes) {
+        Boolean bool = false;
+        if(template != null && StringUtils.isEmpty(template.getTemplateCode())){
+            template.setTemplateCode(StringUtils.guidForDate());
+            bool = pjSetMapper.insertTemplate(template);
+        }else{
+            bool = pjSetMapper.updateTemplate(template);
+        }
+        if(bool){ //
+            List<PjSetTarget> targetList = pjSetMapper.getPjSetTargetListByTemplateCode(template.getTemplateCode());
+            if(targetList !=null && targetList.size() >0){
+                bool = pjSetMapper.deleteTemplateTargetByTemplateCode(template.getTemplateCode());
+            }
+            bool = pjSetMapper.insertTemplateTarget(template.getTemplateCode(),targetCodes);
+        }
+        return bool;
+    }
+
+    @Override
+    public Boolean deleteTemplate(String templateCode) {
+        Integer execNum = pjSetMapper.deleteTemplate(templateCode); //mybatis一次对多条数据进行操作成功后返回值为 -1
+        return execNum < 0;
+    }
+
+    @Override
+    public Boolean insertOrUpdateTarget(PjSetTarget target) {
+        Boolean bool = false;
+        if(target != null && StringUtils.isEmpty(target.getTargetCode())){
+            target.setTargetCode(StringUtils.guidForDate());
+            bool = pjSetMapper.insertTarget(target);
+        }else{
+            bool = pjSetMapper.updateTarget(target);
+        }
+        return bool;
+    }
+
+    @Override
+    public Boolean deleteTarget(String targetCode) {
+        return pjSetMapper.deleteTarget(targetCode);
+    }
+
 }

@@ -57,4 +57,45 @@ public class PjSetController {
         Map<String, Object> resultMap = pjSetService.getCurrentTemplate(templateType);
         return JsonResult.success(resultMap);
     }
+
+    @ResponseBody
+    @RequestMapping("/insertOrUpdateTemplate.do")
+    public JsonResult<Object> insertOrUpdateTemplate(PjSetTemplate template
+            , @RequestParam("targetCodes[]") String[] targetCodes){
+        Boolean bool = pjSetService.insertOrUpdateTemplate(template,targetCodes);
+        if(!bool){
+            JsonResult.error("保存失败");
+        }
+        return JsonResult.success("保存成功",null);
+    }
+
+    @ResponseBody
+    @RequestMapping("/deleteTemplate.do")
+    public JsonResult<Object> deleteTemplate(@RequestParam("templateCode") String templateCode){
+        Boolean bool = pjSetService.deleteTemplate(templateCode);
+        if(!bool){
+            return JsonResult.error("删除失败");
+        }
+        return JsonResult.success("删除成功",null);
+    }
+
+    @ResponseBody
+    @RequestMapping("/insertOrUpdateTarget.do")
+    public JsonResult<Object> insertOrUpdateTarget(PjSetTarget target){
+        Boolean bool = pjSetService.insertOrUpdateTarget(target);
+        if(!bool){
+            JsonResult.error("保存失败");
+        }
+        return JsonResult.success("保存成功",null);
+    }
+
+    @ResponseBody
+    @RequestMapping("/deleteTarget.do")
+    public JsonResult<Object> deleteTarget(@RequestParam("targetCode") String targetCode){
+        Boolean bool = pjSetService.deleteTarget(targetCode);
+        if(!bool){
+            return JsonResult.error("删除失败");
+        }
+        return JsonResult.success("删除成功",null);
+    }
 }

@@ -22,5 +22,6 @@ public class PjSetTarget {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate;
-
+    //
+    private Integer isBind; //是否绑定模板（即是否可执行编辑&删除操作），取值：【1已绑定，2未绑定】
 }

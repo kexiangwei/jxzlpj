@@ -23,4 +23,20 @@ public interface PjSetMapper {
     String isPj(@Param("templateType") String templateType);
 
     List<PjSetTarget> getPjSetTargetListByTemplateCode(@Param("templateCode") String templateCode);
+
+    Boolean insertTemplate(PjSetTemplate template);
+
+    Boolean updateTemplate(PjSetTemplate template);
+
+    Integer deleteTemplate(@Param("templateCode")  String templateCode);
+
+    Boolean insertTemplateTarget(@Param("templateCode") String templateCode, @Param("targetCodes") String[] targetCodes);
+
+    Boolean deleteTemplateTargetByTemplateCode(@Param("templateCode") String templateCode);
+
+    Boolean insertTarget(PjSetTarget target);
+
+    Boolean updateTarget(PjSetTarget target);
+
+    Boolean deleteTarget(@Param("targetCode") String targetCode);
 }
