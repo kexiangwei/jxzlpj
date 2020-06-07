@@ -14,7 +14,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class PjSetTemplate {
-
+    //
+    private Integer isExec; //模板是否启用（即是否可执行编辑&删除操作），取值：【1是，2否】
     //分页参数
     @JsonIgnore
     private Integer pageIndex=1
@@ -22,11 +23,11 @@ public class PjSetTemplate {
 
     private String templateCode
             ,templateType
-            ,templateName
-            ,templateDesc;
+            ,templateName;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date createDate;
-    //
-    private Integer isExec; //模板是否启用（即是否可执行编辑&删除操作），取值：【1是，2否】
+    private Date startDate
+            ,endDate
+            ,createDate;
+
 }

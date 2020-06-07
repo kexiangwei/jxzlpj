@@ -1,7 +1,6 @@
 package com.mycode.jiaoxuepingjia.pjset.mapper;
 
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget;
-import com.mycode.jiaoxuepingjia.pjset.domain.PjSet;
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,15 +13,15 @@ import java.util.List;
 @Mapper
 public interface PjSetMapper {
 
-    List<PjSet> getPjSetList(PjSet pjSet);
-
-    List<PjSetTemplate> getPjSetTemplateList(PjSetTemplate pjSetTemplate);
-
-    List<PjSetTarget> getPjSetTargetList(PjSetTarget pjSetTarget);
-
-    String isPj(@Param("templateType") String templateType);
+    String getExecTemplate(@Param("templateType") String templateType);
 
     List<PjSetTarget> getPjSetTargetListByTemplateCode(@Param("templateCode") String templateCode);
+
+    Boolean insertTemplateTarget(@Param("templateCode") String templateCode, @Param("targetCodes") String[] targetCodes);
+
+    Boolean deleteTemplateTargetByTemplateCode(@Param("templateCode") String templateCode);
+
+    List<PjSetTemplate> getPjSetTemplateList(PjSetTemplate pjSetTemplate);
 
     Boolean insertTemplate(PjSetTemplate template);
 
@@ -30,9 +29,7 @@ public interface PjSetMapper {
 
     Integer deleteTemplate(@Param("templateCode")  String templateCode);
 
-    Boolean insertTemplateTarget(@Param("templateCode") String templateCode, @Param("targetCodes") String[] targetCodes);
-
-    Boolean deleteTemplateTargetByTemplateCode(@Param("templateCode") String templateCode);
+    List<PjSetTarget> getPjSetTargetList(PjSetTarget pjSetTarget);
 
     Boolean insertTarget(PjSetTarget target);
 

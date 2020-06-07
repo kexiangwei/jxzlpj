@@ -2,67 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuepingjia.pjset.mapper.PjSetMapper">
 
-    <select id="getPjSetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSet">
-        select * from JXPJ_PJSET
-    </select>
-
-    <select id="getPjSetTemplateList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
-        select t.*
-        ,(case when pjset.template_code is not null then 1 else 2 end) is_exec
-        from JXPJ_PJSET_TEMPLATE t
-        LEFT JOIN JXPJ_PJSET pjset on pjset.TEMPLATE_CODE = t.TEMPLATE_CODE
-    </select>
-
-    <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
-        select t.*,(case when tt.template_code is not null then 1 else 2 end) is_bind
-        from JXPJ_PJSET_TARGET t LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on tt.target_code = t.TARGET_CODE
-        <where>1=1
-            <if test="targetType !=null and targetType !=''">
-                and TARGET_TYPE = #{targetType}
-            </if>
-        </where>
-    </select>
-
     <!-- 查看当前是否有可用的模板信息 -->
-    <select id="isPj" resultType="java.lang.String">
+    <select id="getExecTemplate" resultType="java.lang.String">
         select template_code
-        from jxpj_pjset
+        from JXPJ_PJSET_TEMPLATE
         where template_type = #{templateType} and end_date > current_date
     </select>
-
     <!-- 根据模板编号获取模板信息 -->
     <select id="getPjSetTargetListByTemplateCode" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
         select t.*
         from jxpj_pjset_template_target tt left join jxpj_pjset_target t on t.target_code = tt.target_code
         where tt.template_code = #{templateCode}
     </select>
-
-    <insert id="insertTemplate">
-        insert into JXPJ_PJSET_TEMPLATE (TEMPLATE_CODE, TEMPLATE_TYPE, TEMPLATE_NAME, TEMPLATE_DESC, CREATE_DATE)
-        values (#{templateCode},#{templateType,jdbcType=VARCHAR},#{templateName,jdbcType=VARCHAR},#{templateDesc,jdbcType=VARCHAR},CURRENT_DATE)
-    </insert>
-    <update id="updateTemplate">
-        update JXPJ_PJSET_TEMPLATE
-        <set>
-            <if test="templateType != null and templateType != ''">
-                TEMPLATE_TYPE = #{templateType}
-            </if>
-            <if test="templateName != null and templateName != ''">
-                , TEMPLATE_NAME = #{templateName}
-            </if>
-            <if test="templateDesc != null">
-                , TEMPLATE_DESC = #{templateDesc}
-            </if>
-        </set>
-        where TEMPLATE_CODE = #{templateCode}
-    </update>
-    <delete id="deleteTemplate">
-        begin
-        DELETE FROM JXPJ_PJSET_TEMPLATE WHERE TEMPLATE_CODE = #{templateCode};
-        delete from JXPJ_PJSET_TEMPLATE_TARGET where TEMPLATE_CODE = #{templateCode};
-        end;
-    </delete>
-
     <insert id="insertTemplateTarget">
         insert all
         <foreach collection="targetCodes" index="idx"  item="targetCode">
@@ -75,6 +26,49 @@
         delete from JXPJ_PJSET_TEMPLATE_TARGET where TEMPLATE_CODE = #{templateCode}
     </delete>
 
+    <select id="getPjSetTemplateList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
+        select t.*
+        ,(case when end_date > current_date then 1 else 2 end) is_exec
+        from JXPJ_PJSET_TEMPLATE t
+    </select>
+    <insert id="insertTemplate">
+        insert into JXPJ_PJSET_TEMPLATE (TEMPLATE_CODE, TEMPLATE_TYPE, TEMPLATE_NAME, START_DATE, END_DATE, CREATE_DATE)
+        values (#{templateCode},#{templateType,jdbcType=VARCHAR},#{templateName,jdbcType=VARCHAR},#{startDate},#{endDate},CURRENT_DATE)
+    </insert>
+    <update id="updateTemplate">
+        update JXPJ_PJSET_TEMPLATE
+        <set>
+            <if test="templateType != null and templateType != ''">
+                TEMPLATE_TYPE = #{templateType}
+            </if>
+            <if test="templateName != null and templateName != ''">
+                , TEMPLATE_NAME = #{templateName}
+            </if>
+            <if test="startDate != null">
+                , START_DATE = #{startDate}
+            </if>
+            <if test="endDate != null">
+                , END_DATE = #{endDate}
+            </if>
+        </set>
+        where TEMPLATE_CODE = #{templateCode}
+    </update>
+    <delete id="deleteTemplate">
+        begin
+        DELETE FROM JXPJ_PJSET_TEMPLATE WHERE TEMPLATE_CODE = #{templateCode};
+        delete from JXPJ_PJSET_TEMPLATE_TARGET where TEMPLATE_CODE = #{templateCode};
+        end;
+    </delete>
+
+    <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
+        select t.*,(case when tt.template_code is not null then 1 else 2 end) is_bind
+        from JXPJ_PJSET_TARGET t LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on tt.target_code = t.TARGET_CODE
+        <where>1=1
+            <if test="targetType !=null and targetType !=''">
+                and TARGET_TYPE = #{targetType}
+            </if>
+        </where>
+    </select>
     <insert id="insertTarget">
         insert into JXPJ_PJSET_TARGET (TARGET_CODE, TARGET_TYPE, TARGET_NAME, TARGET_CONTENT, TARGET_SCORE, CREATE_DATE)
         VALUES (#{targetCode},#{targetType},#{targetName,jdbcType=VARCHAR},#{targetContent},#{targetScore},CURRENT_DATE)

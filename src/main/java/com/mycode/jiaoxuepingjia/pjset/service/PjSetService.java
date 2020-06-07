@@ -1,7 +1,6 @@
 package com.mycode.jiaoxuepingjia.pjset.service;
 
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget;
-import com.mycode.jiaoxuepingjia.pjset.domain.PjSet;
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate;
 
 import java.util.List;
@@ -12,17 +11,15 @@ import java.util.Map;
  */
 public interface PjSetService {
 
-    Map<String, Object> getPjSetList(PjSet pjSet);
+    Map<String, Object> getExecTemplate(String templateType);
 
     Map<String, Object> getPjSetTemplateList(PjSetTemplate pjSetTemplate);
-
-    List<PjSetTarget> getPjSetTargetList(PjSetTarget pjSetTarget);
-
-    Map<String, Object> getCurrentTemplate(String templateType);
 
     Boolean insertOrUpdateTemplate(PjSetTemplate template,String[] targetCodes);
 
     Boolean deleteTemplate(String templateCode);
+
+    List<PjSetTarget> getPjSetTargetList(PjSetTarget pjSetTarget);
 
     Boolean insertOrUpdateTarget(PjSetTarget target);
 
