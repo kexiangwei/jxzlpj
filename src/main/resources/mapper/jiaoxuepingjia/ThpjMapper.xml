@@ -2,8 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuepingjia.thpj.mapper.ThpjMapper">
 
-    <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.thpj.domian.Thpj">
-         SELECT * from JXPJ_THPJ
+    <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery">
+        SELECT c.course_code,c.course_name,c.course_type
+        ,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
+        ,jh.dates teach_date,jh.teach_addr
+        FROM DATA_TEACHER_COURSE tc
+        LEFT JOIN DATA_TEACHER t on t.CODE = TC.USER_ID
+        LEFT JOIN DATA_COURSE c on c.course_code = tc.course_code
+        LEFT JOIN (
+            SELECT * FROM JXSJ_SKJH jh LEFT JOIN JXSJ_SKJH_ITEM it on it.relation_code = jh.code
+        ) jh on jh.course_code = c.course_code and jh.teacher = t.name
+    </select>
+
+    <!--
+    返回值：name 指标名称
+        num 指标名称关联的指标项个数
+        score 指标名称关联的指标项分数合计
+    最后按照‘一二三...’排序。
+    -->
+    <select id="getThpjTargetList" resultType="java.util.Map">
+        SELECT TARGET_NAME as "name",count(0) as "num",sum(TARGET_SCORE) as "score"
+        FROM JXPJ_PJSET_TARGET
+        where TARGET_TYPE = '同行评教'
+        GROUP BY TARGET_NAME
+        order by decode(SUBSTR(TARGET_NAME, 0, 1),'一',1,'二',2,'三',3,'四',4,'五',5,'六',6,'七',7,'八',8,'九',9,'零',0)
+    </select>
+    <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
+        SELECT * FROM JXPJ_PJSET_TARGET where TARGET_TYPE = '同行评教'
     </select>
 
     <insert id="insert">

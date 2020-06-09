@@ -1,6 +1,7 @@
 package com.mycode.jiaoxuepingjia.thpj.controller;
 
 import com.mycode.jiaoxuepingjia.thpj.domian.Thpj;
+import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import com.mycode.jiaoxuepingjia.thpj.service.ThpjService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,9 +27,16 @@ public class ThpjController {
 
     @ResponseBody
     @RequestMapping("/getPageList.do")
-    public JsonResult<Object> getPageList(Thpj thpj){
-        Map<String, Object> resultMap = thpjService.getPageList(thpj);
+    public JsonResult<Object> getPageList(ThpjQuery thpjQuery){
+        Map<String, Object> resultMap = thpjService.getPageList(thpjQuery);
         return JsonResult.success(resultMap);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getThpjTargetList.do")
+    public JsonResult<Object> getThpjTargetList(){
+        List<Map<String, Object>> thpjTargetList = thpjService.getThpjTargetList();
+        return JsonResult.success(thpjTargetList);
     }
 
     @ResponseBody
