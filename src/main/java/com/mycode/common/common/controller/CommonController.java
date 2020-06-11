@@ -35,15 +35,10 @@ public class CommonController {
         return JsonResult.success(resultMap);
     }
 
-    /**
-     *
-     * @param stuCode
-     * @return
-     */
     @ResponseBody
     @RequestMapping("/getCollege.do")
-    public JsonResult<Object> getCollege(@RequestParam(value = "stuCode",required = false) String stuCode){
-        List<Map<String, Object>> maps = commonService.getCollege(stuCode);
+    public JsonResult<Object> getCollege(){
+        List<Map<String, Object>> maps = commonService.getCollege();
         return JsonResult.success(maps);
     }
 

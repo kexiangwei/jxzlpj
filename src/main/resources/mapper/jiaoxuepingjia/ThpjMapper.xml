@@ -12,6 +12,45 @@
         LEFT JOIN (
             SELECT * FROM JXSJ_SKJH jh LEFT JOIN JXSJ_SKJH_ITEM it on it.relation_code = jh.code
         ) jh on jh.course_code = c.course_code and jh.teacher = t.name
+        <where>1=1
+            <if test="teacherCollege !=null and teacherCollege !=''">
+                and t.COLLEGE_NAME = #{teacherCollege}
+            </if>
+            <if test="teacherMajor !=null and teacherMajor !=''">
+                and t.MAJOR_NAME = #{teacherMajor}
+            </if>
+            <if test="teacher !=null and teacher !=''">
+                and t.name = #{teacher}
+            </if>
+            <if test="teacherAge !=null and teacherAge !=''">
+                  <choose>
+                      <when test="teacherAge == '55岁及以上'">
+                          and t.age >= 55
+                      </when>
+                      <when test="teacherAge == '45-54岁'">
+                          and t.age BETWEEN 45 and 54
+                      </when>
+                      <when test="teacherAge == '35-44岁'">
+                          and t.age BETWEEN 35 and 44
+                      </when>
+                      <when test="teacherAge == '34岁及以下'">
+                          and t.age &lt;= 34
+                      </when>
+                  </choose>
+            </if>
+            <if test="teacherTitle !=null and teacherTitle !=''">
+                and t.title = #{teacherTitle}
+            </if>
+            <if test="courseName !=null and courseName !=''">
+                and c.course_name like concat(concat('%',#{courseName}),'%')
+            </if>
+            <if test="courseType !=null and courseType !=''">
+                and c.course_type = #{courseType}
+            </if>
+            <if test="teachDate !=null and teachDate !=''">
+                and jh.dates = to_date(#{teachDate}, 'yyyy-MM-dd')
+            </if>
+        </where>
     </select>
 
     <!--
