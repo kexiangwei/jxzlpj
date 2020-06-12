@@ -40,6 +40,13 @@ public class ThpjController {
     }
 
     @ResponseBody
+    @RequestMapping("/getTeacherInfo.do")
+    public JsonResult<Object> getTeacherInfo(@RequestParam("menuName") String menuName, @RequestParam("userId") String userId){
+        List<Map<String, Object>> teacherInfo = thpjService.getTeacherInfo(menuName,userId);
+        return JsonResult.success(teacherInfo);
+    }
+
+    @ResponseBody
     @RequestMapping("/insert.do")
     public JsonResult<Object> insert(Thpj thpj){
         boolean bool = thpjService.insert(thpj);

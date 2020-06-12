@@ -20,4 +20,6 @@ public interface ThpjService {
     boolean update(Thpj thpj);
 
     boolean delete(String code);
+
+    List<Map<String, Object>> getTeacherInfo(String menuName, String userId);
 }

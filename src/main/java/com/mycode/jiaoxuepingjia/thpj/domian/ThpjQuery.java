@@ -20,6 +20,7 @@ public class ThpjQuery {
     private String courseCode //课程编号
             ,courseName //课程名称
             ,courseType //课程性质
+            ,teacherCode //任课教师编号
             ,teacher //任课教师姓名
             ,teacherAge //教师年龄
             ,teacherTitle //教师职称

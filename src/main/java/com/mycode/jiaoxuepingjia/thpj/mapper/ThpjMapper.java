@@ -26,4 +26,6 @@ public interface ThpjMapper {
     boolean update(Thpj thpj);
 
     boolean delete(@Param("code") String code);
+
+    List<Map<String, Object>> getTeacherInfo(@Param("menuName") String menuName, @Param("userId") String userId);
 }

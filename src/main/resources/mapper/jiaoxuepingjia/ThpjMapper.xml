@@ -4,7 +4,7 @@
 
     <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery">
         SELECT c.course_code,c.course_name,c.course_type
-        ,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
+        ,t.CODE teacher_code,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
         ,jh.dates teach_date,jh.teach_addr
         FROM DATA_TEACHER_COURSE tc
         LEFT JOIN DATA_TEACHER t on t.CODE = TC.USER_ID
@@ -68,6 +68,22 @@
     </select>
     <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
         SELECT * FROM JXPJ_PJSET_TARGET where TARGET_TYPE = '同行评教'
+    </select>
+
+    <select id="getTeacherInfo" resultType="java.util.Map">
+        SELECT 'JXYJ_JXJY' tab_name,'继续教育' tab_comment,count(ROWNUM) num FROM JXYJ_JXJY where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JGXM' tab_name,'教改项目校级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JGXM_CITY' tab_name,'教改项目市级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM_CITY where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JGLW' tab_name,'教改论文' tab_comment,count(ROWNUM) num FROM JXYJ_JGLW  where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JCJS' tab_name,'教材建设' tab_comment,count(ROWNUM) num FROM JXYJ_JCJS  where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JXTD' tab_name,'教学团队申报' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = 112233 and TYPE = 'declare'
+        UNION ALL
+        SELECT 'JXYJ_JXTD' tab_name,'教学团队年度报告' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = 112233 and TYPE = 'report'
     </select>
 
     <insert id="insert">

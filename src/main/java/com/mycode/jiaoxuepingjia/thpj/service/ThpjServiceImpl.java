@@ -63,4 +63,9 @@ public class ThpjServiceImpl implements ThpjService {
         return thpjMapper.delete(code);
     }
 
+    @Override
+    public List<Map<String, Object>> getTeacherInfo(String menuName, String userId) {
+        return thpjMapper.getTeacherInfo(menuName,userId);
+    }
+
 }
