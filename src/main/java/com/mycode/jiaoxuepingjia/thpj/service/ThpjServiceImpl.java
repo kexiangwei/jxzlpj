@@ -34,21 +34,6 @@ public class ThpjServiceImpl implements ThpjService {
     }
 
     @Override
-    public List<Map<String, Object>> getThpjTargetList() {
-        List<Map<String, Object>> thpjTargetList = thpjMapper.getThpjTargetList();
-        List<PjSetTarget> pjSetTargetList = thpjMapper.getPjSetTargetList();
-        Map<String, List<PjSetTarget>> targetListByName = pjSetTargetList.stream().collect(Collectors.groupingBy(PjSetTarget::getTargetName, Collectors.toList()));
-        thpjTargetList.forEach(m -> {
-            targetListByName.forEach((k,v) -> {
-                if(k.equals(m.get("name").toString())){
-                    m.put("targetList",v);
-                }
-            });
-        });
-        return thpjTargetList;
-    }
-
-    @Override
     public boolean insert(Thpj thpj) {
         return thpjMapper.insert(thpj);
     }
@@ -64,8 +49,37 @@ public class ThpjServiceImpl implements ThpjService {
     }
 
     @Override
-    public List<Map<String, Object>> getTeacherInfo(String menuName, String userId) {
-        return thpjMapper.getTeacherInfo(menuName,userId);
+    public List<Map<String, Object>> getThpjTargetList() {
+        List<Map<String, Object>> thpjTargetList = thpjMapper.getThpjTargetList();
+        List<PjSetTarget> pjSetTargetList = thpjMapper.getPjSetTargetList();
+        Map<String, List<PjSetTarget>> targetListByName = pjSetTargetList.stream().collect(Collectors.groupingBy(PjSetTarget::getTargetName, Collectors.toList()));
+        thpjTargetList.forEach(m -> {
+            targetListByName.forEach((k,v) -> {
+                if(k.equals(m.get("name").toString())){
+                    m.put("targetList",v);
+                }
+            });
+        });
+        return thpjTargetList;
+    }
+
+    @Override
+    public List<Map<String, Object>> getTeacherBar(String menuName, String userId) {
+        return thpjMapper.getTeacherBar(menuName,userId);
+    }
+
+    @Override
+    public List<Map<String, Object>> getTeacherPie(String menuName, String userId) {
+        return thpjMapper.getTeacherPie(menuName,userId);
+    }
+
+    @Override
+    public List<Map<String, Object>> getTeacherTab(String menuName, String userId) {
+        return thpjMapper.getTeacherTab(menuName,userId);
+    }
+    @Override
+    public List<Map<String, Object>> getTeacherTabData(String menuName, String userId) {
+        return thpjMapper.getTeacherTabData(menuName,userId);
     }
 
 }

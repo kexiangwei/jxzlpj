@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jiaoxuepingjia.thpj.mapper.ThpjMapper">
+
+    <!--
+    返回值：name 指标名称
+        num 指标名称关联的指标项个数
+        score 指标名称关联的指标项分数合计
+    最后按照‘一二三...’排序。
+    -->
+    <select id="getThpjTargetList" resultType="java.util.Map">
+        SELECT TARGET_NAME as "name",count(0) as "num",sum(TARGET_SCORE) as "score"
+        FROM JXPJ_PJSET_TARGET
+        where TARGET_TYPE = '同行评教'
+        GROUP BY TARGET_NAME
+        order by decode(SUBSTR(TARGET_NAME, 0, 1),'一',1,'二',2,'三',3,'四',4,'五',5,'六',6,'七',7,'八',8,'九',9,'零',0)
+    </select>
+    <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
+        SELECT * FROM JXPJ_PJSET_TARGET where TARGET_TYPE = '同行评教'
+    </select>
+
+    <select id="getTeacherBar" resultType="java.util.Map">
+        SELECT 'JXYJ_JXJY' tab_name,'继续教育' tab_comment,count(ROWNUM) num FROM JXYJ_JXJY where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JGXM' tab_name,'教改项目校级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JGXM_CITY' tab_name,'教改项目市级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM_CITY where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JGLW' tab_name,'教改论文' tab_comment,count(ROWNUM) num FROM JXYJ_JGLW  where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JCJS' tab_name,'教材建设' tab_comment,count(ROWNUM) num FROM JXYJ_JCJS  where USER_ID = 112233
+        UNION ALL
+        SELECT 'JXYJ_JXTD' tab_name,'教学团队申报' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = 112233 and TYPE = 'declare'
+        UNION ALL
+        SELECT 'JXYJ_JXTD' tab_name,'教学团队年度报告' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = 112233 and TYPE = 'report'
+    </select>
+
+    <select id="getTeacherPie" resultType="java.util.Map">
+        SELECT s.STATUS as "name",nvl(sum(dsh+shz+tg+wtg+th),0) as "value"
+        FROM (
+            select '待审核' status from dual union all
+            select '审核中' status from dual union all
+            select '通过' status from dual union all
+            select '未通过' status from dual union all
+            select '退回' status from dual
+        ) s LEFT JOIN (
+            SELECT (case when STATUS is not null then STATUS else '待审核' end) STATUS
+            ,sum(case when SHENHE_CODE is null then 1 else 0 end) dsh
+            ,sum(case when STATUS = '审核中' then 1 else 0 end) shz
+            ,sum(case when STATUS = '通过' then 1 else 0 end) tg
+            ,sum(case when STATUS = '未通过' then 1 else 0 end) wtg
+            ,sum(case when STATUS = '退回' then 1 else 0 end) th
+            FROM
+            <choose>
+                <when test="menuName == '继续教育'">
+                    V_JXYJ_JXJY where 1=1
+                </when>
+                <when test="menuName == '教改项目校级'">
+                    V_JXYJ_JGXM where 1=1
+                </when>
+                <when test="menuName == '教改项目市级'">
+                    V_JXYJ_JGXM_CITY where 1=1
+                </when>
+                <when test="menuName == '教改论文'">
+                    V_JXYJ_JGLW where 1=1
+                </when>
+                <when test="menuName == '教材建设'">
+                    V_JXYJ_JCJS where 1=1
+                </when>
+                <when test="menuName == '教学团队申报'">
+                    V_JXYJ_JXTD where 1=1 and TYPE = 'declare'
+                </when>
+                <when test="menuName == '教学团队年度报告'">
+                    V_JXYJ_JXTD where 1=1 and TYPE = 'report'
+                </when>
+            </choose>
+            and USER_ID = 112233
+            GROUP BY STATUS
+        ) t on t.status = s.STATUS GROUP BY s.STATUS
+    </select>
+
+    <select id="getTeacherTab" resultType="java.util.Map">
+        select COLUMN_NAME,COMMENTS
+        from user_col_comments
+        where table_name =
+        <choose>
+            <when test="menuName == '继续教育'">
+                'JXYJ_JXJY'
+            </when>
+            <when test="menuName == '教改项目校级'">
+                'JXYJ_JGXM'
+            </when>
+            <when test="menuName == '教改项目市级'">
+                'JXYJ_JGXM_CITY'
+            </when>
+            <when test="menuName == '教改论文'">
+                'JXYJ_JGLW'
+            </when>
+            <when test="menuName == '教材建设'">
+                'JXYJ_JCJS'
+            </when>
+            <when test="menuName == '教学团队申报' or menuName == '教学团队年度报告'">
+                'JXYJ_JXTD'
+            </when>
+        </choose>
+    </select>
+    <select id="getTeacherTabData" resultType="java.util.Map">
+        SELECT *
+        FROM
+        <choose>
+            <when test="menuName == '继续教育'">
+                V_JXYJ_JXJY where 1=1
+            </when>
+            <when test="menuName == '教改项目校级'">
+                V_JXYJ_JGXM where 1=1
+            </when>
+            <when test="menuName == '教改项目市级'">
+                V_JXYJ_JGXM_CITY where 1=1
+            </when>
+            <when test="menuName == '教改论文'">
+                V_JXYJ_JGLW where 1=1
+            </when>
+            <when test="menuName == '教材建设'">
+                V_JXYJ_JCJS where 1=1
+            </when>
+            <when test="menuName == '教学团队申报'">
+                V_JXYJ_JXTD where 1=1 and TYPE = 'declare'
+            </when>
+            <when test="menuName == '教学团队年度报告'">
+                V_JXYJ_JXTD where 1=1 and TYPE = 'report'
+            </when>
+        </choose>
+        and USER_ID = 112233
+    </select>
+</mapper>

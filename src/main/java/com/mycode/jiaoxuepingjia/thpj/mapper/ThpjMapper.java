@@ -17,15 +17,22 @@ public interface ThpjMapper {
 
     List<ThpjQuery> getPageList(ThpjQuery thpjQuery);
 
-    List<Map<String, Object>> getThpjTargetList();
-
-    List<PjSetTarget> getPjSetTargetList();
-
     boolean insert(Thpj thpj);
 
     boolean update(Thpj thpj);
 
     boolean delete(@Param("code") String code);
 
-    List<Map<String, Object>> getTeacherInfo(@Param("menuName") String menuName, @Param("userId") String userId);
+    List<Map<String, Object>> getThpjTargetList();
+
+    List<PjSetTarget> getPjSetTargetList();
+
+    List<Map<String, Object>> getTeacherBar(@Param("menuName") String menuName, @Param("userId") String userId);
+
+    List<Map<String, Object>> getTeacherPie(@Param("menuName") String menuName, @Param("userId") String userId);
+
+    List<Map<String, Object>> getTeacherTab(@Param("menuName") String menuName, @Param("userId") String userId);
+
+    List<Map<String, Object>> getTeacherTabData(@Param("menuName") String menuName, @Param("userId") String userId);
+
 }
