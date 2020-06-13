@@ -31,8 +31,8 @@ public interface ThpjMapper {
 
     List<Map<String, Object>> getTeacherPie(@Param("menuName") String menuName, @Param("userId") String userId);
 
-    List<Map<String, Object>> getTeacherTab(@Param("menuName") String menuName, @Param("userId") String userId);
+    List<Map<String, Object>> getTeacherTab(@Param("menuName") String menuName);
 
-    List<Map<String, Object>> getTeacherTabData(@Param("menuName") String menuName, @Param("userId") String userId);
+    List<Map<String, Object>> getTeacherTabData(@Param("menuName") String menuName, @Param("userId") String userId, @Param("status") String status);
 
 }

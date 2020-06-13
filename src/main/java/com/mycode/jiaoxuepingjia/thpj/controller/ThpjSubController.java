@@ -46,15 +46,23 @@ public class ThpjSubController {
 
     @ResponseBody
     @RequestMapping("/getTeacherTab.do")
-    public JsonResult<Object> getTeacherTab(@RequestParam("menuName") String menuName, @RequestParam("userId") String userId){
-        List<Map<String, Object>> teacherTab = thpjService.getTeacherTab(menuName, userId);
+    public JsonResult<Object> getTeacherTab(@RequestParam("menuName") String menuName){
+        List<Map<String, Object>> teacherTab = thpjService.getTeacherTab(menuName);
         return JsonResult.success(teacherTab);
     }
 
+    /**
+     *
+     * @param menuName
+     * @param userId
+     * @param status 审核状态【待审核、审核中、通过、未通过、退回】
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getTeacherTabData.do")
-    public JsonResult<Object> getTeacherTabData(@RequestParam("menuName") String menuName, @RequestParam("userId") String userId){
-        List<Map<String, Object>> teacherTab = thpjService.getTeacherTabData(menuName, userId);
+    public JsonResult<Object> getTeacherTabData(@RequestParam("menuName") String menuName, @RequestParam("userId") String userId
+            , @RequestParam(value = "status",required = false) String status){
+        List<Map<String, Object>> teacherTab = thpjService.getTeacherTabData(menuName, userId, status);
         return JsonResult.success(teacherTab);
     }
 

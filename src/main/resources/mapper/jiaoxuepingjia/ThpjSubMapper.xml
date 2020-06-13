@@ -20,19 +20,19 @@
     </select>
 
     <select id="getTeacherBar" resultType="java.util.Map">
-        SELECT 'JXYJ_JXJY' tab_name,'继续教育' tab_comment,count(ROWNUM) num FROM JXYJ_JXJY where USER_ID = 112233
+        SELECT 'JXYJ_JXJY' tab_name,'继续教育' tab_comment,count(ROWNUM) num FROM JXYJ_JXJY where USER_ID = #{userId}
         UNION ALL
-        SELECT 'JXYJ_JGXM' tab_name,'教改项目校级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM where USER_ID = 112233
+        SELECT 'JXYJ_JGXM' tab_name,'教改项目校级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM where USER_ID = #{userId}
         UNION ALL
-        SELECT 'JXYJ_JGXM_CITY' tab_name,'教改项目市级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM_CITY where USER_ID = 112233
+        SELECT 'JXYJ_JGXM_CITY' tab_name,'教改项目市级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM_CITY where USER_ID = #{userId}
         UNION ALL
-        SELECT 'JXYJ_JGLW' tab_name,'教改论文' tab_comment,count(ROWNUM) num FROM JXYJ_JGLW  where USER_ID = 112233
+        SELECT 'JXYJ_JGLW' tab_name,'教改论文' tab_comment,count(ROWNUM) num FROM JXYJ_JGLW  where USER_ID = #{userId}
         UNION ALL
-        SELECT 'JXYJ_JCJS' tab_name,'教材建设' tab_comment,count(ROWNUM) num FROM JXYJ_JCJS  where USER_ID = 112233
+        SELECT 'JXYJ_JCJS' tab_name,'教材建设' tab_comment,count(ROWNUM) num FROM JXYJ_JCJS  where USER_ID = #{userId}
         UNION ALL
-        SELECT 'JXYJ_JXTD' tab_name,'教学团队申报' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = 112233 and TYPE = 'declare'
+        SELECT 'JXYJ_JXTD' tab_name,'教学团队申报' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = #{userId} and TYPE = 'declare'
         UNION ALL
-        SELECT 'JXYJ_JXTD' tab_name,'教学团队年度报告' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = 112233 and TYPE = 'report'
+        SELECT 'JXYJ_JXTD' tab_name,'教学团队年度报告' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = #{userId} and TYPE = 'report'
     </select>
 
     <select id="getTeacherPie" resultType="java.util.Map">
@@ -74,7 +74,7 @@
                     V_JXYJ_JXTD where 1=1 and TYPE = 'report'
                 </when>
             </choose>
-            and USER_ID = 112233
+            and USER_ID = #{userId}
             GROUP BY STATUS
         ) t on t.status = s.STATUS GROUP BY s.STATUS
     </select>
@@ -130,6 +130,14 @@
                 V_JXYJ_JXTD where 1=1 and TYPE = 'report'
             </when>
         </choose>
-        and USER_ID = 112233
+        <choose>
+            <when test="status != null and status != '' and status == '待审核'">
+                and status is null
+            </when>
+            <when test="status != null and status != ''">
+                and status = #{status}
+            </when>
+        </choose>
+        and USER_ID = #{userId}
     </select>
 </mapper>

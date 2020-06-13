@@ -25,8 +25,8 @@ public interface ThpjService {
 
     List<Map<String, Object>> getTeacherPie(String menuName, String userId);
 
-    List<Map<String, Object>> getTeacherTab(String menuName, String userId);
+    List<Map<String, Object>> getTeacherTab(String menuName);
 
-    List<Map<String, Object>> getTeacherTabData(String menuName, String userId);
+    List<Map<String, Object>> getTeacherTabData(String menuName, String userId, String status);
 
 }

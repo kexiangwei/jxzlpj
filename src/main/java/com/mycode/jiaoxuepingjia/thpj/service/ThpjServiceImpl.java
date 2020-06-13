@@ -74,12 +74,12 @@ public class ThpjServiceImpl implements ThpjService {
     }
 
     @Override
-    public List<Map<String, Object>> getTeacherTab(String menuName, String userId) {
-        return thpjMapper.getTeacherTab(menuName,userId);
+    public List<Map<String, Object>> getTeacherTab(String menuName) {
+        return thpjMapper.getTeacherTab(menuName);
     }
     @Override
-    public List<Map<String, Object>> getTeacherTabData(String menuName, String userId) {
-        return thpjMapper.getTeacherTabData(menuName,userId);
+    public List<Map<String, Object>> getTeacherTabData(String menuName, String userId, String status) {
+        return thpjMapper.getTeacherTabData(menuName,userId,status);
     }
 
 }
