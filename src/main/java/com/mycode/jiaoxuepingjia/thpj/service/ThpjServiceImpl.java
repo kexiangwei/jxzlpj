@@ -3,6 +3,7 @@ package com.mycode.jiaoxuepingjia.thpj.service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget;
+import com.mycode.jiaoxuepingjia.pjset.mapper.PjSetMapper;
 import com.mycode.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import com.mycode.jiaoxuepingjia.thpj.mapper.ThpjMapper;
@@ -22,6 +23,8 @@ public class ThpjServiceImpl implements ThpjService {
 
     @Autowired
     private ThpjMapper thpjMapper;
+    @Autowired
+    private PjSetMapper pjSetMapper;
 
     @Override
     public Map<String, Object> getPageList(ThpjQuery thpjQuery) {
@@ -34,8 +37,13 @@ public class ThpjServiceImpl implements ThpjService {
     }
 
     @Override
-    public boolean insert(Thpj thpj) {
-        return thpjMapper.insert(thpj);
+    public boolean insert(Thpj thpj, String templateCode, Map<String, Object> paramMap) {
+        boolean bool = thpjMapper.insert(thpj);
+        if(bool){
+            List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(templateCode);
+            bool = thpjMapper.insertTarget(thpj, pjSetTargetList, paramMap);
+        }
+        return bool;
     }
 
     @Override
@@ -49,9 +57,14 @@ public class ThpjServiceImpl implements ThpjService {
     }
 
     @Override
-    public List<Map<String, Object>> getThpjTargetList() {
-        List<Map<String, Object>> thpjTargetList = thpjMapper.getThpjTargetList();
-        List<PjSetTarget> pjSetTargetList = thpjMapper.getPjSetTargetList();
+    public String isPjDate() {
+        return pjSetMapper.isPjDate("同行评教");
+    }
+
+    @Override
+    public List<Map<String, Object>> getThpjTargetList(String templateCode) {
+        List<Map<String, Object>> thpjTargetList = thpjMapper.getThpjTargetList(templateCode);
+        List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(templateCode);
         Map<String, List<PjSetTarget>> targetListByName = pjSetTargetList.stream().collect(Collectors.groupingBy(PjSetTarget::getTargetName, Collectors.toList()));
         thpjTargetList.forEach(m -> {
             targetListByName.forEach((k,v) -> {

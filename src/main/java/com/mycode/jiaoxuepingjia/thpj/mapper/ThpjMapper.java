@@ -19,13 +19,13 @@ public interface ThpjMapper {
 
     boolean insert(Thpj thpj);
 
+    boolean insertTarget(@Param("thpj") Thpj thpj, @Param("pjSetTargetList") List<PjSetTarget> pjSetTargetList, @Param("paramMap") Map<String, Object> paramMap);
+
     boolean update(Thpj thpj);
 
     boolean delete(@Param("code") String code);
 
-    List<Map<String, Object>> getThpjTargetList();
-
-    List<PjSetTarget> getPjSetTargetList();
+    List<Map<String, Object>> getThpjTargetList(@Param("templateCode") String templateCode);
 
     List<Map<String, Object>> getTeacherBar(@Param("menuName") String menuName, @Param("userId") String userId);
 
@@ -34,5 +34,4 @@ public interface ThpjMapper {
     List<Map<String, Object>> getTeacherTab(@Param("menuName") String menuName);
 
     List<Map<String, Object>> getTeacherTabData(@Param("menuName") String menuName, @Param("userId") String userId, @Param("status") String status);
-
 }

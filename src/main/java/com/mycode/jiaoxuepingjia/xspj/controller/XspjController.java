@@ -36,14 +36,17 @@ public class XspjController {
 
     /**
      *
-     * @param jsonStr
+     * @param templateCode 模板编号
+     * @param jsonStr 指标项
      * @return
      */
     @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(Xspj xspj, @RequestParam("jsonStr") String jsonStr){
+    public JsonResult<Object> insert(Xspj xspj
+            , @RequestParam("templateCode") String templateCode
+            , @RequestParam("jsonStr") String jsonStr){
         Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
-        boolean bool = xspjService.insert(xspj, paramMap);
+        boolean bool = xspjService.insert(xspj, templateCode, paramMap);
         if(!bool){
             return JsonResult.error("新增失败");
         }

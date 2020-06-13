@@ -3,14 +3,14 @@
 <mapper namespace="com.mycode.jiaoxuepingjia.pjset.mapper.PjSetMapper">
 
     <!-- 查看当前是否有可用的模板信息 -->
-    <select id="getExecTemplate" resultType="java.lang.String">
+    <select id="isPjDate" resultType="java.lang.String">
         select template_code
         from JXPJ_PJSET_TEMPLATE
         where template_type = #{templateType} and end_date > current_date
     </select>
     <!-- 根据模板编号获取模板信息 -->
     <select id="getPjSetTargetListByTemplateCode" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
-        select t.*
+        select tt.TEMPLATE_CODE,t.*
         from jxpj_pjset_template_target tt left join jxpj_pjset_target t on t.target_code = tt.target_code
         where tt.template_code = #{templateCode}
     </select>
@@ -28,12 +28,14 @@
 
     <select id="getPjSetTemplateList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
         select t.*
-        ,(case when end_date > current_date then 1 else 2 end) is_exec
+        ,(case when XS.TEMPLATE_CODE is not null or th.TEMPLATE_CODE is not null then 1 else 2 end) is_exec
         from JXPJ_PJSET_TEMPLATE t
+        LEFT JOIN (SELECT DISTINCT TEMPLATE_CODE FROM JXPJ_XSPJ) xs on XS.TEMPLATE_CODE = t.TEMPLATE_CODE
+        LEFT JOIN (SELECT DISTINCT TEMPLATE_CODE FROM JXPJ_THPJ_ITEM) th on th.TEMPLATE_CODE = t.TEMPLATE_CODE
     </select>
     <insert id="insertTemplate">
         insert into JXPJ_PJSET_TEMPLATE (TEMPLATE_CODE, TEMPLATE_TYPE, TEMPLATE_NAME, START_DATE, END_DATE, CREATE_DATE)
-        values (#{templateCode},#{templateType,jdbcType=VARCHAR},#{templateName,jdbcType=VARCHAR},#{startDate},#{endDate},CURRENT_DATE)
+        values (#{templateCode},#{templateType,jdbcType=VARCHAR},#{templateName,jdbcType=VARCHAR},#{startDate,jdbcType=TIMESTAMP},#{endDate,jdbcType=TIMESTAMP},CURRENT_DATE)
     </insert>
     <update id="updateTemplate">
         update JXPJ_PJSET_TEMPLATE

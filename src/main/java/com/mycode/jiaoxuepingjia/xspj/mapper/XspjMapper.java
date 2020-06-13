@@ -15,5 +15,5 @@ public interface XspjMapper {
 
     List<Xspj> getPageList(Xspj xspj);
 
-    boolean insert(@Param("xspj") Xspj xspj, @Param("paramMap") Map<String,Object> paramMap);
+    boolean insert(@Param("xspj") Xspj xspj, @Param("templateCode") String templateCode, @Param("paramMap") Map<String,Object> paramMap);
 }

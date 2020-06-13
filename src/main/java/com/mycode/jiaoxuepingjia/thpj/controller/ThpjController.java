@@ -1,5 +1,6 @@
 package com.mycode.jiaoxuepingjia.thpj.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.mycode.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import com.mycode.jiaoxuepingjia.thpj.service.ThpjService;
@@ -34,15 +35,17 @@ public class ThpjController {
 
     @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(Thpj thpj){
-        boolean bool = thpjService.insert(thpj);
+    public JsonResult<Object> insert(Thpj thpj,@RequestParam("templateCode") String templateCode
+            , @RequestParam("jsonStr") String jsonStr){
+        Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
+        boolean bool = thpjService.insert(thpj,templateCode, paramMap);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("新增成功",null);
     }
 
-    @ResponseBody
+    /*@ResponseBody
     @RequestMapping("/update.do")
     public JsonResult<Object> update(Thpj thpj){
         boolean bool = thpjService.update(thpj);
@@ -60,5 +63,5 @@ public class ThpjController {
             return JsonResult.error();
         }
         return JsonResult.success();
-    }
+    }*/
 }

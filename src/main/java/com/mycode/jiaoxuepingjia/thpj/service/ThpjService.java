@@ -13,13 +13,15 @@ public interface ThpjService {
 
     Map<String, Object> getPageList(ThpjQuery thpjQuery);
 
-    boolean insert(Thpj thpj);
+    boolean insert(Thpj thpj, String templateCode, Map<String,Object> paramMap);
 
     boolean update(Thpj thpj);
 
     boolean delete(String code);
 
-    List<Map<String, Object>> getThpjTargetList();
+    String isPjDate();
+
+    List<Map<String, Object>> getThpjTargetList(String templateCode);
 
     List<Map<String, Object>> getTeacherBar(String menuName, String userId);
 
@@ -28,5 +30,4 @@ public interface ThpjService {
     List<Map<String, Object>> getTeacherTab(String menuName);
 
     List<Map<String, Object>> getTeacherTabData(String menuName, String userId, String status);
-
 }

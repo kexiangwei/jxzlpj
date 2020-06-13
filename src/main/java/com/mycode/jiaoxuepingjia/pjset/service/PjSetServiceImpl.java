@@ -23,18 +23,13 @@ public class PjSetServiceImpl implements PjSetService {
     private PjSetMapper pjSetMapper;
 
     @Override
-    public Map<String, Object> getExecTemplate(String templateType) {
-        Map<String, Object> resultMap = new HashMap<>();
-        String templateCode = pjSetMapper.getExecTemplate(templateType); //是否评教时间（即查看当前是否有执行中的模板信息）
-        boolean isPjDate = false;
-        List<PjSetTarget> pjSetTargetList = null;
-        if(StringUtils.isNotEmpty(templateCode)){
-            isPjDate = true;
-            pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(templateCode); //根据模板编号获取模板信息
-        }
-        resultMap.put("isPjDate",isPjDate);
-        resultMap.put("targetList",pjSetTargetList);
-        return resultMap;
+    public String isPjDate(String templateType) {
+        return pjSetMapper.isPjDate(templateType);
+    }
+
+    @Override
+    public List<PjSetTarget> getExecTemplate(String templateCode) {
+        return pjSetMapper.getPjSetTargetListByTemplateCode(templateCode); //根据模板编号获取模板信息
     }
 
     @Override

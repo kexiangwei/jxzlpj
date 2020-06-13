@@ -2,6 +2,7 @@ package com.mycode.jiaoxuepingjia.thpj.controller;
 
 import com.mycode.jiaoxuepingjia.thpj.service.ThpjService;
 import com.mycode.util.JsonResult;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,7 +27,11 @@ public class ThpjSubController {
     @ResponseBody
     @RequestMapping("/getThpjTargetList.do")
     public JsonResult<Object> getThpjTargetList(){
-        List<Map<String, Object>> thpjTargetList = thpjService.getThpjTargetList();
+        String templateCode = thpjService.isPjDate(); //是否评教时间（即查看当前是否有执行中的模板信息）
+        if(StringUtils.isEmpty(templateCode)){
+            return JsonResult.error("暂无可用模板");
+        }
+        List<Map<String, Object>> thpjTargetList = thpjService.getThpjTargetList(templateCode);
         return JsonResult.success(thpjTargetList);
     }
 

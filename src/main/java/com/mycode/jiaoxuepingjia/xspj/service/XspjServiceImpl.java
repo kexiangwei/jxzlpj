@@ -31,8 +31,8 @@ public class XspjServiceImpl implements XspjService {
     }
 
     @Override
-    public boolean insert(Xspj xspj, Map<String,Object> paramMap) {
-        return xspjMapper.insert(xspj, paramMap);
+    public boolean insert(Xspj xspj, String templateCode, Map<String,Object> paramMap) {
+        return xspjMapper.insert(xspj, templateCode, paramMap);
     }
 
 }

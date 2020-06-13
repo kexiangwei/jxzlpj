@@ -10,13 +10,11 @@
     -->
     <select id="getThpjTargetList" resultType="java.util.Map">
         SELECT TARGET_NAME as "name",count(0) as "num",sum(TARGET_SCORE) as "score"
-        FROM JXPJ_PJSET_TARGET
-        where TARGET_TYPE = '同行评教'
+        FROM JXPJ_PJSET_TEMPLATE_TARGET tt
+        LEFT JOIN JXPJ_PJSET_TARGET t on t.TARGET_CODE = TT.TARGET_CODE
+        where TT.TEMPLATE_CODE = #{templateCode}
         GROUP BY TARGET_NAME
         order by decode(SUBSTR(TARGET_NAME, 0, 1),'一',1,'二',2,'三',3,'四',4,'五',5,'六',6,'七',7,'八',8,'九',9,'零',0)
-    </select>
-    <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
-        SELECT * FROM JXPJ_PJSET_TARGET where TARGET_TYPE = '同行评教'
     </select>
 
     <select id="getTeacherBar" resultType="java.util.Map">

@@ -11,7 +11,9 @@ import java.util.Map;
  */
 public interface PjSetService {
 
-    Map<String, Object> getExecTemplate(String templateType);
+    String isPjDate(String templateType);
+
+    List<PjSetTarget> getExecTemplate(String templateCode);
 
     Map<String, Object> getPjSetTemplateList(PjSetTemplate pjSetTemplate);
 

@@ -22,8 +22,8 @@
     <insert id="insert">
         insert all
         <foreach collection="paramMap" index="key"  item="val">
-            INTO JXPJ_XSPJ (COURSE_CODE,TARGET_CODE,ANSWER,USER_ID,USER_NAME,CREATE_DATE)
-            VALUES(#{xspj.courseCode,jdbcType=VARCHAR},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR}
+            INTO JXPJ_XSPJ (COURSE_CODE,TEMPLATE_CODE,TARGET_CODE,ANSWER,USER_ID,USER_NAME,CREATE_DATE)
+            VALUES(#{xspj.courseCode,jdbcType=VARCHAR},#{templateCode,jdbcType=VARCHAR},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR}
             ,#{xspj.userId,jdbcType=VARCHAR},#{xspj.userName,jdbcType=VARCHAR},CURRENT_DATE)
         </foreach>
         select 1 from dual
