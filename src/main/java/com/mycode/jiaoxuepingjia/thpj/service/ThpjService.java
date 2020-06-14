@@ -1,5 +1,6 @@
 package com.mycode.jiaoxuepingjia.thpj.service;
 
+import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate;
 import com.mycode.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
 
@@ -13,6 +14,8 @@ public interface ThpjService {
 
     Map<String, Object> getPageList(ThpjQuery thpjQuery);
 
+    Thpj detail(String pjCode);
+
     boolean insert(Thpj thpj, String templateCode, Map<String,Object> paramMap);
 
     boolean update(Thpj thpj);
@@ -20,6 +23,8 @@ public interface ThpjService {
     boolean delete(String code);
 
     String isPjDate();
+
+    PjSetTemplate getThpjTemplateByPjCode(String pjCode);
 
     List<Map<String, Object>> getThpjTargetList(String templateCode);
 

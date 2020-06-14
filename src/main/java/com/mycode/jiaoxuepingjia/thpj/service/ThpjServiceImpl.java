@@ -3,6 +3,7 @@ package com.mycode.jiaoxuepingjia.thpj.service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget;
+import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate;
 import com.mycode.jiaoxuepingjia.pjset.mapper.PjSetMapper;
 import com.mycode.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
@@ -37,6 +38,16 @@ public class ThpjServiceImpl implements ThpjService {
     }
 
     @Override
+    public Thpj detail(String pjCode) {
+        Thpj thpj = thpjMapper.getThpjInfo(pjCode);
+        if(thpj != null){
+            List<Map<String,Object>> thpjItemList = thpjMapper.getThpjItemListByRelationCode(pjCode);
+            thpj.setThpjItemList(thpjItemList);
+        }
+        return thpj;
+    }
+
+    @Override
     public boolean insert(Thpj thpj, String templateCode, Map<String, Object> paramMap) {
         boolean bool = thpjMapper.insert(thpj);
         if(bool){
@@ -59,6 +70,11 @@ public class ThpjServiceImpl implements ThpjService {
     @Override
     public String isPjDate() {
         return pjSetMapper.isPjDate("同行评教");
+    }
+
+    @Override
+    public PjSetTemplate getThpjTemplateByPjCode(String pjCode) {
+        return pjSetMapper.getThpjTemplateByPjCode(pjCode);
     }
 
     @Override

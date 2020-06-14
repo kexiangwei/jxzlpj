@@ -1,5 +1,6 @@
 package com.mycode.jiaoxuepingjia.thpj.controller;
 
+import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate;
 import com.mycode.jiaoxuepingjia.thpj.service.ThpjService;
 import com.mycode.util.JsonResult;
 import com.mycode.util.StringUtils;
@@ -24,10 +25,20 @@ public class ThpjSubController {
     @Autowired
     private ThpjService thpjService;
 
+    /**
+     *
+     * @param pjCode 查询详情时使用的参数
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getThpjTargetList.do")
-    public JsonResult<Object> getThpjTargetList(){
-        String templateCode = thpjService.isPjDate(); //是否评教时间（即查看当前是否有执行中的模板信息）
+    public JsonResult<Object> getThpjTargetList(@RequestParam(value = "pjCode",required = false) String pjCode){
+        String templateCode = null;
+        if(StringUtils.isEmpty(pjCode)){
+            templateCode = thpjService.isPjDate(); //是否评教时间（即查看当前是否有执行中的模板信息）
+        } else {
+            templateCode = thpjService.getThpjTemplateByPjCode(pjCode).getTemplateCode();
+        }
         if(StringUtils.isEmpty(templateCode)){
             return JsonResult.error("暂无可用模板");
         }

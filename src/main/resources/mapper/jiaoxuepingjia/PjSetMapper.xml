@@ -8,6 +8,14 @@
         from JXPJ_PJSET_TEMPLATE
         where template_type = #{templateType} and end_date > current_date
     </select>
+
+    <select id="getThpjTemplateByPjCode" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
+        SELECT DISTINCT t.*
+        FROM JXPJ_THPJ_ITEM it
+        LEFT JOIN JXPJ_PJSET_TEMPLATE t on t.TEMPLATE_CODE = IT.TEMPLATE_CODE
+        WHERE RELATION_CODE = #{pjCode}
+    </select>
+
     <!-- 根据模板编号获取模板信息 -->
     <select id="getPjSetTargetListByTemplateCode" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
         select tt.TEMPLATE_CODE,t.*

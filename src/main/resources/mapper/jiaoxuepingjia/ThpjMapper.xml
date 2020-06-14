@@ -6,7 +6,7 @@
         SELECT c.course_code,c.course_name,c.course_type
         ,t.CODE teacher_code,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
         ,jh.dates teach_date,jh.teach_addr
-        ,(case when th.create_date is not null then 1 else 2 end) is_pj
+        ,(case when th.create_date is not null then 1 else 2 end) is_pj,th.code as pj_code
         FROM DATA_TEACHER_COURSE tc
         LEFT JOIN DATA_TEACHER t on t.CODE = TC.USER_ID
         LEFT JOIN DATA_COURSE c on c.course_code = tc.course_code
@@ -55,6 +55,16 @@
         </where>
     </select>
 
+    <select id="getThpjInfo" resultType="com.mycode.jiaoxuepingjia.thpj.domian.Thpj">
+        SELECT * FROM JXPJ_THPJ where CODE = #{pjCode}
+    </select>
+    <select id="getThpjItemListByRelationCode" resultType="java.util.Map">
+        select NVL(TARGET_CODE,'totalScore') as "targetCode",sum(ANSWER) as "answer"
+        from JXPJ_THPJ_ITEM
+        where RELATION_CODE = #{pjCode}
+        GROUP BY rollup(TARGET_CODE)
+    </select>
+
     <insert id="insert">
         insert into JXPJ_THPJ (CODE, TEACHER_CODE, TEACHER, TEACHER_COLLEGE, COURSE_CODE, COURSE_NAME, COURSE_TYPE, STU_CLASS, TEACH_YEAR, TEACH_MONTH, TEACH_DAY, TEACH_WEEKNUM, TEACH_WEEK, TEACH_LESSONNUM, TEACH_HOUSE, TEACH_CLASSROOM, STU_YINGDAO, STU_SHIDAO, STU_CHIDAO, STU_QUEKE, DP_TEACHER, DP_STUDENT, DP_CLASSROOM, USER_ID, USER_NAME, CREATE_DATE)
         values
@@ -67,9 +77,8 @@
         <foreach collection="pjSetTargetList" index="idx" item="obj">
             <foreach collection="paramMap" index="key"  item="val">
                 <if test="key == obj.targetCode">
-                    INTO JXPJ_THPJ_ITEM (TEACHER_CODE,COURSE_CODE,TEMPLATE_CODE,TARGET_CODE,ANSWER,USER_ID,USER_NAME,CREATE_DATE)
-                    VALUES(#{thpj.teacherCode,jdbcType=VARCHAR},#{thpj.courseCode,jdbcType=VARCHAR}
-                    ,#{obj.templateCode,jdbcType=VARCHAR},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR}
+                    INTO JXPJ_THPJ_ITEM (RELATION_CODE,TEMPLATE_CODE,TARGET_CODE,ANSWER,USER_ID,USER_NAME,CREATE_DATE)
+                    VALUES(#{thpj.code,jdbcType=VARCHAR},#{obj.templateCode,jdbcType=VARCHAR},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR}
                     ,#{thpj.userId,jdbcType=VARCHAR},#{thpj.userName,jdbcType=VARCHAR},CURRENT_DATE)
                 </if>
             </foreach>

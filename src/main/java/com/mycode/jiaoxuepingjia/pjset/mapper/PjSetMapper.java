@@ -15,6 +15,8 @@ public interface PjSetMapper {
 
     String isPjDate(@Param("templateType") String templateType);
 
+    PjSetTemplate getThpjTemplateByPjCode(@Param("pjCode") String pjCode);
+
     List<PjSetTarget> getPjSetTargetListByTemplateCode(@Param("templateCode") String templateCode);
 
     Boolean insertTemplateTarget(@Param("templateCode") String templateCode, @Param("targetCodes") String[] targetCodes);

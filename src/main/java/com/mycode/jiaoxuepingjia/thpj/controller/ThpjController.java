@@ -34,6 +34,13 @@ public class ThpjController {
     }
 
     @ResponseBody
+    @RequestMapping("/detail.do")
+    public JsonResult<Object> detail(@RequestParam("pjCode") String pjCode){
+        Thpj thpj = thpjService.detail(pjCode);
+        return JsonResult.success(thpj);
+    }
+
+    @ResponseBody
     @RequestMapping("/insert.do")
     public JsonResult<Object> insert(Thpj thpj,@RequestParam("templateCode") String templateCode
             , @RequestParam("jsonStr") String jsonStr){

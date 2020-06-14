@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 教学评价-课程质量评价表对应实体
@@ -43,6 +45,6 @@ public class Thpj {
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
-
+    private List<Map<String,Object>> thpjItemList;
 
 }
