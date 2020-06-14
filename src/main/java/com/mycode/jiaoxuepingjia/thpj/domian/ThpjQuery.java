@@ -28,5 +28,6 @@ public class ThpjQuery {
             ,teacherCollege //教师所在学院
             ,teachDate //上课时间
             ,teachAddr; //上课地点
-
+    //评审状态
+     private Integer isPj; //1已评2未评
 }
