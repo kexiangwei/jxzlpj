@@ -32,6 +32,7 @@
             </when>
             <otherwise><!-- 若是其他类型的账号访问，则返回所有已评的课程信息 -->
                 SELECT dc.*
+                ,1 as is_Pj
                 FROM DATA_COURSE dc
                 LEFT JOIN (
                 SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
