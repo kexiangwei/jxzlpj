@@ -6,7 +6,7 @@
         SELECT u.USER_ID,USER_NAME,PHONE,user_group
         FROM SYS_USER u
         LEFT JOIN (
-        SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
+            SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
         ) t on t.USER_ID = u.USER_ID
         <where>1=1
             <if test="userId != null and userId != ''">
@@ -25,15 +25,34 @@
     </select>
 
     <select id="getUserById" resultType="com.mycode.system.user.domain.User">
-        select * from sys_user where user_id = #{userId}
+        select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,user_group
+        from sys_user u
+        LEFT JOIN (
+            SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
+        ) ur on ur.USER_ID = u.USER_ID
+        where u.user_id = #{userId}
     </select>
 
-    <select id="getUserDetail" resultType="map">
-        <if test="userGroup == '老师'">
-            SELECT * from DATA_TEACHER where CODE = #{userId}
+    <select id="getUserDetail" resultType="com.mycode.system.user.domain.User">
+        <if test="accountType == 'teacher'">
+            select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,user_group
+            ,sex,BIRTH_DATE,edu_degree,title,major_name,college_name
+            from sys_user u
+            LEFT JOIN (
+                SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
+            ) ur on ur.USER_ID = u.USER_ID
+            LEFT JOIN DATA_TEACHER dt on dt.code = u.USER_ID
+            where u.user_id = #{userId}
         </if>
-        <if test="userGroup == '学生'">
-            SELECT * from DATA_STUDENT where CODE = #{userId}
+        <if test="accountType == 'student'">
+            select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,user_group
+            ,sex,BIRTH_DATE,class_name,grade,major_name,college_name
+            from sys_user u
+            LEFT JOIN (
+                SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
+            ) ur on ur.USER_ID = u.USER_ID
+            LEFT JOIN DATA_STUDENT s on s.CODE = u.USER_ID
+            where u.user_id = #{userId}
         </if>
     </select>
 

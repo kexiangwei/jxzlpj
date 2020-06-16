@@ -15,7 +15,7 @@ public interface UserMapper {
 
     User getUserById(@Param("userId") String userId);
 
-    Map<String, Object> getUserDetail(User user);
+    User getUserDetail(User user);
 
     boolean updateUser(User user);
 

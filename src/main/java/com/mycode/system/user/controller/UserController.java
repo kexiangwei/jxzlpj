@@ -29,21 +29,21 @@ public class UserController {
         return JsonResult.success(resultMap);
     }
 
-    @ResponseBody
-    @RequestMapping("/getUserDetail.do")
-    public JsonResult<Object> getUserDetail(@RequestParam("userId") String userId){
-        Map<String, Object> resultMap = userService.getUserDetail(userId);
-        return JsonResult.success(resultMap);
-    }
+    /*@ResponseBody
+    @RequestMapping("/getUserById.do")
+    public JsonResult<Object> getUserById(@RequestParam("userId") String userId){
+        User user = userService.getUserById(userId);
+        return JsonResult.success(user);
+    }*/
 
     @ResponseBody
     @RequestMapping("/updateUser.do")
     public JsonResult<Object> updateUser(User user){
         boolean bool = userService.updateUser(user);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("修改失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("修改成功",null);
     }
 
     @ResponseBody

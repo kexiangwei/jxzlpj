@@ -7,6 +7,7 @@ import com.mycode.system.role.domain.Role;
 import com.mycode.system.role.mapper.RoleMapper;
 import com.mycode.system.user.domain.User;
 import com.mycode.system.user.mapper.UserMapper;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +35,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, Object> getUserDetail(String userId) {
-        User userById = userMapper.getUserById(userId);
-        return userMapper.getUserDetail(userById);
-    }
-
-    @Override
     public User getUserById(String userId) {
-        return userMapper.getUserById(userId);
+        User user = userMapper.getUserById(userId);
+        if(user !=null && StringUtils.isNotEmpty(user.getAccountType())){
+            user = userMapper.getUserDetail(user);
+        }
+        return user;
     }
 
     @Override

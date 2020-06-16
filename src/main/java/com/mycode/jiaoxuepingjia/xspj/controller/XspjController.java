@@ -52,4 +52,16 @@ public class XspjController {
         }
         return JsonResult.success("新增成功",null);
     }
+
+    /**
+     *
+     * @param courseCode
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getPjInfo.do")
+    public JsonResult<Object> getPjInfo(@RequestParam("courseCode") String courseCode){
+        Map<String,Object> resultMap = xspjService.getPjInfo(courseCode);
+        return JsonResult.success(resultMap);
+    }
 }

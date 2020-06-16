@@ -10,8 +10,6 @@ public interface UserService {
 
     Map<String, Object> getUserPageList(User user);
 
-    Map<String, Object> getUserDetail(String userId);
-
     User getUserById(String userId);
 
     boolean updateUser(User user);

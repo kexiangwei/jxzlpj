@@ -3,20 +3,43 @@
 <mapper namespace="com.mycode.jiaoxuepingjia.xspj.mapper.XspjMapper">
 
     <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.xspj.domain.Xspj">
-        SELECT c.COURSE_CODE,c.COURSE_NAME,t.teacher_Names
-        ,(case when pj.COURSE_CODE is not null then 1 else 2 end) is_Pj
-        FROM DATA_STUDENT_COURSE sc
-        LEFT JOIN DATA_COURSE c on c.COURSE_CODE = sc.COURSE_CODE
-        LEFT JOIN (
+        <choose>
+            <when test="accountType == 'student'">
+                SELECT c.COURSE_CODE,c.COURSE_NAME,t.teacher_Names
+                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) is_Pj
+                FROM DATA_STUDENT_COURSE sc
+                LEFT JOIN DATA_COURSE c on c.COURSE_CODE = sc.COURSE_CODE
+                LEFT JOIN (
                 SELECT COURSE_CODE,wm_concat(DISTINCT teacher) teacher_Names
                 FROM JXSJ_SKJH jh
                 LEFT JOIN JXSJ_SKJH_ITEM it on it.relation_code = jh.code
                 GROUP BY COURSE_CODE
-        ) t on t.COURSE_CODE = sc.COURSE_CODE
-        LEFT JOIN (
-            SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
-        ) pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.STUDENT_CODE
-        WHERE STUDENT_CODE = #{userId}
+                ) t on t.COURSE_CODE = sc.COURSE_CODE
+                LEFT JOIN (
+                SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
+                ) pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.STUDENT_CODE
+                WHERE STUDENT_CODE = #{userId}
+            </when>
+            <when test="accountType == 'teacher'">
+                SELECT dc.*
+                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) is_Pj
+                FROM DATA_TEACHER_COURSE dtc LEFT JOIN DATA_COURSE dc on DC.COURSE_CODE = DTC.COURSE_CODE
+                LEFT JOIN (
+                SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
+                ) pj on pj.COURSE_CODE = DTC.COURSE_CODE
+                where USER_ID = #{userId}
+                ORDER BY pj.COURSE_CODE
+            </when>
+            <otherwise><!-- 若是其他类型的账号访问，则返回所有已评的课程信息 -->
+                SELECT dc.*
+                FROM DATA_COURSE dc
+                LEFT JOIN (
+                SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
+                ) pj on pj.COURSE_CODE = dc.COURSE_CODE
+                where PJ.COURSE_CODE is not null
+                ORDER BY pj.COURSE_CODE
+            </otherwise>
+        </choose>
     </select>
 
     <insert id="insert">
@@ -28,4 +51,33 @@
         </foreach>
         select 1 from dual
     </insert>
+
+    <select id="getPjInfo" resultType="java.util.Map">
+        SELECT course_code,template_code,TARGET_CODE,target_content,target_score,score/stu_num as avg_score
+        FROM (
+            SELECT pj.course_code,pj.template_code,pj.TARGET_CODE,target_content,target_score
+            ,count(DISTINCT USER_ID) stu_num
+            ,sum(case when answer = '非常同意' then target_score
+            when answer = '比较同意' then target_score*0.8
+            when answer = '一般' then target_score*0.6
+            when answer = '不太同意' then target_score*0.4
+            when answer = '不同意' then target_score*0.2 end) score
+            FROM(
+                SELECT TT.*,target_content,target_score
+                FROM (
+                    SELECT TEMPLATE_CODE
+                    FROM JXPJ_PJSET_TEMPLATE
+                    where TEMPLATE_TYPE = '学生评教' and ROWNUM = 1
+                    ORDER BY CREATE_DATE DESC
+                ) t
+                LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on TT.TEMPLATE_CODE = t.TEMPLATE_CODE
+                LEFT JOIN JXPJ_PJSET_TARGET tg on tg.target_code = tt.target_code
+            ) t LEFT JOIN JXPJ_XSPJ pj on PJ.TEMPLATE_CODE = t.TEMPLATE_CODE and pj.target_code = t.target_code
+                where pj.course_code = #{courseCode}
+            GROUP BY pj.course_code,pj.template_code,pj.TARGET_CODE,target_content,target_score
+        )t
+    </select>
+    <select id="getPjSuggestList" resultType="java.lang.String">
+        SELECT ANSWER FROM JXPJ_XSPJ where COURSE_CODE = #{courseCode} and TEMPLATE_CODE = #{templateCode} and TARGET_CODE = 'suggest'
+    </select>
 </mapper>

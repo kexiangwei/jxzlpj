@@ -13,4 +13,6 @@ public interface XspjService {
     Map<String, Object> getPageList(Xspj xspj);
 
     boolean insert(Xspj xspj, String templateCode, Map<String,Object> paramMap);
+
+    Map<String, Object> getPjInfo(String courseCode);
 }
