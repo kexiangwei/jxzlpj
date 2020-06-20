@@ -36,7 +36,7 @@
     <select id="getUserDetail" resultType="com.mycode.system.user.domain.User">
         <if test="accountType == 'teacher'">
             select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,user_group
-            ,sex,BIRTH_DATE,edu_degree,title,major_name,college_name
+            ,sex,edu_degree,title,major_name,college_name
             from sys_user u
             LEFT JOIN (
                 SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
@@ -46,7 +46,7 @@
         </if>
         <if test="accountType == 'student'">
             select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,user_group
-            ,sex,BIRTH_DATE,class_name,grade,major_name,college_name
+            ,sex,class_name,grade,major_name,college_name
             from sys_user u
             LEFT JOIN (
                 SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id

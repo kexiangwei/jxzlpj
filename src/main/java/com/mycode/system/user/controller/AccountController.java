@@ -79,7 +79,8 @@ public class AccountController {
                 }
             }
         } catch (Exception e){
-            return JsonResult.error("登录失败");
+            e.printStackTrace();
+//            return JsonResult.error("登录失败");
         }
         request.getSession().setAttribute("user", user);
         return JsonResult.success("登录成功",user);

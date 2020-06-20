@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.edu.EduMapper">
+
+    <insert id="resetEduDataInfo">
+        insert all
+        <foreach collection="mapList" index="idx"  item="map">
+            <choose>
+                <when test="tab == 'DATA_COLLEGE'">
+                    INTO DATA_COLLEGE(CODE, NAME, CREATE_DATE)
+                </when>
+                <when test="tab == 'DATA_MAJOR'">
+                    INTO DATA_MAJOR(CODE, NAME, STU_YEAR, EDU_DEGREE, COLLEGE_CODE, COLLEGE_NAME, CREATE_DATE)
+                </when>
+                <when test="tab == 'DATA_CLASS'">
+                    INTO DATA_CLASS(CODE, NAME, HEAD_TEACHER, STUDENT_NUM, GRADE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
+                </when>
+                <when test="tab == 'DATA_COURSE'">
+                    INTO DATA_COURSE(COURSE_CODE, COURSE_NAME, COURSE_TYPE, STU_HOUR, STU_SCORE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
+                </when>
+                <when test="tab == 'DATA_TEACHER'">
+                    INTO DATA_TEACHER(CODE, NAME, SEX, BIRTH_DATE, EDU_DEGREE, TITLE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, AGE, CREATE_DATE)
+                </when>
+                <when test="tab == 'DATA_STUDENT'">
+                    INTO DATA_STUDENT(CODE, NAME, SEX, BIRTH_DATE, CLASS_CDOE, CLASS_NAME, GRADE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
+                </when>
+            </choose>
+            VALUES (
+            <foreach collection="map.values" index="index"  item="item">
+                #{item,jdbcType=VARCHAR},
+            </foreach>
+            CURRENT_DATE)
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <insert id="resetSysUserTeacherInfo">
+        insert into SYS_USER
+        SELECT code,name,'123qaz','teacher',null,null,CURRENT_DATE
+        FROM DATA_TEACHER t LEFT JOIN SYS_USER u on u.USER_ID = t.code where u.USER_ID is null
+    </insert>
+    <insert id="resetSysUserStudentInfo">
+        insert into SYS_USER
+        SELECT code,name,'123qaz','student',null,null,CURRENT_DATE
+        FROM DATA_STUDENT t LEFT JOIN SYS_USER u on u.USER_ID = t.code where u.USER_ID is null
+    </insert>
+    <insert id="resetSysUserRoleInfo">
+        insert into SYS_USER_ROLE
+        SELECT u.USER_ID
+        ,(case when u.ACCOUNT_TYPE = 'teacher' then 5 when u.ACCOUNT_TYPE = 'student' then 6 end)
+        FROM SYS_USER u LEFT JOIN SYS_USER_ROLE ur on ur.USER_ID = u.USER_ID
+        where ur.USER_ID is null
+    </insert>
+
+    <delete id="deleteEduDataInfo">
+        delete from ${tab}
+    </delete>
+</mapper>
