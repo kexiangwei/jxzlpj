@@ -58,7 +58,7 @@ public interface ShenHeMapper {
 
     ShenHeNode getShenheNode(@Param("v_tab_shenhe") String v_tab_shenhe, @Param("relationCode") String relationCode, @Param("userId") String userId);
 
-    boolean toShenhe(ShenHeItem status);
+    boolean toShenhe(ShenHeItem shenHeItem);
 
     int isShenhePass(@Param("v_tab_shenhe") String v_tab_shenhe, @Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 

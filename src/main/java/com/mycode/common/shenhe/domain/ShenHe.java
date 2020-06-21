@@ -17,7 +17,7 @@ public class ShenHe {
             ,relationCode; // 关联的信息编号
     private Integer batchNum;
     private String status; // 审核意见
-    private Long userId;
+    private String userId;
     private String userName;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")
