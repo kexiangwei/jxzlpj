@@ -2,15 +2,18 @@ package com.mycode.common.file.controller;
 
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.service.FileService;
-import com.mycode.util.StringUtils;
 import com.mycode.util.JsonResult;
+import com.mycode.util.StringUtils;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.List;
@@ -51,10 +54,16 @@ public class FileController {
                 StringBuffer newFileName = new StringBuffer(code);
                 newFileName.append(multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().lastIndexOf(".")));
                 filePath.append(newFileName);
-                FileOutputStream fos = new FileOutputStream(filePath.toString());
-                fos.write(multipartFile.getBytes());
-                fos.flush();
-                fos.close();
+                //判断文件是否是图片，如果是且图片尺寸大于600*450，则进行压缩
+                BufferedImage image = ImageIO.read(multipartFile.getInputStream());
+                if (image != null && image.getWidth() > 600 && image.getHeight() > 450) {
+                    Thumbnails.of(image).size(600,500).toFile(new File(filePath.toString()));
+                } else {
+                    FileOutputStream fos = new FileOutputStream(filePath.toString());
+                    fos.write(multipartFile.getBytes());
+                    fos.flush();
+                    fos.close();
+                }
                 // 保存文件信息到数据库
                 fileInfo.setCode(code);
                 fileInfo.setFileName(multipartFile.getOriginalFilename());

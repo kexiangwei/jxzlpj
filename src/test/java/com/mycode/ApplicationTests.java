@@ -13,14 +13,7 @@ public class ApplicationTests {
 
     @Test
     public void contextLoads() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
-        map.put("123","z3");
-        map.put("t",null);
-        map.put("t1",null);
-        map.put("234","L4");
-        map.put("t2",null);
-        map.put("345","W5");
-        System.out.println(map);
+
     }
 
 }
