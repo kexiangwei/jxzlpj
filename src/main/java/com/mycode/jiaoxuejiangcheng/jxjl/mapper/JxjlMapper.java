@@ -14,7 +14,7 @@ public interface JxjlMapper {
 
     List<Jxjl> getPageList(Jxjl obj);
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     boolean insert(Jxjl obj);
 

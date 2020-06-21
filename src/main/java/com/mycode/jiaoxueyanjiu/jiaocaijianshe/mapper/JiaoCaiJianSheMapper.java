@@ -15,7 +15,7 @@ import java.util.List;
 @Mapper
 public interface JiaoCaiJianSheMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     List<JiaoCaiJianShe> getPageList(JiaoCaiJianShe jiaoCaiJianShe);
 

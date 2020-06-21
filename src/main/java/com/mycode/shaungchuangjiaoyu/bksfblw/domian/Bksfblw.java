@@ -21,7 +21,7 @@ public class Bksfblw {
             ,pageSize=10;
 
     //
-    private Integer shenHeUserId //获取审核列表参数
+    private String shenHeUserId //获取审核列表参数
             ,userId; //指导教师信息-工号
     private String userName
             ,userUnit; //指导教师信息-姓名

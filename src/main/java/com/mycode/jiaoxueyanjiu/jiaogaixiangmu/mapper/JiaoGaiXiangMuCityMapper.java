@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface JiaoGaiXiangMuCityMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId, @Param("isZjshAccount") Integer isZjshAccount);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId, @Param("isZjshAccount") Integer isZjshAccount);
 
     List<JiaoGaiXiangMuForCity> getPageList(JiaoGaiXiangMuForCity jiaoGaiXiangMuForCity);
 

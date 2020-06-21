@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface ProjectMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     List<Project> getPageList(Project obj);
 

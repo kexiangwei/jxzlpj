@@ -14,7 +14,7 @@ public interface JyjxcgjMapper {
 
     List<Jyjxcgj> getPageList(Jyjxcgj obj);
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     boolean insert(Jyjxcgj obj);
 

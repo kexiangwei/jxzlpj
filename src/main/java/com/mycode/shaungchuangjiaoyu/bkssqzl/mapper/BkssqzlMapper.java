@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface BkssqzlMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     List<Bkssqzl> getPageList(Bkssqzl obj);
 

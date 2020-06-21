@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface SykcjMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     List<Sykcj> getPageList(Sykcj sykcj);
 

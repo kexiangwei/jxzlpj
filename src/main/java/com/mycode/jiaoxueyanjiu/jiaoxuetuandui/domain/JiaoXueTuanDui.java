@@ -25,7 +25,7 @@ public class JiaoXueTuanDui {
     //用于区分教学团队下的申报或者是年度报告
     private String type;
     //
-    private Integer shenHeUserId //获取审核列表参数
+    private String shenHeUserId //获取审核列表参数
             ,userId;
     private String userName
             ,userUnit;

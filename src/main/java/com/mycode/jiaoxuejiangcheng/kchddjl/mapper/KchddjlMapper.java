@@ -14,7 +14,7 @@ public interface KchddjlMapper {
 
     List<Kchddjl> getPageList(Kchddjl obj);
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     boolean insert(Kchddjl obj);
 

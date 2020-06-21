@@ -16,13 +16,13 @@ public interface JiaoGaiXiangMuMapper {
 
     @ResultType(Integer.class)
     @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 1 AND USER_ID = #{shenHeUserId}")
-    Integer isJwcGly(@Param("shenHeUserId") Integer shenHeUserId);
+    Integer isJwcGly(@Param("shenHeUserId") String shenHeUserId);
 
     @ResultType(Integer.class)
     @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 7 AND USER_ID = #{shenHeUserId}")
-    Integer isZjAccount(@Param("shenHeUserId") Integer shenHeUserId);
+    Integer isZjAccount(@Param("shenHeUserId") String shenHeUserId);
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId,@Param("isZjshAccount") Integer isZjshAccount);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId,@Param("isZjshAccount") Integer isZjshAccount);
 
     List<JiaoGaiXiangMu> getPageList(JiaoGaiXiangMu jiaoGaiXiangMu);
 

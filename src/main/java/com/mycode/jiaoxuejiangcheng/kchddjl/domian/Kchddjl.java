@@ -21,7 +21,7 @@ public class Kchddjl {
             ,pageSize=10;
 
     //
-    private Integer shenHeUserId //获取审核列表参数
+    private String shenHeUserId //获取审核列表参数
             ,userId; //获取信息列表|查询参数
     private String userName
             ,userUnit;

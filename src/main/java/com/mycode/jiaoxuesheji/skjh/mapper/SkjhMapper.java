@@ -15,7 +15,7 @@ import java.util.List;
 @Mapper
 public interface SkjhMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     List<Skjh> getShenHePageList(Skjh skjh);
 

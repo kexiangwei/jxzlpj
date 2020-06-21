@@ -19,11 +19,11 @@ public interface JiaoXueTuanDuiMapper {
 
     @ResultType(Integer.class)
     @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 1 AND USER_ID = #{shenHeUserId}")
-    Integer isJwcGly(@Param("shenHeUserId") Integer shenHeUserId);
+    Integer isJwcGly(@Param("shenHeUserId") String shenHeUserId);
 
     @ResultType(Integer.class)
     @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 8 AND USER_ID = #{shenHeUserId}")
-    Integer isZjAccount(@Param("shenHeUserId") Integer shenHeUserId);
+    Integer isZjAccount(@Param("shenHeUserId") String shenHeUserId);
 
     int getNotShenHeNum(JiaoXueTuanDui jiaoXueTuanDui);
 

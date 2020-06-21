@@ -14,7 +14,7 @@ public interface JxjbgbsMapper {
 
     List<Jxjbgbs> getPageList(Jxjbgbs obj);
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     boolean insert(Jxjbgbs obj);
 

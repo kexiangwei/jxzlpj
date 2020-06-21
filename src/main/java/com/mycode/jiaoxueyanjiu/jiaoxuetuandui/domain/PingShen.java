@@ -30,7 +30,7 @@ public class PingShen {
     private Double totalScore; //总分
     private String pingshenOpinion; //评审意见
     //
-    private Integer userId; //评委工号
+    private String userId; //评委工号
     private String userName; //评委姓名
     //
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")

@@ -17,7 +17,7 @@ public class Sykcj {
     private Integer pageIndex=1
             ,pageSize=10;
     //
-    private Integer shenHeUserId //获取审核数据列表参数
+    private String shenHeUserId //获取审核数据列表参数
             ,userId; //获取业务数据列表参数
     private String userName;
 

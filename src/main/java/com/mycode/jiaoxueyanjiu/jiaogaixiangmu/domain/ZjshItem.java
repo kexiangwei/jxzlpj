@@ -15,7 +15,7 @@ public class ZjshItem {
     private Integer batchNum;
     private String status // 审核状态【通过 | 退回】
                 ,opinion; // 审核意见
-    private Integer userId;
+    private String userId;
     private String userName;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     private Date createDate;

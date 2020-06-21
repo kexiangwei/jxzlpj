@@ -14,7 +14,7 @@ public interface JxmsMapper {
 
     List<Jxms> getPageList(Jxms obj);
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     boolean insert(Jxms obj);
 

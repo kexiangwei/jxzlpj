@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface WtbsMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     List<Wtbs> getPageList(Wtbs obj);
 

@@ -19,7 +19,7 @@ public class JiaoGaiLunWen {
     private Integer pageIndex=1
             ,pageSize=10;
     //
-    private Integer shenHeUserId //获取审核列表参数
+    private String shenHeUserId //获取审核列表参数
             ,userId;
     private String userName
             ,userUnit;

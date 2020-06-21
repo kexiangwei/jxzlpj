@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface XkzybsMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") Integer shenHeUserId);
+    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     List<Xkzybs> getPageList(Xkzybs obj);
 
