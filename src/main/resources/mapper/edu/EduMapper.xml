@@ -44,6 +44,7 @@
         SELECT code,name,'123qaz','student',null,null,CURRENT_DATE
         FROM DATA_STUDENT t LEFT JOIN SYS_USER u on u.USER_ID = t.code where u.USER_ID is null
     </insert>
+    <!-- 默认授权，老师拥有老师角色，学生拥有学生角色。 -->
     <insert id="resetSysUserRoleInfo">
         insert into SYS_USER_ROLE
         SELECT u.USER_ID
