@@ -20,7 +20,7 @@ public class ShenHeItem {
     private String shenheType; //审核类别：【初审，终审】
     private String status // 审核状态【通过 | 退回】
                 ,opinion; // 审核意见
-    private Integer userId;
+    private String userId;
     private String userName;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")

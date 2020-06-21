@@ -56,7 +56,7 @@ public interface ShenHeMapper {
     //
     boolean batchSubimt(@Param("objList") List<?> objList);
 
-    ShenHeNode getShenheNode(@Param("v_tab_shenhe") String v_tab_shenhe, @Param("relationCode") String relationCode, @Param("userId") Integer userId);
+    ShenHeNode getShenheNode(@Param("v_tab_shenhe") String v_tab_shenhe, @Param("relationCode") String relationCode, @Param("userId") String userId);
 
     boolean toShenhe(ShenHeItem status);
 

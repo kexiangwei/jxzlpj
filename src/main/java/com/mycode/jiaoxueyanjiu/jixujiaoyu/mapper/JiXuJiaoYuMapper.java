@@ -28,7 +28,7 @@ public interface JiXuJiaoYuMapper {
 
     boolean batchSubimt(@Param("jiXuJiaoYuList") List<JiXuJiaoYu> jiXuJiaoYuList);
 
-    ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") Integer userId);
+    ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") String userId);
 
     int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 }

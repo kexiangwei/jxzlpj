@@ -27,7 +27,7 @@ public interface JiaoGaiLunWenMapper {
 
     boolean batchSubimt(@Param("jiaoGaiLunWenList") List<JiaoGaiLunWen> jiaoGaiLunWenList);
 
-    ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") Integer userId);
+    ShenHeNode getShenheNode(@Param("relationCode") String relationCode, @Param("userId") String userId);
 
     int isShenhePass(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 }
