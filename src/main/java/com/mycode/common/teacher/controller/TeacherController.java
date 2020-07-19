@@ -17,7 +17,7 @@ import java.util.List;
  */
 @CrossOrigin
 @Controller
-@RequestMapping("/scjx")
+@RequestMapping("/common")
 public class TeacherController {
 
     @Autowired
