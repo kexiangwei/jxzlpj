@@ -17,8 +17,8 @@
                 ) t on t.COURSE_CODE = sc.COURSE_CODE
                 LEFT JOIN (
                 SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
-                ) pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.STUDENT_CODE
-                WHERE STUDENT_CODE = #{userId}
+                ) pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.USER_ID
+                WHERE USER_ID = #{userId}
             </when>
             <when test="accountType == 'teacher'">
                 SELECT dc.*

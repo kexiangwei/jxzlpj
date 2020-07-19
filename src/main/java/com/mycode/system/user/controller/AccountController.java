@@ -59,23 +59,23 @@ public class AccountController {
             , @RequestParam("userId") String userId
             , @RequestParam("password") String password, HttpServletRequest request){
         //
-        /*boolean hasKey = redisUtil.hasKey(token);
+        boolean hasKey = redisUtil.hasKey(token);
         if (hasKey) {
             if(!redisUtil.get(token).toString().equals(verifyCode)){
-                return JsonResult.error(400,"验证码输入有误！");
+                return JsonResult.error(400,"验证码输入有误");
             }
         }else{
-            return JsonResult.error(404," 验证码已超时，请重新获取！");
-        }*/
+            return JsonResult.error(404," 验证码已超时，请重新获取");
+        }
         //
         User user = null;
         try{
             user = userService.getUserById(userId);
             if(user == null){
-                return JsonResult.error(404,userId+" 账号未注册！");
+                return JsonResult.error(404,userId+" 账号未注册");
             }else{
                 if(!user.getUserId().equals(userId) || !user.getPassword().equals(password)){
-                    return JsonResult.error(400,"账号或密码错误！");
+                    return JsonResult.error(400,"账号或密码错误");
                 }
             }
         } catch (Exception e){

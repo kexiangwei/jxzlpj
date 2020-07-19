@@ -24,6 +24,12 @@
                 <when test="tab == 'DATA_STUDENT'">
                     INTO DATA_STUDENT(CODE, NAME, SEX, BIRTH_DATE, CLASS_CDOE, CLASS_NAME, GRADE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
                 </when>
+                <when test="tab == 'DATA_TEACHER_COURSE'">
+                    INTO DATA_TEACHER_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
+                </when>
+                <when test="tab == 'DATA_STUDENT_COURSE'">
+                    INTO DATA_TEACHER_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
+                </when>
             </choose>
             VALUES (
             <foreach collection="map.values" index="index"  item="item">
