@@ -23,8 +23,8 @@ public class EduDataSourceService {
     private ResultSet rs = null;
 
 //    @Scheduled(cron = "0 * * * * ?") //每分钟执行一次
-//    @Scheduled(cron = "0 0/5 * * * ?") //5分钟执行一次
-    @Scheduled(cron = "0 0 0 1 * ?") //每月1日00:00执行一次
+    @Scheduled(cron = "0 0/5 * * * ?") //5分钟执行一次
+//    @Scheduled(cron = "0 0 0 1 * ?") //每月1日00:00执行一次
     public boolean resetEduDataInfo(){
         boolean bool = false;
         final String[] tabs = {"DATA_COLLEGE","DATA_MAJOR","DATA_CLASS","DATA_COURSE","DATA_TEACHER","DATA_STUDENT","DATA_TEACHER_COURSE","DATA_STUDENT_COURSE"};

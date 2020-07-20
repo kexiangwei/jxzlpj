@@ -28,7 +28,7 @@
                     INTO DATA_TEACHER_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
                 </when>
                 <when test="tab == 'DATA_STUDENT_COURSE'">
-                    INTO DATA_TEACHER_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
+                    INTO DATA_STUDENT_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
                 </when>
             </choose>
             VALUES (
