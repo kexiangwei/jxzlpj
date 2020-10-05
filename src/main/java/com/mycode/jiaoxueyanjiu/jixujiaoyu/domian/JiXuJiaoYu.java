@@ -10,8 +10,6 @@ import java.util.Date;
 
 /**
  * 教学研究-继续教育
- * @auther kexiangwei
- * @date 2019/7/13
  */
 @Getter
 @Setter
