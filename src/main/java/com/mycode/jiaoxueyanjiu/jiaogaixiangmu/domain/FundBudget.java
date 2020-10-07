@@ -4,9 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 教学研究-教改项目-项目成员
- * @auther kexiangwei
- * @date 2019/11/13
+ * 教学研究-教改项目-六、项目经费预算
  */
 @Getter
 @Setter

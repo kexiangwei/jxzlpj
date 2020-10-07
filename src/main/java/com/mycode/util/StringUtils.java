@@ -5,12 +5,9 @@ import org.springframework.lang.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.UUID;
 
 public class StringUtils {
-
-	public static String guidForDate(){
-		return new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
-	}
 
 	/**
 	 * 生成随机字符
@@ -34,6 +31,10 @@ public class StringUtils {
 			return guid(length,isNumeric);
 		}
 		return code;
+	}
+
+	public static String uuid(){
+		return org.springframework.util.StringUtils.replace(UUID.randomUUID().toString(), "-", "");
 	}
 
 	public static boolean isEmpty(@Nullable Object str) {
