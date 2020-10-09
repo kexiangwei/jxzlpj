@@ -58,7 +58,7 @@ public class JiXuJiaoYuServiceImpl implements JiXuJiaoYuService {
         if(bool){
             List<FileInfo> fileListByRelationCode = fileMapper.getFileListByRelationCode(code);
             if(!fileListByRelationCode.isEmpty()){
-                bool = fileMapper.deleteFileInfo(null, code);
+                bool = fileMapper.deleteFileInfo(code);
             }
         }
         return bool;

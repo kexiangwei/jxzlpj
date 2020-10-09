@@ -2,11 +2,9 @@ package com.mycode.jiaoxueyanjiu.jiaocaijianshe.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.file.domain.FileInfo;
-import com.mycode.common.file.mapper.FileMapper;
-import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.common.shenhe.domain.ShenHeNode;
-import com.mycode.common.shenhe.mapper.ShenHeMapper;
+import com.mycode.file.domain.FileInfo;
+import com.mycode.file.mapper.FileMapper;
+import com.mycode.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jiaocaijianshe.domian.JiaoCaiJianShe;
 import com.mycode.jiaoxueyanjiu.jiaocaijianshe.mapper.JiaoCaiJianSheMapper;
 import com.mycode.util.StringUtils;
@@ -32,16 +30,16 @@ public class JiaoCaiJianSheServiceImpl implements JiaoCaiJianSheService {
 
     @Override
     public Map<String, Object> getPageList(JiaoCaiJianShe jiaoCaiJianShe) {
-        Map<String, Object> resultMap = new HashMap<>();
-        if(StringUtils.isNotEmpty(jiaoCaiJianShe.getShenHeUserId())){
-            int unShenHeNum = jiaoCaiJianSheMapper.getNotShenHeNum(jiaoCaiJianShe.getShenHeUserId());//获取未审核数
-            resultMap.put("unShenHeNum", unShenHeNum);
-        }
+        Map<String, Object> map = new HashMap<>();
         Page<Object> pageInfo = PageHelper.startPage(jiaoCaiJianShe.getPageIndex(), jiaoCaiJianShe.getPageSize());
-        List<JiaoCaiJianShe> list = jiaoCaiJianSheMapper.getPageList(jiaoCaiJianShe);
-        resultMap.put("totalNum",pageInfo.getTotal());
-        resultMap.put("pageList", list);
-        return resultMap;
+        List<JiaoCaiJianShe> pageList = jiaoCaiJianSheMapper.getPageList(jiaoCaiJianShe);
+        //获取未审核数
+        if(StringUtils.isNotEmpty(jiaoCaiJianShe.getShenHeUserId())){
+            map.put("unShenHeNum", shenHeMapper.getNotShenHeNum("V_JXYJ_JCJS_SHENHE", jiaoCaiJianShe.getShenHeUserId()));
+        }
+        map.put("totalNum",pageInfo.getTotal());
+        map.put("pageList", pageList);
+        return map;
     }
 
     @Override
@@ -60,44 +58,9 @@ public class JiaoCaiJianSheServiceImpl implements JiaoCaiJianSheService {
         if(bool){
             List<FileInfo> fileListByRelationCode = fileMapper.getFileListByRelationCode(code);
             if(!fileListByRelationCode.isEmpty()){
-                bool = fileMapper.deleteFileInfo(null, code);
+                bool = fileMapper.deleteFileInfo(code);
             }
         }
         return bool;
     }
-
-    @Override
-    public boolean toSubimt(String activeShenheCode, List<JiaoCaiJianShe> jiaoCaiJianSheList) {
-        for (JiaoCaiJianShe jiaoCaiJianShe : jiaoCaiJianSheList) {
-            jiaoCaiJianShe.setShenheCode(activeShenheCode);
-            jiaoCaiJianShe.setBatchNum(StringUtils.isEmpty(jiaoCaiJianShe.getBatchNum())?1:jiaoCaiJianShe.getBatchNum()+1);//提交批次，每提交一次加1
-            jiaoCaiJianShe.setStatus("审核中");
-        }
-        return jiaoCaiJianSheMapper.batchSubimt(jiaoCaiJianSheList);
-    }
-
-    @Override
-    public boolean toShenhe(ShenHeItem item, List<JiaoCaiJianShe> jiaoCaiJianSheList) {
-        boolean bool = false;
-        for (JiaoCaiJianShe jiaoCaiJianShe : jiaoCaiJianSheList) {
-            item.setRelationCode(jiaoCaiJianShe.getCode());
-            item.setBatchNum(jiaoCaiJianShe.getBatchNum());
-            ShenHeNode node = jiaoCaiJianSheMapper.getShenheNode(item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
-            item.setNodeCode(node.getNodeCode());
-            item.setNodeName(node.getNodeName());
-            bool = shenHeMapper.toShenhe(item); //提交审核
-            if(bool){
-                if(item.getStatus().equals("退回")){
-                    return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
-                } else { // 通过 | 未通过
-                    int isPass = shenHeMapper.isShenhePass("V_JXYJ_JCJS_SHENHE",item.getRelationCode(), item.getBatchNum());
-                    if(isPass == 1){
-                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),item.getStatus());
-                    }
-                }
-            }
-        }
-        return bool;
-    }
-
 }

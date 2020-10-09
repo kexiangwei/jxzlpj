@@ -62,6 +62,9 @@
         <if test="userName != null and userName != ''">
             and j.user_name = #{userName}
         </if>
+        <if test="userUnit != null and userUnit != ''">
+            and j.user_unit = #{userUnit}
+        </if>
         <if test="peixunName != null and peixunName != ''">
             and peixun_name like concat(concat('%',#{peixunName}),'%')
         </if>

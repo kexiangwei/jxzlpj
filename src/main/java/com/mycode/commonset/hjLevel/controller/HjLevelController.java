@@ -1,6 +1,6 @@
-package com.mycode.common.hjLevel.controller;
+package com.mycode.commonset.hjLevel.controller;
 
-import com.mycode.common.hjLevel.service.HjLevelService;
+import com.mycode.commonset.hjLevel.service.HjLevelService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;

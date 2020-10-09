@@ -1,9 +1,7 @@
 package com.mycode.jiaoxueyanjiu.jiaogailunwen.service;
 
-import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.jiaoxueyanjiu.jiaogailunwen.domian.JiaoGaiLunWen;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,15 +11,9 @@ public interface JiaoGaiLunWenService {
 
     Map<String, Object> getPageList(JiaoGaiLunWen jiaoGaiLunWen);
 
-    JiaoGaiLunWen get(JiaoGaiLunWen jiaoGaiLunWen);
-
     boolean insert(JiaoGaiLunWen jiaoGaiLunWen);
 
     boolean update(JiaoGaiLunWen jiaoGaiLunWen);
 
     boolean delete(String code);
-
-    boolean toSubimt(String activeShenheCode, List<JiaoGaiLunWen> jiaoGaiLunWenList);
-
-    boolean toShenhe(ShenHeItem item, List<JiaoGaiLunWen> jiaoGaiLunWenList);
 }

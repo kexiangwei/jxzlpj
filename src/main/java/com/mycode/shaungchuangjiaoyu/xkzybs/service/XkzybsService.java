@@ -1,9 +1,7 @@
 package com.mycode.shaungchuangjiaoyu.xkzybs.service;
 
-import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.shaungchuangjiaoyu.xkzybs.domian.Xkzybs;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,16 +9,12 @@ import java.util.Map;
  */
 public interface XkzybsService {
 
-    Map<String, Object> getPageList(Xkzybs obj);
+    Map<String, Object> getPageList(Xkzybs xkzybs);
 
-    boolean insert(Xkzybs obj);
+    boolean insert(Xkzybs xkzybs);
 
-    boolean update(Xkzybs obj);
+    boolean update(Xkzybs xkzybs);
 
-    boolean delete(String objCode);
-
-    boolean toSubimt(String activeShenheCode, List<Xkzybs> objList);
-
-    boolean toShenhe(ShenHeItem item, List<Xkzybs> objList);
+    boolean delete(String code);
 
 }

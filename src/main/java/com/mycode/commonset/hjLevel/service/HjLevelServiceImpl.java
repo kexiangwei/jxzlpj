@@ -1,7 +1,7 @@
-package com.mycode.common.hjLevel.service;
+package com.mycode.commonset.hjLevel.service;
 
 
-import com.mycode.common.hjLevel.mapper.HjLevelMapper;
+import com.mycode.commonset.hjLevel.mapper.HjLevelMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

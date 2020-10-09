@@ -2,16 +2,14 @@ package com.mycode.shaungchuangjiaoyu.xkzybs.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.file.domain.FileInfo;
-import com.mycode.common.file.mapper.FileMapper;
-import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.common.shenhe.domain.ShenHeNode;
-import com.mycode.common.shenhe.mapper.ShenHeMapper;
+import com.mycode.file.domain.FileInfo;
+import com.mycode.file.mapper.FileMapper;
 import com.mycode.shaungchuangjiaoyu.xkzybs.domian.Xkzybs;
 import com.mycode.shaungchuangjiaoyu.xkzybs.mapper.XkzybsMapper;
+import com.mycode.shenhe.mapper.ShenHeMapper;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,72 +29,38 @@ public class XkzybsServiceImpl implements XkzybsService {
     private FileMapper fileMapper;
 
     @Override
-    public Map<String, Object> getPageList(Xkzybs obj) {
-        Map<String, Object> resultMap = new HashMap<>();
-        if(!StringUtils.isEmpty(obj.getShenHeUserId())){
-            int unShenHeNum = xkzybsMapper.getNotShenHeNum(obj.getShenHeUserId());//获取未审核数
-            resultMap.put("unShenHeNum", unShenHeNum);
+    public Map<String, Object> getPageList(Xkzybs xkzybs) {
+        Map<String, Object> map = new HashMap<>();
+        Page<Object> pageInfo = PageHelper.startPage(xkzybs.getPageIndex(), xkzybs.getPageSize());
+        List<Xkzybs> pageList = xkzybsMapper.getPageList(xkzybs);
+        //获取未审核数
+        if(StringUtils.isNotEmpty(xkzybs.getShenHeUserId())){
+            map.put("unShenHeNum", shenHeMapper.getNotShenHeNum("V_SCJY_XKZYBS_SHENHE", xkzybs.getShenHeUserId()));
         }
-        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
-        List<Xkzybs> pageList = xkzybsMapper.getPageList(obj);
-        resultMap.put("totalNum",pageInfo.getTotal());
-        resultMap.put("pageList", pageList);
-        return resultMap;
+        map.put("totalNum", pageInfo.getTotal());
+        map.put("pageList", pageList);
+        return map;
     }
 
     @Override
-    public boolean insert(Xkzybs obj) {
-        return xkzybsMapper.insert(obj);
+    public boolean insert(Xkzybs xkzybs) {
+        return xkzybsMapper.insert(xkzybs);
     }
 
     @Override
-    public boolean update(Xkzybs obj) {
-        return xkzybsMapper.update(obj);
+    public boolean update(Xkzybs xkzybs) {
+        return xkzybsMapper.update(xkzybs);
     }
 
     @Override
-    public boolean delete(String objCode) {
-        boolean bool = xkzybsMapper.delete(objCode);
+    public boolean delete(String code) {
+        boolean bool = xkzybsMapper.delete(code);
         if(bool){
-            List<FileInfo> fileListByRelationCode = fileMapper.getFileListByRelationCode(objCode);
+            List<FileInfo> fileListByRelationCode = fileMapper.getFileListByRelationCode(code);
             if(!fileListByRelationCode.isEmpty()){
-                bool = fileMapper.deleteFileInfo(null, objCode);
+                bool = fileMapper.deleteFileInfo(code);
             }
         }
         return bool;
     }
-
-    @Override
-    public boolean toSubimt(String activeShenheCode, List<Xkzybs> objList) {
-        for (Xkzybs obj : objList) {
-            obj.setShenheCode(activeShenheCode);
-            obj.setBatchNum(StringUtils.isEmpty(obj.getBatchNum())?1:obj.getBatchNum()+1);//提交批次，每提交一次加1
-        }
-        return shenHeMapper.batchSubimt(objList);
-    }
-
-    @Override
-    public boolean toShenhe(ShenHeItem item, List<Xkzybs> objList) {
-        boolean bool = false;
-        for (Xkzybs obj : objList) {
-            item.setRelationCode(obj.getCode());
-            item.setBatchNum(obj.getBatchNum());
-            ShenHeNode node = shenHeMapper.getShenheNode("V_SCJY_XKZYBS_SHENHE",item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
-            item.setNodeCode(node.getNodeCode());
-            item.setNodeName(node.getNodeName());
-            bool = shenHeMapper.toShenhe(item); //提交审核
-            if(bool){
-                if(item.getStatus().equals("退回")){
-                    return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
-                } else { // 通过 | 未通过
-                    int isPass = shenHeMapper.isShenhePass("V_SCJY_XKZYBS_SHENHE",item.getRelationCode(), item.getBatchNum());
-                    if(isPass == 1){
-                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),item.getStatus());
-                    }
-                }
-            }
-        }
-        return bool;
-    }
-
 }

@@ -11,10 +11,10 @@ import lombok.Setter;
 public class Student {
 
     private String relationCode //关联的业务数据编号
-            ,college //学院
-            ,major   //专业
             ,studentCode //学号
             ,studentName //姓名
+            ,college //学院
+            ,major   //专业
             ,sorted; //排序
 
 }

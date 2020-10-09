@@ -12,14 +12,12 @@ import java.util.List;
 @Mapper
 public interface XkzybsMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
+    List<Xkzybs> getPageList(Xkzybs xkzybs);
 
-    List<Xkzybs> getPageList(Xkzybs obj);
+    boolean insert(Xkzybs xkzybs);
 
-    boolean insert(Xkzybs obj);
+    boolean update(Xkzybs xkzybs);
 
-    boolean update(Xkzybs obj);
-
-    boolean delete(@Param("objCode") String objCode);
+    boolean delete(@Param("code") String code);
 
 }

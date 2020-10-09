@@ -12,5 +12,9 @@ public interface FileMapper {
 
     boolean saveFileInfo(FileInfo fileInfo);
 
-    boolean deleteFileInfo(@Param("code") String code, @Param("relationCode") String relationCode);
+    boolean deleteFileInfo(@Param("relationCode") String relationCode, @Param("code") String code);
+
+    default boolean deleteFileInfo(@Param("relationCode") String relationCode){
+        return this.deleteFileInfo(relationCode,null);
+    }
 }

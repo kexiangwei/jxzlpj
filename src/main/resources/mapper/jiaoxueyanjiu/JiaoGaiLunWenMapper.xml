@@ -2,51 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxueyanjiu.jiaogailunwen.mapper.JiaoGaiLunWenMapper">
 
-    <select id="getNotShenHeNum" resultType="int">
-        SELECT count(0) from (
-            SELECT j.code,j.batch_num
-            ,count(sn.node_code) total_num
-            ,count(item.node_code) exec_num
-            ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-            from v_jxyj_jglw_shenhe j
-            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-            left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-            GROUP BY j.code,j.batch_num
-        )t
-        left join v_jxyj_jglw_shenhe j on j.code = t.code and j.batch_num = t.batch_num
-        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-        left join sys_user_role ur on ur.role_id = sn.role_id
-        where 1=1
-        and exec_num >= exec_level-1
-        AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
-        AND exec_level > exec_num
-        and ur.user_id = #{shenHeUserId}
-    </select>
-
-    <!-- ORDER BY is_submit ASC,create_date DESC 踩坑记录
-        返回的数据列表中字段值重复
-    -->
     <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaogailunwen.domian.JiaoGaiLunWen">
         <choose>
-            <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
-                SELECT v.*
+            <when test="shenHeUserId != null and shenHeUserId != ''"><!-- 审核列表 -->
+                select j.*
                 ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
                 from (
-                SELECT v.code,v.batch_num
-                ,count(sn.node_code) total_num
-                ,count(item.node_code) exec_num
-                ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-                from v_jxyj_jglw_shenhe v
-                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-                left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
-                GROUP BY v.code,v.batch_num
-                ) t
-                left join v_jxyj_jglw_shenhe v on v.code = t.code and v.batch_num = t.batch_num
-                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                    select j.code,j.batch_num
+                        ,count(sn.node_code) total_num
+                        ,count(item.node_code) exec_num
+                        ,max(case when j.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                    from V_JXYJ_JGLW_SHENHE j
+                    left join common_shenhe_node sn on sn.shenhe_code = j.shenhe_code
+                    left join common_shenhe_item item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+                    group by j.code,j.batch_num
+                )t
+                left join V_JXYJ_JGLW_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
+                left join common_shenhe_node sn on sn.shenhe_code = j.shenhe_code
                 left join sys_user_role ur on ur.role_id = sn.role_id
                 <where>1=1
                     and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
-                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END) -- 排除上一级状态值为‘退回’的数据
+                    and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end) -- 排除上一级审核状态为“未通过”，“退回”的数据
                     and ur.user_id = #{shenHeUserId}
                     <if test="shenheStatus != null and shenheStatus != ''">
                         <choose>
@@ -60,11 +36,11 @@
                     </if>
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY shenhe_status DESC
+                order by shenhe_status desc
             </when>
             <otherwise><!-- 提交列表 -->
-                SELECT v.*
-                from v_jxyj_jglw v
+                select j.*
+                from V_JXYJ_JGLW j
                 <where>1=1
                     <choose>
                         <when test="status != null and status != '' and status == '待审核'">
@@ -81,37 +57,24 @@
     </select>
     <sql id="queryCondition">
         <if test="userId != null and userId != '' and userId !=999999">
-            and v.user_id = #{userId}
+            and j.user_id = #{userId}
         </if>
         <if test="userName != null and userName != ''">
-            and v.user_name = #{userName}
+            and j.user_name = #{userName}
+        </if>
+        <if test="userUnit != null and userUnit != ''">
+            and j.user_unit = #{userUnit}
         </if>
         <if test="lwTitle != null and lwTitle != ''">
             and lw_title like concat(concat('%',#{lwTitle}),'%')
         </if>
     </sql>
 
-    <select id="get" resultType="com.mycode.jiaoxueyanjiu.jiaogailunwen.domian.JiaoGaiLunWen">
-        SELECT *
-        FROM JXYJ_JGLW
-        <where>1=1
-            <if test="dyAuthorCode != null and dyAuthorCode != ''">
-                and DY_AUTHOR_CODE = #{dyAuthorCode}
-            </if>
-            <if test="lwTitle != null and lwTitle != ''">
-                and LW_TITLE = #{lwTitle}
-            </if>
-            <if test="qkName != null and qkName != ''">
-                and QK_NAME = #{qkName}
-            </if>
-        </where>
-    </select>
-
     <insert id="insert">
           insert into JXYJ_JGLW
-          (code,lw_title,qk_name,qk_type,dy_author_code,dy_author_name,dy_author_unit,tx_author_code,tx_author_name,tx_author_unit,publish_year,user_id,user_name,user_unit,create_date)
+          (code,lw_title,qk_name,qk_type,qk_attr,dy_author_code,dy_author_name,dy_author_unit,tx_author_code,tx_author_name,tx_author_unit,publish_date,user_id,user_name,user_unit,create_date)
           values
-          (#{code},#{lwTitle},#{qkName},#{qkType},#{dyAuthorCode},#{dyAuthorName},#{dyAuthorUnit},#{txAuthorCode},#{txAuthorName},#{txAuthorUnit},#{publishYear},#{userId},#{userName},#{userUnit,jdbcType=VARCHAR},sysdate)
+          (#{code},#{lwTitle},#{qkName},#{qkType},#{qkAttr},#{dyAuthorCode},#{dyAuthorName},#{dyAuthorUnit},#{txAuthorCode},#{txAuthorName},#{txAuthorUnit},#{publishDate},#{userId},#{userName},#{userUnit,jdbcType=VARCHAR},CURRENT_DATE)
     </insert>
 
     <update id="update">
@@ -125,6 +88,9 @@
             </if>
             <if test="qkType != null and qkType != ''">
                 , qk_type = #{qkType}
+            </if>
+            <if test="qkAttr != null and qkAttr != ''">
+                , qk_attr = #{qkAttr}
             </if>
             <if test="dyAuthorCode != null and dyAuthorCode != ''">
                 , dy_author_code = #{dyAuthorCode}
@@ -144,8 +110,8 @@
             <if test="txAuthorUnit != null and txAuthorUnit != ''">
                 , tx_author_unit = #{txAuthorUnit}
             </if>
-            <if test="publishYear != null and publishYear != ''">
-                , publish_Year = #{publishYear}
+            <if test="publishDate != null and publishDate != ''">
+                , publish_date = #{publishDate}
             </if>
         </set>
         where code = #{code}
@@ -154,37 +120,4 @@
     <delete id="delete">
         delete from JXYJ_JGLW where code = #{code}
     </delete>
-
-    <update id="batchSubimt">
-        insert all
-        <foreach collection ="jiaoGaiLunWenList" item="obj" index= "idx">
-            into COMMON_SHENHE
-            (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
-            values
-            ( #{obj.shenheCode},#{obj.code},#{obj.batchNum},#{obj.status},#{obj.userId},#{obj.userName},sysdate)
-        </foreach>
-        select 1 from dual
-    </update>
-
-    <select id="getShenheNode" resultType="com.mycode.common.shenhe.domain.ShenHeNode">
-        SELECT sn.*
-        from v_jxyj_jglw_shenhe j
-        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = j.shenhe_code
-        LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
-        where code = #{relationCode} and ur.user_id = #{userId}
-    </select>
-
-    <select id="isShenhePass" resultType="int">
-        SELECT (case when total_num = exec_num then 1 else 0 end) isPass
-        from (
-            SELECT j.code,j.batch_num
-            ,count(sn.node_code) total_num
-            ,count(item.node_code) exec_num
-            from v_jxyj_jglw_shenhe j
-            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
-            left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-            WHERE j.code = #{relationCode} and j.batch_num = #{batchNum}
-            GROUP BY j.code,j.batch_num
-        )t
-    </select>
 </mapper>

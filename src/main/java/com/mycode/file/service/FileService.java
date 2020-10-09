@@ -10,5 +10,5 @@ public interface FileService {
 
     boolean saveFileInfo(FileInfo fileInfo);
 
-    boolean deleteFileInfo(String code, String relationCode);
+    boolean deleteFileInfo(String relationCode, String code);
 }

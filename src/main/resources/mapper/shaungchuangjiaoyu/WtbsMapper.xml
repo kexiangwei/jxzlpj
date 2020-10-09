@@ -2,48 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.shaungchuangjiaoyu.wtbs.mapper.WtbsMapper">
 
-    <select id="getNotShenHeNum" resultType="int">
-        SELECT count(0) from (
-            SELECT v.code,v.batch_num
-            ,count(sn.node_code) total_num
-            ,count(item.node_code) exec_num
-            ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-            from V_SCJY_WTBS_SHENHE v
-            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
-            GROUP BY v.code,v.batch_num
-        )t
-        left join V_SCJY_WTBS_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
-        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-        left join sys_user_role ur on ur.role_id = sn.role_id
-        where 1=1
-        and exec_num >= exec_level-1
-        AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
-        AND exec_level > exec_num
-        and ur.user_id = #{shenHeUserId}
-    </select>
-
     <select id="getPageList" resultType="com.mycode.shaungchuangjiaoyu.wtbs.domian.Wtbs">
         <choose>
-            <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
-                SELECT v.*
+            <when test="shenHeUserId != null and shenHeUserId != ''">
+                select v.*
                 ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
                 from (
-                    SELECT v.code,v.batch_num
+                    select v.code,v.batch_num
                     ,count(sn.node_code) total_num
                     ,count(item.node_code) exec_num
-                    ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
+                    ,max(case when v.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
                     from V_SCJY_WTBS_SHENHE v
-                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-                    left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
-                    GROUP BY v.code,v.batch_num
-                ) t
+                    left join common_shenhe_node sn on sn.shenhe_code = v.shenhe_code
+                    left join common_shenhe_item item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                    group by v.code,v.batch_num
+                )t
                 left join V_SCJY_WTBS_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
-                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                left join common_shenhe_node sn on sn.shenhe_code = v.shenhe_code
                 left join sys_user_role ur on ur.role_id = sn.role_id
                 <where>1=1
                     and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
-                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END) -- 排除上一级状态值为‘退回’的数据
+                    and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end) -- 排除上一级审核状态为“未通过”，“退回”的数据
                     and ur.user_id = #{shenHeUserId}
                     <if test="shenheStatus != null and shenheStatus != ''">
                         <choose>
@@ -57,26 +36,12 @@
                     </if>
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY shenhe_status DESC
+                order by shenhe_status desc
             </when>
             <otherwise><!-- 提交列表 -->
-                SELECT *
+                select v.*
                 from V_SCJY_WTBS v
                 <where>1=1
-                    <!--<if test="isSubmit != null and isSubmit != ''">
-                        <choose>
-                            <when test="isSubmit == '已提交'">
-                                and shenhe_code is not null
-                                and status != '退回'
-                            </when>
-                            <when test="isSubmit == '未提交'">
-                                and (shenhe_code is null or status = '退回')
-                            </when>
-                            <otherwise>
-                                and 1>1
-                            </otherwise>
-                        </choose>
-                    </if>-->
                     <choose>
                         <when test="status != null and status != '' and status == '待审核'">
                             and shenhe_code is null
@@ -87,36 +52,44 @@
                     </choose>
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY is_submit ASC,create_date DESC
             </otherwise>
         </choose>
     </select>
     <sql id="queryCondition">
-        <if test="level1 != null and level1 != ''">
-            and level1 = #{level1}
-        </if>
-        <if test="level2 != null and level2 != ''">
-            and level2 = #{level2}
-        </if>
-        <if test="grantDate_start != null">
-            and grant_date >= #{grantDate_start}
-        </if>
-        <if test="grantDate_end != null">
-            and grant_date &lt;= #{grantDate_end}
-        </if>
         <if test="userId != null and userId != '' and userId !=999999">
             and v.user_id = #{userId}
         </if>
         <if test="userName != null and userName != ''">
             and v.user_name = #{userName}
         </if>
+        <if test="userUnit != null and userUnit != ''">
+            and v.user_unit = #{userUnit}
+        </if>
+        <if test="name != null and name != ''">
+            and name like concat(concat('%',#{name}),'%')
+        </if>
+        <if test="type != null and type != ''">
+            and type = #{type}
+        </if>
+        <if test="level1 != null and level1 != ''">
+            and level1 = #{level1}
+        </if>
+        <if test="level2 != null and level2 != ''">
+            and level2 = #{level2}
+        </if>
+        <if test="zsGrantDateStart != null">
+            and ZS_GRANT_DATE >= #{zsGrantDateStart}
+        </if>
+        <if test="zsGrantDateEnd != null">
+            and ZS_GRANT_DATE &lt;= #{zsGrantDateEnd}
+        </if>
     </sql>
 
     <insert id="insert">
           insert into SCJY_WTBS
-          (code,name,level1,level2,grant_unit,grant_date,user_id,user_name,user_unit,create_date)
+          (CODE, NAME, TYPE, LEVEL1, LEVEL2, ZS_NUM, ZS_GRANT_UNIT, ZS_GRANT_DATE, USER_ID, USER_NAME, USER_UNIT, CREATE_DATE)
           values
-          (#{code},#{name},#{level1},#{level2},#{grantUnit},#{grantDate},#{userId},#{userName},#{userUnit},sysdate)
+          (#{code},#{name},#{type},#{level1},#{level2},#{zsNum,jdbcType=VARCHAR},#{zsGrantUnit,jdbcType=VARCHAR},#{zsGrantDate,jdbcType=DATE},#{userId},#{userName},#{userUnit},CURRENT_DATE)
     </insert>
 
     <update id="update">
@@ -125,23 +98,29 @@
             <if test="name != null and name != ''">
                 name = #{name}
             </if>
+            <if test="type != null and type != ''">
+                , type = #{type}
+            </if>
             <if test="level1 != null and level1 != ''">
                 , level1 = #{level1}
             </if>
             <if test="level2 != null and level2 != ''">
                 , level2 = #{level2}
             </if>
-            <if test="grantUnit !=null and grantUnit !=''">
-                , grant_unit = #{grantUnit}
+            <if test="zsNum !=null and zsNum !=''">
+                , ZS_NUM = #{zsNum}
             </if>
-            <if test="grantDate !=null">
-                , grant_date = #{grantDate}
+            <if test="zsGrantUnit !=null and zsGrantUnit !=''">
+                , ZS_GRANT_UNIT = #{zsGrantUnit}
+            </if>
+            <if test="zsGrantDate !=null">
+                , ZS_GRANT_DATE = #{zsGrantDate}
             </if>
         </set>
         where code = #{code}
     </update>
 
     <delete id="delete">
-        DELETE FROM SCJY_WTBS WHERE CODE = #{objCode}
+        DELETE FROM SCJY_WTBS WHERE CODE = #{code}
     </delete>
 </mapper>

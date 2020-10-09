@@ -1,7 +1,7 @@
-package com.mycode.shaungchuangjiaoyu.zdxscy.controller;
+package com.mycode.shaungchuangjiaoyu.zdxscjcyxm.controller;
 
-import com.mycode.shaungchuangjiaoyu.zdxscy.domian.Zdxscy;
-import com.mycode.shaungchuangjiaoyu.zdxscy.service.ZdxscyService;
+import com.mycode.shaungchuangjiaoyu.zdxscjcyxm.domian.Zdxscjcyxm;
+import com.mycode.shaungchuangjiaoyu.zdxscjcyxm.service.ZdxscjcyxmService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,27 +13,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Map;
 
 /**
- * 双创教育-指导学生创业
+ * 双创教育-指导学生参加创业项目
  */
 @CrossOrigin
 @Controller
-@RequestMapping("/scjy_zdxscy")
-public class ZdxscyController {
+@RequestMapping("/scjy_zdxscjcyxm")
+public class ZdxscjcyxmController {
 
     @Autowired
-    private ZdxscyService zdxscyService;
+    private ZdxscjcyxmService zdxscjcyxmService;
 
     @ResponseBody
     @RequestMapping("/getPageList.do")
-    public JsonResult<Object> getPageList(Zdxscy zdxscy){
-        Map<String, Object> resultMap = zdxscyService.getPageList(zdxscy);
+    public JsonResult<Object> getPageList(Zdxscjcyxm zdxscjcyxm){
+        Map<String, Object> resultMap = zdxscjcyxmService.getPageList(zdxscjcyxm);
         return JsonResult.success(resultMap);
     }
 
     @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(Zdxscy zdxscy){
-        boolean bool = zdxscyService.insert(zdxscy);
+    public JsonResult<Object> insert(Zdxscjcyxm zdxscjcyxm){
+        boolean bool = zdxscjcyxmService.insert(zdxscjcyxm);
         if(!bool){
             return JsonResult.error("新增失败");
         }
@@ -42,8 +42,8 @@ public class ZdxscyController {
 
     @ResponseBody
     @RequestMapping("/update.do")
-    public JsonResult<Object> update(Zdxscy zdxscy){
-        boolean bool = zdxscyService.update(zdxscy);
+    public JsonResult<Object> update(Zdxscjcyxm zdxscjcyxm){
+        boolean bool = zdxscjcyxmService.update(zdxscjcyxm);
         if(!bool){
             return JsonResult.error("修改失败");
         }
@@ -53,7 +53,7 @@ public class ZdxscyController {
     @ResponseBody
     @RequestMapping("/delete.do")
     public JsonResult<Object> delete(@RequestParam("code") String code){
-        boolean bool = zdxscyService.delete(code);
+        boolean bool = zdxscjcyxmService.delete(code);
         if(!bool){
             return JsonResult.error("删除失败");
         }

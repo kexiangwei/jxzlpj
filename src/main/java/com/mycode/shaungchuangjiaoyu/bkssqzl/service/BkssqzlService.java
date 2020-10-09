@@ -1,9 +1,7 @@
 package com.mycode.shaungchuangjiaoyu.bkssqzl.service;
 
-import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.shaungchuangjiaoyu.bkssqzl.domian.Bkssqzl;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,16 +9,12 @@ import java.util.Map;
  */
 public interface BkssqzlService {
 
-    Map<String, Object> getPageList(Bkssqzl obj);
+    Map<String, Object> getPageList(Bkssqzl bkssqzl);
 
-    boolean insert(Bkssqzl obj);
+    boolean insert(Bkssqzl bkssqzl);
 
-    boolean update(Bkssqzl obj);
+    boolean update(Bkssqzl bkssqzl);
 
-    boolean delete(String objCode);
-
-    boolean toSubimt(String activeShenheCode, List<Bkssqzl> objList);
-
-    boolean toShenhe(ShenHeItem item, List<Bkssqzl> objList);
+    boolean delete(String code);
 
 }

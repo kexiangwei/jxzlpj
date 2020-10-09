@@ -24,7 +24,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public boolean deleteFileInfo(String code, String relationCode) {
-        return fileMapper.deleteFileInfo(code,relationCode);
+    public boolean deleteFileInfo(String relationCode, String code) {
+        return fileMapper.deleteFileInfo(relationCode, code);
     }
 }

@@ -113,7 +113,7 @@ public class FileController {
     @RequestMapping(value="/deleteFileInfo.do")
     public JsonResult<Object> deleteFileInfo(@RequestParam(value="relationCode",required = false) String relationCode
             ,@RequestParam(value="code",required = false) String code) throws Exception {
-        boolean bool = fileService.deleteFileInfo(code,relationCode);
+        boolean bool = fileService.deleteFileInfo(relationCode, code);
         if(!bool){
             JsonResult.error("删除失败！");
         }

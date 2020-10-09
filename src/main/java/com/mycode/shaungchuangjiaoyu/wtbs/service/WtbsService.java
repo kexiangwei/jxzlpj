@@ -1,9 +1,7 @@
 package com.mycode.shaungchuangjiaoyu.wtbs.service;
 
-import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.shaungchuangjiaoyu.wtbs.domian.Wtbs;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,16 +9,11 @@ import java.util.Map;
  */
 public interface WtbsService {
 
-    Map<String, Object> getPageList(Wtbs obj);
+    Map<String, Object> getPageList(Wtbs wtbs);
 
-    boolean insert(Wtbs obj);
+    boolean insert(Wtbs wtbs);
 
-    boolean update(Wtbs obj);
+    boolean update(Wtbs wtbs);
 
-    boolean delete(String objCode);
-
-    boolean toSubimt(String activeShenheCode, List<Wtbs> objList);
-
-    boolean toShenhe(ShenHeItem item, List<Wtbs> objList);
-
+    boolean delete(String code);
 }

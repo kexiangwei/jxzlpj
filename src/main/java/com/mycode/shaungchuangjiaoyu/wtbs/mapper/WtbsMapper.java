@@ -12,14 +12,12 @@ import java.util.List;
 @Mapper
 public interface WtbsMapper {
 
-    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
+    List<Wtbs> getPageList(Wtbs wtbs);
 
-    List<Wtbs> getPageList(Wtbs obj);
+    boolean insert(Wtbs wtbs);
 
-    boolean insert(Wtbs obj);
+    boolean update(Wtbs wtbs);
 
-    boolean update(Wtbs obj);
-
-    boolean delete(@Param("objCode") String objCode);
+    boolean delete(@Param("code") String code);
 
 }

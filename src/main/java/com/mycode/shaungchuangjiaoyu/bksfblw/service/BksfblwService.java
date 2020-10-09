@@ -1,9 +1,7 @@
 package com.mycode.shaungchuangjiaoyu.bksfblw.service;
 
-import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.shaungchuangjiaoyu.bksfblw.domian.Bksfblw;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,16 +9,12 @@ import java.util.Map;
  */
 public interface BksfblwService {
 
-    Map<String, Object> getPageList(Bksfblw obj);
+    Map<String, Object> getPageList(Bksfblw bksfblw);
 
-    boolean insert(Bksfblw obj);
+    boolean insert(Bksfblw bksfblw);
 
-    boolean update(Bksfblw obj);
+    boolean update(Bksfblw bksfblw);
 
-    boolean delete(String objCode);
-
-    boolean toSubimt(String activeShenheCode, List<Bksfblw> objList);
-
-    boolean toShenhe(ShenHeItem item, List<Bksfblw> objList);
+    boolean delete(String code);
 
 }

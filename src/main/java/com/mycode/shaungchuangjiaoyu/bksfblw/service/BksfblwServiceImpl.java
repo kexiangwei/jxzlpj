@@ -2,16 +2,14 @@ package com.mycode.shaungchuangjiaoyu.bksfblw.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.file.domain.FileInfo;
-import com.mycode.common.file.mapper.FileMapper;
-import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.common.shenhe.domain.ShenHeNode;
-import com.mycode.common.shenhe.mapper.ShenHeMapper;
+import com.mycode.file.domain.FileInfo;
+import com.mycode.file.mapper.FileMapper;
 import com.mycode.shaungchuangjiaoyu.bksfblw.domian.Bksfblw;
 import com.mycode.shaungchuangjiaoyu.bksfblw.mapper.BksfblwMapper;
+import com.mycode.shenhe.mapper.ShenHeMapper;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,69 +29,36 @@ public class BksfblwServiceImpl implements BksfblwService {
     private FileMapper fileMapper;
 
     @Override
-    public Map<String, Object> getPageList(Bksfblw obj) {
+    public Map<String, Object> getPageList(Bksfblw bksfblw) {
         Map<String, Object> resultMap = new HashMap<>();
-        if(!StringUtils.isEmpty(obj.getShenHeUserId())){
-            int unShenHeNum = bksfblwMapper.getNotShenHeNum(obj.getShenHeUserId());//获取未审核数
-            resultMap.put("unShenHeNum", unShenHeNum);
+        Page<Object> pageInfo = PageHelper.startPage(bksfblw.getPageIndex(), bksfblw.getPageSize());
+        List<Bksfblw> pageList = bksfblwMapper.getPageList(bksfblw);
+        //获取未审核数
+        if(StringUtils.isNotEmpty(bksfblw.getShenHeUserId())){
+            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum("v_scjy_bksfblw_shenhe", bksfblw.getShenHeUserId()));
         }
-        Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
-        List<Bksfblw> pageList = bksfblwMapper.getPageList(obj);
-        resultMap.put("totalNum",pageInfo.getTotal());
+        resultMap.put("totalNum", pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
     }
 
     @Override
-    public boolean insert(Bksfblw obj) {
-        return bksfblwMapper.insert(obj);
+    public boolean insert(Bksfblw bksfblw) {
+        return bksfblwMapper.insert(bksfblw);
     }
 
     @Override
-    public boolean update(Bksfblw obj) {
-        return bksfblwMapper.update(obj);
+    public boolean update(Bksfblw bksfblw) {
+        return bksfblwMapper.update(bksfblw);
     }
 
     @Override
-    public boolean delete(String objCode) {
-        boolean bool = bksfblwMapper.delete(objCode);
+    public boolean delete(String code) {
+        boolean bool = bksfblwMapper.delete(code);
         if(bool){
-            List<FileInfo> fileListByRelationCode = fileMapper.getFileListByRelationCode(objCode);
+            List<FileInfo> fileListByRelationCode = fileMapper.getFileListByRelationCode(code);
             if(!fileListByRelationCode.isEmpty()){
-                bool = fileMapper.deleteFileInfo(null, objCode);
-            }
-        }
-        return bool;
-    }
-
-    @Override
-    public boolean toSubimt(String activeShenheCode, List<Bksfblw> objList) {
-        for (Bksfblw obj : objList) {
-            obj.setShenheCode(activeShenheCode);
-            obj.setBatchNum(StringUtils.isEmpty(obj.getBatchNum())?1:obj.getBatchNum()+1);//提交批次，每提交一次加1
-        }
-        return shenHeMapper.batchSubimt(objList);
-    }
-
-    @Override
-    public boolean toShenhe(ShenHeItem item, List<Bksfblw> objList) {
-        boolean bool = false;
-        for (Bksfblw obj : objList) {
-            item.setRelationCode(obj.getCode());
-            item.setBatchNum(obj.getBatchNum());
-            ShenHeNode node = shenHeMapper.getShenheNode("V_SCJY_BKSFBLW_SHENHE",item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
-            item.setNodeCode(node.getNodeCode());
-            item.setNodeName(node.getNodeName());
-            bool = shenHeMapper.toShenhe(item); //提交审核
-            if(bool){
-                if(item.getStatus().equals("退回")){
-                    return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
-                } else { // 通过 | 未通过
-                    int isPass = shenHeMapper.isShenhePass("V_SCJY_BKSFBLW_SHENHE",item.getRelationCode(), item.getBatchNum());
-                    if(isPass == 1){
-                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),item.getStatus());
-                    }
-                }
+                bool = fileMapper.deleteFileInfo(code);
             }
         }
         return bool;

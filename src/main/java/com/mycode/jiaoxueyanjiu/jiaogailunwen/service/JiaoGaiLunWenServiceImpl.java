@@ -2,11 +2,10 @@ package com.mycode.jiaoxueyanjiu.jiaogailunwen.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.file.domain.FileInfo;
-import com.mycode.common.file.mapper.FileMapper;
-import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.common.shenhe.domain.ShenHeNode;
-import com.mycode.common.shenhe.mapper.ShenHeMapper;
+import com.mycode.file.domain.FileInfo;
+import com.mycode.file.mapper.FileMapper;
+import com.mycode.jiaoxueyanjiu.jixujiaoyu.domian.JiXuJiaoYu;
+import com.mycode.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jiaogailunwen.domian.JiaoGaiLunWen;
 import com.mycode.jiaoxueyanjiu.jiaogailunwen.mapper.JiaoGaiLunWenMapper;
 import com.mycode.util.StringUtils;
@@ -32,21 +31,16 @@ public class JiaoGaiLunWenServiceImpl implements JiaoGaiLunWenService {
 
     @Override
     public Map<String, Object> getPageList(JiaoGaiLunWen jiaoGaiLunWen) {
-        Map<String, Object> resultMap = new HashMap<>();
-        if(StringUtils.isNotEmpty(jiaoGaiLunWen.getShenHeUserId())){
-            int unShenHeNum = jiaoGaiLunWenMapper.getNotShenHeNum(jiaoGaiLunWen.getShenHeUserId());//获取未审核数
-            resultMap.put("unShenHeNum", unShenHeNum);
-        }
+        Map<String, Object> map = new HashMap<>();
         Page<Object> pageInfo = PageHelper.startPage(jiaoGaiLunWen.getPageIndex(), jiaoGaiLunWen.getPageSize());
         List<JiaoGaiLunWen> pageList = jiaoGaiLunWenMapper.getPageList(jiaoGaiLunWen);
-        resultMap.put("totalNum",pageInfo.getTotal());
-        resultMap.put("pageList", pageList);
-        return resultMap;
-    }
-
-    @Override
-    public JiaoGaiLunWen get(JiaoGaiLunWen jiaoGaiLunWen) {
-        return jiaoGaiLunWenMapper.get(jiaoGaiLunWen);
+        //获取未审核数
+        if(StringUtils.isNotEmpty(jiaoGaiLunWen.getShenHeUserId())){
+            map.put("unShenHeNum", shenHeMapper.getNotShenHeNum("V_JXYJ_JGLW_SHENHE", jiaoGaiLunWen.getShenHeUserId()));
+        }
+        map.put("totalNum", pageInfo.getTotal());
+        map.put("pageList", pageList);
+        return map;
     }
 
     @Override
@@ -65,41 +59,7 @@ public class JiaoGaiLunWenServiceImpl implements JiaoGaiLunWenService {
         if(bool){
             List<FileInfo> fileListByRelationCode = fileMapper.getFileListByRelationCode(code);
             if(!fileListByRelationCode.isEmpty()){
-                bool = fileMapper.deleteFileInfo(null, code);
-            }
-        }
-        return bool;
-    }
-
-    @Override
-    public boolean toSubimt(String activeShenheCode, List<JiaoGaiLunWen> jiaoGaiLunWenList) {
-        for (JiaoGaiLunWen JiaoGaiLunWen : jiaoGaiLunWenList) {
-            JiaoGaiLunWen.setShenheCode(activeShenheCode);
-            JiaoGaiLunWen.setBatchNum(StringUtils.isEmpty(JiaoGaiLunWen.getBatchNum())?1:JiaoGaiLunWen.getBatchNum()+1);//提交批次，每提交一次加1
-            JiaoGaiLunWen.setStatus("审核中");
-        }
-        return jiaoGaiLunWenMapper.batchSubimt(jiaoGaiLunWenList);
-    }
-
-    @Override
-    public boolean toShenhe(ShenHeItem item, List<JiaoGaiLunWen> jiaoGaiLunWenList) {
-        boolean bool = false;
-        for (JiaoGaiLunWen JiaoGaiLunWen : jiaoGaiLunWenList) {
-            item.setRelationCode(JiaoGaiLunWen.getCode());
-            item.setBatchNum(JiaoGaiLunWen.getBatchNum());
-            ShenHeNode node = jiaoGaiLunWenMapper.getShenheNode(item.getRelationCode(), item.getUserId()); //获取符合当前用户的审核节点信息
-            item.setNodeCode(node.getNodeCode());
-            item.setNodeName(node.getNodeName());
-            bool = shenHeMapper.toShenhe(item); //提交审核
-            if(bool){
-                if(item.getStatus().equals("退回")){
-                    return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),"退回");
-                } else { // 通过 | 未通过
-                    int isPass = shenHeMapper.isShenhePass("V_JXYJ_JGLW_SHENHE",item.getRelationCode(), item.getBatchNum());
-                    if(isPass == 1){
-                        return shenHeMapper.changeStatus(item.getRelationCode(),item.getBatchNum(),item.getStatus());
-                    }
-                }
+                bool = fileMapper.deleteFileInfo(code);
             }
         }
         return bool;

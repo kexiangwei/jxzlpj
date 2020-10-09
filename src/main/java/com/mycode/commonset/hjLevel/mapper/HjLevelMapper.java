@@ -1,4 +1,4 @@
-package com.mycode.common.hjLevel.mapper;
+package com.mycode.commonset.hjLevel.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
