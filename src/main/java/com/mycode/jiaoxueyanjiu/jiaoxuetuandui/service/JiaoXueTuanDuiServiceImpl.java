@@ -2,13 +2,9 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.file.domain.FileInfo;
-import com.mycode.common.file.mapper.FileMapper;
-import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.common.shenhe.domain.ShenHeNode;
-import com.mycode.common.shenhe.mapper.ShenHeMapper;
-import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMu;
-import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMuForCity;
+import com.mycode.commonset.shenheSet.domain.ShenHeItem;
+import com.mycode.commonset.shenheSet.domain.ShenHeNode;
+import com.mycode.commonset.shenheSet.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;

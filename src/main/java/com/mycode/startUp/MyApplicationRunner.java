@@ -19,11 +19,9 @@ public class MyApplicationRunner implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		// TODO Auto-generated method stub
-		log.info("====== myApplicationRunner run. ======");
 		EduDataSource eduDataSource = applicationContext.getBean(EduDataSource.class);
 		String eduDatasourceInfo = eduDataSource.getEduDatasourceInfo();
-		log.info("eduDatasourceInfo ======> "+eduDatasourceInfo);
+		log.info(eduDatasourceInfo);
 	}
 
 }

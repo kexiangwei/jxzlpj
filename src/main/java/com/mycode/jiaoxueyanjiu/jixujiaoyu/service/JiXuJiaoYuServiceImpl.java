@@ -4,7 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.file.domain.FileInfo;
 import com.mycode.file.mapper.FileMapper;
-import com.mycode.shenhe.mapper.ShenHeMapper;
+import com.mycode.commonset.shenheSet.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jixujiaoyu.domian.JiXuJiaoYu;
 import com.mycode.jiaoxueyanjiu.jixujiaoyu.mapper.JiXuJiaoYuMapper;
 import com.mycode.util.StringUtils;

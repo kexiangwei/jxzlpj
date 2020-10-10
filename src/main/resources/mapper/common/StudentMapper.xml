@@ -2,6 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.common.student.mapper.StudentMapper">
 
+    <select id="getCollege" resultType="java.util.Map">
+        SELECT distinct code,name
+        FROM DATA_COLLEGE
+        ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
+    </select>
+
+    <select id="getMajor" resultType="java.util.Map">
+        SELECT distinct m.code,m.name
+        FROM DATA_MAJOR m /*LEFT JOIN DATA_COLLEGE c on c.CODE = m.COLLEGE_CODE*/
+        <where>1=1
+            <if test="collegeCode !=null and collegeCode !=''">
+                and COLLEGE_CODE = #{collegeCode}
+            </if>
+        </where>
+        ORDER BY NLSSORT(m.name,'NLS_SORT = SCHINESE_PINYIN_M')
+    </select>
+
     <select id="getStudentInfo" resultType="com.mycode.common.student.domian.Student">
         select relation_code,student_code,student_name
         ,c.name college,m.name major

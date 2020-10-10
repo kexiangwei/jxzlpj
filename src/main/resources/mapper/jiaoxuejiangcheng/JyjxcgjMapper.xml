@@ -2,48 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuejiangcheng.jyjxcgj.mapper.JyjxcgjMapper">
 
-    <select id="getNotShenHeNum" resultType="int">
-        SELECT count(0) from (
-            SELECT v.code,v.batch_num
-            ,count(sn.node_code) total_num
-            ,count(item.node_code) exec_num
-            ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-            from V_JXJC_JYJXCGJ_SHENHE v
-            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
-            GROUP BY v.code,v.batch_num
-        )t
-        left join V_JXJC_JYJXCGJ_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
-        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-        left join sys_user_role ur on ur.role_id = sn.role_id
-        where 1=1
-        and exec_num >= exec_level-1
-        AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END)
-        AND exec_level > exec_num
-        and ur.user_id = #{shenHeUserId}
-    </select>
-
     <select id="getPageList" resultType="com.mycode.jiaoxuejiangcheng.jyjxcgj.domian.Jyjxcgj">
         <choose>
-            <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
-                SELECT v.*
-                ,(case /*when ur.role_id = is_back then '退回'*/ when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+            <when test="shenHeUserId != null and shenHeUserId != ''">
+                select v.*
+                ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
                 from (
-                    SELECT v.code,v.batch_num
+                    select v.code,v.batch_num
                     ,count(sn.node_code) total_num
                     ,count(item.node_code) exec_num
-                    ,max(case when item.status = '退回' then sn.role_id else 0 end ) is_back
-                    from V_JXJC_JYJXCGJ_SHENHE v
-                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-                    left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
-                    GROUP BY v.code,v.batch_num
-                ) t
-                left join V_JXJC_JYJXCGJ_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
-                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                    ,max(case when v.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                    from v_jxjc_jyjxcgj_shenhe v
+                    left join common_shenhe_node sn on sn.shenhe_code = v.shenhe_code
+                    left join common_shenhe_item item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                    group by v.code,v.batch_num
+                )t
+                left join v_jxjc_jyjxcgj_shenhe v on v.code = t.code and v.batch_num = t.batch_num
+                left join common_shenhe_node sn on sn.shenhe_code = v.shenhe_code
                 left join sys_user_role ur on ur.role_id = sn.role_id
                 <where>1=1
                     and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
-                    AND 1 != (CASE WHEN sn.exec_level > t.exec_num AND is_back > 0 THEN 1 ELSE 0 END) -- 排除上一级状态值为‘退回’的数据
+                    and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end) -- 排除上一级审核状态为“未通过”，“退回”的数据
                     and ur.user_id = #{shenHeUserId}
                     <if test="shenheStatus != null and shenheStatus != ''">
                         <choose>
@@ -53,18 +32,15 @@
                             <when test="shenheStatus == '未审核'">
                                 and exec_level > exec_num
                             </when>
-                            <!--<when test="shenheStatus == '退回'">
-                                and ur.role_id = is_back
-                            </when>-->
                         </choose>
                     </if>
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY shenhe_status DESC
+                order by shenhe_status desc
             </when>
             <otherwise><!-- 提交列表 -->
-                SELECT *
-                from V_JXJC_JYJXCGJ v
+                select v.*
+                from v_jxjc_jyjxcgj v
                 <where>1=1
                     <choose>
                         <when test="status != null and status != '' and status == '待审核'">
@@ -76,27 +52,29 @@
                     </choose>
                     <include refid="queryCondition"/>
                 </where>
-                ORDER BY is_submit DESC,create_date DESC
             </otherwise>
         </choose>
     </select>
     <sql id="queryCondition">
-        <if test="objName != null and objName != ''">
-            and obj_Name like concat(concat('%',#{objName}),'%')
-        </if>
         <if test="userId != null and userId != '' and userId !=999999">
             and v.user_id = #{userId}
         </if>
         <if test="userName != null and userName != ''">
             and v.user_name = #{userName}
         </if>
+        <if test="userUnit != null and userUnit != ''">
+            and v.user_unit = #{userUnit}
+        </if>
+        <if test="objName != null and objName != ''">
+            and obj_Name like concat(concat('%',#{objName}),'%')
+        </if>
     </sql>
 
     <insert id="insert">
           insert into JXJC_JYJXCGJ
-          (code,obj_name,person_rank,unit_rank,level1,level2,datetime_year,grant_unit,user_id,user_name,user_unit,create_date)
+          (CODE, OBJ_NAME, LEVEL1, LEVEL2, PERSON_RANK, UNIT_RANK, DATETIME_YEAR, GRANT_UNIT, USER_ID, USER_NAME, USER_UNIT, CREATE_DATE)
           values
-          (#{code},#{objName},#{personRank},#{unitRank},#{level1},#{level2},#{datetimeYear,jdbcType=VARCHAR},#{grantUnit},#{userId},#{userName},#{userUnit},sysdate)
+          (#{code},#{objName},#{level1},#{level2},#{personRank},#{unitRank},#{datetimeYear,jdbcType=VARCHAR},#{grantUnit},#{userId},#{userName},#{userUnit},CURRENT_DATE)
     </insert>
 
     <update id="update">
@@ -105,17 +83,17 @@
             <if test="objName != null and objName != ''">
                 obj_name = #{objName}
             </if>
-            <if test="personRank != null and personRank != ''">
-                , person_rank = #{personRank}
-            </if>
-            <if test="unitRank != null and unitRank != ''">
-                , unit_rank = #{unitRank}
-            </if>
             <if test="level1 != null and level1 != ''">
                 , level1 = #{level1}
             </if>
             <if test="level2 !=null and level2 !=''">
                 , level2 = #{level2}
+            </if>
+            <if test="personRank != null and personRank != ''">
+                , person_rank = #{personRank}
+            </if>
+            <if test="unitRank != null and unitRank != ''">
+                , unit_rank = #{unitRank}
             </if>
             <if test="datetimeYear !=null and datetimeYear !=''">
                 , datetime_year = #{datetimeYear}
@@ -128,7 +106,7 @@
     </update>
 
     <delete id="delete">
-        DELETE FROM JXJC_JYJXCGJ WHERE CODE = #{objCode}
+        DELETE FROM JXJC_JYJXCGJ WHERE CODE = #{code}
     </delete>
 
 </mapper>

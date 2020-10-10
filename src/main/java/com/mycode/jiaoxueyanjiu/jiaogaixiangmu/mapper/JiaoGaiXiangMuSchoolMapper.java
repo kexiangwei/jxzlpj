@@ -3,7 +3,6 @@ package com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMuSchool;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;
-import com.mycode.shenhe.domain.ZjshItem;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

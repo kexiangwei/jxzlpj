@@ -2,16 +2,10 @@ package com.mycode.jiaoxuejiangcheng.jxsg.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.file.domain.FileInfo;
-import com.mycode.common.file.mapper.FileMapper;
-import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.common.shenhe.domain.ShenHeNode;
-import com.mycode.common.shenhe.mapper.ShenHeMapper;
 import com.mycode.jiaoxuejiangcheng.jxsg.domian.Jxsg;
 import com.mycode.jiaoxuejiangcheng.jxsg.mapper.JxsgMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;

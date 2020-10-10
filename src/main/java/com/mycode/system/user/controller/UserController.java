@@ -69,4 +69,17 @@ public class UserController {
         List<Menu> menuList = userService.getUserMenu(userId);
         return JsonResult.success(menuList);
     }
+
+    /**
+     * 根据menuId,userId 查询用户是否拥有菜单的提交、审核权限
+     * @param menuId
+     * @param userId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getAuthority.do")
+    public JsonResult<Object> getAuthority(@RequestParam("menuId") String menuId,@RequestParam("userId") String userId){
+        Map<String, Integer> resultMap = userService.getAuthority(menuId,userId);
+        return JsonResult.success(resultMap);
+    }
 }

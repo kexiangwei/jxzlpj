@@ -6,7 +6,7 @@ import com.mycode.file.domain.FileInfo;
 import com.mycode.file.mapper.FileMapper;
 import com.mycode.shaungchuangjiaoyu.zdxscy.domian.Zdxscy;
 import com.mycode.shaungchuangjiaoyu.zdxscy.mapper.ZdxscyMapper;
-import com.mycode.shenhe.mapper.ShenHeMapper;
+import com.mycode.commonset.shenheSet.mapper.ShenHeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

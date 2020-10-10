@@ -198,7 +198,7 @@
     </delete>
 
 
-    <select id="getZjshProcess" resultType="com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.ZjshItem">
+    <select id="getZjshProcess" resultType="com.mycode.commonset.shenheSet.domain.ZjshItem">
         SELECT * FROM JXYJ_JXTD_ZJSH WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}
     </select>
 

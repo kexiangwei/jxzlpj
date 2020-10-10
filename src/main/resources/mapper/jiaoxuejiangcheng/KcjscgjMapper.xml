@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jiaoxuejiangcheng.kcjscgj.mapper.KcjscgjMapper">
+
+    <select id="getPageList" resultType="com.mycode.jiaoxuejiangcheng.kcjscgj.domian.Kcjscgj">
+        <choose>
+            <when test="shenHeUserId != null and shenHeUserId != ''">
+                select v.*
+                ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                from (
+                    select v.code,v.batch_num
+                    ,count(sn.node_code) total_num
+                    ,count(item.node_code) exec_num
+                    ,max(case when v.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                    from v_jxjc_kcjscgj_shenhe v
+                    left join common_shenhe_node sn on sn.shenhe_code = v.shenhe_code
+                    left join common_shenhe_item item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                    group by v.code,v.batch_num
+                )t
+                left join v_jxjc_kcjscgj_shenhe v on v.code = t.code and v.batch_num = t.batch_num
+                left join common_shenhe_node sn on sn.shenhe_code = v.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
+                <where>1=1
+                    and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
+                    and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end) -- 排除上一级审核状态为“未通过”，“退回”的数据
+                    and ur.user_id = #{shenHeUserId}
+                    <if test="shenheStatus != null and shenheStatus != ''">
+                        <choose>
+                            <when test="shenheStatus == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatus == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <include refid="queryCondition"/>
+                </where>
+                order by shenhe_status desc
+            </when>
+            <otherwise><!-- 提交列表 -->
+                select v.*
+                from v_jxjc_kcjscgj v
+                <where>1=1
+                    <choose>
+                        <when test="status != null and status != '' and status == '待审核'">
+                            and shenhe_code is null
+                        </when>
+                        <when test="status != null and status != ''">
+                            and status = #{status}
+                        </when>
+                    </choose>
+                    <include refid="queryCondition"/>
+                </where>
+            </otherwise>
+        </choose>
+    </select>
+    <sql id="queryCondition">
+        <if test="userId != null and userId != '' and userId !=999999">
+            and v.user_id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            and v.user_name = #{userName}
+        </if>
+        <if test="userUnit != null and userUnit != ''">
+            and v.user_unit = #{userUnit}
+        </if>
+        <if test="courseName != null and courseName != ''">
+            and COURSE_NAME like concat(concat('%',#{courseName}),'%')
+        </if>
+        <if test="awardName != null and awardName != ''">
+            and AWARD_NAME like concat(concat('%',#{awardName}),'%')
+        </if>
+    </sql>
+
+    <insert id="insert">
+          insert into JXJC_KCJSCGJ
+          (CODE, COURSE_NAME, AWARD_NAME, AWARD_LEVEL, WIN_AWARD, CERT_AUTHORITY, AWARD_DATE, USER_ID, USER_NAME, USER_UNIT, CREATE_DATE)
+          values
+          (#{code},#{courseName},#{awardName},#{awardLevel},#{winAward},#{certAuthority},#{awardDate},#{userId},#{userName},#{userUnit},CURRENT_DATE)
+    </insert>
+
+    <update id="update">
+        update JXJC_KCJSCGJ
+        <set>
+            <if test="courseName != null and courseName != ''">
+                COURSE_NAME = #{courseName}
+            </if>
+            <if test="awardName != null and awardName != ''">
+                , AWARD_NAME = #{awardName}
+            </if>
+            <if test="awardLevel != null and awardLevel != ''">
+                , AWARD_LEVEL = #{awardLevel}
+            </if>
+            <if test="winAward !=null and winAward !=''">
+                , WIN_AWARD = #{winAward}
+            </if>
+            <if test="certAuthority !=null and certAuthority !=''">
+                , CERT_AUTHORITY = #{certAuthority}
+            </if>
+            <if test="awardDate !=null">
+                , AWARD_DATE = #{awardDate}
+            </if>
+        </set>
+        where code = #{code}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM JXJC_KCJSCGJ WHERE CODE = #{code}
+    </delete>
+
+</mapper>

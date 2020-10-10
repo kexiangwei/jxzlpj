@@ -78,4 +78,9 @@ public class UserServiceImpl implements UserService {
         List<Menu> menuList = userMapper.getUserMenu(userId);
         return Menu.getMenuTree(menuList);
     }
+
+    @Override
+    public Map<String, Integer> getAuthority(String menuId, String userId) {
+        return userMapper.getAuthority(menuId,userId);
+    }
 }

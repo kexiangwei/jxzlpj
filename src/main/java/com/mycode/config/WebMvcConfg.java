@@ -1,7 +1,6 @@
 package com.mycode.config;
 
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

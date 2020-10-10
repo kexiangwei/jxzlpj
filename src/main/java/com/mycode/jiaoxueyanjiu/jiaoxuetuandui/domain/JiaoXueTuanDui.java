@@ -2,21 +2,21 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.ZjshItem;
+import com.mycode.commonset.shenheSet.domain.ShenHeObj;
+import com.mycode.commonset.shenheSet.domain.ZjshItem;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 教学研究-教学团队
  */
 @Getter
 @Setter
-public class JiaoXueTuanDui {
+public class JiaoXueTuanDui extends ShenHeObj {
 
     //分页参数
     @JsonIgnore

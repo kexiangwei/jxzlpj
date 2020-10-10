@@ -1,8 +1,8 @@
 package com.mycode.jiaoxuejiangcheng.jxjbgbs.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.common.shenhe.service.ShenHeService;
+import com.mycode.commonset.shenheSet.domain.ShenHeItem;
+import com.mycode.commonset.shenheSet.service.ShenHeService;
 import com.mycode.jiaoxuejiangcheng.jxjbgbs.domian.Jxjbgbs;
 import com.mycode.jiaoxuejiangcheng.jxjbgbs.service.JxjbgbsService;
 import com.mycode.util.JsonResult;

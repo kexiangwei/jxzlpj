@@ -1,6 +1,6 @@
 package com.mycode.jiaoxuejiangcheng.jxjbgbs.service;
 
-import com.mycode.common.shenhe.domain.ShenHeItem;
+import com.mycode.commonset.shenheSet.domain.ShenHeItem;
 import com.mycode.jiaoxuejiangcheng.jxjbgbs.domian.Jxjbgbs;
 
 import java.util.List;

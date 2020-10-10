@@ -19,4 +19,6 @@ public interface UserService {
     boolean grant(String userId, String[] roleIdArr);
 
     List<Menu> getUserMenu(String userId);
+
+    Map<String, Integer> getAuthority(String menuId, String userId);
 }

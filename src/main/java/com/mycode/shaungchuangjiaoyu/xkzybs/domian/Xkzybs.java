@@ -2,7 +2,7 @@ package com.mycode.shaungchuangjiaoyu.xkzybs.domian;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mycode.shenhe.domain.ShenHeObj;
+import com.mycode.commonset.shenheSet.domain.ShenHeObj;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;

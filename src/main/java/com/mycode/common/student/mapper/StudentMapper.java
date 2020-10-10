@@ -5,12 +5,17 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 双创教育-学生信息
  */
 @Mapper
 public interface StudentMapper {
+
+    List<Map<String, Object>> getCollege();
+
+    List<Map<String, Object>> getMajor(@Param("collegeCode") String collegeCode);
 
     List<Student> getStudentInfo(@Param("relationCode") String relationCode);
 

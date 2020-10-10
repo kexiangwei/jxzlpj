@@ -26,4 +26,6 @@ public interface UserMapper {
     boolean deleteRoleByUserId(@Param("userId") String userId);
 
     List<Menu> getUserMenu(@Param("userId") String userId);
+
+    Map<String,Integer> getAuthority(@Param("menuId") String menuId, @Param("userId") String userId);
 }

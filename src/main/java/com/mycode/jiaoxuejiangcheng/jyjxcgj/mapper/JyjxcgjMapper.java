@@ -12,14 +12,12 @@ import java.util.List;
 @Mapper
 public interface JyjxcgjMapper {
 
-    List<Jyjxcgj> getPageList(Jyjxcgj obj);
+    List<Jyjxcgj> getPageList(Jyjxcgj jyjxcgj);
 
-    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
+    boolean insert(Jyjxcgj jyjxcgj);
 
-    boolean insert(Jyjxcgj obj);
+    boolean update(Jyjxcgj jyjxcgj);
 
-    boolean update(Jyjxcgj obj);
-
-    boolean delete(@Param("objCode") String objCode);
+    boolean delete(@Param("code") String code);
 
 }
