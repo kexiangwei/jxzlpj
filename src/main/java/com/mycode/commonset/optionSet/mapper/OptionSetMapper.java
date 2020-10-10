@@ -15,11 +15,13 @@ public interface OptionSetMapper {
     //OptionSet
     List<Map<String, Object>> getOptionSetMenuList(@Param("pid") String pid);
 
-    List<Map<String, Object>> getOptionSetList(@Param("menuId") String menuId);
+    List<Map<String, Object>> getOptionSetAttrList(@Param("menuId") String menuId);
 
-    boolean addOptionSet(@Param("menuId") String menuId, @Param("optionCode") String optionCode);
+    List<Map<String, Object>> getOptionSetList(@Param("menuId") String menuId, @Param("attr") String attr);
 
-    boolean delOptionSet(@Param("menuId") String menuId, @Param("optionCode") String optionCode);
+    boolean addOptionSet(@Param("menuId") String menuId, @Param("attr") String attr, @Param("optionCode") String optionCode);
+
+    boolean delOptionSet(@Param("menuId") String menuId, @Param("attr") String attr, @Param("optionCode") String optionCode);
 
     //Option
     List<Map<String, Object>> getOptionPageList();
@@ -30,5 +32,6 @@ public interface OptionSetMapper {
 
     boolean updateOption(@Param("code") String code, @Param("name") String name);
 
-    boolean deleteOption(@Param("code") String code);
+    int deleteOption(@Param("code") String code);
+
 }

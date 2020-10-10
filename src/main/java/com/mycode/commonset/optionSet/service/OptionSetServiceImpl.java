@@ -24,18 +24,23 @@ public class OptionSetServiceImpl implements OptionSetService {
     }
 
     @Override
-    public List<Map<String, Object>> getOptionSetList(String menuId) {
-        return optionSetMapper.getOptionSetList(menuId);
+    public List<Map<String, Object>> getOptionSetAttrList(String menuId) {
+        return optionSetMapper.getOptionSetAttrList(menuId);
     }
 
     @Override
-    public boolean addOptionSet(String menuId, String optionCode) {
-        return optionSetMapper.addOptionSet(menuId,optionCode);
+    public List<Map<String, Object>> getOptionSetList(String menuId, String attr) {
+        return optionSetMapper.getOptionSetList(menuId, attr);
     }
 
     @Override
-    public boolean delOptionSet(String menuId, String optionCode) {
-        return optionSetMapper.delOptionSet(menuId,optionCode);
+    public boolean addOptionSet(String menuId, String attr, String optionCode) {
+        return optionSetMapper.addOptionSet(menuId,attr,optionCode);
+    }
+
+    @Override
+    public boolean delOptionSet(String menuId, String attr, String optionCode) {
+        return optionSetMapper.delOptionSet(menuId,attr,optionCode);
     }
 
     @Override
@@ -60,6 +65,7 @@ public class OptionSetServiceImpl implements OptionSetService {
 
     @Override
     public boolean deleteOption(String code) {
-        return optionSetMapper.deleteOption(code);
+        int execNum = optionSetMapper.deleteOption(code); //mybatis一次对多条数据进行操作成功后返回值为 -1
+        return execNum < 0;
     }
 }

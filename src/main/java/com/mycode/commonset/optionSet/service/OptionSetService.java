@@ -11,11 +11,13 @@ public interface OptionSetService {
     //OptionSet
     List<Map<String, Object>> getOptionSetMenuList(String pid);
 
-    List<Map<String, Object>> getOptionSetList(String menuId);
+    List<Map<String, Object>> getOptionSetAttrList(String menuId);
 
-    boolean addOptionSet(String menuId, String optionCode);
+    List<Map<String, Object>> getOptionSetList(String menuId, String attr);
 
-    boolean delOptionSet(String menuId, String optionCode);
+    boolean addOptionSet(String menuId, String attr, String optionCode);
+
+    boolean delOptionSet(String menuId, String attr, String optionCode);
 
     //Option
     List<Map<String, Object>> getOptionPageList();
@@ -27,4 +29,5 @@ public interface OptionSetService {
     boolean updateOption(String code, String name);
 
     boolean deleteOption(String code);
+
 }

@@ -28,15 +28,21 @@ public class OptionSetController {
         return JsonResult.success(mapList);
     }
 
+    @RequestMapping("/getOptionSetAttrList.do")
+    public JsonResult<Object> getOptionSetAttrList(@RequestParam(value = "menuId") String menuId){
+        List<Map<String, Object>> mapList = optionSetService.getOptionSetAttrList(menuId);
+        return JsonResult.success(mapList);
+    }
+
     @RequestMapping("/getOptionSetList.do")
-    public JsonResult<Object> getOptionSetList(@RequestParam("menuId") String menuId){
-        List<Map<String, Object>> mapList = optionSetService.getOptionSetList(menuId);
+    public JsonResult<Object> getOptionSetList(@RequestParam("menuId") String menuId, @RequestParam("attr") String attr){
+        List<Map<String, Object>> mapList = optionSetService.getOptionSetList(menuId,attr);
         return JsonResult.success(mapList);
     }
 
     @RequestMapping("/addOptionSet.do")
-    public JsonResult<Object> addOptionSet(@RequestParam("menuId") String menuId,@RequestParam("optionCode") String optionCode){
-        boolean bool = optionSetService.addOptionSet(menuId,optionCode);
+    public JsonResult<Object> addOptionSet(@RequestParam("menuId") String menuId, @RequestParam("attr") String attr, @RequestParam("optionCode") String optionCode){
+        boolean bool = optionSetService.addOptionSet(menuId,attr,optionCode);
         if(!bool){
             return JsonResult.error();
         }
@@ -44,8 +50,8 @@ public class OptionSetController {
     }
 
     @RequestMapping("/delOptionSet.do")
-    public JsonResult<Object> delOptionSet(@RequestParam("menuId") String menuId,@RequestParam("optionCode") String optionCode){
-        boolean bool = optionSetService.delOptionSet(menuId,optionCode);
+    public JsonResult<Object> delOptionSet(@RequestParam("menuId") String menuId, @RequestParam("attr") String attr, @RequestParam("optionCode") String optionCode){
+        boolean bool = optionSetService.delOptionSet(menuId,attr,optionCode);
         if(!bool){
             return JsonResult.error();
         }
