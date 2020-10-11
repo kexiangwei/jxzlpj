@@ -8,7 +8,7 @@
                 SELECT NVL(sum(case when ZJ.CREATE_DATE is null then 1 else 0 end), 0)
                 FROM JXYJ_JXTD ct
                 LEFT JOIN COMMON_SHENHE_ITEM it on IT.RELATION_CODE = ct.code
-                LEFT JOIN JXYJ_JXTD_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM  and ZJ.USER_ID = #{shenHeUserId}
+                LEFT JOIN COMMON_SHENHE_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM  and ZJ.USER_ID = #{shenHeUserId}
                 where ct.TYPE = #{type} and IT.SHENHE_TYPE = '初审' and IT.STATUS = '通过'
             </when>
             <otherwise>
@@ -24,7 +24,7 @@
                     LEFT JOIN COMMON_SHENHE_ITEM item ON item.relation_code = v.code AND item.batch_num = v.batch_num AND item.node_code = sn.node_code
                     LEFT JOIN (
                         SELECT xm_code, BATCH_NUM, (CASE WHEN count(0) = (SELECT count(0) FROM SYS_USER_ROLE WHERE role_id = 8) THEN 1 ELSE 0 END) isZjshAll
-                        FROM JXYJ_JXTD_ZJSH GROUP BY xm_code, BATCH_NUM
+                        FROM COMMON_SHENHE_ZJSH GROUP BY xm_code, BATCH_NUM
                     ) zj ON zj.xm_code = v.code AND zj.batch_num = v.batch_num
                     GROUP BY v.code, v.batch_num
                 ) t
@@ -50,7 +50,7 @@
                 ,(case when ps.CREATE_DATE is not null then '已填写' else '未填写' end) reportResult
                 from  v_JXYJ_JXTD_SHENHE v
                 left join COMMON_SHENHE_ITEM it on it.relation_code = v.code and it.batch_num = v.batch_num
-                LEFT JOIN JXYJ_JXTD_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM and ZJ.user_id = #{shenHeUserId}
+                LEFT JOIN COMMON_SHENHE_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM and ZJ.user_id = #{shenHeUserId}
                 LEFT JOIN JXYJ_JXTD_ZJPS ps on ps.relation_code = IT.RELATION_CODE and ps.BATCH_NUM = IT.BATCH_NUM and ps.user_id = #{shenHeUserId}
                 where it.shenhe_type = '初审' and it.STATUS = '通过'
                 <if test="shenheStatus != null and shenheStatus != ''">
@@ -85,7 +85,7 @@
                 LEFT JOIN (
                 SELECT xm_code,BATCH_NUM
                 ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = 8) then 1 else 0 end) isZjshAll
-                from JXYJ_JXTD_ZJSH
+                from COMMON_SHENHE_ZJSH
                 GROUP BY xm_code,BATCH_NUM
                 ) zj on zj.xm_code = v.code and zj.batch_num = v.batch_num
                 GROUP BY v.code,v.batch_num
@@ -199,17 +199,17 @@
 
 
     <select id="getZjshProcess" resultType="com.mycode.commonset.shenheSet.domain.ZjshItem">
-        SELECT * FROM JXYJ_JXTD_ZJSH WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}
+        SELECT * FROM COMMON_SHENHE_ZJSH WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}
     </select>
 
     <select id="isZjshAll" resultType="java.lang.Integer">
         SELECT case when count(ZJSH.USER_ID) = count(ZJ.USER_ID) then 1 else 0 end as isZjshAll
         FROM (SELECT * FROM SYS_USER_ROLE where role_id = 7) zj
-        LEFT JOIN (SELECT * FROM JXYJ_JXTD_ZJSH where XM_CODE = #{relationCode} AND BATCH_NUM = #{batchNum}) zjsh on ZJSH.USER_ID = ZJ.USER_ID
+        LEFT JOIN (SELECT * FROM COMMON_SHENHE_ZJSH where XM_CODE = #{relationCode} AND BATCH_NUM = #{batchNum}) zjsh on ZJSH.USER_ID = ZJ.USER_ID
     </select>
 
     <insert id="toZjShenhe">
-        INSERT INTO JXYJ_JXTD_ZJSH
+        INSERT INTO COMMON_SHENHE_ZJSH
         (XM_CODE,BATCH_NUM,STATUS,OPINION,USER_ID,USER_NAME,CREATE_DATE)
         VALUES
         (#{relationCode},#{batchNum},#{status},#{opinion},#{userId},#{userName},CURRENT_DATE)
