@@ -1,9 +1,7 @@
 package com.mycode.jiaoxuesheji.skjh.mapper;
 
-import com.mycode.common.shenhe.domain.ShenHeNode;
 import com.mycode.jiaoxuesheji.skjh.domian.Skjh;
 import com.mycode.jiaoxuesheji.skjh.domian.SkjhItem;
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

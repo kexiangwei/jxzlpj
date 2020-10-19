@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jiaoxuesheji.kcjxssfa.mapper.KcjxssfaMapper">
+
+    <select id="getPageList" resultType="com.mycode.jiaoxuesheji.kcjxssfa.domian.Kcjxssfa">
+        SELECT * FROM JXSJ_KCJXSSFA
+        <where> 1=1
+            <if test="courseCode != null and courseCode != ''">
+                and COURSE_CODE = #{courseCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="getItemListByRelationCode" resultType="com.mycode.jiaoxuesheji.kcjxssfa.domian.KcjxssfaItem">
+        SELECT * FROM JXSJ_KCJXSSFA_ITEM where RELATION_CODE = #{relationCode}
+    </select>
+
+    <select id="getCourseListByUserId" resultType="com.mycode.jiaoxuesheji.kcjxssfa.domian.Course">
+        SELECT T2.*
+        FROM DATA_TEACHER_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+        WHERE T1.USER_ID =#{userId}
+    </select>
+
+    <insert id="insert">
+          insert into JXSJ_KCJXSSFA
+          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, COURSE_LEADER, TEACH_CLASS, STUDENT_NUM, CLASS_LOCATION, OPEN_COLLEGE
+          , USER_ID, USER_NAME, USER_UNIT, CREATE_DATE)
+          values
+          (#{code},#{courseCode},#{courseName},#{courseAttr},#{courseLeader},#{teachClass},#{studentNum},#{classLocation},#{openCollege}
+          ,#{userId},#{userName},#{userUnit},CURRENT_DATE)
+    </insert>
+    <insert id="insertItem">
+        insert into JXSJ_KCJXSSFA_ITEM
+        (RELATION_CODE, ITEM_CODE, COURSE_NUM, WEEK, WEEK_NUM, LESSON_NUM, LESSON_HOUR, COMMON_DATE
+        , TEACHER, TEACH_TARGET, TEACH_DESIGN, POLITIC_ELEMENT)
+         values
+        (#{code},lower(sys_guid()),#{courseNum},#{week},#{weekNum},#{lessonNum},#{lessonHour},#{commonDate}
+        ,#{teacher},#{teachTarget},#{teachDesign},#{politicElement})
+    </insert>
+</mapper>

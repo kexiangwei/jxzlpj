@@ -2,19 +2,19 @@ package com.mycode.jiaoxuesheji.skjh.domian;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mycode.commonset.shenheSet.domain.ShenHeObj;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 教学设计-授课计划
  */
 @Getter
 @Setter
-public class Skjh {
+public class Skjh extends ShenHeObj {
 
     //分页参数
     @JsonIgnore

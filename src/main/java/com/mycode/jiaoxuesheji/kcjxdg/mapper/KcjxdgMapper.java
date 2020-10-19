@@ -1,6 +1,7 @@
 package com.mycode.jiaoxuesheji.kcjxdg.mapper;
 
 import com.mycode.jiaoxuesheji.kcjxdg.domian.Kcjxdg;
+import com.mycode.shaungchuangjiaoyu.wtbs.domian.Wtbs;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -11,8 +12,6 @@ import java.util.List;
  */
 @Mapper
 public interface KcjxdgMapper {
-
-    int getNotShenHeNum(@Param("shenHeUserId") String shenHeUserId);
 
     List<Kcjxdg> getPageList(Kcjxdg kcjxdg);
 

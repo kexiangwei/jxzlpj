@@ -1,6 +1,6 @@
 package com.mycode.jiaoxuesheji.skjh.service;
 
-import com.mycode.common.shenhe.domain.ShenHeItem;
+import com.mycode.commonset.shenheSet.domain.ShenHeItem;
 import com.mycode.jiaoxuesheji.skjh.domian.Skjh;
 import com.mycode.jiaoxuesheji.skjh.domian.SkjhItem;
 

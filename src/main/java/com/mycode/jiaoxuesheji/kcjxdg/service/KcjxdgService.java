@@ -1,10 +1,8 @@
 package com.mycode.jiaoxuesheji.kcjxdg.service;
 
-import com.mycode.common.shenhe.domain.ShenHeItem;
 import com.mycode.jiaoxuesheji.kcjxdg.domian.Kcjxdg;
-import com.mycode.jiaoxueyanjiu.jiaocaijianshe.domian.JiaoCaiJianShe;
+import com.mycode.shaungchuangjiaoyu.wtbs.domian.Wtbs;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,8 +17,4 @@ public interface KcjxdgService {
     boolean update(Kcjxdg kcjxdg);
 
     boolean delete(String code);
-
-    boolean toSubimt(String activeShenheCode, List<Kcjxdg> kcjxdgList);
-
-    boolean toShenhe(ShenHeItem item, List<Kcjxdg> kcjxdgList);
 }
