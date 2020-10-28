@@ -1,6 +1,6 @@
 package com.mycode.jiaoxuexiaoguo.kcxj.service;
 
-import com.mycode.common.shenhe.domain.ShenHeItem;
+import com.mycode.commonset.shenheSet.domain.ShenHeItem;
 import com.mycode.jiaoxuexiaoguo.kcxj.domian.Kcxj;
 
 import java.util.List;

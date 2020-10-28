@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 教学评价-评教设置
@@ -46,7 +47,7 @@ public class PjSetServiceImpl implements PjSetService {
     public Boolean insertOrUpdateTemplate(PjSetTemplate template, String[] targetCodes) {
         Boolean bool = false;
         if(template != null && StringUtils.isEmpty(template.getTemplateCode())){
-            template.setTemplateCode(StringUtils.guidForDate());
+            template.setTemplateCode(org.springframework.util.StringUtils.replace(UUID.randomUUID().toString(), "-", ""));
             bool = pjSetMapper.insertTemplate(template);
         }else{
             bool = pjSetMapper.updateTemplate(template);
@@ -76,7 +77,7 @@ public class PjSetServiceImpl implements PjSetService {
     public Boolean insertOrUpdateTarget(PjSetTarget target) {
         Boolean bool = false;
         if(target != null && StringUtils.isEmpty(target.getTargetCode())){
-            target.setTargetCode(StringUtils.guidForDate());
+            target.setTargetCode(org.springframework.util.StringUtils.replace(UUID.randomUUID().toString(), "-", ""));
             bool = pjSetMapper.insertTarget(target);
         }else{
             bool = pjSetMapper.updateTarget(target);

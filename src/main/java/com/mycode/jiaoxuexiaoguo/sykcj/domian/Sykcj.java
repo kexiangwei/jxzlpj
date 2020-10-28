@@ -2,6 +2,7 @@ package com.mycode.jiaoxuexiaoguo.sykcj.domian;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mycode.commonset.shenheSet.domain.ShenHeObj;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,7 +11,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class Sykcj {
+public class Sykcj extends ShenHeObj {
 
     //分页参数
     @JsonIgnore

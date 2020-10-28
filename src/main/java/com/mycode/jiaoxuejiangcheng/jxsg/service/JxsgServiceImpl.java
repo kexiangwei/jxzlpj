@@ -30,7 +30,7 @@ public class JxsgServiceImpl implements JxsgService {
         Map<String, Object> resultMap = new HashMap<>();
         Page<Object> pageInfo = PageHelper.startPage(obj.getPageIndex(), obj.getPageSize());
         List<Jxsg> pageList = jxsgMapper.getPageList(obj);
-        resultMap.put("totalNum",pageInfo.getTotal());
+        resultMap.put("totalNum", pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
     }

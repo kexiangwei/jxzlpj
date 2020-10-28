@@ -1,8 +1,8 @@
 package com.mycode.jiaoxuexiaoguo.sykcj;
 
 import com.alibaba.fastjson.JSON;
-import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.common.shenhe.service.ShenHeService;
+import com.mycode.commonset.shenheSet.domain.ShenHeItem;
+import com.mycode.commonset.shenheSet.service.ShenHeService;
 import com.mycode.jiaoxuexiaoguo.sykcj.domian.Sykcj;
 import com.mycode.jiaoxuexiaoguo.sykcj.service.SykcjService;
 import com.mycode.util.JsonResult;

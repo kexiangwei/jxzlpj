@@ -58,7 +58,7 @@ public class AccountController {
             , @RequestParam("verifyCode") String verifyCode
             , @RequestParam("userId") String userId
             , @RequestParam("password") String password, HttpServletRequest request){
-        //
+       /* //
         boolean hasKey = redisUtil.hasKey(token);
         if (hasKey) {
             if(!redisUtil.get(token).toString().equals(verifyCode)){
@@ -66,7 +66,7 @@ public class AccountController {
             }
         }else{
             return JsonResult.error(404," 验证码已超时，请重新获取");
-        }
+        }*/
         //
         User user = null;
         try{

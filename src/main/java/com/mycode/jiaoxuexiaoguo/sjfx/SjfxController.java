@@ -1,8 +1,8 @@
 package com.mycode.jiaoxuexiaoguo.sjfx;
 
 import com.alibaba.fastjson.JSON;
-import com.mycode.common.shenhe.domain.ShenHeItem;
-import com.mycode.common.shenhe.service.ShenHeService;
+import com.mycode.commonset.shenheSet.domain.ShenHeItem;
+import com.mycode.commonset.shenheSet.service.ShenHeService;
 import com.mycode.jiaoxuexiaoguo.sjfx.domian.Sjfx;
 import com.mycode.jiaoxuexiaoguo.sjfx.service.SjfxService;
 import com.mycode.util.JsonResult;
