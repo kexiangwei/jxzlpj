@@ -1,6 +1,5 @@
 package com.mycode.jiaoxuesheji.kcjxssfa.controller;
 
-import com.mycode.jiaoxuesheji.kcjxssfa.domian.Course;
 import com.mycode.jiaoxuesheji.kcjxssfa.domian.Kcjxssfa;
 import com.mycode.jiaoxuesheji.kcjxssfa.domian.KcjxssfaItem;
 import com.mycode.jiaoxuesheji.kcjxssfa.service.KcjxssfaService;
@@ -38,13 +37,6 @@ public class KcjxssfaController {
     public JsonResult<Object> getItemListByRelationCode(@RequestParam("relationCode") String relationCode){
         List<KcjxssfaItem> itemList = kcjxssfaService.getItemListByRelationCode(relationCode);
         return JsonResult.success(itemList);
-    }
-
-    @ResponseBody
-    @RequestMapping("/getCourseListByUserId.do")
-    public JsonResult<Object> getCourseListByUserId(@RequestParam("userId") String userId){
-        List<Course> courseList = kcjxssfaService.getCourseListByUserId(userId);
-        return JsonResult.success(courseList);
     }
 
     @ResponseBody

@@ -12,9 +12,9 @@
                 <when test="tab == 'DATA_MAJOR'">
                     INTO DATA_MAJOR(CODE, NAME, STU_YEAR, EDU_DEGREE, COLLEGE_CODE, COLLEGE_NAME, CREATE_DATE)
                 </when>
-                <when test="tab == 'DATA_CLASS'">
+                <!--<when test="tab == 'DATA_CLASS'">
                     INTO DATA_CLASS(CODE, NAME, HEAD_TEACHER, STUDENT_NUM, GRADE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
-                </when>
+                </when>-->
                 <when test="tab == 'DATA_COURSE'">
                     INTO DATA_COURSE(COURSE_CODE, COURSE_NAME, COURSE_TYPE, STU_HOUR, STU_SCORE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
                 </when>

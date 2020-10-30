@@ -27,10 +27,10 @@ public class EduDataSourceService {
     @Scheduled(cron = "0 0 0 1 * ?") //每月1日00:00执行一次
     public boolean resetEduDataInfo(){
         boolean bool = false;
-        final String[] tabs = {"DATA_COLLEGE","DATA_MAJOR","DATA_CLASS","DATA_COURSE","DATA_TEACHER","DATA_STUDENT","DATA_TEACHER_COURSE","DATA_STUDENT_COURSE"};
+        final String[] tabs = {"DATA_COLLEGE","DATA_MAJOR"/*,"DATA_CLASS"*/,"DATA_COURSE","DATA_TEACHER","DATA_STUDENT","DATA_TEACHER_COURSE","DATA_STUDENT_COURSE"};
         final String[] sql = {"select jg_id,jgmc from jw_user.v_xy"
                 ,"select zyh_id,zymc,xz,null,zy.jg_id,jgmc from jw_user.v_zy zy left join jw_user.v_xy xy on xy.jg_id = zy.jg_id"
-                ,"select bh_id,bj,null,zxrs,njdm_id,bj.zyh_id,zymc,jgmc from jw_user.v_bj bj left join jw_user.v_zy zy on zy.zyh_id = bj.zyh_id left join jw_user.v_xy xy on xy.jg_id = bj.jg_id"
+               /* ,"select bh_id,bj,null,zxrs,njdm_id,bj.zyh_id,zymc,jgmc from jw_user.v_bj bj left join jw_user.v_zy zy on zy.zyh_id = bj.zyh_id left join jw_user.v_xy xy on xy.jg_id = bj.jg_id"*/
                 ,"select kch_id,kcmc,kcxzmc,zxs,xf,null,null,jgmc from jw_user.v_kc kc left join jw_user.v_kcxz kcxz on kcxz.kcxzdm = kc.kch_id left join jw_user.v_xy xy on xy.jg_id = kc.kkbm_id"
                 ,"select jgh_id,xm,null,csrq,null,zcm,null,null,jgmc,null from jw_user.v_jsxx js left join jw_user.v_xy xy on xy.jg_id = js.jg_id"
                 ,"select xh_id,xm,null,csrq,xs.bh_id,bj,xs.njdm_id,xs.zyh_id,zymc,jgmc from jw_user.v_xsxx xs left join jw_user.v_bj bj on bj.bh_id = xs.bh_id left join jw_user.v_zy zy on zy.zyh_id = xs.zyh_id left join jw_user.v_xy xy on xy.jg_id = xs.jg_id"

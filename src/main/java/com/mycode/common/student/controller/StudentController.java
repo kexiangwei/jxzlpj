@@ -4,10 +4,12 @@ import com.mycode.common.student.domian.Student;
 import com.mycode.common.student.service.StudentService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 双创教育-学生信息
@@ -19,25 +21,6 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
-
-    @ResponseBody
-    @RequestMapping("/getCollege.do")
-    public JsonResult<Object> getCollege(){
-        List<Map<String, Object>> maps = studentService.getCollege();
-        return JsonResult.success(maps);
-    }
-
-    /**
-     *
-     * @param collegeCode
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("/getMajor.do")
-    public JsonResult<Object> getMajor(@RequestParam(value = "collegeCode",required = false) String collegeCode){
-        List<Map<String, Object>> maps = studentService.getMajor(collegeCode);
-        return JsonResult.success(maps);
-    }
 
     @RequestMapping("/getStudentInfo.do")
     public JsonResult<Object> getStudentInfo(@RequestParam("relationCode") String relationCode){

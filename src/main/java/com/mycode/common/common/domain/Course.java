@@ -1,11 +1,10 @@
-package com.mycode.jiaoxuesheji.kcjxssfa.domian;
+package com.mycode.common.common.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 教学设计-课程教学实施方案
+ * 教学质量评价-课程信息
  */
 @Getter
 @Setter

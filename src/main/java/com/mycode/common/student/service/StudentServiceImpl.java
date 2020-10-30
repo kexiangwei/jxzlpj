@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 双创教育-学生信息
@@ -16,16 +15,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentMapper studentMapper;
-
-    @Override
-    public List<Map<String, Object>> getCollege() {
-        return studentMapper.getCollege();
-    }
-
-    @Override
-    public List<Map<String, Object>> getMajor(String collegeCode) {
-        return studentMapper.getMajor(collegeCode);
-    }
 
     @Override
     public List<Student> getStudentInfo(String relationCode) {

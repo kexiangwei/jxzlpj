@@ -13,10 +13,6 @@ import java.util.Map;
 @Mapper
 public interface StudentMapper {
 
-    List<Map<String, Object>> getCollege();
-
-    List<Map<String, Object>> getMajor(@Param("collegeCode") String collegeCode);
-
     List<Student> getStudentInfo(@Param("relationCode") String relationCode);
 
     boolean addStudentInfo(Student student);

@@ -15,12 +15,6 @@
         SELECT * FROM JXSJ_KCJXSSFA_ITEM where RELATION_CODE = #{relationCode}
     </select>
 
-    <select id="getCourseListByUserId" resultType="com.mycode.jiaoxuesheji.kcjxssfa.domian.Course">
-        SELECT T2.*
-        FROM DATA_TEACHER_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
-        WHERE T1.USER_ID =#{userId}
-    </select>
-
     <insert id="insert">
           insert into JXSJ_KCJXSSFA
           (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, COURSE_LEADER, TEACH_CLASS, STUDENT_NUM, CLASS_LOCATION, OPEN_COLLEGE

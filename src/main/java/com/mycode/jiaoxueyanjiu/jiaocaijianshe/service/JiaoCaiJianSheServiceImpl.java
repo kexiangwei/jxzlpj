@@ -37,7 +37,7 @@ public class JiaoCaiJianSheServiceImpl implements JiaoCaiJianSheService {
         if(StringUtils.isNotEmpty(jiaoCaiJianShe.getShenHeUserId())){
             map.put("unShenHeNum", shenHeMapper.getNotShenHeNum("V_JXYJ_JCJS_SHENHE", jiaoCaiJianShe.getShenHeUserId()));
         }
-        map.put("totalNum",pageInfo.getTotal());
+        map.put("totalNum", pageInfo.getTotal());
         map.put("pageList", pageList);
         return map;
     }

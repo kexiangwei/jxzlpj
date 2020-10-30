@@ -10,10 +10,6 @@ import java.util.Map;
  */
 public interface StudentService {
 
-    List<Map<String, Object>> getCollege();
-
-    List<Map<String, Object>> getMajor(String collegeCode);
-
     List<Student> getStudentInfo(String relationCode);
 
     boolean addStudentInfo(Student student);

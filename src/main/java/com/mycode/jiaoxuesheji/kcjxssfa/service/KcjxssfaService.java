@@ -1,6 +1,5 @@
 package com.mycode.jiaoxuesheji.kcjxssfa.service;
 
-import com.mycode.jiaoxuesheji.kcjxssfa.domian.Course;
 import com.mycode.jiaoxuesheji.kcjxssfa.domian.Kcjxssfa;
 import com.mycode.jiaoxuesheji.kcjxssfa.domian.KcjxssfaItem;
 
@@ -15,8 +14,6 @@ public interface KcjxssfaService {
     Map<String, Object> getPageList(Kcjxssfa kcjxssfa);
 
     List<KcjxssfaItem> getItemListByRelationCode(String relationCode);
-
-    List<Course> getCourseListByUserId(String userId);
 
     boolean insert(KcjxssfaItem item);
 

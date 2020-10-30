@@ -2,7 +2,6 @@ package com.mycode.jiaoxuesheji.kcjxssfa.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.jiaoxuesheji.kcjxssfa.domian.Course;
 import com.mycode.jiaoxuesheji.kcjxssfa.domian.Kcjxssfa;
 import com.mycode.jiaoxuesheji.kcjxssfa.domian.KcjxssfaItem;
 import com.mycode.jiaoxuesheji.kcjxssfa.mapper.KcjxssfaMapper;
@@ -36,11 +35,6 @@ public class KcjxssfaServiceImpl implements KcjxssfaService {
     @Override
     public List<KcjxssfaItem> getItemListByRelationCode(String relationCode) {
         return kcjxssfaMapper.getItemListByRelationCode(relationCode);
-    }
-
-    @Override
-    public List<Course> getCourseListByUserId(String userId) {
-        return kcjxssfaMapper.getCourseListByUserId(userId);
     }
 
     @Override
