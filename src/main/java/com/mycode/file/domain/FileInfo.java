@@ -19,7 +19,8 @@ public class FileInfo {
          ,filePath;
     private Double fileSize;
     private String userId
-            ,userName;
+            ,userName
+            ,userUnit;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate;
