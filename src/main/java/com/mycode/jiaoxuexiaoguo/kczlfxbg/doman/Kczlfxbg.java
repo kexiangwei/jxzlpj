@@ -35,7 +35,6 @@ public class Kczlfxbg {
     private String userId
             ,userName
             ,userUnit;
-    private Set<String> userGroup;
 
     //数据录入时间
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")

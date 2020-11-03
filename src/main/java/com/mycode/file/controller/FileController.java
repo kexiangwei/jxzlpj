@@ -67,7 +67,6 @@ public class FileController {
                 // 保存文件信息到数据库
                 fileInfo.setCode(code);
                 fileInfo.setFileName(multipartFile.getOriginalFilename());
-                fileInfo.setFileSize(Double.valueOf(multipartFile.getSize())/1024);
                 fileInfo.setFilePath(new StringBuffer("/files/upfile/"+fileInfo.getFileCategory()+"/"+fileInfo.getRelationCode()+"/").append(newFileName).toString());
                 boolean bool = fileService.saveFileInfo(fileInfo);
                 if(!bool){

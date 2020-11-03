@@ -17,10 +17,9 @@ public class FileInfo {
         ,fileType // 二级分类，衬衫要长袖，半袖，花格，白色，黑色，这是二级，这里类比文件类别【结业证书|参会照片|其他文件】
         ,fileName
          ,filePath;
-    private Double fileSize;
+//    private Double fileSize;
     private String userId
-            ,userName
-            ,userUnit;
+            ,userName;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate;

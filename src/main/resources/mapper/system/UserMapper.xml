@@ -25,21 +25,31 @@
     </select>
 
     <select id="getUserById" resultType="com.mycode.system.user.domain.User">
-        select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,user_group
+        select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,max_auth_level,user_group
         from sys_user u
         LEFT JOIN (
-            SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
+
+                SELECT user_id,MIN(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
+                FROM SYS_USER_ROLE ur
+                LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
+                GROUP BY user_id
+
         ) ur on ur.USER_ID = u.USER_ID
         where u.user_id = #{userId}
     </select>
 
     <select id="getUserDetail" resultType="com.mycode.system.user.domain.User">
         <if test="accountType == 'teacher'">
-            select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,user_group
-            ,sex,edu_degree,title,major_name,college_name
+            select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,max_auth_level,user_group
+            ,unit user_unit,major_code,major_name,college_code,college_name
             from sys_user u
             LEFT JOIN (
-                SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
+
+            SELECT user_id,MIN(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
+            FROM SYS_USER_ROLE ur
+            LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
+            GROUP BY user_id
+
             ) ur on ur.USER_ID = u.USER_ID
             LEFT JOIN DATA_TEACHER dt on dt.code = u.USER_ID
             where u.user_id = #{userId}

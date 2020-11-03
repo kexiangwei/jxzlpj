@@ -14,8 +14,6 @@ import java.util.List;
 public class ShenHe {
 
     //
-    private List<ShenHeItem> shenHeItemList = new ArrayList<>();
-    //
     private String shenheCode
             ,relationCode; // 关联的信息编号
     private Integer batchNum;
@@ -25,5 +23,7 @@ public class ShenHe {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createDate;
+    //
+    private List<ShenHeItem> shenHeItemList = new ArrayList<>();
 
 }

@@ -77,7 +77,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/getAuthority.do")
+    @RequestMapping("/getUserAuth.do")
     public JsonResult<Object> getAuthority(@RequestParam("menuId") String menuId,@RequestParam("userId") String userId){
         Map<String, Integer> resultMap = userService.getAuthority(menuId,userId);
         return JsonResult.success(resultMap);

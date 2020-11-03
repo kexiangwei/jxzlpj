@@ -1,4 +1,4 @@
-package com.mycode.jiaoxueyanjiu.jixujiaoyu;
+package com.mycode.jiaoxueyanjiu.jixujiaoyu.controller;
 
 import com.mycode.jiaoxueyanjiu.jixujiaoyu.domian.JiXuJiaoYu;
 import com.mycode.jiaoxueyanjiu.jixujiaoyu.service.JiXuJiaoYuService;

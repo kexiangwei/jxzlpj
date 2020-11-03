@@ -24,9 +24,10 @@ public class ShenHeObj {
     //查询参数
     private String code; //业务编号
     private String shenHeUserId //获取审核列表参数
-            ,userId;
-    private String userName
-            ,userUnit;
+            ,userId
+            ,userName
+            ,userUnit
+            ,maxAuthLevel; //最高权限级别
 
     //逻辑字段
     private String isSubmit //提交状态【已提交 | 未提交】

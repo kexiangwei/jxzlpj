@@ -11,8 +11,6 @@ import java.util.Set;
 @Mapper
 public interface KczlfxbgMapper {
 
-    Set<String> getUserGroup(String userId);
-
     List<Course> getPageList(Kczlfxbg kczlfxbg);
 
     boolean insert(Kczlfxbg kczlfxbg);
