@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper.JiaoXueTuanDuiProvinceMapper">
+
+    <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDuiProvince">
+        <choose>
+            <when test="shenHeUserId !=null and shenHeUserId !='' and isZjshAccount == 1"><!-- 校外专家审核列表 -->
+                SELECT v.*
+                ,(case when ZJ.CREATE_DATE is not null then '已审核' else '未审核' end) shenhe_status
+                from  (
+                    SELECT j.*
+                    ,sh.shenhe_code,sh.batch_num,sh.status
+                    from (
+                        SELECT code,MAX(BATCH_NUM) BATCH_NUM
+                        from JXYJ_JXTD_PROVINCE j
+                        LEFT JOIN COMMON_SHENHE sh on sh.relation_code = j.code
+                        where sh.relation_code is not null
+                        GROUP BY code
+                    ) t
+                    LEFT JOIN JXYJ_JXTD_PROVINCE j on j.code = t.code
+                    LEFT JOIN COMMON_SHENHE sh on sh.RELATION_CODE = t.code and sh.BATCH_NUM = t.BATCH_NUM
+                ) v
+                left join COMMON_SHENHE_ITEM it on it.relation_code = v.code and it.batch_num = v.batch_num
+                LEFT JOIN COMMON_SHENHE_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM and ZJ.user_id = #{shenHeUserId}
+                where it.shenhe_type = '初审' and it.STATUS = '通过'
+                <if test="shenheStatus != null and shenheStatus != ''">
+                    <choose>
+                        <when test="shenheStatus == '已审核'">
+                            and ZJ.xm_code is not null
+                        </when>
+                        <when test="shenheStatus == '未审核'">
+                            and ZJ.xm_code is null
+                        </when>
+                    </choose>
+                </if>
+                <include refid="queryCondition"/>
+            </when>
+            <when test="shenHeUserId !=null and shenHeUserId !=''"><!-- 审核列表 -->
+                SELECT v.*
+                ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+
+                /*,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status_first
+                ,(case when exec_num > exec_level then '已审核'
+                        when exec_num = exec_level and isZjshAll =1 then '未审核' else '待审核' end ) shenhe_status_final*/
+
+                ,(case when exec_num = exec_level and v.status = '未通过' then '未通过'
+                    when exec_num = exec_level and v.status = '退回' then '退回'
+                    when exec_num >= exec_level then '通过' else '未审核' end ) shenhe_status_first
+                ,(case when exec_num > exec_level then v.status
+                    when exec_num = exec_level and (v.status = '未通过' or v.status = '退回') then ''
+                    when exec_num = exec_level and isZjshAll =1 then '未审核' else '待审核' end ) shenhe_status_final
+
+                from (
+                    SELECT v.code,v.batch_num
+                        ,count(sn.node_code) total_num
+                        ,count(item.node_code) exec_num
+                        ,max(case when item.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                        ,max(NVL(isZjshAll, 0)) isZjshAll
+                    from (
+                        SELECT j.*
+                        ,sh.shenhe_code,sh.batch_num,sh.status
+                        from (
+                            SELECT code,MAX(BATCH_NUM) BATCH_NUM
+                            from JXYJ_JXTD_PROVINCE j
+                            LEFT JOIN COMMON_SHENHE sh on sh.relation_code = j.code
+                            where sh.relation_code is not null
+                            GROUP BY code
+                        ) t
+                        LEFT JOIN JXYJ_JXTD_PROVINCE j on j.code = t.code
+                        LEFT JOIN COMMON_SHENHE sh on sh.RELATION_CODE = t.code and sh.BATCH_NUM = t.BATCH_NUM
+                  ) v
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                    left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                    LEFT JOIN (
+                        SELECT xm_code,BATCH_NUM
+                        ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = 3) then 1 else 0 end) isZjshAll
+                        from COMMON_SHENHE_ZJSH
+                        GROUP BY xm_code,BATCH_NUM
+                    ) zj on zj.xm_code = v.code and zj.batch_num = v.batch_num
+                    GROUP BY v.code,v.batch_num
+                )t left join V_JXYJ_JXTD_PROVINCE_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
+                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
+                <where>1=1
+                    and exec_num >= exec_level-1
+                    and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end)
+                    and ur.user_id = #{shenHeUserId}
+                    <if test="shenheStatus != null and shenheStatus != ''">
+                        <choose>
+                            <when test="shenheStatus == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatus == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <if test="shenheStatusFirst != null and shenheStatusFirst != ''">
+                        <choose>
+                            <when test="shenheStatusFirst == '通过'">
+                                and exec_num >= exec_level and v.status = '审核中'
+                            </when>
+                            <when test="shenheStatusFirst == '未通过'">
+                                and exec_num = exec_level and v.status = '未通过'
+                            </when>
+                            <when test="shenheStatusFirst == '退回'">
+                                and exec_num = exec_level and v.status = '退回'
+                            </when>
+                            <!--<when test="shenheStatusFirst == '已审核'">
+                                and exec_num >= exec_level
+                            </when>-->
+                            <when test="shenheStatusFirst == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <if test="shenheStatusFinal != null and shenheStatusFinal != ''">
+                        <choose>
+                            <!--<when test="shenheStatusFinal == '已审核'">
+                                and exec_num > exec_level
+                            </when>-->
+                            <when test="shenheStatusFinal == '未审核'">
+                                and exec_num = exec_level and isZjshAll =1
+                            </when>
+                            <when test="shenheStatusFinal == '待审核'">
+                                /*and exec_num &lt;= exec_level*/ and isZjshAll !=1 /*and v.status != '未通过' and v.status != '退回'*/ and v.status = '审核中'
+                            </when>
+                            <otherwise>/*v.status = '通过' | '未通过' | '退回'*/
+                                and exec_num > exec_level and v.status = #{shenheStatusFinal}
+                            </otherwise>
+                        </choose>
+                    </if>
+                    <include refid="queryCondition"/>
+                </where>
+                ORDER BY shenhe_status DESC
+            </when>
+            <otherwise>
+                SELECT v.*
+                from V_JXYJ_JXTD_PROVINCE v
+                <where> 1=1
+                    <choose>
+                        <when test="status != null and status != '' and status == '待审核'">
+                            and shenhe_code is null
+                        </when>
+                        <when test="status != null and status != ''">
+                            and status = #{status}
+                        </when>
+                    </choose>
+                    <include refid="queryCondition"/>
+                </where>
+            </otherwise>
+        </choose>
+    </select>
+    <sql id="queryCondition">
+        <if test="userId != null and userId != '' and userId != 111">
+            and v.user_id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            and v.user_name = #{userName}
+        </if>
+        <if test="userUnit != null and userUnit != ''">
+            and v.user_unit = #{userUnit}
+        </if>
+        <if test="teamName != null and teamName != ''">
+            and TEAM_NAME like concat(concat('%',#{teamName}),'%')
+        </if>
+    </sql>
+
+    <insert id="insert">
+          insert into JXYJ_JXTD_PROVINCE
+          (CODE, TEAM_NAME, TEAM_LEADER, LEADER_UNIT, CYCLE, BATCH, COMMON_DATE, USER_ID, USER_NAME, USER_UNIT, CREATE_DATE)
+          values
+          (#{code},#{teamName},#{teamLeader},#{leaderUnit},#{cycle},#{batch},#{commonDate},#{userId},#{userName},#{userName},CURRENT_DATE)
+    </insert>
+
+    <update id="update">
+        update JXYJ_JXTD_PROVINCE
+        <set>
+            <if test="teamName != null and teamName != ''">
+                TEAM_NAME = #{teamName}
+            </if>
+            <if test="teamLeader != null and teamLeader != ''">
+                , TEAM_LEADER = #{teamLeader}
+            </if>
+            <if test="leaderUnit != null and leaderUnit != ''">
+                , LEADER_UNIT = #{leaderUnit}
+            </if>
+            <if test="cycle != null and cycle != ''">
+                , CYCLE = #{cycle}
+            </if>
+            <if test="batch !=null and batch !=''">
+                , BATCH = #{batch}
+            </if>
+            <if test="commonDate !=null">
+                , COMMON_DATE = #{commonDate}
+            </if>
+        </set>
+        where code = #{code}
+    </update>
+
+    <delete id="delete">
+        delete from JXYJ_JXTD_PROVINCE where code = #{code}
+    </delete>
+</mapper>
