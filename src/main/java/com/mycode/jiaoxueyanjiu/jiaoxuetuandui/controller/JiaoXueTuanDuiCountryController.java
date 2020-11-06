@@ -1,7 +1,7 @@
 package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.controller;
 
-import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.CountryTeam;
-import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service.CountryTeamService;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDuiCountry;
+import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service.JiaoXueTuanDuiCountryService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,22 +18,22 @@ import java.util.Map;
 @CrossOrigin
 @Controller
 @RequestMapping("/jxyj_jxtd_country")
-public class CountryTeamController {
+public class JiaoXueTuanDuiCountryController {
 
     @Autowired
-    private CountryTeamService countryTeamService;
+    private JiaoXueTuanDuiCountryService jiaoXueTuanDuiCountryService;
 
     @ResponseBody
     @RequestMapping("/getPageList.do")
-    public JsonResult<Object> getPageList(CountryTeam countryTeam){
-        Map<String, Object> resultMap = countryTeamService.getPageList(countryTeam);
+    public JsonResult<Object> getPageList(JiaoXueTuanDuiCountry jiaoXueTuanDuiCountry){
+        Map<String, Object> resultMap = jiaoXueTuanDuiCountryService.getPageList(jiaoXueTuanDuiCountry);
         return JsonResult.success(resultMap);
     }
 
     @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(CountryTeam countryTeam){
-        boolean bool = countryTeamService.insert(countryTeam);
+    public JsonResult<Object> insert(JiaoXueTuanDuiCountry jiaoXueTuanDuiCountry){
+        boolean bool = jiaoXueTuanDuiCountryService.insert(jiaoXueTuanDuiCountry);
         if(!bool){
             return JsonResult.error();
         }
@@ -42,8 +42,8 @@ public class CountryTeamController {
 
     @ResponseBody
     @RequestMapping("/update.do")
-    public JsonResult<Object> update(CountryTeam countryTeam){
-        boolean bool = countryTeamService.update(countryTeam);
+    public JsonResult<Object> update(JiaoXueTuanDuiCountry jiaoXueTuanDuiCountry){
+        boolean bool = jiaoXueTuanDuiCountryService.update(jiaoXueTuanDuiCountry);
         if(!bool){
             return JsonResult.error();
         }
@@ -53,7 +53,7 @@ public class CountryTeamController {
     @ResponseBody
     @RequestMapping("/delete.do")
     public JsonResult<Object> delete(@RequestParam("code") String code){
-        boolean bool = countryTeamService.delete(code);
+        boolean bool = jiaoXueTuanDuiCountryService.delete(code);
         if(!bool){
             return JsonResult.error();
         }

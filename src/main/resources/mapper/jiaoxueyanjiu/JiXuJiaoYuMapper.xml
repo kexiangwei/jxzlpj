@@ -2,6 +2,46 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxueyanjiu.jixujiaoyu.mapper.JiXuJiaoYuMapper">
 
+    <select id="getNotShenHeNumByAuth" resultType="java.lang.Integer">
+        SELECT count(0)
+        from (
+            SELECT j.code,j.batch_num
+            ,count(sn.node_code) total_num
+            ,count(item.node_code) exec_num
+            ,max(case when item.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+            from (
+
+                SELECT j.*
+                ,sh.shenhe_code,sh.batch_num,sh.status
+                from (
+                    SELECT j.code,MAX(BATCH_NUM) BATCH_NUM
+                    from JXYJ_JXJY j
+                    LEFT JOIN COMMON_SHENHE sh on sh.relation_code = j.code
+                    LEFT JOIN DATA_TEACHER dt on DT.code = j.user_id
+                    where sh.relation_code is not null
+                    <if test="maxAuthLevel != null and maxAuthLevel != '' and maxAuthLevel == 6">
+                        and DT.COLLEGE_CODE = #{collegeCode}
+                    </if>
+                    GROUP BY j.code
+                ) t
+                LEFT JOIN JXYJ_JXJY j on j.code = t.code
+                LEFT JOIN COMMON_SHENHE sh on sh.RELATION_CODE = t.code and sh.BATCH_NUM = t.BATCH_NUM
+
+            ) j
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+            group by j.code,j.batch_num
+        )t
+        left join V_JXYJ_JXJY_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
+        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+        left join sys_user_role ur on ur.role_id = sn.role_id
+        where 1=1
+        and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
+        and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end) -- 排除上一级审核状态为“未通过”，“退回”的数据
+        and exec_level > exec_num
+        and ur.user_id = #{shenHeUserId}
+    </select>
+
     <select id="getPageList" resultType="com.mycode.jiaoxueyanjiu.jixujiaoyu.domian.JiXuJiaoYu">
         <choose>
             <when test="shenHeUserId != null and shenHeUserId != ''"><!-- 审核列表 -->
@@ -12,7 +52,25 @@
                     ,count(sn.node_code) total_num
                     ,count(item.node_code) exec_num
                     ,max(case when j.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
-                    from v_jxyj_jxjy_shenhe j
+                    from (
+
+                        SELECT j.*
+                        ,sh.shenhe_code,sh.batch_num,sh.status
+                        from (
+                            SELECT j.code,MAX(BATCH_NUM) BATCH_NUM
+                            from JXYJ_JXJY j
+                            LEFT JOIN COMMON_SHENHE sh on sh.relation_code = j.code
+                            LEFT JOIN DATA_TEACHER dt on DT.code = j.user_id
+                            where sh.relation_code is not null
+                            <if test="maxAuthLevel != null and maxAuthLevel != '' and maxAuthLevel == 6">
+                                and DT.COLLEGE_CODE = #{collegeCode}
+                            </if>
+                            GROUP BY j.code
+                        ) t
+                        LEFT JOIN JXYJ_JXJY j on j.code = t.code
+                        LEFT JOIN COMMON_SHENHE sh on sh.RELATION_CODE = t.code and sh.BATCH_NUM = t.BATCH_NUM
+
+                    ) j
                     left join common_shenhe_node sn on sn.shenhe_code = j.shenhe_code
                     left join common_shenhe_item item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
                     group by j.code,j.batch_num
@@ -55,8 +113,9 @@
             </otherwise>
         </choose>
     </select>
+
     <sql id="queryCondition">
-        <if test="userId != null and userId != '' and userId !=999999">
+        <if test="userId != null and userId != '' and userId !=111">
             and j.user_id = #{userId}
         </if>
         <if test="userName != null and userName != ''">

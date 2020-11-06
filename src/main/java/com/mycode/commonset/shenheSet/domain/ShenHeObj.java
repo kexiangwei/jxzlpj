@@ -27,7 +27,8 @@ public class ShenHeObj {
             ,userId
             ,userName
             ,userUnit
-            ,maxAuthLevel; //最高权限级别
+            ,maxAuthLevel //最高权限级别
+            ,collegeCode; //学院编号
 
     //逻辑字段
     private String isSubmit //提交状态【已提交 | 未提交】

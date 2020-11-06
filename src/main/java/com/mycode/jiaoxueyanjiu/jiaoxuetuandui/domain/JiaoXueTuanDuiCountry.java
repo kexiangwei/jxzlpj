@@ -16,11 +16,10 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class CountryTeam extends ShenHeObj {
+public class JiaoXueTuanDuiCountry extends ShenHeObj {
 
     //业务字段
-    private String menuId
-            ,code //业务编号
+    private String code //业务编号
             ,teamName //团队名称
             ,teamLeader //团队负责人
             ,leaderUnit //单位

@@ -24,19 +24,17 @@ public class JiXuJiaoYuServiceImpl implements JiXuJiaoYuService {
     @Autowired
     private JiXuJiaoYuMapper jiXuJiaoYuMapper;
     @Autowired
-    private ShenHeMapper shenHeMapper;
-    @Autowired
     private FileMapper fileMapper;
 
     @Override
     public Map<String, Object> getPageList(JiXuJiaoYu jiXuJiaoYu) {
         Map<String, Object> map = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(jiXuJiaoYu.getPageIndex(), jiXuJiaoYu.getPageSize());
-        List<JiXuJiaoYu> pageList = jiXuJiaoYuMapper.getPageList(jiXuJiaoYu);
         //获取未审核数
         if(StringUtils.isNotEmpty(jiXuJiaoYu.getShenHeUserId())){
-            map.put("unShenHeNum", shenHeMapper.getNotShenHeNum("V_JXYJ_JXJY_SHENHE", jiXuJiaoYu.getShenHeUserId()));
+            map.put("unShenHeNum", jiXuJiaoYuMapper.getNotShenHeNumByAuth(jiXuJiaoYu.getShenHeUserId(),jiXuJiaoYu.getMaxAuthLevel(),jiXuJiaoYu.getCollegeCode()));
         }
+        Page<Object> pageInfo = PageHelper.startPage(jiXuJiaoYu.getPageIndex(), jiXuJiaoYu.getPageSize());
+        List<JiXuJiaoYu> pageList = jiXuJiaoYuMapper.getPageList(jiXuJiaoYu);
         map.put("totalNum",pageInfo.getTotal());
         map.put("pageList", pageList);
         return map;

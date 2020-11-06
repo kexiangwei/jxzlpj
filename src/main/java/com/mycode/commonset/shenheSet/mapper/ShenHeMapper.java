@@ -53,38 +53,26 @@ public interface ShenHeMapper {
 
     boolean changeStatus(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum, @Param("status") String status);
 
-    //有专家审核时调用（教学团队）
-    int getNotShenHeNum(@Param("viewName") String viewName, @Param("shenHeUserId") String shenHeUserId
-            , @Param("isZjshAccount") Integer isZjshAccount, @Param("jwcGly") Integer jwcGly, @Param("menuId") String menuId);
     //有专家审核时调用
-    default int getNotShenHeNum(@Param("viewName") String viewName, @Param("shenHeUserId") String shenHeUserId
-            , @Param("isZjshAccount") Integer isZjshAccount, @Param("jwcGly") Integer jwcGly){
-        return this.getNotShenHeNum(viewName,shenHeUserId,isZjshAccount,jwcGly,null);
-    }
+    int getNotShenHeNum(@Param("viewName") String viewName, @Param("shenHeUserId") String shenHeUserId
+            , @Param("isZjshAccount") Integer isZjshAccount, @Param("jwcGly") Integer jwcGly);
     //有审核流程时调用
     default int getNotShenHeNum(@Param("viewName") String viewName, @Param("shenHeUserId") String shenHeUserId){
-        return this.getNotShenHeNum(viewName,shenHeUserId,null,null,null);
+        return this.getNotShenHeNum(viewName,shenHeUserId,null,null);
     }
 
     @ResultType(Integer.class)
-    @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 1 AND USER_ID = #{shenHeUserId}")
+    @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 4 AND USER_ID = #{shenHeUserId}")
     Integer isJwcGly(@Param("shenHeUserId") String shenHeUserId);
 
     @ResultType(Integer.class)
-    @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 7 AND USER_ID = #{shenHeUserId}")
+    @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 3 AND USER_ID = #{shenHeUserId}")
     Integer isZjAccount(@Param("shenHeUserId") String shenHeUserId);
-
-    @ResultType(Integer.class)
-    @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 8 AND USER_ID = #{shenHeUserId}")
-    Integer isJXTD_ZjAccount(@Param("shenHeUserId") String shenHeUserId);
 
     @ResultType(ZjshItem.class)
     @Select("SELECT * FROM COMMON_SHENHE_ZJSH WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}")
     List<ZjshItem> getZjshProcess(@Param("xmCode") String xmCode, @Param("batchNum") Integer batchNum);
 
-    Integer isZjshAll(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum, @Param("flag") String flag);
+    Integer isZjshAll(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum);
 
-    default Integer isZjshAll(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum){
-        return this.isZjshAll(relationCode,batchNum,null);
-    }
 }

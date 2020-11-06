@@ -23,7 +23,7 @@
                     LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
                     LEFT JOIN COMMON_SHENHE_ITEM item ON item.relation_code = v.code AND item.batch_num = v.batch_num AND item.node_code = sn.node_code
                     LEFT JOIN (
-                        SELECT xm_code, BATCH_NUM, (CASE WHEN count(0) = (SELECT count(0) FROM SYS_USER_ROLE WHERE role_id = 8) THEN 1 ELSE 0 END) isZjshAll
+                        SELECT xm_code, BATCH_NUM, (CASE WHEN count(0) = (SELECT count(0) FROM SYS_USER_ROLE WHERE role_id = 3) THEN 1 ELSE 0 END) isZjshAll
                         FROM COMMON_SHENHE_ZJSH GROUP BY xm_code, BATCH_NUM
                     ) zj ON zj.xm_code = v.code AND zj.batch_num = v.batch_num
                     GROUP BY v.code, v.batch_num
@@ -84,7 +84,7 @@
                 left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
                 LEFT JOIN (
                 SELECT xm_code,BATCH_NUM
-                ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = 8) then 1 else 0 end) isZjshAll
+                ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = 3) then 1 else 0 end) isZjshAll
                 from COMMON_SHENHE_ZJSH
                 GROUP BY xm_code,BATCH_NUM
                 ) zj on zj.xm_code = v.code and zj.batch_num = v.batch_num
@@ -153,7 +153,7 @@
         </choose>
     </select>
     <sql id="queryCondition">
-        <if test="userId != null and userId != '' and userId !=999999">
+        <if test="userId != null and userId != '' and userId !=111">
             and v.user_id = #{userId}
         </if>
         <if test="userName != null and userName != ''">
@@ -204,7 +204,7 @@
 
     <select id="isZjshAll" resultType="java.lang.Integer">
         SELECT case when count(ZJSH.USER_ID) = count(ZJ.USER_ID) then 1 else 0 end as isZjshAll
-        FROM (SELECT * FROM SYS_USER_ROLE where role_id = 7) zj
+        FROM (SELECT * FROM SYS_USER_ROLE where role_id = 3) zj
         LEFT JOIN (SELECT * FROM COMMON_SHENHE_ZJSH where XM_CODE = #{relationCode} AND BATCH_NUM = #{batchNum}) zjsh on ZJSH.USER_ID = ZJ.USER_ID
     </select>
 

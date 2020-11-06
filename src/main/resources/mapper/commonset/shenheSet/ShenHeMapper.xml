@@ -73,9 +73,6 @@
                 LEFT JOIN COMMON_SHENHE_ITEM it on IT.RELATION_CODE = ct.code
                 LEFT JOIN COMMON_SHENHE_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM  and ZJ.USER_ID = #{shenHeUserId}
                 where IT.SHENHE_TYPE = '初审' and IT.STATUS = '通过'
-                <if test="menuId != null and menuId != ''">
-                    and MENU_ID = #{menuId}
-                </if>
             </when>
             <when test="jwcGly !=null and jwcGly == 1">
                 SELECT NVL(sum(case when shenhe_status_first = '未审核' or shenhe_status_final = '未审核' then 1 else 0 end), 0)
@@ -97,15 +94,10 @@
                         left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
                         LEFT JOIN (
                             SELECT xm_code,BATCH_NUM
-                            ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = NVL2(${menuId},8,7)) then 1 else 0 end) isZjshAll
+                            ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = 3) then 1 else 0 end) isZjshAll
                             from COMMON_SHENHE_ZJSH
                             GROUP BY xm_code,BATCH_NUM
                         ) zj on zj.xm_code = v.code and zj.batch_num = v.batch_num
-                <where> 1=1
-                    <if test="menuId != null and menuId != ''">
-                        and MENU_ID = #{menuId}
-                    </if>
-                </where>
                         GROUP BY v.code,v.batch_num
                     )t left join ${viewName} v on v.code = t.code and v.batch_num = t.batch_num
                     left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
@@ -126,11 +118,6 @@
                     from ${viewName} j
                     left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
                     left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-                <where> 1=1
-                    <if test="menuId != null and menuId != ''">
-                        and MENU_ID = #{menuId}
-                    </if>
-                </where>
                     group by j.code,j.batch_num
                 )t
                 left join ${viewName} j on j.code = t.code and j.batch_num = t.batch_num
@@ -147,7 +134,7 @@
 
     <select id="isZjshAll" resultType="java.lang.Integer">
         SELECT case when count(ZJSH.USER_ID) = count(ZJ.USER_ID) then 1 else 0 end as isZjshAll
-        FROM (SELECT * FROM SYS_USER_ROLE where role_id = NVL2(#{flag},8,7)) zj
+        FROM (SELECT * FROM SYS_USER_ROLE where role_id = 3) zj
         LEFT JOIN (
           SELECT * FROM COMMON_SHENHE_ZJSH WHERE XM_CODE = #{relationCode} AND BATCH_NUM = #{batchNum}
         ) zjsh on ZJSH.USER_ID = ZJ.USER_ID

@@ -12,6 +12,8 @@ import java.util.List;
 @Mapper
 public interface JiXuJiaoYuMapper {
 
+    Integer getNotShenHeNumByAuth(@Param("shenHeUserId") String shenHeUserId, @Param("maxAuthLevel") String maxAuthLevel, @Param("collegeCode") String collegeCode);
+
     List<JiXuJiaoYu> getPageList(JiXuJiaoYu jiXuJiaoYu);
 
     boolean insert(JiXuJiaoYu jiXuJiaoYu);
@@ -19,5 +21,4 @@ public interface JiXuJiaoYuMapper {
     boolean update(JiXuJiaoYu jiXuJiaoYu);
 
     boolean delete(@Param("code") String code);
-
 }
