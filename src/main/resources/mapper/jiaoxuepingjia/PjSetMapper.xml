@@ -34,6 +34,7 @@
         delete from JXPJ_PJSET_TEMPLATE_TARGET where TEMPLATE_CODE = #{templateCode}
     </delete>
 
+
     <select id="getPjSetTemplateList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
         select t.*
         ,(case when XS.TEMPLATE_CODE is not null or th.TEMPLATE_CODE is not null then 1 else 2 end) is_exec
@@ -70,8 +71,10 @@
         end;
     </delete>
 
+
     <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
-        select t.*,(case when tt.template_code is not null then 1 else 2 end) is_bind
+        select t.*
+        ,(case when tt.template_code is not null then 1 else 2 end) is_bind_template
         from JXPJ_PJSET_TARGET t LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on tt.target_code = t.TARGET_CODE
         <where>1=1
             <if test="targetType !=null and targetType !=''">

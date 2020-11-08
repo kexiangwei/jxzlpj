@@ -31,20 +31,25 @@ public class PjSetController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/getExecTemplate.do")
+    @RequestMapping("/getActiveTemplate.do")
     public JsonResult<Object> getExecTemplate(@RequestParam("templateType") String templateType){
-        String templateCode = pjSetService.isPjDate(templateType); //是否评教时间（即查看当前是否有执行中的模板信息）
+        String templateCode = pjSetService.isPjDate(templateType); //当前是否评教时间（即查看当前是否有执行中的模板信息）
         if(StringUtils.isEmpty(templateCode)){
             return JsonResult.error("暂无可用模板");
         }
-        List<PjSetTarget> pjSetTargetList = pjSetService.getExecTemplate(templateCode);
+        List<PjSetTarget> pjSetTargetList = pjSetService.getActiveTemplate(templateCode);
         return JsonResult.success(pjSetTargetList);
     }
 
+    /**
+     *
+     * @param template
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getPjSetTemplateList.do")
-    public JsonResult<Object> getPjSetTemplateList(PjSetTemplate pjSetTemplate){
-        Map<String, Object> resultMap = pjSetService.getPjSetTemplateList(pjSetTemplate);
+    public JsonResult<Object> getPjSetTemplateList(PjSetTemplate template){
+        Map<String, Object> resultMap = pjSetService.getPjSetTemplateList(template);
         return JsonResult.success(resultMap);
     }
 
@@ -69,10 +74,15 @@ public class PjSetController {
         return JsonResult.success("删除成功",null);
     }
 
+    /**
+     *
+     * @param target
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getPjSetTargetList.do")
-    public JsonResult<Object> getPjSetTargetList(PjSetTarget pjSetTarget){
-        List<PjSetTarget> mapList = pjSetService.getPjSetTargetList(pjSetTarget);
+    public JsonResult<Object> getPjSetTargetList(PjSetTarget target){
+        List<PjSetTarget> mapList = pjSetService.getPjSetTargetList(target);
         return JsonResult.success(mapList);
     }
 

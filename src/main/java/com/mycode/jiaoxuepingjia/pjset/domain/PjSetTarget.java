@@ -14,7 +14,7 @@ import java.util.Date;
 @Setter
 public class PjSetTarget {
     //
-    private Integer isBind; //是否绑定模板（即是否可执行编辑&删除操作），取值：【1已绑定，2未绑定】
+    private Integer isBindTemplate; //是否绑定模板（即是否可执行编辑&删除操作），取值：【1已绑定，2未绑定】
     private String templateCode;
     //
     private String targetCode

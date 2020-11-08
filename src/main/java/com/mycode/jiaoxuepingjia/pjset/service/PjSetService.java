@@ -13,7 +13,8 @@ public interface PjSetService {
 
     String isPjDate(String templateType);
 
-    List<PjSetTarget> getExecTemplate(String templateCode);
+    List<PjSetTarget> getActiveTemplate(String templateCode);
+
 
     Map<String, Object> getPjSetTemplateList(PjSetTemplate pjSetTemplate);
 
@@ -21,7 +22,8 @@ public interface PjSetService {
 
     Boolean deleteTemplate(String templateCode);
 
-    List<PjSetTarget> getPjSetTargetList(PjSetTarget pjSetTarget);
+
+    List<PjSetTarget> getPjSetTargetList(PjSetTarget target);
 
     Boolean insertOrUpdateTarget(PjSetTarget target);
 

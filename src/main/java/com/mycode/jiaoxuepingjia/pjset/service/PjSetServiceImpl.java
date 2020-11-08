@@ -29,15 +29,20 @@ public class PjSetServiceImpl implements PjSetService {
     }
 
     @Override
-    public List<PjSetTarget> getExecTemplate(String templateCode) {
+    public List<PjSetTarget> getActiveTemplate(String templateCode) {
         return pjSetMapper.getPjSetTargetListByTemplateCode(templateCode); //根据模板编号获取模板信息
     }
 
+    /**
+     *
+     * @param template
+     * @return
+     */
     @Override
-    public Map<String, Object> getPjSetTemplateList(PjSetTemplate pjSetTemplate) {
+    public Map<String, Object> getPjSetTemplateList(PjSetTemplate template) {
         Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(pjSetTemplate.getPageIndex(), pjSetTemplate.getPageSize());
-        List<PjSetTemplate> pageList = pjSetMapper.getPjSetTemplateList(pjSetTemplate);
+        Page<Object> pageInfo = PageHelper.startPage(template.getPageIndex(), template.getPageSize());
+        List<PjSetTemplate> pageList = pjSetMapper.getPjSetTemplateList(template);
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);
         return resultMap;
@@ -46,8 +51,11 @@ public class PjSetServiceImpl implements PjSetService {
     @Override
     public Boolean insertOrUpdateTemplate(PjSetTemplate template, String[] targetCodes) {
         Boolean bool = false;
-        if(template != null && StringUtils.isEmpty(template.getTemplateCode())){
-            template.setTemplateCode(org.springframework.util.StringUtils.replace(UUID.randomUUID().toString(), "-", ""));
+        if(template == null){
+            return bool;
+        }
+        if(StringUtils.isEmpty(template.getTemplateCode())){
+            template.setTemplateCode(String.valueOf(System.currentTimeMillis()));
             bool = pjSetMapper.insertTemplate(template);
         }else{
             bool = pjSetMapper.updateTemplate(template);
@@ -68,16 +76,24 @@ public class PjSetServiceImpl implements PjSetService {
         return execNum < 0;
     }
 
+    /**
+     *
+     * @param target
+     * @return
+     */
     @Override
-    public List<PjSetTarget> getPjSetTargetList(PjSetTarget pjSetTarget) {
-        return pjSetMapper.getPjSetTargetList(pjSetTarget);
+    public List<PjSetTarget> getPjSetTargetList(PjSetTarget target) {
+        return pjSetMapper.getPjSetTargetList(target);
     }
 
     @Override
     public Boolean insertOrUpdateTarget(PjSetTarget target) {
         Boolean bool = false;
-        if(target != null && StringUtils.isEmpty(target.getTargetCode())){
-            target.setTargetCode(org.springframework.util.StringUtils.replace(UUID.randomUUID().toString(), "-", ""));
+        if(target == null){
+            return bool;
+        }
+        if(StringUtils.isEmpty(target.getTargetCode())){
+            target.setTargetCode(String.valueOf(System.currentTimeMillis()));
             bool = pjSetMapper.insertTarget(target);
         }else{
             bool = pjSetMapper.updateTarget(target);
