@@ -22,7 +22,7 @@ public class Thpj {
                 ,teacherCollege
                 ,courseCode
                 ,courseName
-                ,courseType
+                ,courseAttr
                 ,stuClass;
     private Integer teachYear
                 ,teachMonth
@@ -39,12 +39,14 @@ public class Thpj {
     private String dpTeacher
                 ,dpStudent
                 ,dpClassroom;
+
+    private List<Map<String,Object>> thpjItemList;
+
     private String userId
                 ,userName;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
-    private List<Map<String,Object>> thpjItemList;
 
 }

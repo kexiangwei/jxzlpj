@@ -15,11 +15,13 @@ public class ThpjQuery {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-
+    //评审状态
+    private Integer isPj; //1已评2未评
+    private String pjCode; //评教编号
     //业务字段
     private String courseCode //课程编号
             ,courseName //课程名称
-            ,courseType //课程性质
+            ,courseAttr //课程性质
             ,teacherCode //任课教师编号
             ,teacher //任课教师姓名
             ,teacherAge //教师年龄
@@ -28,7 +30,5 @@ public class ThpjQuery {
             ,teacherCollege //教师所在学院
             ,teachDate //上课时间
             ,teachAddr; //上课地点
-    //评审状态
-    private Integer isPj; //1已评2未评
-    private String pjCode; //评教编号
+
 }

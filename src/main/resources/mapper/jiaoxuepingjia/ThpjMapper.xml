@@ -3,10 +3,11 @@
 <mapper namespace="com.mycode.jiaoxuepingjia.thpj.mapper.ThpjMapper">
 
     <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery">
-        SELECT c.course_code,c.course_name,c.course_type
-        ,t.CODE teacher_code,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
+        SELECT t.CODE teacher_code,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
+        ,c.course_code,c.course_name,c.course_attr
         ,jh.dates teach_date,jh.teach_addr
-        ,(case when th.create_date is not null then 1 else 2 end) is_pj,th.code as pj_code
+        ,(case when th.create_date is not null then 1 else 2 end) is_pj
+        ,th.code as pj_code
         FROM DATA_TEACHER_COURSE tc
         LEFT JOIN DATA_TEACHER t on t.CODE = TC.USER_ID
         LEFT JOIN DATA_COURSE c on c.course_code = tc.course_code
@@ -25,7 +26,7 @@
                 and t.name = #{teacher}
             </if>
             <if test="teacherAge !=null and teacherAge !=''">
-                  <choose>
+                  <!--<choose>
                       <when test="teacherAge == '55岁及以上'">
                           and t.age >= 55
                       </when>
@@ -38,19 +39,22 @@
                       <when test="teacherAge == '34岁及以下'">
                           and t.age &lt;= 34
                       </when>
-                  </choose>
+                  </choose>-->
             </if>
             <if test="teacherTitle !=null and teacherTitle !=''">
-                and t.title = #{teacherTitle}
+--                 and t.title = #{teacherTitle}
             </if>
             <if test="courseName !=null and courseName !=''">
                 and c.course_name like concat(concat('%',#{courseName}),'%')
             </if>
-            <if test="courseType !=null and courseType !=''">
-                and c.course_type = #{courseType}
+            <if test="courseAttr !=null and courseAttr !=''">
+                and c.course_attr = #{courseAttr}
             </if>
             <if test="teachDate !=null and teachDate !=''">
                 and jh.dates = to_date(#{teachDate}, 'yyyy-MM-dd')
+            </if>
+            <if test="teachAddr !=null and teachAddr !=''">
+                and jh.teach_addr = #{teachAddr}
             </if>
         </where>
     </select>
