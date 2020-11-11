@@ -5,15 +5,11 @@
     <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery">
         SELECT t.CODE teacher_code,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
         ,c.course_code,c.course_name,c.course_attr
-        ,jh.dates teach_date,jh.teach_addr
-        ,(case when th.create_date is not null then 1 else 2 end) is_pj
+        ,(case when th.code is not null then 1 else 2 end) is_pj
         ,th.code as pj_code
         FROM DATA_TEACHER_COURSE tc
         LEFT JOIN DATA_TEACHER t on t.CODE = TC.USER_ID
         LEFT JOIN DATA_COURSE c on c.course_code = tc.course_code
-        LEFT JOIN (
-            SELECT * FROM JXSJ_SKJH jh LEFT JOIN JXSJ_SKJH_ITEM it on it.relation_code = jh.code
-        ) jh on jh.course_code = c.course_code and jh.teacher = t.name
         LEFT JOIN JXPJ_THPJ th on teacher_CODE = TC.USER_ID and th.course_code = tc.course_code
         <where>1=1
             <if test="teacherCollege !=null and teacherCollege !=''">
@@ -26,7 +22,7 @@
                 and t.name = #{teacher}
             </if>
             <if test="teacherAge !=null and teacherAge !=''">
-                  <!--<choose>
+                  <choose>
                       <when test="teacherAge == '55岁及以上'">
                           and t.age >= 55
                       </when>
@@ -39,10 +35,10 @@
                       <when test="teacherAge == '34岁及以下'">
                           and t.age &lt;= 34
                       </when>
-                  </choose>-->
+                  </choose>
             </if>
             <if test="teacherTitle !=null and teacherTitle !=''">
---                 and t.title = #{teacherTitle}
+                and t.title = #{teacherTitle}
             </if>
             <if test="courseName !=null and courseName !=''">
                 and c.course_name like concat(concat('%',#{courseName}),'%')
@@ -50,30 +46,39 @@
             <if test="courseAttr !=null and courseAttr !=''">
                 and c.course_attr = #{courseAttr}
             </if>
-            <if test="teachDate !=null and teachDate !=''">
+            <!--<if test="teachDate !=null and teachDate !=''">
                 and jh.dates = to_date(#{teachDate}, 'yyyy-MM-dd')
             </if>
             <if test="teachAddr !=null and teachAddr !=''">
                 and jh.teach_addr = #{teachAddr}
-            </if>
+            </if>-->
         </where>
     </select>
 
     <select id="getThpjInfo" resultType="com.mycode.jiaoxuepingjia.thpj.domian.Thpj">
-        SELECT * FROM JXPJ_THPJ where CODE = #{pjCode}
+        SELECT * FROM JXPJ_THPJ where CODE = #{code}
     </select>
     <select id="getThpjItemListByRelationCode" resultType="java.util.Map">
-        select NVL(TARGET_CODE,'totalScore') as "targetCode",sum(ANSWER) as "answer"
+        select NVL(TARGET_CODE,'totalScore') as "targetCode"
+        ,sum(ANSWER) as "answer"
         from JXPJ_THPJ_ITEM
-        where RELATION_CODE = #{pjCode}
+        where RELATION_CODE = #{relationCode}
         GROUP BY rollup(TARGET_CODE)
     </select>
 
     <insert id="insert">
-        insert into JXPJ_THPJ (CODE, TEACHER_CODE, TEACHER, TEACHER_COLLEGE, COURSE_CODE, COURSE_NAME, COURSE_TYPE, STU_CLASS, TEACH_YEAR, TEACH_MONTH, TEACH_DAY, TEACH_WEEKNUM, TEACH_WEEK, TEACH_LESSONNUM, TEACH_HOUSE, TEACH_CLASSROOM, STU_YINGDAO, STU_SHIDAO, STU_CHIDAO, STU_QUEKE, DP_TEACHER, DP_STUDENT, DP_CLASSROOM, USER_ID, USER_NAME, CREATE_DATE)
+        insert into JXPJ_THPJ
+        (CODE, TEMPLATE_CODE, TEACHER_CODE, TEACHER, TEACHER_COLLEGE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, STU_CLASS
+        , TEACH_YEAR, TEACH_MONTH, TEACH_DAY, TEACH_WEEKNUM, TEACH_WEEK, TEACH_LESSONNUM, TEACH_HOUSE, TEACH_CLASSROOM
+        , STU_YINGDAO, STU_SHIDAO, STU_CHIDAO, STU_QUEKE
+        , DP_TEACHER, DP_STUDENT, DP_CLASSROOM
+        , USER_ID, USER_NAME, CREATE_DATE)
         values
         (
-        #{code},#{teacherCode},#{teacher},#{teacherCollege},#{courseCode},#{courseName},#{courseType},#{stuClass},#{teachYear},#{teachMonth},#{teachDay},#{teachWeekNum},#{teachWeek},#{teachLessonNum},#{teachHouse},#{teachClassroom},#{stuYingdao},#{stuShidao},#{stuChidao},#{stuQueke},#{dpTeacher},#{dpStudent},#{dpClassroom},#{userId},#{userName},CURRENT_DATE
+        #{code},#{templateCode},#{teacherCode},#{teacher},#{teacherCollege},#{courseCode},#{courseName},#{courseAttr},#{stuClass}
+        ,#{teachYear},#{teachMonth},#{teachDay},#{teachWeekNum},#{teachWeek},#{teachLessonNum},#{teachHouse},#{teachClassroom}
+        ,#{stuYingdao},#{stuShidao},#{stuChidao},#{stuQueke},#{dpTeacher},#{dpStudent},#{dpClassroom}
+        ,#{userId},#{userName},CURRENT_DATE
         )
     </insert>
     <insert id="insertTarget">
@@ -81,30 +86,12 @@
         <foreach collection="pjSetTargetList" index="idx" item="obj">
             <foreach collection="paramMap" index="key"  item="val">
                 <if test="key == obj.targetCode">
-                    INTO JXPJ_THPJ_ITEM (RELATION_CODE,TEMPLATE_CODE,TARGET_CODE,ANSWER,USER_ID,USER_NAME,CREATE_DATE)
-                    VALUES(#{thpj.code,jdbcType=VARCHAR},#{obj.templateCode,jdbcType=VARCHAR},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR}
-                    ,#{thpj.userId,jdbcType=VARCHAR},#{thpj.userName,jdbcType=VARCHAR},CURRENT_DATE)
+                    INTO JXPJ_THPJ_ITEM(RELATION_CODE,TARGET_CODE,ANSWER)
+                    VALUES (#{relationCode},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
                 </if>
             </foreach>
         </foreach>
         select 1 from dual
     </insert>
-
-    <update id="update">
-        update JXPJ_THPJ
-        <set>
-            <if test="testName != null and testName != ''">
-                test_name = #{testName}
-            </if>
-            <if test="remark != null">
-                , remark = #{remark}
-            </if>
-        </set>
-        where code = #{code}
-    </update>
-
-    <delete id="delete">
-        delete from JXPJ_THPJ where code = #{code}
-    </delete>
 
 </mapper>

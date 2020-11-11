@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public interface PjSetService {
 
-    String isPjDate(String templateType);
+    String getActiveTemplateCode(String templateType);
 
     List<PjSetTarget> getActiveTemplate(String templateCode);
 

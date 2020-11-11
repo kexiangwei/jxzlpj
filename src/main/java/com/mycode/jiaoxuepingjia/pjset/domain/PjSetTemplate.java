@@ -16,6 +16,7 @@ import java.util.Date;
 public class PjSetTemplate {
     //
     private Integer isActive; //模板是否启用（即是否可执行编辑&删除操作），取值：【1是，2否】
+
     //分页参数
     @JsonIgnore
     private Integer pageIndex=1

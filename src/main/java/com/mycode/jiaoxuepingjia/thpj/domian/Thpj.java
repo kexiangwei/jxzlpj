@@ -17,13 +17,14 @@ import java.util.Map;
 public class Thpj {
 
     private String code
+                ,templateCode //使用的模板编号
                 ,teacherCode
                 ,teacher
                 ,teacherCollege
                 ,courseCode
                 ,courseName
                 ,courseAttr
-                ,stuClass;
+                ,stuClass; //学生班级
     private Integer teachYear
                 ,teachMonth
                 ,teachDay

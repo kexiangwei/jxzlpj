@@ -26,14 +26,14 @@ public class PjSetController {
     private PjSetService pjSetService;
 
     /**
-     * 获取当前可执行模板信息
+     * 获取当前可用模板信息
      * @param templateType 模板类型，可选值【学生评教，同行评教】
      * @return
      */
     @ResponseBody
     @RequestMapping("/getActiveTemplate.do")
     public JsonResult<Object> getExecTemplate(@RequestParam("templateType") String templateType){
-        String templateCode = pjSetService.isPjDate(templateType); //当前是否评教时间（即查看当前是否有执行中的模板信息）
+        String templateCode = pjSetService.getActiveTemplateCode(templateType); //当前是否评教时间（即查看当前是否有执行中的模板信息）
         if(StringUtils.isEmpty(templateCode)){
             return JsonResult.error("暂无可用模板");
         }

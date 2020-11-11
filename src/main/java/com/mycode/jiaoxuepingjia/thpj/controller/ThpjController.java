@@ -35,17 +35,16 @@ public class ThpjController {
 
     @ResponseBody
     @RequestMapping("/detail.do")
-    public JsonResult<Object> detail(@RequestParam("pjCode") String pjCode){
-        Thpj thpj = thpjService.detail(pjCode);
+    public JsonResult<Object> detail(@RequestParam("code") String code){
+        Thpj thpj = thpjService.detail(code);
         return JsonResult.success(thpj);
     }
 
     @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(Thpj thpj,@RequestParam("templateCode") String templateCode
-            , @RequestParam("jsonStr") String jsonStr){
+    public JsonResult<Object> insert(Thpj thpj, @RequestParam("jsonStr") String jsonStr){
         Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
-        boolean bool = thpjService.insert(thpj,templateCode, paramMap);
+        boolean bool = thpjService.insert(thpj, paramMap);
         if(!bool){
             return JsonResult.error("新增失败");
         }

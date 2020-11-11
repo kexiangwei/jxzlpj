@@ -3,20 +3,13 @@
 <mapper namespace="com.mycode.jiaoxuepingjia.pjset.mapper.PjSetMapper">
 
     <!-- 查看当前是否有可用的模板信息 -->
-    <select id="isPjDate" resultType="java.lang.String">
+    <select id="getActiveTemplateCode" resultType="java.lang.String">
         select template_code
         from JXPJ_PJSET_TEMPLATE
         where template_type = #{templateType} and end_date > current_date
     </select>
 
-    <select id="getThpjTemplateByPjCode" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
-        SELECT DISTINCT t.*
-        FROM JXPJ_THPJ_ITEM it
-        LEFT JOIN JXPJ_PJSET_TEMPLATE t on t.TEMPLATE_CODE = IT.TEMPLATE_CODE
-        WHERE RELATION_CODE = #{pjCode}
-    </select>
-
-    <!-- 根据模板编号获取模板信息 -->
+    <!-- 模板&指标操作 -->
     <select id="getPjSetTargetListByTemplateCode" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
         select tt.TEMPLATE_CODE,t.*
         from jxpj_pjset_template_target tt left join jxpj_pjset_target t on t.target_code = tt.target_code
@@ -34,13 +27,16 @@
         delete from JXPJ_PJSET_TEMPLATE_TARGET where TEMPLATE_CODE = #{templateCode}
     </delete>
 
-
+    <!--模板-->
     <select id="getPjSetTemplateList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
-        select t.*
-        ,(case when XS.TEMPLATE_CODE is not null or th.TEMPLATE_CODE is not null then 1 else 2 end) is_exec
+        /*select t.*
+        ,(case when th.TEMPLATE_CODE is not null or XS.TEMPLATE_CODE is not null then 1 else 2 end) is_active
         from JXPJ_PJSET_TEMPLATE t
-        LEFT JOIN (SELECT DISTINCT TEMPLATE_CODE FROM JXPJ_XSPJ) xs on XS.TEMPLATE_CODE = t.TEMPLATE_CODE
         LEFT JOIN (SELECT DISTINCT TEMPLATE_CODE FROM JXPJ_THPJ_ITEM) th on th.TEMPLATE_CODE = t.TEMPLATE_CODE
+        LEFT JOIN (SELECT DISTINCT TEMPLATE_CODE FROM JXPJ_XSPJ) xs on XS.TEMPLATE_CODE = t.TEMPLATE_CODE*/
+        select t.*
+        ,(case when end_date > current_date then 1 else 2 end) is_active
+        from JXPJ_PJSET_TEMPLATE t
     </select>
     <insert id="insertTemplate">
         insert into JXPJ_PJSET_TEMPLATE (TEMPLATE_CODE, TEMPLATE_TYPE, TEMPLATE_NAME, START_DATE, END_DATE, CREATE_DATE)
@@ -71,11 +67,11 @@
         end;
     </delete>
 
-
+    <!--指标-->
     <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
         select t.*
         ,(case when tt.template_code is not null then 1 else 2 end) is_bind_template
-        from JXPJ_PJSET_TARGET t LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on tt.target_code = t.TARGET_CODE
+        from JXPJ_PJSET_TARGET t LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on tt.target_code = t.target_code
         <where>1=1
             <if test="targetType !=null and targetType !=''">
                 and TARGET_TYPE = #{targetType}

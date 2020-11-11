@@ -13,9 +13,8 @@ import java.util.List;
 @Mapper
 public interface PjSetMapper {
 
-    String isPjDate(@Param("templateType") String templateType);
+    String getActiveTemplateCode(@Param("templateType") String templateType);
 
-    PjSetTemplate getThpjTemplateByPjCode(@Param("pjCode") String pjCode);
 
     List<PjSetTarget> getPjSetTargetListByTemplateCode(@Param("templateCode") String templateCode);
 

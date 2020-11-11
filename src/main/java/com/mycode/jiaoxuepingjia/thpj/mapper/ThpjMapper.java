@@ -1,6 +1,7 @@
 package com.mycode.jiaoxuepingjia.thpj.mapper;
 
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget;
+import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate;
 import com.mycode.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,19 +18,19 @@ public interface ThpjMapper {
 
     List<ThpjQuery> getPageList(ThpjQuery thpjQuery);
 
-    Thpj getThpjInfo(@Param("pjCode") String pjCode);
+    Thpj getThpjInfo(@Param("code") String code);
 
-    List<Map<String,Object>> getThpjItemListByRelationCode(@Param("pjCode") String pjCode);
+    List<Map<String,Object>> getThpjItemListByRelationCode(@Param("relationCode") String relationCode);
 
     boolean insert(Thpj thpj);
 
-    boolean insertTarget(@Param("thpj") Thpj thpj, @Param("pjSetTargetList") List<PjSetTarget> pjSetTargetList, @Param("paramMap") Map<String, Object> paramMap);
+    boolean insertTarget(@Param("relationCode") String relationCode, @Param("pjSetTargetList") List<PjSetTarget> pjSetTargetList, @Param("paramMap") Map<String, Object> paramMap);
 
-    boolean update(Thpj thpj);
 
-    boolean delete(@Param("code") String code);
+    String getThpjTemplateCode(String code);
 
     List<Map<String, Object>> getThpjTargetList(@Param("templateCode") String templateCode);
+
 
     List<Map<String, Object>> getTeacherBar(@Param("menuName") String menuName, @Param("userId") String userId);
 

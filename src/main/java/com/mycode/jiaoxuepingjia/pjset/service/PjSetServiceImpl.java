@@ -24,8 +24,8 @@ public class PjSetServiceImpl implements PjSetService {
     private PjSetMapper pjSetMapper;
 
     @Override
-    public String isPjDate(String templateType) {
-        return pjSetMapper.isPjDate(templateType);
+    public String getActiveTemplateCode(String templateType) {
+        return pjSetMapper.getActiveTemplateCode(templateType);
     }
 
     @Override
@@ -59,12 +59,14 @@ public class PjSetServiceImpl implements PjSetService {
             bool = pjSetMapper.insertTemplate(template);
         }else{
             bool = pjSetMapper.updateTemplate(template);
-        }
-        if(bool && targetCodes !=null){ //
-            List<PjSetTarget> targetList = pjSetMapper.getPjSetTargetListByTemplateCode(template.getTemplateCode());
-            if(targetList !=null && targetList.size() >0){
-                bool = pjSetMapper.deleteTemplateTargetByTemplateCode(template.getTemplateCode());
+            if(bool && targetCodes !=null){ //
+                List<PjSetTarget> targetList = pjSetMapper.getPjSetTargetListByTemplateCode(template.getTemplateCode());
+                if(targetList !=null && targetList.size() >0){
+                    bool = pjSetMapper.deleteTemplateTargetByTemplateCode(template.getTemplateCode());
+                }
             }
+        }
+        if(bool && targetCodes !=null){
             bool = pjSetMapper.insertTemplateTarget(template.getTemplateCode(),targetCodes);
         }
         return bool;

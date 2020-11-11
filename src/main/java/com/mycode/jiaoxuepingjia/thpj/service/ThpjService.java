@@ -14,19 +14,19 @@ public interface ThpjService {
 
     Map<String, Object> getPageList(ThpjQuery thpjQuery);
 
-    Thpj detail(String pjCode);
+    Thpj detail(String code);
 
-    boolean insert(Thpj thpj, String templateCode, Map<String,Object> paramMap);
+    boolean insert(Thpj thpj, Map<String,Object> paramMap);
 
-    boolean update(Thpj thpj);
+   /* boolean update(Thpj thpj);
 
-    boolean delete(String code);
+    boolean delete(String code);*/
 
-    String isPjDate();
 
-    PjSetTemplate getThpjTemplateByPjCode(String pjCode);
+    String getThpjTemplateCode(String code);
 
     List<Map<String, Object>> getThpjTargetList(String templateCode);
+
 
     List<Map<String, Object>> getTeacherBar(String menuName, String userId);
 

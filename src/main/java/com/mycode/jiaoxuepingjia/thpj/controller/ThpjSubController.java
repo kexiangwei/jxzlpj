@@ -1,6 +1,7 @@
 package com.mycode.jiaoxuepingjia.thpj.controller;
 
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate;
+import com.mycode.jiaoxuepingjia.pjset.service.PjSetService;
 import com.mycode.jiaoxuepingjia.thpj.service.ThpjService;
 import com.mycode.util.JsonResult;
 import com.mycode.util.StringUtils;
@@ -24,20 +25,22 @@ public class ThpjSubController {
 
     @Autowired
     private ThpjService thpjService;
+    @Autowired
+    private PjSetService pjSetService;
 
     /**
      *
-     * @param pjCode 查询详情时使用的参数
+     * @param code 查询详情时使用的参数
      * @return
      */
     @ResponseBody
     @RequestMapping("/getThpjTargetList.do")
-    public JsonResult<Object> getThpjTargetList(@RequestParam(value = "pjCode",required = false) String pjCode){
+    public JsonResult<Object> getThpjTargetList(@RequestParam(value = "code",required = false) String code){
         String templateCode = null;
-        if(StringUtils.isEmpty(pjCode)){
-            templateCode = thpjService.isPjDate(); //是否评教时间（即查看当前是否有执行中的模板信息）
+        if(StringUtils.isEmpty(code)){
+            templateCode = pjSetService.getActiveTemplateCode("同行评教");
         } else {
-            templateCode = thpjService.getThpjTemplateByPjCode(pjCode).getTemplateCode();
+            templateCode = thpjService.getThpjTemplateCode(code); //城头变幻大王旗
         }
         if(StringUtils.isEmpty(templateCode)){
             return JsonResult.error("暂无可用模板");
@@ -71,7 +74,7 @@ public class ThpjSubController {
      *
      * @param menuName
      * @param userId
-     * @param status 审核状态【待审核、审核中、通过、未通过、退回】
+     * @param status 审核状态【通过、未通过、退回】
      * @return
      */
     @ResponseBody

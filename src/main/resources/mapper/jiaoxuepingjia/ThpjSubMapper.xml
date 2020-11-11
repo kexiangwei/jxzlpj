@@ -2,6 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuepingjia.thpj.mapper.ThpjMapper">
 
+    <select id="getThpjTemplateCode" resultType="java.lang.String">
+        SELECT TEMPLATE_CODE from JXPJ_THPJ WHERE CODE = #{code}
+    </select>
+
     <!--
     返回值：name 指标名称
         num 指标名称关联的指标项个数
@@ -20,44 +24,39 @@
     <select id="getTeacherBar" resultType="java.util.Map">
         <choose>
             <when test="menuName == '教学研究'">
-                SELECT 'JXYJ_JXJY' tab_name,'继续教育' tab_comment,count(ROWNUM) num FROM JXYJ_JXJY where USER_ID = #{userId}
-                UNION ALL SELECT 'JXYJ_JGXM' tab_name,'教改项目校级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM where USER_ID = #{userId}
-                UNION ALL SELECT 'JXYJ_JGXM_CITY' tab_name,'教改项目市级' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM_CITY where USER_ID = #{userId}
-                UNION ALL SELECT 'JXYJ_JGLW' tab_name,'教改论文' tab_comment,count(ROWNUM) num FROM JXYJ_JGLW  where USER_ID = #{userId}
-                UNION ALL SELECT 'JXYJ_JCJS' tab_name,'教材建设' tab_comment,count(ROWNUM) num FROM JXYJ_JCJS  where USER_ID = #{userId}
-                UNION ALL SELECT 'JXYJ_JXTD' tab_name,'教学团队申报' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = #{userId} and TYPE = 'declare'
-                UNION ALL SELECT 'JXYJ_JXTD' tab_name,'教学团队年度报告' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD  where USER_ID = #{userId} and TYPE = 'report'
+                SELECT 'JXYJ_JXJY' tab_name,'继续教育' tab_comment,count(ROWNUM) num FROM JXYJ_JXJY where USER_ID = 888
+                UNION ALL SELECT 'JXYJ_JGXM_COUNTRY' tab_name,'国家级教改项目' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM_COUNTRY where USER_ID = 888
+                UNION ALL SELECT 'JXYJ_JGXM_PROVINCE' tab_name,'省部级教改项目' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM_PROVINCE where USER_ID = 888
+                UNION ALL SELECT 'JXYJ_JGXM_SCHOOL' tab_name,'校级教改项目' tab_comment,count(ROWNUM) num FROM JXYJ_JGXM_SCHOOL where USER_ID = 888
+                UNION ALL SELECT 'JXYJ_JGLW' tab_name,'教改论文' tab_comment,count(ROWNUM) num FROM JXYJ_JGLW  where USER_ID = 888
+                UNION ALL SELECT 'JXYJ_JCJS' tab_name,'教材建设' tab_comment,count(ROWNUM) num FROM JXYJ_JCJS  where USER_ID = 888
+                UNION ALL SELECT 'JXYJ_JXTD_COUNTRY' tab_name,'国家级教学团队' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD_COUNTRY  where USER_ID = 888
+                UNION ALL SELECT 'JXYJ_JXTD_PROVINCE' tab_name,'省部级教学团队' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD_PROVINCE  where USER_ID = 888
+                UNION ALL SELECT 'JXYJ_JXTD_SCHOOL' tab_name,'校级教学团队' tab_comment,count(ROWNUM) num FROM JXYJ_JXTD_SCHOOL  where USER_ID = 888
             </when>
-            <when test="menuName == '教学设计'"><!-- SELECT 'JXSJ_SKJH' tab_name,'授课计划' tab_comment,count(ROWNUM) num FROM JXSJ_SKJH where USER_ID = #{userId} UNION ALL -->
-                SELECT 'JXSJ_KCSSJH' tab_name,'课程实施计划' tab_comment,count(ROWNUM) num FROM JXSJ_KCSSJH where USER_ID = #{userId}
-                UNION ALL SELECT 'JXSJ_KCJXDG' tab_name,'课程教学大纲' tab_comment,count(ROWNUM) num FROM JXSJ_KCJXDG where USER_ID = #{userId}
+            <when test="menuName == '教学设计'">
+
             </when>
             <when test="menuName == '教学效果'">
-                SELECT 'JXXG_SJFX' tab_name,'试卷分析' tab_comment,count(ROWNUM) num FROM JXXG_SJFX where USER_ID = #{userId}
-                UNION ALL SELECT 'JXXG_KCXJ' tab_name,'课程小结' tab_comment,count(ROWNUM) num FROM JXXG_SJFX where USER_ID = #{userId}
-                UNION ALL SELECT 'JXXG_SYKCJ' tab_name,'实验课成绩' tab_comment,count(ROWNUM) num FROM JXXG_SJFX where USER_ID = #{userId}
+
             </when>
         </choose>
     </select>
 
     <select id="getTeacherPie" resultType="java.util.Map">
-        SELECT s.STATUS as "name",nvl(sum(dsh+shz+tg+wtg+th),0) as "value"
+        SELECT s.STATUS as "name",nvl(sum(tg+wtg+th),0) as "value"
         FROM (
-            select '待审核' status from dual
-            union all select '审核中' status from dual
-            union all select '通过' status from dual
+            select '通过' status from dual
             union all select '未通过' status from dual
             union all select '退回' status from dual
         ) s LEFT JOIN (
             SELECT (case when STATUS is not null then STATUS else '待审核' end) STATUS
-            ,sum(case when SHENHE_CODE is null then 1 else 0 end) dsh
-            ,sum(case when STATUS = '审核中' then 1 else 0 end) shz
             ,sum(case when STATUS = '通过' then 1 else 0 end) tg
             ,sum(case when STATUS = '未通过' then 1 else 0 end) wtg
             ,sum(case when STATUS = '退回' then 1 else 0 end) th
             FROM
             <include refid="sql"/>
-            and USER_ID = #{userId}
+            and USER_ID = 888
             GROUP BY STATUS
         ) t on t.status = s.STATUS GROUP BY s.STATUS
     </select>
@@ -70,11 +69,14 @@
             <when test="menuName == '继续教育'">
                 'JXYJ_JXJY'
             </when>
-            <when test="menuName == '教改项目校级'">
-                'JXYJ_JGXM'
+            <when test="menuName == '国家级教改项目'">
+                'JXYJ_JGXM_COUNTRY'
             </when>
-            <when test="menuName == '教改项目市级'">
-                'JXYJ_JGXM_CITY'
+            <when test="menuName == '省部级教改项目'">
+                'JXYJ_JGXM_PROVINCE'
+            </when>
+            <when test="menuName == '校级教改项目'">
+                'JXYJ_JGXM_SCHOOL'
             </when>
             <when test="menuName == '教改论文'">
                 'JXYJ_JGLW'
@@ -82,42 +84,26 @@
             <when test="menuName == '教材建设'">
                 'JXYJ_JCJS'
             </when>
-            <when test="menuName == '教学团队申报' or menuName == '教学团队年度报告'">
-                'JXYJ_JXTD'
+            <when test="menuName == '国家级教学团队'">
+                'JXYJ_JXTD_COUNTRY'
             </when>
-            <!--<when test="menuName == '授课计划'">
-                'XSJ_SKJH'
-            </when>-->
-            <when test="menuName == '课程实施计划'">
-                'JXSJ_KCSSJH'
+            <when test="menuName == '省部级教学团队'">
+                'JXYJ_JXTD_PROVINCE'
             </when>
-            <when test="menuName == '课程教学大纲'">
-                'JXSJ_KCJXDG'
-            </when>
-            <when test="menuName == '试卷分析'">
-                'JXXG_SJFX'
-            </when>
-            <when test="menuName == '课程小结'">
-                'JXXG_KCXJ'
-            </when>
-            <when test="menuName == '实验课成绩'">
-                'JXXG_SYKCJ'
+            <when test="menuName == '校级教学团队'">
+                'JXYJ_JXTD_SCHOOL'
             </when>
         </choose>
     </select>
+
     <select id="getTeacherTabData" resultType="java.util.Map">
         SELECT *
         FROM
         <include refid="sql"/>
-        <choose>
-            <when test="status != null and status != '' and status == '待审核'">
-                and status is null
-            </when>
-            <when test="status != null and status != ''">
-                and status = #{status}
-            </when>
-        </choose>
-        and USER_ID = #{userId}
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        and USER_ID = 888
     </select>
 
     <sql id="sql">
@@ -125,11 +111,14 @@
             <when test="menuName == '继续教育'">
                 V_JXYJ_JXJY where 1=1
             </when>
-            <when test="menuName == '教改项目校级'">
-                V_JXYJ_JGXM where 1=1
+            <when test="menuName == '国家级教改项目'">
+                V_JXYJ_JGXM_COUNTRY where 1=1
             </when>
-            <when test="menuName == '教改项目市级'">
-                V_JXYJ_JGXM_CITY where 1=1
+            <when test="menuName == '省部级教改项目'">
+                V_JXYJ_JGXM_PROVINCE where 1=1
+            </when>
+            <when test="menuName == '校级教改项目'">
+                V_JXYJ_JGXM_SCHOOL where 1=1
             </when>
             <when test="menuName == '教改论文'">
                 V_JXYJ_JGLW where 1=1
@@ -137,29 +126,14 @@
             <when test="menuName == '教材建设'">
                 V_JXYJ_JCJS where 1=1
             </when>
-            <when test="menuName == '教学团队申报'">
-                V_JXYJ_JXTD where 1=1 and TYPE = 'declare'
+            <when test="menuName == '国家级教学团队'">
+                V_JXYJ_JXTD_COUNTRY where 1=1
             </when>
-            <when test="menuName == '教学团队年度报告'">
-                V_JXYJ_JXTD where 1=1 and TYPE = 'report'
+            <when test="menuName == '省部级教学团队'">
+                V_JXYJ_JXTD_PROVINCE where 1=1
             </when>
-            <!--<when test="menuName == '授课计划'">
-                V_JXSJ_SKJH where 1=1
-            </when>-->
-            <when test="menuName == '课程实施计划'">
-                V_JXSJ_KCSSJH where 1=1
-            </when>
-            <when test="menuName == '课程教学大纲'">
-                V_JXSJ_KCJXDG where 1=1
-            </when>
-            <when test="menuName == '试卷分析'">
-                V_JXXG_SJFX where 1=1
-            </when>
-            <when test="menuName == '课程小结'">
-                V_JXXG_KCXJ where 1=1
-            </when>
-            <when test="menuName == '实验课成绩'">
-                V_JXXG_SYKCJ where 1=1
+            <when test="menuName == '校级教学团队'">
+                V_JXYJ_JXTD_SCHOOL where 1=1
             </when>
         </choose>
     </sql>

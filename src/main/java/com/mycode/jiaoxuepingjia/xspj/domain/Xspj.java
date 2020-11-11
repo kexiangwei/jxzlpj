@@ -18,17 +18,19 @@ public class Xspj {
     //查询字段
     private String accountType //账号类别
             ,userId
-            ,userName;
+            ,userName
+            ,userUnit;
+    private Integer isPj; //评教状态【1已评2未评】
     //业务字段
     private String courseCode //课程编号
             ,courseName //课程名称
-            ,courseType //课程类型
+            ,courseAttr //课程类型
             ,stuHour //学时
             ,stuScore //学分
             ,majorName
             ,collegeName
             ,teacherNames; //学生身份登录返回的字段：本课程所有任课教师的姓名
-    private Integer isPj; //评教状态【1已评2未评】
+
 
     //
 

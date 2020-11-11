@@ -38,26 +38,26 @@ public class ThpjServiceImpl implements ThpjService {
     }
 
     @Override
-    public Thpj detail(String pjCode) {
-        Thpj thpj = thpjMapper.getThpjInfo(pjCode);
+    public Thpj detail(String code) {
+        Thpj thpj = thpjMapper.getThpjInfo(code);
         if(thpj != null){
-            List<Map<String,Object>> thpjItemList = thpjMapper.getThpjItemListByRelationCode(pjCode);
+            List<Map<String,Object>> thpjItemList = thpjMapper.getThpjItemListByRelationCode(code);
             thpj.setThpjItemList(thpjItemList);
         }
         return thpj;
     }
 
     @Override
-    public boolean insert(Thpj thpj, String templateCode, Map<String, Object> paramMap) {
+    public boolean insert(Thpj thpj, Map<String, Object> paramMap) {
         boolean bool = thpjMapper.insert(thpj);
         if(bool){
-            List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(templateCode);
-            bool = thpjMapper.insertTarget(thpj, pjSetTargetList, paramMap);
+            List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
+            bool = thpjMapper.insertTarget(thpj.getCode(), pjSetTargetList, paramMap);
         }
         return bool;
     }
 
-    @Override
+   /* @Override
     public boolean update(Thpj thpj) {
         return thpjMapper.update(thpj);
     }
@@ -65,16 +65,11 @@ public class ThpjServiceImpl implements ThpjService {
     @Override
     public boolean delete(String code) {
         return thpjMapper.delete(code);
-    }
+    }*/
 
     @Override
-    public String isPjDate() {
-        return pjSetMapper.isPjDate("同行评教");
-    }
-
-    @Override
-    public PjSetTemplate getThpjTemplateByPjCode(String pjCode) {
-        return pjSetMapper.getThpjTemplateByPjCode(pjCode);
+    public String getThpjTemplateCode(String code) {
+        return thpjMapper.getThpjTemplateCode(code);
     }
 
     @Override
@@ -106,6 +101,7 @@ public class ThpjServiceImpl implements ThpjService {
     public List<Map<String, Object>> getTeacherTab(String menuName) {
         return thpjMapper.getTeacherTab(menuName);
     }
+
     @Override
     public List<Map<String, Object>> getTeacherTabData(String menuName, String userId, String status) {
         return thpjMapper.getTeacherTabData(menuName,userId,status);
