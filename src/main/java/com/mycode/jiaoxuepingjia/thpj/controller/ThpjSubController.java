@@ -49,7 +49,7 @@ public class ThpjSubController {
         return JsonResult.success(thpjTargetList);
     }
 
-    @ResponseBody
+    /*@ResponseBody
     @RequestMapping("/getTeacherBar.do")
     public JsonResult<Object> getTeacherBar(@RequestParam("menuName") String menuName, @RequestParam("userId") String userId){
         List<Map<String, Object>> teacherBar = thpjService.getTeacherBar(menuName, userId);
@@ -61,28 +61,21 @@ public class ThpjSubController {
     public JsonResult<Object> getTeacherPie(@RequestParam("menuName") String menuName, @RequestParam("userId") String userId){
         List<Map<String, Object>> teacherPie = thpjService.getTeacherPie(menuName, userId);
         return JsonResult.success(teacherPie);
+    }*/
+
+    @ResponseBody
+    @RequestMapping("/getTableCols.do")
+    public JsonResult<Object> getTableCols(@RequestParam("tableName") String tableName){
+        List<Map<String, Object>> tableCols = thpjService.getTableCols(tableName);
+        return JsonResult.success(tableCols);
     }
 
     @ResponseBody
-    @RequestMapping("/getTeacherTab.do")
-    public JsonResult<Object> getTeacherTab(@RequestParam("menuName") String menuName){
-        List<Map<String, Object>> teacherTab = thpjService.getTeacherTab(menuName);
-        return JsonResult.success(teacherTab);
+    @RequestMapping("/getTableDatas.do")
+    public JsonResult<Object> getTeacherTabData(@RequestParam("viewName") String viewName, @RequestParam("userId") String userId){
+        List<Map<String, Object>> tableDatas = thpjService.getTableDatas(viewName, userId);
+        return JsonResult.success(tableDatas);
     }
 
-    /**
-     *
-     * @param menuName
-     * @param userId
-     * @param status 审核状态【通过、未通过、退回】
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("/getTeacherTabData.do")
-    public JsonResult<Object> getTeacherTabData(@RequestParam("menuName") String menuName, @RequestParam("userId") String userId
-            , @RequestParam(value = "status",required = false) String status){
-        List<Map<String, Object>> teacherTab = thpjService.getTeacherTabData(menuName, userId, status);
-        return JsonResult.success(teacherTab);
-    }
 
 }

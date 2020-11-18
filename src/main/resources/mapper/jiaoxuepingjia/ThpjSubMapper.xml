@@ -12,7 +12,7 @@
         score 指标名称关联的指标项分数合计
     最后按照‘一二三...’排序。
     -->
-    <select id="getThpjTargetList" resultType="java.util.Map">
+    <select id="getPjzb" resultType="java.util.Map">
         SELECT TARGET_NAME as "name",count(0) as "num",sum(TARGET_SCORE) as "score"
         FROM JXPJ_PJSET_TEMPLATE_TARGET tt
         LEFT JOIN JXPJ_PJSET_TARGET t on t.TARGET_CODE = TT.TARGET_CODE
@@ -21,7 +21,7 @@
         order by decode(SUBSTR(TARGET_NAME, 0, 1),'一',1,'二',2,'三',3,'四',4,'五',5,'六',6,'七',7,'八',8,'九',9,'零',0)
     </select>
 
-    <select id="getTeacherBar" resultType="java.util.Map">
+    <!--<select id="getTeacherBar" resultType="java.util.Map">
         <choose>
             <when test="menuName == '教学研究'">
                 SELECT 'JXYJ_JXJY' tab_name,'继续教育' tab_comment,count(ROWNUM) num FROM JXYJ_JXJY where USER_ID = 888
@@ -50,91 +50,56 @@
             union all select '未通过' status from dual
             union all select '退回' status from dual
         ) s LEFT JOIN (
-            SELECT (case when STATUS is not null then STATUS else '待审核' end) STATUS
+            SELECT STATUS
             ,sum(case when STATUS = '通过' then 1 else 0 end) tg
             ,sum(case when STATUS = '未通过' then 1 else 0 end) wtg
             ,sum(case when STATUS = '退回' then 1 else 0 end) th
             FROM
-            <include refid="sql"/>
-            and USER_ID = 888
+            <choose>
+                <when test="menuName == '继续教育'">
+                    V_JXYJ_JXJY
+                </when>
+                <when test="menuName == '国家级教改项目'">
+                    V_JXYJ_JGXM_COUNTRY
+                </when>
+                <when test="menuName == '省部级教改项目'">
+                    V_JXYJ_JGXM_PROVINCE
+                </when>
+                <when test="menuName == '校级教改项目'">
+                    V_JXYJ_JGXM_SCHOOL
+                </when>
+                <when test="menuName == '教改论文'">
+                    V_JXYJ_JGLW
+                </when>
+                <when test="menuName == '教材建设'">
+                    V_JXYJ_JCJS
+                </when>
+                <when test="menuName == '国家级教学团队'">
+                    V_JXYJ_JXTD_COUNTRY
+                </when>
+                <when test="menuName == '省部级教学团队'">
+                    V_JXYJ_JXTD_PROVINCE
+                </when>
+                <when test="menuName == '校级教学团队'">
+                    V_JXYJ_JXTD_SCHOOL
+                </when>
+            </choose>
+            where 1=1 and STATUS is not null and USER_ID = 888
             GROUP BY STATUS
         ) t on t.status = s.STATUS GROUP BY s.STATUS
+    </select>-->
+
+    <select id="getTableCols" resultType="java.util.Map">
+        SELECT c.COLUMN_NAME,c.COMMENTS
+        FROM user_tab_columns t LEFT JOIN user_col_comments c on c.table_name = t.table_name and c.COLUMN_NAME = t.COLUMN_NAME
+        where t.table_name = #{tableName} and t.COLUMN_NAME not in ('CODE','USER_ID','USER_NAME','USER_UNIT')
+        ORDER BY column_id
     </select>
 
-    <select id="getTeacherTab" resultType="java.util.Map">
-        select COLUMN_NAME,COMMENTS
-        from user_col_comments
-        where table_name =
-        <choose>
-            <when test="menuName == '继续教育'">
-                'JXYJ_JXJY'
-            </when>
-            <when test="menuName == '国家级教改项目'">
-                'JXYJ_JGXM_COUNTRY'
-            </when>
-            <when test="menuName == '省部级教改项目'">
-                'JXYJ_JGXM_PROVINCE'
-            </when>
-            <when test="menuName == '校级教改项目'">
-                'JXYJ_JGXM_SCHOOL'
-            </when>
-            <when test="menuName == '教改论文'">
-                'JXYJ_JGLW'
-            </when>
-            <when test="menuName == '教材建设'">
-                'JXYJ_JCJS'
-            </when>
-            <when test="menuName == '国家级教学团队'">
-                'JXYJ_JXTD_COUNTRY'
-            </when>
-            <when test="menuName == '省部级教学团队'">
-                'JXYJ_JXTD_PROVINCE'
-            </when>
-            <when test="menuName == '校级教学团队'">
-                'JXYJ_JXTD_SCHOOL'
-            </when>
-        </choose>
-    </select>
-
-    <select id="getTeacherTabData" resultType="java.util.Map">
+    <select id="getTableDatas" resultType="java.util.Map">
         SELECT *
-        FROM
-        <include refid="sql"/>
-        <if test="status != null and status != ''">
-            and status = #{status}
-        </if>
-        and USER_ID = 888
+        FROM ${viewName}
+        where USER_ID = #{userId}
     </select>
 
-    <sql id="sql">
-        <choose>
-            <when test="menuName == '继续教育'">
-                V_JXYJ_JXJY where 1=1
-            </when>
-            <when test="menuName == '国家级教改项目'">
-                V_JXYJ_JGXM_COUNTRY where 1=1
-            </when>
-            <when test="menuName == '省部级教改项目'">
-                V_JXYJ_JGXM_PROVINCE where 1=1
-            </when>
-            <when test="menuName == '校级教改项目'">
-                V_JXYJ_JGXM_SCHOOL where 1=1
-            </when>
-            <when test="menuName == '教改论文'">
-                V_JXYJ_JGLW where 1=1
-            </when>
-            <when test="menuName == '教材建设'">
-                V_JXYJ_JCJS where 1=1
-            </when>
-            <when test="menuName == '国家级教学团队'">
-                V_JXYJ_JXTD_COUNTRY where 1=1
-            </when>
-            <when test="menuName == '省部级教学团队'">
-                V_JXYJ_JXTD_PROVINCE where 1=1
-            </when>
-            <when test="menuName == '校级教学团队'">
-                V_JXYJ_JXTD_SCHOOL where 1=1
-            </when>
-        </choose>
-    </sql>
 </mapper>

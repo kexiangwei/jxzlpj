@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget;
 import com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate;
 import com.mycode.jiaoxuepingjia.pjset.mapper.PjSetMapper;
+import com.mycode.jiaoxuepingjia.thpj.domian.Ckpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import com.mycode.jiaoxuepingjia.thpj.mapper.ThpjMapper;
@@ -26,6 +27,39 @@ public class ThpjServiceImpl implements ThpjService {
     private ThpjMapper thpjMapper;
     @Autowired
     private PjSetMapper pjSetMapper;
+
+    @Override
+    public List<Map<String, Object>> getCkpjDetail(Ckpj ckpj) {
+        List<Map<String, Object>> mapList = thpjMapper.getPjzb(ckpj.getTemplateCode());
+        List<Map<String, Object>> targetAvgList = thpjMapper.getThpjTargetAvgList(ckpj.getUserId(),ckpj.getCourseCode());
+        List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(ckpj.getTemplateCode());
+        pjSetTargetList.stream().forEach(t1 -> {
+            targetAvgList.stream().forEach(t2 -> {
+               if(t2.get("targetCode").toString().equals(t1.getTargetCode())){
+                   t1.setAvgScore(Double.parseDouble(t2.get("avgScore").toString()));
+               }
+            });
+        });
+        Map<String, List<PjSetTarget>> targetListByName = pjSetTargetList.stream().collect(Collectors.groupingBy(PjSetTarget::getTargetName, Collectors.toList()));
+        mapList.forEach(m -> {
+            targetListByName.forEach((k,v) -> {
+                if(k.equals(m.get("name").toString())){
+                    m.put("targetList",v);
+                }
+            });
+        });
+        return mapList;
+    }
+
+    @Override
+    public Map<String, Object> getCkpjPageList(Ckpj ckpj) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Page<Object> pageInfo = PageHelper.startPage(ckpj.getPageIndex(), ckpj.getPageSize());
+        List<Ckpj> pageList = thpjMapper.getCkpjPageList(ckpj);
+        resultMap.put("totalNum", pageInfo.getTotal());
+        resultMap.put("pageList", pageList);
+        return resultMap;
+    }
 
     @Override
     public Map<String, Object> getPageList(ThpjQuery thpjQuery) {
@@ -74,20 +108,20 @@ public class ThpjServiceImpl implements ThpjService {
 
     @Override
     public List<Map<String, Object>> getThpjTargetList(String templateCode) {
-        List<Map<String, Object>> thpjTargetList = thpjMapper.getThpjTargetList(templateCode);
+        List<Map<String, Object>> mapList = thpjMapper.getPjzb(templateCode);
         List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(templateCode);
         Map<String, List<PjSetTarget>> targetListByName = pjSetTargetList.stream().collect(Collectors.groupingBy(PjSetTarget::getTargetName, Collectors.toList()));
-        thpjTargetList.forEach(m -> {
+        mapList.forEach(m -> {
             targetListByName.forEach((k,v) -> {
                 if(k.equals(m.get("name").toString())){
                     m.put("targetList",v);
                 }
             });
         });
-        return thpjTargetList;
+        return mapList;
     }
 
-    @Override
+    /*@Override
     public List<Map<String, Object>> getTeacherBar(String menuName, String userId) {
         return thpjMapper.getTeacherBar(menuName,userId);
     }
@@ -95,16 +129,16 @@ public class ThpjServiceImpl implements ThpjService {
     @Override
     public List<Map<String, Object>> getTeacherPie(String menuName, String userId) {
         return thpjMapper.getTeacherPie(menuName,userId);
+    }*/
+
+    @Override
+    public List<Map<String, Object>> getTableCols(String tableName) {
+        return thpjMapper.getTableCols(tableName);
     }
 
     @Override
-    public List<Map<String, Object>> getTeacherTab(String menuName) {
-        return thpjMapper.getTeacherTab(menuName);
-    }
-
-    @Override
-    public List<Map<String, Object>> getTeacherTabData(String menuName, String userId, String status) {
-        return thpjMapper.getTeacherTabData(menuName,userId,status);
+    public List<Map<String, Object>> getTableDatas(String viewName, String userId) {
+        return thpjMapper.getTableDatas(viewName,userId);
     }
 
 }

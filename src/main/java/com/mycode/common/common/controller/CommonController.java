@@ -45,8 +45,9 @@ public class CommonController {
 
     @ResponseBody
     @RequestMapping("/getCourseListByUserId.do")
-    public JsonResult<Object> getCourseListByUserId(@RequestParam("userId") String userId){
-        List<Course> courseList = commonService.getCourseListByUserId(userId);
+    public JsonResult<Object> getCourseListByUserId(@RequestParam("userId") String userId
+            ,@RequestParam(value = "courseName",required = false) String courseName){
+        List<Course> courseList = commonService.getCourseListByUserId(userId,courseName);
         return JsonResult.success(courseList);
     }
 

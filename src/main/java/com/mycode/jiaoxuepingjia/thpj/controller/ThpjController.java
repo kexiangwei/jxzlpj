@@ -1,6 +1,7 @@
 package com.mycode.jiaoxuepingjia.thpj.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.mycode.jiaoxuepingjia.thpj.domian.Ckpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import com.mycode.jiaoxuepingjia.thpj.service.ThpjService;
@@ -25,6 +26,20 @@ public class ThpjController {
 
     @Autowired
     private ThpjService thpjService;
+
+    @ResponseBody
+    @RequestMapping("/getCkpjDetail.do")
+    public JsonResult<Object> getCkpjDetail(Ckpj ckpj){
+        List<Map<String, Object>> mapList = thpjService.getCkpjDetail(ckpj);
+        return JsonResult.success(mapList);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getCkpjPageList.do")
+    public JsonResult<Object> getCkpjPageList(Ckpj ckpj){
+        Map<String, Object> resultMap = thpjService.getCkpjPageList(ckpj);
+        return JsonResult.success(resultMap);
+    }
 
     @ResponseBody
     @RequestMapping("/getPageList.do")

@@ -25,8 +25,8 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public List<Course> getCourseListByUserId(String userId) {
-        return commonMapper.getCourseListByUserId(userId);
+    public List<Course> getCourseListByUserId(String userId, String courseName) {
+        return commonMapper.getCourseListByUserId(userId,courseName);
     }
 
 }

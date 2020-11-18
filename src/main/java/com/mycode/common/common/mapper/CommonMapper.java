@@ -14,6 +14,6 @@ public interface CommonMapper {
 
     List<Map<String, Object>> getMajor(@Param("collegeCode") String collegeCode);
 
-    List<Course> getCourseListByUserId(@Param("userId") String userId);
+    List<Course> getCourseListByUserId(@Param("userId") String userId, @Param("courseName") String courseName);
 
 }

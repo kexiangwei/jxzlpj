@@ -22,6 +22,7 @@ public class PjSetTarget {
             ,targetName
             ,targetContent;
     private Integer targetScore;
+    private Double avgScore;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createDate;

@@ -23,5 +23,8 @@
         SELECT T2.*
         FROM DATA_TEACHER_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
         WHERE T1.USER_ID =#{userId}
+        <if test="courseName !=null and courseName !=''">
+            and T2.COURSE_NAME = #{courseName}
+        </if>
     </select>
 </mapper>
