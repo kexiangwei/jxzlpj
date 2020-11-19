@@ -43,9 +43,9 @@ public class XspjServiceImpl implements XspjService {
         List<Map<String, Object>> targetList = xspjMapper.getPjInfo(courseCode);
         OptionalDouble totalAvg = targetList.stream().mapToDouble(m -> Double.parseDouble(m.get("AVG_SCORE").toString())).average();
         List<String> suggestList = xspjMapper.getPjSuggestList(courseCode, targetList.get(0).get("TEMPLATE_CODE").toString());
-        pjInfo.put("totalAvg",totalAvg);
         pjInfo.put("targetList",targetList);
         pjInfo.put("suggestList",suggestList);
+        pjInfo.put("totalAvg",totalAvg);
         return pjInfo;
     }
 

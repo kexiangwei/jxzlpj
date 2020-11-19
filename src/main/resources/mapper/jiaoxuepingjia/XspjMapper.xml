@@ -5,38 +5,32 @@
     <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.xspj.domain.Xspj">
         <choose>
             <when test="accountType == 'student'">
-                SELECT c.COURSE_CODE,c.COURSE_NAME,t.teacher_Names
-                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) is_Pj
+                SELECT c.course_code,c.course_name,c.course_attr,c.STU_SCORE,c.STU_HOUR,c.MAJOR_NAME,c.COLLEGE_NAME
+                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) is_pj
                 FROM DATA_STUDENT_COURSE sc
                 LEFT JOIN DATA_COURSE c on c.COURSE_CODE = sc.COURSE_CODE
                 LEFT JOIN (
-                SELECT COURSE_CODE,wm_concat(DISTINCT teacher) teacher_Names
-                FROM JXSJ_SKJH jh
-                LEFT JOIN JXSJ_SKJH_ITEM it on it.relation_code = jh.code
-                GROUP BY COURSE_CODE
-                ) t on t.COURSE_CODE = sc.COURSE_CODE
-                LEFT JOIN (
-                SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
+                    SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
                 ) pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.USER_ID
                 WHERE sc.USER_ID = #{userId}
             </when>
             <when test="accountType == 'teacher'">
-                SELECT dc.*
+                SELECT c.course_code,c.course_name,c.course_attr,c.STU_SCORE,c.STU_HOUR,c.MAJOR_NAME,c.COLLEGE_NAME
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) is_Pj
-                FROM DATA_TEACHER_COURSE dtc LEFT JOIN DATA_COURSE dc on DC.COURSE_CODE = DTC.COURSE_CODE
+                FROM DATA_TEACHER_COURSE dtc
+                LEFT JOIN DATA_COURSE c on c.COURSE_CODE = DTC.COURSE_CODE
                 LEFT JOIN (
-                SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
-                ) pj on pj.COURSE_CODE = DTC.COURSE_CODE
-                where USER_ID = #{userId}
-                ORDER BY pj.COURSE_CODE
+                  SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
+                ) pj on pj.COURSE_CODE = c.COURSE_CODE
+                where dtc.USER_ID = #{userId}
             </when>
             <otherwise><!-- 若是其他类型的账号访问，则返回所有已评的课程信息 -->
-                SELECT dc.*
+                SELECT c.course_code,c.course_name,c.course_attr,c.STU_SCORE,c.STU_HOUR,c.MAJOR_NAME,c.COLLEGE_NAME
                 ,1 as is_Pj
-                FROM DATA_COURSE dc
+                FROM DATA_COURSE c
                 LEFT JOIN (
-                SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
-                ) pj on pj.COURSE_CODE = dc.COURSE_CODE
+                    SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
+                ) pj on pj.COURSE_CODE = c.COURSE_CODE
                 where PJ.COURSE_CODE is not null
                 ORDER BY pj.COURSE_CODE
             </otherwise>
