@@ -28,6 +28,19 @@ public class ThpjServiceImpl implements ThpjService {
     @Autowired
     private PjSetMapper pjSetMapper;
 
+    /*
+    查看评教
+     */
+    @Override
+    public Map<String, Object> getCkpjPageList(Ckpj ckpj) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Page<Object> pageInfo = PageHelper.startPage(ckpj.getPageIndex(), ckpj.getPageSize());
+        List<Ckpj> pageList = thpjMapper.getCkpjPageList(ckpj);
+        resultMap.put("totalNum", pageInfo.getTotal());
+        resultMap.put("pageList", pageList);
+        return resultMap;
+    }
+
     @Override
     public List<Map<String, Object>> getCkpjDetail(Ckpj ckpj) {
         List<Map<String, Object>> mapList = thpjMapper.getPjzb(ckpj.getTemplateCode());
@@ -35,9 +48,9 @@ public class ThpjServiceImpl implements ThpjService {
         List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(ckpj.getTemplateCode());
         pjSetTargetList.stream().forEach(t1 -> {
             targetAvgList.stream().forEach(t2 -> {
-               if(t2.get("targetCode").toString().equals(t1.getTargetCode())){
-                   t1.setAvgScore(Double.parseDouble(t2.get("avgScore").toString()));
-               }
+                if(t2.get("targetCode").toString().equals(t1.getTargetCode())){
+                    t1.setAvgScore(Double.parseDouble(t2.get("avgScore").toString()));
+                }
             });
         });
         Map<String, List<PjSetTarget>> targetListByName = pjSetTargetList.stream().collect(Collectors.groupingBy(PjSetTarget::getTargetName, Collectors.toList()));
@@ -51,16 +64,9 @@ public class ThpjServiceImpl implements ThpjService {
         return mapList;
     }
 
-    @Override
-    public Map<String, Object> getCkpjPageList(Ckpj ckpj) {
-        Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(ckpj.getPageIndex(), ckpj.getPageSize());
-        List<Ckpj> pageList = thpjMapper.getCkpjPageList(ckpj);
-        resultMap.put("totalNum", pageInfo.getTotal());
-        resultMap.put("pageList", pageList);
-        return resultMap;
-    }
-
+    /*
+    同行评教
+     */
     @Override
     public Map<String, Object> getPageList(ThpjQuery thpjQuery) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -91,12 +97,15 @@ public class ThpjServiceImpl implements ThpjService {
         return bool;
     }
 
-   /* @Override
-    public boolean update(Thpj thpj) {
-        return thpjMapper.update(thpj);
+   @Override
+    public boolean update(Thpj thpj, Map<String, Object> paramMap) {
+       boolean bool = thpjMapper.deleteTargetByRelationCode(thpj.getCode()); //删除以前的记录
+       List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
+       bool = thpjMapper.insertTarget(thpj.getCode(), pjSetTargetList, paramMap); //然后再重新录入
+       return bool;
     }
 
-    @Override
+    /*@Override
     public boolean delete(String code) {
         return thpjMapper.delete(code);
     }*/
@@ -121,24 +130,11 @@ public class ThpjServiceImpl implements ThpjService {
         return mapList;
     }
 
-    /*@Override
-    public List<Map<String, Object>> getTeacherBar(String menuName, String userId) {
-        return thpjMapper.getTeacherBar(menuName,userId);
-    }
-
+    /*
+    同行评教-比较评价
+     */
     @Override
-    public List<Map<String, Object>> getTeacherPie(String menuName, String userId) {
-        return thpjMapper.getTeacherPie(menuName,userId);
-    }*/
-
-    @Override
-    public List<Map<String, Object>> getTableCols(String tableName) {
-        return thpjMapper.getTableCols(tableName);
+    public Integer isFull(String userId) {
+        return thpjMapper.isFull(userId);
     }
-
-    @Override
-    public List<Map<String, Object>> getTableDatas(String viewName, String userId) {
-        return thpjMapper.getTableDatas(viewName,userId);
-    }
-
 }

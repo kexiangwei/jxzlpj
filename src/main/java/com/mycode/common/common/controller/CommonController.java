@@ -25,17 +25,26 @@ public class CommonController {
     private CommonService commonService;
 
     @ResponseBody
+    @RequestMapping("/getTableCols.do")
+    public JsonResult<Object> getTableCols(@RequestParam("tableName") String tableName){
+        List<Map<String, Object>> tableCols = commonService.getTableCols(tableName);
+        return JsonResult.success(tableCols);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getTableDatas.do")
+    public JsonResult<Object> getTeacherTabData(@RequestParam("viewName") String viewName, @RequestParam("userId") String userId){
+        List<Map<String, Object>> tableDatas = commonService.getTableDatas(viewName, userId);
+        return JsonResult.success(tableDatas);
+    }
+
+    @ResponseBody
     @RequestMapping("/getCollege.do")
     public JsonResult<Object> getCollege(){
         List<Map<String, Object>> maps = commonService.getCollege();
         return JsonResult.success(maps);
     }
 
-    /**
-     *
-     * @param collegeCode
-     * @return
-     */
     @ResponseBody
     @RequestMapping("/getMajor.do")
     public JsonResult<Object> getMajor(@RequestParam(value = "collegeCode",required = false) String collegeCode){

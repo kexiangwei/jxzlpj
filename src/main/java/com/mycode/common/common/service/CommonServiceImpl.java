@@ -15,6 +15,16 @@ public class CommonServiceImpl implements CommonService {
     private CommonMapper commonMapper;
 
     @Override
+    public List<Map<String, Object>> getTableCols(String tableName) {
+        return commonMapper.getTableCols(tableName);
+    }
+
+    @Override
+    public List<Map<String, Object>> getTableDatas(String viewName, String userId) {
+        return commonMapper.getTableDatas(viewName,userId);
+    }
+
+    @Override
     public List<Map<String, Object>> getCollege() {
         return commonMapper.getCollege();
     }

@@ -17,11 +17,16 @@ import java.util.Map;
 @Mapper
 public interface ThpjMapper {
 
+    /*
+    查看评教
+     */
+    List<Ckpj> getCkpjPageList(Ckpj ckpj);
 
     List<Map<String, Object>> getThpjTargetAvgList(@Param("userId") String userId, @Param("courseCode") String courseCode);
 
-    List<Ckpj> getCkpjPageList(Ckpj ckpj);
-
+    /*
+    同行评教
+     */
     List<ThpjQuery> getPageList(ThpjQuery thpjQuery);
 
     Thpj getThpjInfo(@Param("code") String code);
@@ -32,18 +37,17 @@ public interface ThpjMapper {
 
     boolean insertTarget(@Param("relationCode") String relationCode, @Param("pjSetTargetList") List<PjSetTarget> pjSetTargetList, @Param("paramMap") Map<String, Object> paramMap);
 
+    boolean deleteTargetByRelationCode(@Param("relationCode") String relationCode);
+    /*
 
+     */
     String getThpjTemplateCode(String code);
 
     List<Map<String, Object>> getPjzb(@Param("templateCode") String templateCode);
 
-
-    /*List<Map<String, Object>> getTeacherBar(@Param("menuName") String menuName, @Param("userId") String userId);
-
-    List<Map<String, Object>> getTeacherPie(@Param("menuName") String menuName, @Param("userId") String userId);*/
-
-    List<Map<String, Object>> getTableCols(@Param("tableName") String tableName);
-
-    List<Map<String, Object>> getTableDatas(@Param("viewName") String viewName, @Param("userId") String userId);
+    /*
+   同行评教-比较评价
+    */
+    Integer isFull(@Param("userId") String userId);
 
 }

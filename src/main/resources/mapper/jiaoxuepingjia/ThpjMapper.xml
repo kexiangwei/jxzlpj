@@ -2,14 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuepingjia.thpj.mapper.ThpjMapper">
 
-    <select id="getThpjTargetAvgList" resultType="java.util.Map">
-        SELECT TARGET_CODE "targetCode",AVG(ANSWER) "avgScore"
-        from JXPJ_THPJ t1 LEFT JOIN JXPJ_THPJ_ITEM t2 on T2.RELATION_CODE = T1.CODE
-        where T1.TEACHER_CODE = #{userId} and COURSE_CODE = #{courseCode}
-        GROUP BY TARGET_CODE
-    </select>
-
-
+    <!--
+     查看评教
+     -->
     <select id="getCkpjPageList" resultType="com.mycode.jiaoxuepingjia.thpj.domian.Ckpj">
         SELECT t2.course_code,t2.course_name,t2.course_attr,t2.STU_SCORE,t2.STU_HOUR,t2.MAJOR_NAME,t2.COLLEGE_NAME
         ,(case when pj.template_code is not null then 1 else 2 end) is_pj
@@ -23,19 +18,40 @@
         </if>
     </select>
 
+    <select id="getThpjTargetAvgList" resultType="java.util.Map">
+        SELECT TARGET_CODE "targetCode",AVG(ANSWER) "avgScore"
+        from JXPJ_THPJ t1 LEFT JOIN JXPJ_THPJ_ITEM t2 on T2.RELATION_CODE = T1.CODE
+        where T1.TEACHER_CODE = #{userId} and COURSE_CODE = #{courseCode}
+        GROUP BY TARGET_CODE
+    </select>
+
     <!--
-    关于is_pj，只查询本学期进行的评教？
+    同行评教
+    关于is_pj，对于一门课程查新最新一次的评教信息（是否只查询本学期进行的评教？）
     -->
     <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery">
-        SELECT t.CODE teacher_code,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
-        ,c.course_code,c.course_name,c.course_attr
-        ,(case when th.code is not null then 1 else 2 end) is_pj
-        ,th.code as pj_code
-        FROM DATA_TEACHER_COURSE tc
-        LEFT JOIN DATA_TEACHER t on t.CODE = TC.USER_ID
-        LEFT JOIN DATA_COURSE c on c.course_code = tc.course_code
-        LEFT JOIN JXPJ_THPJ th on teacher_CODE = TC.USER_ID and th.course_code = tc.course_code
-        <where>1=1
+        SELECT c.course_code,c.course_name,c.course_attr
+        ,t.CODE teacher_code,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
+        ,(case when pj.code is not null then 1 else 2 end) is_pj,pj.code as pj_code
+        ,(case when total_score >= 90 then 1 else 2 end) is_top
+        FROM DATA_COURSE c
+        LEFT JOIN DATA_TEACHER_COURSE tc on tc.course_code = c.course_code
+        LEFT JOIN DATA_TEACHER t on t.CODE = tc.USER_ID
+        LEFT JOIN (
+            SELECT pj.*
+            from (SELECT teacher_CODE,course_code,max(create_date) create_date FROM JXPJ_THPJ GROUP BY teacher_CODE,course_code) t
+            LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = t.teacher_CODE and pj.course_code = t.course_code and pj.create_date = t.create_date
+        ) pj on pj.teacher_CODE = tc.USER_ID and pj.course_code = tc.course_code
+        LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) pj2 on pj2.RELATION_CODE = pj.code
+
+        <where> tc.USER_ID is not null
+            <if test="courseName !=null and courseName !=''">
+                and c.course_name like concat(concat('%',#{courseName}),'%')
+            </if>
+            <if test="courseAttr !=null and courseAttr !=''">
+                and c.course_attr = #{courseAttr}
+            </if>
+
             <if test="teacherCollege !=null and teacherCollege !=''">
                 and t.COLLEGE_CODE = #{teacherCollege}
             </if>
@@ -64,12 +80,7 @@
             <if test="teacherTitle !=null and teacherTitle !=''">
 --                 and t.title = #{teacherTitle}
             </if>
-            <if test="courseName !=null and courseName !=''">
-                and c.course_name like concat(concat('%',#{courseName}),'%')
-            </if>
-            <if test="courseAttr !=null and courseAttr !=''">
-                and c.course_attr = #{courseAttr}
-            </if>
+
             <!--<if test="teachDate !=null and teachDate !=''">
                 and jh.dates = to_date(#{teachDate}, 'yyyy-MM-dd')
             </if>
@@ -88,6 +99,17 @@
         from JXPJ_THPJ_ITEM
         where RELATION_CODE = #{relationCode}
         GROUP BY rollup(TARGET_CODE)
+    </select>
+
+    <select id="isFull" resultType="java.lang.Integer">
+        SELECT (case when DECODE(ROUND(pj_num*0.3), 0, 1) = top_num then 1 else 2 end) is_full
+        FROM(
+            SELECT count(t.code) pj_num
+            , sum(case when total_score >= 90 then 1 else 0 end) top_num
+            FROM JXPJ_THPJ t
+            LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) t2 on T2.RELATION_CODE = t.code
+            where USER_ID = #{userId}
+        )t
     </select>
 
     <insert id="insert">
@@ -118,4 +140,26 @@
         select 1 from dual
     </insert>
 
+    <delete id="deleteTargetByRelationCode">
+        delete from JXPJ_THPJ_ITEM where RELATION_CODE = #{relationCode}
+    </delete>
+
+    <select id="getThpjTemplateCode" resultType="java.lang.String">
+        SELECT TEMPLATE_CODE from JXPJ_THPJ WHERE CODE = #{code}
+    </select>
+
+    <!--
+    返回值：name 指标名称
+        num 指标名称关联的指标项个数
+        score 指标名称关联的指标项分数合计
+    最后按照‘一二三...’排序。
+    -->
+    <select id="getPjzb" resultType="java.util.Map">
+        SELECT TARGET_NAME as "name",count(0) as "num",sum(TARGET_SCORE) as "score"
+        FROM JXPJ_PJSET_TEMPLATE_TARGET tt
+        LEFT JOIN JXPJ_PJSET_TARGET t on t.TARGET_CODE = TT.TARGET_CODE
+        where TT.TEMPLATE_CODE = #{templateCode}
+        GROUP BY TARGET_NAME
+        order by decode(SUBSTR(TARGET_NAME, 0, 1),'一',1,'二',2,'三',3,'四',4,'五',5,'六',6,'七',7,'八',8,'九',9,'零',0)
+    </select>
 </mapper>

@@ -10,6 +10,10 @@ import java.util.Map;
 @Mapper
 public interface CommonMapper {
 
+    List<Map<String, Object>> getTableCols(@Param("tableName") String tableName);
+
+    List<Map<String, Object>> getTableDatas(@Param("viewName") String viewName, @Param("userId") String userId);
+
     List<Map<String, Object>> getCollege();
 
     List<Map<String, Object>> getMajor(@Param("collegeCode") String collegeCode);

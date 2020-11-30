@@ -1,11 +1,12 @@
 package com.mycode.jiaoxuepingjia.thpj.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.mycode.jiaoxuepingjia.thpj.domian.Ckpj;
+import com.mycode.jiaoxuepingjia.pjset.service.PjSetService;
 import com.mycode.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import com.mycode.jiaoxuepingjia.thpj.service.ThpjService;
 import com.mycode.util.JsonResult;
+import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,20 +27,8 @@ public class ThpjController {
 
     @Autowired
     private ThpjService thpjService;
-
-    @ResponseBody
-    @RequestMapping("/getCkpjDetail.do")
-    public JsonResult<Object> getCkpjDetail(Ckpj ckpj){
-        List<Map<String, Object>> mapList = thpjService.getCkpjDetail(ckpj);
-        return JsonResult.success(mapList);
-    }
-
-    @ResponseBody
-    @RequestMapping("/getCkpjPageList.do")
-    public JsonResult<Object> getCkpjPageList(Ckpj ckpj){
-        Map<String, Object> resultMap = thpjService.getCkpjPageList(ckpj);
-        return JsonResult.success(resultMap);
-    }
+    @Autowired
+    private PjSetService pjSetService;
 
     @ResponseBody
     @RequestMapping("/getPageList.do")
@@ -61,22 +50,23 @@ public class ThpjController {
         Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
         boolean bool = thpjService.insert(thpj, paramMap);
         if(!bool){
-            return JsonResult.error("新增失败");
+            return JsonResult.error("提交失败");
         }
-        return JsonResult.success("新增成功",null);
-    }
-
-    /*@ResponseBody
-    @RequestMapping("/update.do")
-    public JsonResult<Object> update(Thpj thpj){
-        boolean bool = thpjService.update(thpj);
-        if(!bool){
-            return JsonResult.error();
-        }
-        return JsonResult.success();
+        return JsonResult.success("提交成功",null);
     }
 
     @ResponseBody
+    @RequestMapping("/update.do")
+    public JsonResult<Object> update(Thpj thpj, @RequestParam("jsonStr") String jsonStr){
+        Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
+        boolean bool = thpjService.update(thpj, paramMap);
+        if(!bool){
+            return JsonResult.error("提交失败");
+        }
+        return JsonResult.success("提交成功",null);
+    }
+
+    /*@ResponseBody
     @RequestMapping("/delete.do")
     public JsonResult<Object> delete(@RequestParam("code") String code){
         boolean bool = thpjService.delete(code);
@@ -85,4 +75,25 @@ public class ThpjController {
         }
         return JsonResult.success();
     }*/
+
+    /**
+     *
+     * @param code 查询详情时使用的参数
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getThpjTargetList.do")
+    public JsonResult<Object> getThpjTargetList(@RequestParam(value = "code",required = false) String code){
+        String templateCode = null;
+        if(StringUtils.isEmpty(code)){
+            templateCode = pjSetService.getActiveTemplateCode("同行评教");
+        } else {
+            templateCode = thpjService.getThpjTemplateCode(code); //城头变幻大王旗
+        }
+        if(StringUtils.isEmpty(templateCode)){
+            return JsonResult.error("暂无可用模板");
+        }
+        List<Map<String, Object>> thpjTargetList = thpjService.getThpjTargetList(templateCode);
+        return JsonResult.success(thpjTargetList);
+    }
 }
