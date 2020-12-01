@@ -102,6 +102,9 @@ public class ThpjServiceImpl implements ThpjService {
        boolean bool = thpjMapper.deleteTargetByRelationCode(thpj.getCode()); //删除以前的记录
        List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
        bool = thpjMapper.insertTarget(thpj.getCode(), pjSetTargetList, paramMap); //然后再重新录入
+       if(bool){
+           bool = thpjMapper.resetSubmit(thpj.getCode());
+       }
        return bool;
     }
 
@@ -134,7 +137,12 @@ public class ThpjServiceImpl implements ThpjService {
     同行评教-比较评价
      */
     @Override
-    public Integer isFull(String userId) {
-        return thpjMapper.isFull(userId);
+    public Integer isTopFull(String userId) {
+        return thpjMapper.isTopFull(userId);
+    }
+
+    @Override
+    public boolean submit(String code) {
+        return thpjMapper.submit(code);
     }
 }

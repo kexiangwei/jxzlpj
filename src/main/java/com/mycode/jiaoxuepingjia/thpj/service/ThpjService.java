@@ -39,5 +39,7 @@ public interface ThpjService {
     /*
     同行评教-比较评价
      */
-    Integer isFull(String userId);
+    Integer isTopFull(String userId);
+
+    boolean submit(String code);
 }

@@ -18,6 +18,8 @@ public class ThpjQuery {
     //评审状态
     private Integer isPj; //1已评2未评
     private String pjCode; //评教编号
+    private Integer isTop //本次评分是否90分及以上，1是2否
+            ,isSubmit; //是否提交
     //业务字段
     private String courseCode //课程编号
             ,courseName //课程名称

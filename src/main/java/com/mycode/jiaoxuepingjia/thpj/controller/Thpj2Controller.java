@@ -26,9 +26,19 @@ public class Thpj2Controller {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/isFull.do")
-    public JsonResult<Object> isFull(@RequestParam("userId") String userId){
-        Integer isFull = thpjService.isFull(userId);
+    @RequestMapping("/isTopFull.do")
+    public JsonResult<Object> isTopFull(@RequestParam("userId") String userId){
+        Integer isFull = thpjService.isTopFull(userId);
         return JsonResult.success(isFull);
+    }
+
+    @ResponseBody
+    @RequestMapping("/submit.do")
+    public JsonResult<Object> submit(@RequestParam("code") String code){
+        boolean bool = thpjService.submit(code);
+        if(!bool){
+            return JsonResult.error("提交失败");
+        }
+        return JsonResult.success("提交成功",null);
     }
 }

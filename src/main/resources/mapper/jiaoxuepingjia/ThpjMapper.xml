@@ -28,22 +28,22 @@
     <!--
     同行评教
     关于is_pj，对于一门课程查新最新一次的评教信息（是否只查询本学期进行的评教？）
+    (
+        SELECT pj.*
+        from (SELECT teacher_CODE,course_code,max(create_date) create_date FROM JXPJ_THPJ GROUP BY teacher_CODE,course_code) t
+        LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = t.teacher_CODE and pj.course_code = t.course_code and pj.create_date = t.create_date
+    )
     -->
     <select id="getPageList" resultType="com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery">
         SELECT c.course_code,c.course_name,c.course_attr
         ,t.CODE teacher_code,t.name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
-        ,(case when pj.code is not null then 1 else 2 end) is_pj,pj.code as pj_code
+        ,(case when pj.code is not null then 1 else 2 end) is_pj,pj.code as pj_code, pj.is_submit
         ,(case when total_score >= 90 then 1 else 2 end) is_top
         FROM DATA_COURSE c
         LEFT JOIN DATA_TEACHER_COURSE tc on tc.course_code = c.course_code
         LEFT JOIN DATA_TEACHER t on t.CODE = tc.USER_ID
-        LEFT JOIN (
-            SELECT pj.*
-            from (SELECT teacher_CODE,course_code,max(create_date) create_date FROM JXPJ_THPJ GROUP BY teacher_CODE,course_code) t
-            LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = t.teacher_CODE and pj.course_code = t.course_code and pj.create_date = t.create_date
-        ) pj on pj.teacher_CODE = tc.USER_ID and pj.course_code = tc.course_code
+        LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = tc.USER_ID and pj.course_code = tc.course_code
         LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) pj2 on pj2.RELATION_CODE = pj.code
-
         <where> tc.USER_ID is not null
             <if test="courseName !=null and courseName !=''">
                 and c.course_name like concat(concat('%',#{courseName}),'%')
@@ -101,16 +101,26 @@
         GROUP BY rollup(TARGET_CODE)
     </select>
 
-    <select id="isFull" resultType="java.lang.Integer">
-        SELECT (case when DECODE(ROUND(pj_num*0.3), 0, 1) = top_num then 1 else 2 end) is_full
+    <!-- 優秀率算法 -->
+    <select id="isTopFull" resultType="java.lang.Integer">
+        SELECT (case when pj_num = 0 then 2
+            when pj_num = 1 and top_num = 0 then 2
+            when pj_num = 1 and top_num = 1 then 1
+            when ROUND(pj_num*0.3) = top_num then 1 else 2 end) is_top_full
         FROM(
             SELECT count(t.code) pj_num
-            , sum(case when total_score >= 90 then 1 else 0 end) top_num
+            , NVL(sum(case when total_score >= 90 then 1 else 0 end), 0) top_num
             FROM JXPJ_THPJ t
             LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) t2 on T2.RELATION_CODE = t.code
-            where USER_ID = #{userId}
+            where is_submit = 1 and USER_ID = #{userId}
         )t
     </select>
+    <update id="submit">
+UPDATE JXPJ_THPJ set IS_SUBMIT = 1 where CODE = #{code}
+    </update>
+    <update id="resetSubmit">
+UPDATE JXPJ_THPJ set IS_SUBMIT = null where CODE = #{code}
+    </update>
 
     <insert id="insert">
         insert into JXPJ_THPJ

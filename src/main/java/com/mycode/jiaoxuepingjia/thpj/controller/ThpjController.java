@@ -7,6 +7,7 @@ import com.mycode.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import com.mycode.jiaoxuepingjia.thpj.service.ThpjService;
 import com.mycode.util.JsonResult;
 import com.mycode.util.StringUtils;
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -50,20 +52,23 @@ public class ThpjController {
         Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
         boolean bool = thpjService.insert(thpj, paramMap);
         if(!bool){
-            return JsonResult.error("提交失败");
+            return JsonResult.error("保存失败");
         }
-        return JsonResult.success("提交成功",null);
+        return JsonResult.success("保存成功",null);
     }
 
     @ResponseBody
     @RequestMapping("/update.do")
-    public JsonResult<Object> update(Thpj thpj, @RequestParam("jsonStr") String jsonStr){
+    public JsonResult<Object> update(Thpj thpj, @RequestParam("jsonStr") String jsonStr, HttpServletRequest request, HttpServletResponse response){
+        response.setHeader("Access-Control-Allow-Headers","Content-Type,Access-Control-Allow-Headers,Authorization,X-Requested-With");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+
         Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
         boolean bool = thpjService.update(thpj, paramMap);
         if(!bool){
-            return JsonResult.error("提交失败");
+            return JsonResult.error("修改失败");
         }
-        return JsonResult.success("提交成功",null);
+        return JsonResult.success("修改成功",null);
     }
 
     /*@ResponseBody

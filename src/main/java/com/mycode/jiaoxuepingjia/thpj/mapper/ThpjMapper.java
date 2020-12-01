@@ -48,6 +48,9 @@ public interface ThpjMapper {
     /*
    同行评教-比较评价
     */
-    Integer isFull(@Param("userId") String userId);
+    Integer isTopFull(@Param("userId") String userId);
 
+    boolean submit(@Param("code") String code);
+
+    boolean resetSubmit(@Param("code") String code);
 }
