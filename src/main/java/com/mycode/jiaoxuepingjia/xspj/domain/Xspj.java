@@ -15,6 +15,8 @@ public class Xspj {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
+    //    private String teacherNames; //学生身份登录返回的字段：本课程所有任课教师的姓名
+    private Integer isPj; //评教状态【1已评2未评】
     //查询字段
     private String accountType //账号类别
             ,userId
@@ -28,6 +30,5 @@ public class Xspj {
             ,stuHour //学时
             ,majorName
             ,collegeName;
-//    private String teacherNames; //学生身份登录返回的字段：本课程所有任课教师的姓名
-    private Integer isPj; //评教状态【1已评2未评】
+
 }

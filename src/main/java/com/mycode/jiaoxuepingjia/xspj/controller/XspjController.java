@@ -40,8 +40,7 @@ public class XspjController {
     @ResponseBody
     @RequestMapping("/insert.do")
     public JsonResult<Object> insert(Xspj xspj
-            , @RequestParam("templateCode") String templateCode
-            , @RequestParam("jsonStr") String jsonStr){
+            , @RequestParam("templateCode") String templateCode, @RequestParam("jsonStr") String jsonStr){
         Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
         boolean bool = xspjService.insert(xspj, templateCode, paramMap);
         if(!bool){
