@@ -15,6 +15,6 @@ public interface CommonService {
 
     List<Map<String, Object>> getMajor(String collegeCode);
 
-    List<Course> getCourseListByUserId(String userId, String courseName);
+    List<Course> getCourseListByUserId(String userId, String accountType, String courseName);
 
 }

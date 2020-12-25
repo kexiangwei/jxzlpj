@@ -33,11 +33,20 @@
     </select>
 
     <select id="getCourseListByUserId" resultType="com.mycode.common.common.domain.Course">
-        SELECT T2.*
-        FROM DATA_TEACHER_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
-        WHERE T1.USER_ID =#{userId}
-        <if test="courseName !=null and courseName !=''">
-            and T2.COURSE_NAME = #{courseName}
-        </if>
+        <choose>
+            <when test="accountType == 'student'">
+                SELECT T2.*
+                FROM DATA_STUDENT_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+            </when>
+            <otherwise>
+                SELECT T2.*
+                FROM DATA_TEACHER_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+            </otherwise>
+        </choose>
+        <where> T1.USER_ID =#{userId}
+            <if test="courseName !=null and courseName !=''">
+                and T2.COURSE_NAME = #{courseName}
+            </if>
+        </where>
     </select>
 </mapper>

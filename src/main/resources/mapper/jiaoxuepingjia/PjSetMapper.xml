@@ -37,6 +37,11 @@
         select t.*
         ,(case when end_date > current_date then 1 else 2 end) is_active
         from JXPJ_PJSET_TEMPLATE t
+        <where>
+            <if test="templateType != null and templateType != ''">
+                TEMPLATE_TYPE = #{templateType}
+            </if>
+        </where>
     </select>
     <insert id="insertTemplate">
         insert into JXPJ_PJSET_TEMPLATE (TEMPLATE_CODE, TEMPLATE_TYPE, TEMPLATE_NAME, START_DATE, END_DATE, CREATE_DATE)
