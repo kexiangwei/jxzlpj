@@ -49,4 +49,9 @@ public class XspjServiceImpl implements XspjService {
         return pjInfo;
     }
 
+    @Override
+    public List<Map<String,Object>> getPjInfoTransferData(String userId) {
+        return xspjMapper.getPjInfoTransferData(userId);
+    }
+
 }

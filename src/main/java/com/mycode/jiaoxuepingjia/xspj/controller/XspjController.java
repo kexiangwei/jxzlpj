@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,5 +60,17 @@ public class XspjController {
     public JsonResult<Object> getPjInfo(@RequestParam("courseCode") String courseCode){
         Map<String,Object> resultMap = xspjService.getPjInfo(courseCode);
         return JsonResult.success(resultMap);
+    }
+
+    /**
+     * 学生评教-比较评价-穿梭框初始值（根据userId 获取本学期课程及授课教师信息）
+     * @param userId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getPjInfoTransferData.do")
+    public JsonResult<Object> getPjInfoTransferData(@RequestParam("userId") String userId){
+        List<Map<String,Object>> mapList = xspjService.getPjInfoTransferData(userId);
+        return JsonResult.success(mapList);
     }
 }

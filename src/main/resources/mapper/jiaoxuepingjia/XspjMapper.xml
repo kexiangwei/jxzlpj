@@ -75,4 +75,13 @@
     <select id="getPjSuggestList" resultType="java.lang.String">
         SELECT ANSWER FROM JXPJ_XSPJ where COURSE_CODE = #{courseCode} and TEMPLATE_CODE = #{templateCode} and TARGET_CODE = 'suggest'
     </select>
+
+    <select id="getPjInfoTransferData" resultType="java.util.Map">
+SELECT T2.COURSE_CODE "courseCode", T2.COURSE_NAME "courseName", T4.code "teacherCode", T4.name "teacherName"
+FROM DATA_STUDENT_COURSE T1
+LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+LEFT JOIN DATA_TEACHER_COURSE T3 ON T3.COURSE_CODE = T2.COURSE_CODE
+LEFT JOIN DATA_TEACHER T4 ON T4.CODE = T3.USER_ID
+WHERE T1.USER_ID = #{userId}
+    </select>
 </mapper>

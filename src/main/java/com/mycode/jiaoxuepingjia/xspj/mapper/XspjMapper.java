@@ -20,4 +20,7 @@ public interface XspjMapper {
     List<Map<String, Object>> getPjInfo(@Param("courseCode") String courseCode);
 
     List<String> getPjSuggestList(@Param("courseCode") String courseCode, @Param("templateCode") String templateCode);
+
+    List<Map<String,Object>> getPjInfoTransferData(@Param("userId") String userId);
+
 }
