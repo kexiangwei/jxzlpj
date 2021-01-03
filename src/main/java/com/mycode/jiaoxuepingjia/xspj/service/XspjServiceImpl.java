@@ -37,8 +37,6 @@ public class XspjServiceImpl implements XspjService {
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @Override
     public boolean insert(Xspj xspj, Map<String,Object> paramMap) {
-        String code = StringUtils.guid(16, false);
-        xspj.setCode(code);
         boolean bool = xspjMapper.insertXspj(xspj);
         if(bool){
             xspjMapper.insertXspjItem(xspj, paramMap);

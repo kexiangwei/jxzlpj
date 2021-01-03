@@ -15,15 +15,14 @@ public class Xspj {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-    private Integer isPj; //评教状态【1已评2未评】
-    //
-    private String code
-            ,templateCode
-            ,suggest;
     //查询字段
     private String accountType //账号类别
             ,userId
             ,userName;
+    //
+    private Integer isPj; //评教状态【1已评2未评】
+    private String templateCode;
+
     //业务字段
     private String courseCode //课程编号
             ,courseName //课程名称

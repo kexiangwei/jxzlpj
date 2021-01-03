@@ -35,7 +35,7 @@ public class XspjController {
 
     /**
      *
-     * @param xspj [templateCode,courseCode，suggest，userId，userName]
+     * @param xspj [courseCode，templateCode，userId，userName]
      * @param jsonString 指标项
      * @return
      */
