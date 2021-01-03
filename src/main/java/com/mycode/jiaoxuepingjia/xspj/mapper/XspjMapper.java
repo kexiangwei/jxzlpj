@@ -15,9 +15,7 @@ public interface XspjMapper {
 
     List<Xspj> getPageList(Xspj xspj);
 
-    boolean insertXspj(Xspj xspj);
-
-    boolean insertXspjItem(@Param("xspj") Xspj xspj, @Param("paramMap") Map<String,Object> paramMap);
+    boolean insert(@Param("xspj") Xspj xspj, @Param("paramMap") Map<String,Object> paramMap);
 
     List<Map<String, Object>> getPjInfo(@Param("courseCode") String courseCode);
 

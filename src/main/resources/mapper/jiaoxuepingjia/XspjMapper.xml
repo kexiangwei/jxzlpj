@@ -33,15 +33,12 @@
         </choose>
     </select>
 
-    <insert id="insertXspj">
-        insert into JXPJ_XSPJ (COURSE_CODE, TEMPLATE_CODE, USER_ID, USER_NAME, CREATE_DATE)
-        VALUES (#{courseCode},#{templateCode},#{userId},#{userName},CURRENT_DATE)
-    </insert>
-    <insert id="insertXspjItem">
+    <insert id="insert">
         insert all
         <foreach collection="paramMap" index="key"  item="val">
-            INTO JXPJ_XSPJ_ITEM (COURSE_CODE,TEMPLATE_CODE,TARGET_CODE,ANSWER)
-            VALUES(#{xspj.courseCode,jdbcType=VARCHAR},#{xspj.templateCode,jdbcType=VARCHAR},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
+            INTO JXPJ_XSPJ (COURSE_CODE, TEMPLATE_CODE, TARGET_CODE, ANSWER, USER_ID, USER_NAME, CREATE_DATE)
+            VALUES(#{xspj.courseCode,jdbcType=VARCHAR},#{xspj.templateCode,jdbcType=VARCHAR}
+            ,#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR},#{xspj.userId},#{xspj.userName},CURRENT_DATE)
         </foreach>
         select 1 from dual
     </insert>
@@ -56,24 +53,21 @@
         FROM(
             SELECT TT.*,target_content,target_score
             FROM (
-                SELECT * FROM (
-                    SELECT ROWNUM rn, TEMPLATE_CODE
-                    FROM JXPJ_PJSET_TEMPLATE
-                    where TEMPLATE_TYPE = '学生评教' ORDER BY END_DATE desc
-                ) where rn = 1
+                    SELECT * FROM (
+                            SELECT ROWNUM rn, TEMPLATE_CODE
+                            FROM JXPJ_PJSET_TEMPLATE
+                            where TEMPLATE_TYPE = '学生评教' ORDER BY END_DATE desc
+                    ) where rn = 1
             ) t
             LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on TT.TEMPLATE_CODE = t.TEMPLATE_CODE
             LEFT JOIN JXPJ_PJSET_TARGET tg on tg.target_code = tt.target_code
         ) t2 LEFT JOIN (
-            SELECT pj.course_code,pj.template_code,target_code,answer
-            FROM (SELECT DISTINCT course_code,template_code from JXPJ_XSPJ) pj
-            LEFT JOIN JXPJ_XSPJ_ITEM pj2 on pj2.course_code = pj.course_code and pj2.template_code = pj.template_code
-            where pj.course_code = #{courseCode}
+            SELECT * from JXPJ_XSPJ where course_code = #{courseCode}
         ) pj on PJ.TEMPLATE_CODE = t2.TEMPLATE_CODE and pj.target_code = t2.target_code
         GROUP BY pj.template_code,pj.TARGET_CODE,target_content,target_score
     </select>
     <select id="getPjInfoSuggestList" resultType="java.lang.String">
-        SELECT ANSWER FROM JXPJ_XSPJ_ITEM where COURSE_CODE = #{courseCode} and TEMPLATE_CODE = #{templateCode} and TARGET_CODE = 'suggest'
+        SELECT ANSWER FROM JXPJ_XSPJ where COURSE_CODE = #{courseCode} and TEMPLATE_CODE = #{templateCode} and TARGET_CODE = 'suggest'
     </select>
 
     <select id="getPjInfoTransferData" resultType="java.util.Map">
