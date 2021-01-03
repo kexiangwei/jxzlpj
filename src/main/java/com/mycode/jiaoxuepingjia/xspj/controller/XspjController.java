@@ -1,6 +1,7 @@
 package com.mycode.jiaoxuepingjia.xspj.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.mycode.jiaoxuepingjia.xspj.domain.Xspj;
 import com.mycode.jiaoxuepingjia.xspj.service.XspjService;
 import com.mycode.util.JsonResult;
@@ -34,16 +35,15 @@ public class XspjController {
 
     /**
      *
-     * @param templateCode 模板编号
-     * @param jsonStr 指标项
+     * @param xspj [templateCode,courseCode，suggest，userId，userName]
+     * @param jsonString 指标项
      * @return
      */
     @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(Xspj xspj
-            , @RequestParam("templateCode") String templateCode, @RequestParam("jsonStr") String jsonStr){
-        Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
-        boolean bool = xspjService.insert(xspj, templateCode, paramMap);
+    public JsonResult<Object> insert(Xspj xspj, @RequestParam("jsonString") String jsonString){
+        Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
+        boolean bool = xspjService.insert(xspj, paramMap);
         if(!bool){
             return JsonResult.error("新增失败");
         }
@@ -72,5 +72,18 @@ public class XspjController {
     public JsonResult<Object> getPjInfoTransferData(@RequestParam("userId") String userId){
         List<Map<String,Object>> mapList = xspjService.getPjInfoTransferData(userId);
         return JsonResult.success(mapList);
+    }
+
+    @ResponseBody
+    @RequestMapping("/insertBjpj.do")
+    public JsonResult<Object> insertBjpj(@RequestParam("userId") String userId
+            , @RequestParam("templateCode") String templateCode
+            , @RequestParam("courseCodes") String courseCodes){
+        /*JSONArray jsonArray = JSON.parseArray(courseCodes);
+        jsonArray.stream().forEach(arr -> {
+            System.out.println(arr);
+        });*/
+        System.out.println(courseCodes);
+        return JsonResult.success();
     }
 }

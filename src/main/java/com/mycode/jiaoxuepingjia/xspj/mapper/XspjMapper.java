@@ -15,11 +15,13 @@ public interface XspjMapper {
 
     List<Xspj> getPageList(Xspj xspj);
 
-    boolean insert(@Param("xspj") Xspj xspj, @Param("templateCode") String templateCode, @Param("paramMap") Map<String,Object> paramMap);
+    boolean insertXspj(Xspj xspj);
+
+    boolean insertXspjItem(@Param("xspj") Xspj xspj, @Param("paramMap") Map<String,Object> paramMap);
 
     List<Map<String, Object>> getPjInfo(@Param("courseCode") String courseCode);
 
-    List<String> getPjSuggestList(@Param("courseCode") String courseCode, @Param("templateCode") String templateCode);
+    List<String> getPjInfoSuggestList(@Param("courseCode") String courseCode, @Param("templateCode") String templateCode);
 
     List<Map<String,Object>> getPjInfoTransferData(@Param("userId") String userId);
 

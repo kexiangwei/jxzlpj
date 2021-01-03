@@ -4,9 +4,11 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.jiaoxuepingjia.xspj.domain.Xspj;
 import com.mycode.jiaoxuepingjia.xspj.mapper.XspjMapper;
+import com.mycode.util.StringUtils;
 import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +34,16 @@ public class XspjServiceImpl implements XspjService {
         return resultMap;
     }
 
+    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @Override
-    public boolean insert(Xspj xspj, String templateCode, Map<String,Object> paramMap) {
-        return xspjMapper.insert(xspj, templateCode, paramMap);
+    public boolean insert(Xspj xspj, Map<String,Object> paramMap) {
+        String code = StringUtils.guid(16, false);
+        xspj.setCode(code);
+        boolean bool = xspjMapper.insertXspj(xspj);
+        if(bool){
+            xspjMapper.insertXspjItem(xspj, paramMap);
+        }
+        return bool;
     }
 
     @Override
@@ -42,7 +51,7 @@ public class XspjServiceImpl implements XspjService {
         Map<String,Object> pjInfo = new HashMap<>();
         List<Map<String, Object>> targetList = xspjMapper.getPjInfo(courseCode);
         OptionalDouble totalAvg = targetList.stream().mapToDouble(m -> Double.parseDouble(m.get("AVG_SCORE").toString())).average();
-        List<String> suggestList = xspjMapper.getPjSuggestList(courseCode, targetList.get(0).get("TEMPLATE_CODE").toString());
+        List<String> suggestList = xspjMapper.getPjInfoSuggestList(courseCode, targetList.get(0).get("TEMPLATE_CODE").toString());
         pjInfo.put("targetList",targetList);
         pjInfo.put("suggestList",suggestList);
         pjInfo.put("totalAvg",totalAvg);
