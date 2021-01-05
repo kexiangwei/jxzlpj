@@ -1,5 +1,6 @@
 package com.mycode.jiaoxuepingjia.xspj.service;
 
+import com.mycode.jiaoxuepingjia.xspj.domain.BjpjParams;
 import com.mycode.jiaoxuepingjia.xspj.domain.Xspj;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface XspjService {
     Map<String, Object> getPjInfo(String courseCode);
 
     List<Map<String,Object>> getPjInfoTransferData(String userId);
+
+    boolean insertBjpj(BjpjParams params);
 }

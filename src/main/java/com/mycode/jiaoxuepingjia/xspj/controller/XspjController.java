@@ -2,6 +2,7 @@ package com.mycode.jiaoxuepingjia.xspj.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.mycode.jiaoxuepingjia.xspj.domain.BjpjParams;
 import com.mycode.jiaoxuepingjia.xspj.domain.Xspj;
 import com.mycode.jiaoxuepingjia.xspj.service.XspjService;
 import com.mycode.util.JsonResult;
@@ -76,14 +77,11 @@ public class XspjController {
 
     @ResponseBody
     @RequestMapping("/insertBjpj.do")
-    public JsonResult<Object> insertBjpj(@RequestParam("userId") String userId
-            , @RequestParam("templateCode") String templateCode
-            , @RequestParam("courseCodes") String courseCodes){
-        /*JSONArray jsonArray = JSON.parseArray(courseCodes);
-        jsonArray.stream().forEach(arr -> {
-            System.out.println(arr);
-        });*/
-        System.out.println(courseCodes);
-        return JsonResult.success();
+    public JsonResult<Object> insertBjpj(BjpjParams params){
+        boolean bool = xspjService.insertBjpj(params);
+        if(!bool){
+            return JsonResult.error("新增失败");
+        }
+        return JsonResult.success("新增成功",null);
     }
 }

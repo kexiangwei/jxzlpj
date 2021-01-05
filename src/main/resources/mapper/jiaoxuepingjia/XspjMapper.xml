@@ -78,4 +78,17 @@ LEFT JOIN DATA_TEACHER_COURSE T3 ON T3.COURSE_CODE = T2.COURSE_CODE
 LEFT JOIN DATA_TEACHER T4 ON T4.CODE = T3.USER_ID
 WHERE T1.USER_ID = #{userId}
     </select>
+
+    <insert id="insertBjpj">
+        insert into JXPJ_XSPJ_BJPJ (CODE, TEMPLATE_CODE, PREFER_TEACHER, USER_ID, USER_NAME, CREATE_DATE)
+        VALUES (#{code},#{templateCode},#{preferTeacher},#{userId},#{userName},CURRENT_DATE)
+    </insert>
+    <insert id="insertBjpjTarget">
+        insert all
+        <foreach collection="mapList" index="idx" item="obj">
+            INTO JXPJ_XSPJ_BJPJ_TARGET (RELATION_CODE, COURSE_CODE, TARGET_CODE, SCORE)
+            VALUES (#{obj.relationCode},#{obj.courseCode},#{obj.targetCode},#{obj.score})
+        </foreach>
+        select 1 from dual
+    </insert>
 </mapper>

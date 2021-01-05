@@ -1,5 +1,6 @@
 package com.mycode.jiaoxuepingjia.xspj.mapper;
 
+import com.mycode.jiaoxuepingjia.xspj.domain.BjpjParams;
 import com.mycode.jiaoxuepingjia.xspj.domain.Xspj;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -23,4 +24,7 @@ public interface XspjMapper {
 
     List<Map<String,Object>> getPjInfoTransferData(@Param("userId") String userId);
 
+    boolean insertBjpj(BjpjParams params);
+
+    boolean insertBjpjTarget(@Param("mapList") List<Map<String, Object>> mapList);
 }
