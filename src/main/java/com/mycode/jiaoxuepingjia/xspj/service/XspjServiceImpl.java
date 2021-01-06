@@ -85,4 +85,42 @@ public class XspjServiceImpl implements XspjService {
         return bool;
     }
 
+    @Override
+    public boolean insertBjpjSuggest(String relationCode, String courseCode, String suggest) {
+        boolean bool = false;
+        String dbSuggest = xspjMapper.selectBjpjSuggest(relationCode, courseCode);
+        if(StringUtils.isNotEmpty(dbSuggest)){
+            bool = xspjMapper.deleteBjpjSuggest(relationCode, courseCode);
+        }
+        bool = xspjMapper.insertBjpjSuggest(relationCode, courseCode, suggest);
+        return bool;
+    }
+
+    @Override
+    public String selectBjpjSuggest(String relationCode, String courseCode) {
+        return xspjMapper.selectBjpjSuggest(relationCode, courseCode);
+    }
+
+    @Override
+    public Map<String, Object> getBjpjPageList(Xspj xspj) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Page<Object> pageInfo = PageHelper.startPage(xspj.getPageIndex(), xspj.getPageSize());
+        List<Xspj> pageList = xspjMapper.getBjpjPageList(xspj);
+        resultMap.put("totalNum", pageInfo.getTotal());
+        resultMap.put("pageList", pageList);
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, Object> getBjpjPjInfo(String courseCode) {
+        Map<String,Object> pjInfo = new HashMap<>();
+        List<Map<String, Object>> targetList = xspjMapper.getBjpjPjInfo(courseCode);
+        OptionalDouble totalAvg = targetList.stream().mapToDouble(m -> Double.parseDouble(m.get("AVG_SCORE").toString())).average();
+        List<String> suggestList = xspjMapper.getBjpjPjInfoSuggestList(courseCode, targetList.get(0).get("TEMPLATE_CODE").toString());
+        pjInfo.put("targetList",targetList);
+        pjInfo.put("suggestList",suggestList);
+        pjInfo.put("totalAvg",totalAvg);
+        return pjInfo;
+    }
+
 }

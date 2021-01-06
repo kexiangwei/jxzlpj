@@ -84,4 +84,38 @@ public class XspjController {
         }
         return JsonResult.success("新增成功",null);
     }
+
+    @ResponseBody
+    @RequestMapping("/insertBjpjSuggest.do")
+    public JsonResult<Object> insertBjpjSuggest(@RequestParam("relationCode") String relationCode
+            , @RequestParam("courseCode") String courseCode
+            , @RequestParam("suggest") String suggest){
+        boolean bool = xspjService.insertBjpjSuggest(relationCode, courseCode, suggest);
+        if(!bool){
+            return JsonResult.error("新增失败");
+        }
+        return JsonResult.success("新增成功",null);
+    }
+
+    @ResponseBody
+    @RequestMapping("/selectBjpjSuggest.do")
+    public JsonResult<Object> selectBjpjSuggest(@RequestParam("relationCode") String relationCode
+            , @RequestParam("courseCode") String courseCode){
+        String suggest = xspjService.selectBjpjSuggest(relationCode, courseCode);
+        return JsonResult.success(suggest);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getBjpjPageList.do")
+    public JsonResult<Object> getBjpjPageList(Xspj xspj){
+        Map<String,Object> resultMap = xspjService.getBjpjPageList(xspj);
+        return JsonResult.success(resultMap);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getBjpjPjInfo.do")
+    public JsonResult<Object> getBjpjPjInfo(@RequestParam("courseCode") String courseCode){
+        Map<String,Object> resultMap = xspjService.getBjpjPjInfo(courseCode);
+        return JsonResult.success(resultMap);
+    }
 }

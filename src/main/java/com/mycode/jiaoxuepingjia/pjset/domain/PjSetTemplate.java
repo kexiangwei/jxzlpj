@@ -31,4 +31,7 @@ public class PjSetTemplate {
             ,endDate
             ,createDate;
 
+    //
+    private String userId;
+    private Integer isPj; //是否评教，取值：【1是，2否】
 }

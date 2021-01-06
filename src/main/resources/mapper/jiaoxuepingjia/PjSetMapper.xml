@@ -29,19 +29,21 @@
 
     <!--模板-->
     <select id="getPjSetTemplateList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTemplate">
-        /*select t.*
-        ,(case when th.TEMPLATE_CODE is not null or XS.TEMPLATE_CODE is not null then 1 else 2 end) is_active
-        from JXPJ_PJSET_TEMPLATE t
-        LEFT JOIN (SELECT DISTINCT TEMPLATE_CODE FROM JXPJ_THPJ_ITEM) th on th.TEMPLATE_CODE = t.TEMPLATE_CODE
-        LEFT JOIN (SELECT DISTINCT TEMPLATE_CODE FROM JXPJ_XSPJ) xs on XS.TEMPLATE_CODE = t.TEMPLATE_CODE*/
-        select t.*
-        ,(case when end_date > current_date then 1 else 2 end) is_active
-        from JXPJ_PJSET_TEMPLATE t
-        <where>
-            <if test="templateType != null and templateType != ''">
-                TEMPLATE_TYPE = #{templateType}
-            </if>
-        </where>
+        <choose>
+            <when test="templateType != null and templateType == '学生评教'">
+                select t.*
+                ,(case when end_date > current_date then 1 else 2 end) is_active
+                ,(case when PJ.TEMPLATE_CODE is not null then 1 else 2 end) is_pj
+                from JXPJ_PJSET_TEMPLATE t
+                LEFT JOIN (SELECT * FROM JXPJ_XSPJ_BJPJ where user_id = #{userId}) pj on PJ.TEMPLATE_CODE = t.TEMPLATE_CODE
+                where TEMPLATE_TYPE = '学生评教'
+            </when>
+            <otherwise>
+                select t.*
+                ,(case when end_date > current_date then 1 else 2 end) is_active
+                from JXPJ_PJSET_TEMPLATE t
+            </otherwise>
+        </choose>
     </select>
     <insert id="insertTemplate">
         insert into JXPJ_PJSET_TEMPLATE (TEMPLATE_CODE, TEMPLATE_TYPE, TEMPLATE_NAME, START_DATE, END_DATE, CREATE_DATE)

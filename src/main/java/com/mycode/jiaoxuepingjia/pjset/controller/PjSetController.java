@@ -41,11 +41,6 @@ public class PjSetController {
         return JsonResult.success(pjSetTargetList);
     }
 
-    /**
-     *
-     * @param template
-     * @return
-     */
     @ResponseBody
     @RequestMapping("/getPjSetTemplateList.do")
     public JsonResult<Object> getPjSetTemplateList(PjSetTemplate template){

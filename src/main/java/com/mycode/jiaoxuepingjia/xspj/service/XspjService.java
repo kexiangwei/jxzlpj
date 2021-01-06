@@ -20,4 +20,12 @@ public interface XspjService {
     List<Map<String,Object>> getPjInfoTransferData(String userId);
 
     boolean insertBjpj(BjpjParams params);
+
+    boolean insertBjpjSuggest(String relationCode, String courseCode, String suggest);
+
+    String selectBjpjSuggest(String relationCode, String courseCode);
+
+    Map<String, Object> getBjpjPageList(Xspj xspj);
+
+    Map<String, Object> getBjpjPjInfo(String courseCode);
 }

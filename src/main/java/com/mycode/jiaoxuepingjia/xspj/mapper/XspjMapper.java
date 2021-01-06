@@ -27,4 +27,20 @@ public interface XspjMapper {
     boolean insertBjpj(BjpjParams params);
 
     boolean insertBjpjTarget(@Param("mapList") List<Map<String, Object>> mapList);
+
+    boolean insertBjpjSuggest(@Param("relationCode") String relationCode
+            , @Param("courseCode") String courseCode
+            , @Param("suggest") String suggest);
+
+    String selectBjpjSuggest(@Param("relationCode") String relationCode
+            , @Param("courseCode") String courseCode);
+
+    boolean deleteBjpjSuggest(@Param("relationCode") String relationCode
+            , @Param("courseCode") String courseCode);
+
+    List<Xspj> getBjpjPageList(Xspj xspj);
+
+    List<Map<String, Object>> getBjpjPjInfo(@Param("courseCode") String courseCode);
+
+    List<String> getBjpjPjInfoSuggestList(@Param("courseCode") String courseCode, @Param("templateCode") String templateCode);
 }
