@@ -75,8 +75,9 @@
     <!--指标-->
     <select id="getPjSetTargetList" resultType="com.mycode.jiaoxuepingjia.pjset.domain.PjSetTarget">
         select t.*
-        ,(case when tt.template_code is not null then 1 else 2 end) is_bind_template
-        from JXPJ_PJSET_TARGET t LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on tt.target_code = t.target_code
+        ,(case when tt.target_code is not null then 1 else 2 end) is_bind_template
+        from JXPJ_PJSET_TARGET t
+        LEFT JOIN (SELECT DISTINCT target_code from JXPJ_PJSET_TEMPLATE_TARGET) tt on tt.target_code = t.target_code
         <where>1=1
             <if test="targetType !=null and targetType !=''">
                 and TARGET_TYPE = #{targetType}
