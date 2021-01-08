@@ -1,4 +1,4 @@
-package com.mycode.common.common.domain;
+package com.mycode.common;
 
 import lombok.Getter;
 import lombok.Setter;

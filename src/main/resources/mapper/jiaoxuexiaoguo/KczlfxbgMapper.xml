@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jiaoxuexiaoguo.kczlfxbg.mapper.KczlfxbgMapper">
 
-    <select id="getPageList" resultType="com.mycode.common.common.domain.Course">
+    <select id="getPageList" resultType="com.mycode.common.Course">
         SELECT T2.*
         FROM DATA_TEACHER_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
         <where>

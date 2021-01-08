@@ -1,7 +1,5 @@
-package com.mycode.common.common.service;
+package com.mycode.common;
 
-import com.mycode.common.common.domain.Course;
-import com.mycode.common.common.mapper.CommonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
-package com.mycode.common.common.service;
+package com.mycode.common;
 
-import com.mycode.common.common.domain.Course;
+import com.mycode.common.Course;
 
 import java.util.List;
 import java.util.Map;

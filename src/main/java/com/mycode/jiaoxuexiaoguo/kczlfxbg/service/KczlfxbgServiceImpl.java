@@ -2,7 +2,7 @@ package com.mycode.jiaoxuexiaoguo.kczlfxbg.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.common.domain.Course;
+import com.mycode.common.Course;
 import com.mycode.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg;
 import com.mycode.jiaoxuexiaoguo.kczlfxbg.mapper.KczlfxbgMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 public class KczlfxbgServiceImpl implements KczlfxbgService {

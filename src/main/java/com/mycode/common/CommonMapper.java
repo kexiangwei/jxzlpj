@@ -1,6 +1,6 @@
-package com.mycode.common.common.mapper;
+package com.mycode.common;
 
-import com.mycode.common.common.domain.Course;
+import com.mycode.common.Course;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
