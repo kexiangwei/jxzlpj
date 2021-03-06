@@ -2,7 +2,7 @@ package com.mycode.jiaoxueyanjiu.jiaogaixiangmu.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.commonset.shenheSet.mapper.ShenHeMapper;
+import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.FundBudget;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMuSchool;
 import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.domain.Member;

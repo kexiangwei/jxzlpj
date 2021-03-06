@@ -2,11 +2,11 @@ package com.mycode.shaungchuangjiaoyu.bkssqzl.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.file.domain.FileInfo;
-import com.mycode.file.mapper.FileMapper;
+import com.mycode.common.file.domain.FileInfo;
+import com.mycode.common.file.mapper.FileMapper;
 import com.mycode.shaungchuangjiaoyu.bkssqzl.domian.Bkssqzl;
 import com.mycode.shaungchuangjiaoyu.bkssqzl.mapper.BkssqzlMapper;
-import com.mycode.commonset.shenheSet.mapper.ShenHeMapper;
+import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

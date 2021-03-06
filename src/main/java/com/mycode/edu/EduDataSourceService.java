@@ -1,6 +1,7 @@
 package com.mycode.edu;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.*;
  * @auther kexiangwei
  * @date 2020/6/20
  */
+@EnableScheduling
 @Service
 public class EduDataSourceService {
 
@@ -23,7 +25,7 @@ public class EduDataSourceService {
     private ResultSet rs = null;
 
 //    @Scheduled(cron = "0 * * * * ?") //每分钟执行一次
-//    @Scheduled(cron = "0 0/5 * * * ?") //5分钟执行一次
+//    @Scheduled(cron = "0 0/10 * * * ?") //10分钟执行一次
     @Scheduled(cron = "0 0 0 1 * ?") //每月1日00:00执行一次
     public boolean resetEduDataInfo(){
         boolean bool = false;

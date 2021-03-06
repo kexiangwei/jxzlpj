@@ -29,12 +29,12 @@ public class UserController {
         return JsonResult.success(resultMap);
     }
 
-    /*@ResponseBody
+    @ResponseBody
     @RequestMapping("/getUserById.do")
     public JsonResult<Object> getUserById(@RequestParam("userId") String userId){
         User user = userService.getUserById(userId);
         return JsonResult.success(user);
-    }*/
+    }
 
     @ResponseBody
     @RequestMapping("/updateUser.do")

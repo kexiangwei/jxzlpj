@@ -1,15 +1,12 @@
 package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mycode.commonset.shenheSet.domain.ShenHeObj;
-import com.mycode.commonset.shenheSet.domain.ZjshItem;
+import com.mycode.common.shenheSet.domain.ShenHeObj;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 教学研究-教学团队-国家级团队

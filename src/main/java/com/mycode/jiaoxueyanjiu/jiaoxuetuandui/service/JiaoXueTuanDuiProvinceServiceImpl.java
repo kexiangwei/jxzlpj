@@ -2,14 +2,10 @@ package com.mycode.jiaoxueyanjiu.jiaoxuetuandui.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.commonset.shenheSet.mapper.ShenHeMapper;
-import com.mycode.file.domain.FileInfo;
-import com.mycode.file.mapper.FileMapper;
-import com.mycode.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuProvinceMapper;
-import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDuiCountry;
+import com.mycode.common.shenheSet.mapper.ShenHeMapper;
+import com.mycode.common.file.domain.FileInfo;
+import com.mycode.common.file.mapper.FileMapper;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDuiProvince;
-import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper.JiaoXueTuanDuiCountryMapper;
-import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper.JiaoXueTuanDuiMapper;
 import com.mycode.jiaoxueyanjiu.jiaoxuetuandui.mapper.JiaoXueTuanDuiProvinceMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
