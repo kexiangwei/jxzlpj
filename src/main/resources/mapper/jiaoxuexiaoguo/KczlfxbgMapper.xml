@@ -6,7 +6,7 @@
         SELECT T2.*
         FROM DATA_TEACHER_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
         <where>
-            <if test="userId != null and userId != '' and userId !=999999">
+            <if test="userId != null and userId != ''">
                 and T1.USER_ID =#{userId}
             </if>
             <if test="courseName != null and courseName != ''">

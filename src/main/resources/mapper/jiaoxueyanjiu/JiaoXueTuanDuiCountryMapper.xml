@@ -152,7 +152,7 @@
         </choose>
     </select>
     <sql id="queryCondition">
-        <if test="userId != null and userId != '' and userId != 111">
+        <if test="userId != null and userId != ''">
             and v.user_id = #{userId}
         </if>
         <if test="userName != null and userName != ''">

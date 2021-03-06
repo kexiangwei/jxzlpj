@@ -17,13 +17,13 @@ public class User {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-//    private String collegeOrDept; //学院或部门
+    private String collegeOrDept; //学院或部门
 
     //业务字段
     private String userId
             ,userName
             ,accountType //账号类型
-//            ,maxAuthLevel //最高权限级别
+            ,maxAuthLevel //最高权限级别
             ,userGroup //用户组
             ,headImg //头像地址
             ,phone;
