@@ -6,29 +6,29 @@
         insert all
         <foreach collection="mapList" index="idx"  item="map">
             <choose>
-                <when test="tab == 'DATA_COLLEGE'">
-                    INTO DATA_COLLEGE(CODE, NAME, CREATE_DATE)
+                <when test="tab == 'SYS_DATA_COLLEGE'">
+                    INTO SYS_DATA_COLLEGE(CODE, NAME, CREATE_DATE)
                 </when>
-                <when test="tab == 'DATA_MAJOR'">
-                    INTO DATA_MAJOR(CODE, NAME, STU_YEAR, EDU_DEGREE, COLLEGE_CODE, COLLEGE_NAME, CREATE_DATE)
+                <when test="tab == 'SYS_DATA_MAJOR'">
+                    INTO SYS_DATA_MAJOR(CODE, NAME, STU_YEAR, EDU_DEGREE, COLLEGE_CODE, COLLEGE_NAME, CREATE_DATE)
                 </when>
                 <!--<when test="tab == 'DATA_CLASS'">
                     INTO DATA_CLASS(CODE, NAME, HEAD_TEACHER, STUDENT_NUM, GRADE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
                 </when>-->
-                <when test="tab == 'DATA_COURSE'">
-                    INTO DATA_COURSE(COURSE_CODE, COURSE_NAME, COURSE_TYPE, STU_HOUR, STU_SCORE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
+                <when test="tab == 'SYS_DATA_COURSE'">
+                    INTO SYS_DATA_COURSE(COURSE_CODE, COURSE_NAME, COURSE_TYPE, XS, XF, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
                 </when>
-                <when test="tab == 'DATA_TEACHER'">
-                    INTO DATA_TEACHER(CODE, NAME, SEX, BIRTH_DATE, EDU_DEGREE, TITLE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, AGE, CREATE_DATE)
+                <when test="tab == 'SYS_DATA_TEACHER'">
+                    INTO SYS_DATA_TEACHER(CODE, NAME, SEX, BIRTH_DATE, EDU_DEGREE, TITLE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, AGE, CREATE_DATE)
                 </when>
-                <when test="tab == 'DATA_STUDENT'">
-                    INTO DATA_STUDENT(CODE, NAME, SEX, BIRTH_DATE, CLASS_CDOE, CLASS_NAME, GRADE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
+                <when test="tab == 'SYS_DATA_STUDENT'">
+                    INTO SYS_DATA_STUDENT(CODE, NAME, SEX, BIRTH_DATE, CLASS_CDOE, CLASS_NAME, GRADE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
                 </when>
-                <when test="tab == 'DATA_TEACHER_COURSE'">
-                    INTO DATA_TEACHER_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
+                <when test="tab == 'SYS_DATA_TEACHER_COURSE'">
+                    INTO SYS_DATA_TEACHER_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
                 </when>
-                <when test="tab == 'DATA_STUDENT_COURSE'">
-                    INTO DATA_STUDENT_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
+                <when test="tab == 'SYS_DATA_STUDENT_COURSE'">
+                    INTO SYS_DATA_STUDENT_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
                 </when>
             </choose>
             VALUES (
@@ -43,12 +43,12 @@
     <insert id="resetSysUserTeacherInfo">
         insert into SYS_USER
         SELECT code,name,'123qaz','teacher',null,null,CURRENT_DATE
-        FROM DATA_TEACHER t LEFT JOIN SYS_USER u on u.USER_ID = t.code where u.USER_ID is null
+        FROM SYS_DATA_TEACHER t LEFT JOIN SYS_USER u on u.USER_ID = t.code where u.USER_ID is null
     </insert>
     <insert id="resetSysUserStudentInfo">
         insert into SYS_USER
         SELECT code,name,'123qaz','student',null,null,CURRENT_DATE
-        FROM DATA_STUDENT t LEFT JOIN SYS_USER u on u.USER_ID = t.code where u.USER_ID is null
+        FROM SYS_DATA_STUDENT t LEFT JOIN SYS_USER u on u.USER_ID = t.code where u.USER_ID is null
     </insert>
     <!-- 默认授权，老师拥有老师角色，学生拥有学生角色。 -->
     <insert id="resetSysUserRoleInfo">

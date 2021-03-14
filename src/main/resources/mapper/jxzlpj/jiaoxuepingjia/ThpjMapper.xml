@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jxzlpj.jiaoxuepingjia.thpj.mapper.ThpjMapper">
+
+    <!--
+     查看评教
+     -->
+    <select id="getCkpjPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Ckpj">
+        SELECT t2.course_code,t2.course_name,t2.course_attr,t2.XF,t2.XS,t2.MAJOR_NAME,t2.COLLEGE_NAME
+        ,(case when pj.template_code is not null then 1 else 2 end) is_pj
+        ,pj.template_code template_code
+        FROM SYS_DATA_TEACHER_COURSE T1
+        LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+        LEFT JOIN (SELECT DISTINCT template_code,teacher_code,course_code FROM JXPJ_THPJ) pj on pj.teacher_code = T1.USER_ID and pj.course_code = T1.COURSE_CODE
+        WHERE T1.USER_ID = #{userId}
+        <if test="courseName !=null and courseName !=''">
+            and t2.course_name like concat(concat('%',#{courseName}),'%')
+        </if>
+    </select>
+
+    <select id="getThpjTargetAvgList" resultType="java.util.Map">
+        SELECT TARGET_CODE "targetCode",AVG(ANSWER) "avgScore"
+        from JXPJ_THPJ t1 LEFT JOIN JXPJ_THPJ_ITEM t2 on T2.RELATION_CODE = T1.CODE
+        where T1.TEACHER_CODE = #{userId} and COURSE_CODE = #{courseCode}
+        GROUP BY TARGET_CODE
+    </select>
+
+    <!--
+    同行评教
+    关于is_pj，对于一门课程查新最新一次的评教信息（是否只查询本学期进行的评教？）
+    (
+        SELECT pj.*
+        from (SELECT teacher_CODE,course_code,max(create_date) create_date FROM JXPJ_THPJ GROUP BY teacher_CODE,course_code) t
+        LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = t.teacher_CODE and pj.course_code = t.course_code and pj.create_date = t.create_date
+    )
+    -->
+    <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.ThpjQuery">
+        SELECT c.course_code,c.course_name,c.course_attr
+        ,t.USER_ID teacher_code,t.user_name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
+        ,(case when pj.code is not null then 1 else 2 end) is_pj,pj.code as pj_code, pj.is_submit
+        ,(case when total_score >= 90 then 1 else 2 end) is_top
+        FROM SYS_DATA_COURSE c
+        LEFT JOIN SYS_DATA_TEACHER_COURSE tc on tc.course_code = c.course_code
+        LEFT JOIN SYS_DATA_TEACHER t on t.USER_ID = tc.USER_ID
+        LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = tc.USER_ID and pj.course_code = tc.course_code
+        LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) pj2 on pj2.RELATION_CODE = pj.code
+        <where> tc.USER_ID is not null
+            <if test="courseName !=null and courseName !=''">
+                and c.course_name like concat(concat('%',#{courseName}),'%')
+            </if>
+            <if test="courseAttr !=null and courseAttr !=''">
+                and c.course_attr = #{courseAttr}
+            </if>
+
+            <if test="teacherCollege !=null and teacherCollege !=''">
+                and t.COLLEGE_CODE = #{teacherCollege}
+            </if>
+            <if test="teacherMajor !=null and teacherMajor !=''">
+                and t.MAJOR_CODE = #{teacherMajor}
+            </if>
+            <if test="teacher !=null and teacher !=''">
+                and t.name = #{teacher}
+            </if>
+            <if test="teacherAge !=null and teacherAge !=''">
+                  <!--<choose>
+                      <when test="teacherAge == '55岁及以上'">
+                          and t.age >= 55
+                      </when>
+                      <when test="teacherAge == '45-54岁'">
+                          and t.age BETWEEN 45 and 54
+                      </when>
+                      <when test="teacherAge == '35-44岁'">
+                          and t.age BETWEEN 35 and 44
+                      </when>
+                      <when test="teacherAge == '34岁及以下'">
+                          and t.age &lt;= 34
+                      </when>
+                  </choose>-->
+            </if>
+            <if test="teacherTitle !=null and teacherTitle !=''">
+--                 and t.title = #{teacherTitle}
+            </if>
+
+            <!--<if test="teachDate !=null and teachDate !=''">
+                and jh.dates = to_date(#{teachDate}, 'yyyy-MM-dd')
+            </if>
+            <if test="teachAddr !=null and teachAddr !=''">
+                and jh.teach_addr = #{teachAddr}
+            </if>-->
+        </where>
+    </select>
+
+    <select id="getThpjInfo" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj">
+        SELECT * FROM JXPJ_THPJ where CODE = #{code}
+    </select>
+    <select id="getThpjItemListByRelationCode" resultType="java.util.Map">
+        select NVL(TARGET_CODE,'totalScore') as "targetCode"
+        ,sum(ANSWER) as "answer"
+        from JXPJ_THPJ_ITEM
+        where RELATION_CODE = #{relationCode}
+        GROUP BY rollup(TARGET_CODE)
+    </select>
+
+    <!-- 優秀率算法 -->
+    <select id="isTopFull" resultType="java.lang.Integer">
+        SELECT (case when pj_num = 0 then 2
+            when pj_num = 1 and top_num = 0 then 2
+            when pj_num = 1 and top_num = 1 then 1
+            when ROUND(pj_num*0.3) = top_num then 1 else 2 end) is_top_full
+        FROM(
+            SELECT count(t.code) pj_num
+            , NVL(sum(case when total_score >= 90 then 1 else 0 end), 0) top_num
+            FROM JXPJ_THPJ t
+            LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) t2 on T2.RELATION_CODE = t.code
+            where is_submit = 1 and USER_ID = #{userId}
+        )t
+    </select>
+    <update id="submit">
+UPDATE JXPJ_THPJ set IS_SUBMIT = 1 where CODE = #{code}
+    </update>
+    <update id="resetSubmit">
+UPDATE JXPJ_THPJ set IS_SUBMIT = null where CODE = #{code}
+    </update>
+
+    <insert id="insert">
+        insert into JXPJ_THPJ
+        (CODE, TEMPLATE_CODE, TEACHER_CODE, TEACHER, TEACHER_COLLEGE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, STU_CLASS
+        , TEACH_YEAR, TEACH_MONTH, TEACH_DAY, TEACH_WEEKNUM, TEACH_WEEK, TEACH_LESSONNUM, TEACH_HOUSE, TEACH_CLASSROOM
+        , STU_YINGDAO, STU_SHIDAO, STU_CHIDAO, STU_QUEKE
+        , DP_TEACHER, DP_STUDENT, DP_CLASSROOM
+        , USER_ID, USERNAME, CREATE_DATE)
+        values
+        (
+        #{code},#{templateCode},#{teacherCode},#{teacher},#{teacherCollege},#{courseCode},#{courseName},#{courseAttr},#{stuClass}
+        ,#{teachYear},#{teachMonth},#{teachDay},#{teachWeekNum},#{teachWeek},#{teachLessonNum},#{teachHouse},#{teachClassroom}
+        ,#{stuYingdao},#{stuShidao},#{stuChidao},#{stuQueke},#{dpTeacher},#{dpStudent},#{dpClassroom}
+        ,#{userId},#{userName},CURRENT_DATE
+        )
+    </insert>
+    <insert id="insertTarget">
+        insert all
+        <foreach collection="pjSetTargetList" index="idx" item="obj">
+            <foreach collection="paramMap" index="key"  item="val">
+                <if test="key == obj.targetCode">
+                    INTO JXPJ_THPJ_ITEM(RELATION_CODE,TARGET_CODE,ANSWER)
+                    VALUES (#{relationCode},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
+                </if>
+            </foreach>
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <delete id="deleteTargetByRelationCode">
+        delete from JXPJ_THPJ_ITEM where RELATION_CODE = #{relationCode}
+    </delete>
+
+    <select id="getThpjTemplateCode" resultType="java.lang.String">
+        SELECT TEMPLATE_CODE from JXPJ_THPJ WHERE CODE = #{code}
+    </select>
+
+    <!--
+    返回值：name 指标名称
+        num 指标名称关联的指标项个数
+        score 指标名称关联的指标项分数合计
+    最后按照‘一二三...’排序。
+    -->
+    <select id="getPjzb" resultType="java.util.Map">
+        SELECT TARGET_NAME as "name",count(0) as "num",sum(TARGET_SCORE) as "score"
+        FROM JXPJ_PJSET_TEMPLATE_TARGET tt
+        LEFT JOIN JXPJ_PJSET_TARGET t on t.TARGET_CODE = TT.TARGET_CODE
+        where TT.TEMPLATE_CODE = #{templateCode}
+        GROUP BY TARGET_NAME
+        order by decode(SUBSTR(TARGET_NAME, 0, 1),'一',1,'二',2,'三',3,'四',4,'五',5,'六',6,'七',7,'八',8,'九',9,'零',0)
+    </select>
+</mapper>

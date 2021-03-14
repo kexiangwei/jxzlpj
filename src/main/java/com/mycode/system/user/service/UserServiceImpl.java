@@ -10,11 +10,9 @@ import com.mycode.system.user.mapper.UserMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -65,12 +63,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     public boolean grant(String userId, String[] roleIdArr) {
-        userMapper.deleteRoleByUserId(userId); //若用户未绑定角色，会返回0，故不能使用if(bool){}
-        if(roleIdArr ==null || roleIdArr.length ==0){
+        Set<String> userRoleIdArr = userMapper.getRoleByUserId(userId);
+        if(userRoleIdArr != null && !userRoleIdArr.isEmpty()){
+            userMapper.deleteRoleByUserId(userId);
+        }
+        //移除权限
+        if(roleIdArr != null && roleIdArr.length == 0){
             return true;
         }
-        return userMapper.grant(userId,roleIdArr);
+        //授予权限
+        return userMapper.grant(userId, roleIdArr);
     }
 
     @Override
@@ -80,7 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, Integer> getAuthority(String menuId, String userId) {
-        return userMapper.getAuthority(menuId,userId);
+    public Map<String, Integer> getAuthority(String userId, String menuId) {
+        return userMapper.getAuthority(userId,menuId);
     }
 }

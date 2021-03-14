@@ -8,7 +8,7 @@
 
     <insert id="saveFileInfo">
         insert into COMMON_FILE
-        (CODE, RELATION_CODE, FILE_CATEGORY, FILE_TYPE, FILE_NAME, FILE_PATH, USER_ID, USER_NAME, CREATE_DATE)
+        (CODE, RELATION_CODE, FILE_CATEGORY, FILE_TYPE, FILE_NAME, FILE_PATH, USER_ID, USERNAME, CREATE_DATE)
         values
         (#{code},#{relationCode},#{fileCategory},#{fileType},#{fileName},#{filePath},#{userId},#{userName},CURRENT_DATE)
     </insert>

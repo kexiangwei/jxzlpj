@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.mapper.KczlfxbgMapper">
+
+    <select id="getPageList" resultType="com.mycode.common.Course">
+        SELECT T2.*
+        FROM SYS_DATA_TEACHER_COURSE T1 LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+        <where>
+            <if test="userId != null and userId != ''">
+                and T1.USER_ID =#{userId}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                and T2.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+            </if>
+        </where>
+    </select>
+
+    <!--<sql id="queryCondition">
+
+        <if test="userName != null and userName != ''">
+            and USERNAME = #{userName}
+        </if>
+        <if test="userUnit != null and userUnit != ''">
+            and USER_UNIT = #{userUnit}
+        </if>
+
+    </sql>-->
+
+    <insert id="insert">
+          insert into JXXG_KCZLFXBG
+          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, XUE_NIAN, XUE_QI, OPEN_COLLEGE, XI_JIAOYANSHI, TEACHERS, TEACH_CLASS, USER_ID, USER_NAME, USER_UNIT, CREATE_DATE)
+          values
+          (#{code},#{courseCode},#{courseName},#{courseAttr},#{xueNian},#{xueQi},#{openCollege},#{xiJiaoyanshi},#{teachers},#{teachClass},#{userId},#{userName},#{userUnit},CURRENT_DATE)
+    </insert>
+
+    <update id="update">
+        update JXXG_KCZLFXBG
+        <set>
+            <if test="courseCode != null and courseCode != ''">
+                COURSE_CODE = #{courseCode}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                , COURSE_NAME = #{courseName}
+            </if>
+            <if test="courseAttr != null and courseAttr != ''">
+                , COURSE_ATTR = #{courseAttr}
+            </if>
+            <if test="xueNian != null and xueNian != ''">
+                , XUE_NIAN = #{xueNian}
+            </if>
+            <if test="xueQi != null and xueQi != ''">
+                , XUE_QI = #{xueQi}
+            </if>
+            <if test="openCollege != null and openCollege != ''">
+                , OPEN_COLLEGE = #{openCollege}
+            </if>
+            <if test="xiJiaoyanshi != null and xiJiaoyanshi != ''">
+                , XI_JIAOYANSHI = #{xiJiaoyanshi}
+            </if>
+            <if test="teachers != null and teachers != ''">
+                , TEACHERS = #{teachers}
+            </if>
+            <if test="teachClass != null and teachClass != ''">
+                , TEACH_CLASS = #{teachClass}
+            </if>
+        </set>
+        where code = #{code}
+    </update>
+
+    <delete id="delete">
+        delete from JXXG_KCZLFXBG where code = #{code}
+    </delete>
+
+</mapper>

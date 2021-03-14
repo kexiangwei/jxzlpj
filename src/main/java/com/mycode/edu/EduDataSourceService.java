@@ -29,7 +29,7 @@ public class EduDataSourceService {
     @Scheduled(cron = "0 0 0 1 * ?") //每月1日00:00执行一次
     public boolean resetEduDataInfo(){
         boolean bool = false;
-        final String[] tabs = {"DATA_COLLEGE","DATA_MAJOR"/*,"DATA_CLASS"*/,"DATA_COURSE","DATA_TEACHER","DATA_STUDENT","DATA_TEACHER_COURSE","DATA_STUDENT_COURSE"};
+        final String[] tabs = {"SYS_DATA_COLLEGE","SYS_DATA_MAJOR"/*,"DATA_CLASS"*/,"SYS_DATA_COURSE","SYS_DATA_TEACHER","SYS_DATA_STUDENT","SYS_DATA_TEACHER_COURSE","SYS_DATA_STUDENT_COURSE"};
         final String[] sql = {"select jg_id,jgmc from jw_user.v_xy"
                 ,"select zyh_id,zymc,xz,null,zy.jg_id,jgmc from jw_user.v_zy zy left join jw_user.v_xy xy on xy.jg_id = zy.jg_id"
                /* ,"select bh_id,bj,null,zxrs,njdm_id,bj.zyh_id,zymc,jgmc from jw_user.v_bj bj left join jw_user.v_zy zy on zy.zyh_id = bj.zyh_id left join jw_user.v_xy xy on xy.jg_id = bj.jg_id"*/

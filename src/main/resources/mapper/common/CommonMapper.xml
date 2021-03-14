@@ -5,7 +5,7 @@
     <select id="getTableCols" resultType="java.util.Map">
         SELECT c.COLUMN_NAME,c.COMMENTS
         FROM user_tab_columns t LEFT JOIN user_col_comments c on c.table_name = t.table_name and c.COLUMN_NAME = t.COLUMN_NAME
-        where t.table_name = #{tableName} and t.COLUMN_NAME not in ('CODE','USER_ID','USER_NAME','USER_UNIT')
+        where t.table_name = #{tableName} and t.COLUMN_NAME not in ('CODE','USER_ID','USERNAME','USER_UNIT')
         ORDER BY column_id
     </select>
 
@@ -17,13 +17,13 @@
 
     <select id="getCollege" resultType="java.util.Map">
         SELECT distinct code,name
-        FROM DATA_COLLEGE
+        FROM SYS_DATA_COLLEGE
         ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
     </select>
 
     <select id="getMajor" resultType="java.util.Map">
         SELECT distinct m.code,m.name
-        FROM DATA_MAJOR m /*LEFT JOIN DATA_COLLEGE c on c.CODE = m.COLLEGE_CODE*/
+        FROM SYS_DATA_MAJOR m /*LEFT JOIN SYS_DATA_COLLEGE c on c.CODE = m.COLLEGE_CODE*/
         <where>1=1
             <if test="collegeCode !=null and collegeCode !=''">
                 and COLLEGE_CODE = #{collegeCode}
@@ -36,11 +36,11 @@
         <choose>
             <when test="accountType == 'student'">
                 SELECT T2.*
-                FROM DATA_STUDENT_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+                FROM SYS_DATA_STUDENT_COURSE T1 LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
             </when>
             <otherwise>
                 SELECT T2.*
-                FROM DATA_TEACHER_COURSE T1 LEFT JOIN DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+                FROM SYS_DATA_TEACHER_COURSE T1 LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
             </otherwise>
         </choose>
         <where> T1.USER_ID =#{userId}

@@ -18,7 +18,7 @@
         insert all
         <foreach collection ="objList" item="obj" index= "idx">
             into COMMON_SHENHE
-            (shenhe_code,relation_code,batch_num,status,user_id,user_name,create_date)
+            (shenhe_code,relation_code,batch_num,status,user_id,USER_NAME,create_date)
             values
             (#{obj.shenheCode},#{obj.code},#{obj.batchNum},'审核中',#{obj.userId},#{obj.userName},CURRENT_DATE)
         </foreach>
@@ -35,7 +35,7 @@
 
     <insert id="toShenhe">
         insert into COMMON_SHENHE_ITEM
-        (relation_code,batch_num,shenhe_type,status,opinion,node_code,node_name,user_id,user_name,create_date)
+        (relation_code,batch_num,shenhe_type,status,opinion,node_code,node_name,user_id,USER_NAME,create_date)
         values
         (#{relationCode},#{batchNum},#{shenheType,jdbcType=VARCHAR},#{status},#{opinion},#{nodeCode},#{nodeName},#{userId},#{userName},CURRENT_DATE)
     </insert>

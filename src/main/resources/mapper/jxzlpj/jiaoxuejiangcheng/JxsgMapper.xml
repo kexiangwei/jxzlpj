@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jxzlpj.jiaoxuejiangcheng.jxsg.mapper.JxsgMapper">
+
+    <select id="isAdmin" resultType="java.lang.Integer">
+        SELECT count(0)
+        FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.ROLE_ID = UR.ROLE_ID
+        where (ROLE_NAME = '超级管理员' OR ROLE_NAME = '教务处管理员') AND USER_ID = #{userId}
+    </select>
+
+    <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuejiangcheng.jxsg.domian.Jxsg">
+        SELECT j.*
+        ,c.name college_name,m.name major_name
+        from JXJC_JXSG j
+        LEFT JOIN SYS_DATA_COLLEGE c on c.code = j.teacher_college
+        LEFT JOIN SYS_DATA_MAJOR m on m.code = j.teacher_major
+         <where>1=1
+             <if test="event != null and event != ''">
+                 and event like concat(concat('%',#{event}),'%')
+             </if>
+             <if test="eventLevel != null and eventLevel != ''">
+                 and event_level = #{eventLevel}
+             </if>
+             <if test="datetimeStart != null">
+                 and happen_time >= #{datetimeStart}
+             </if>
+             <if test="datetimeEnd != null">
+                 and happen_time &lt;= #{datetimeEnd}
+             </if>
+             <if test="userId != null and userId != ''">
+                 and teacher_id LIKE
+                 (
+                     case when (
+                         SELECT count(0)
+                         FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.ROLE_ID = UR.ROLE_ID
+                         where (ROLE_NAME = '超级管理员' OR ROLE_NAME = '教务处管理员') AND USER_ID = #{userId}
+                     ) = 1 then '%' else #{userId,jdbcType=VARCHAR} end
+                 )
+             </if>
+         </where>
+    </select>
+
+    <insert id="insert">
+          insert into JXJC_JXSG
+          (code,teacher_college,teacher_major,teacher_id,teacher_name,teacher_unit,event,event_level,happen_time,user_id,USER_NAME,create_time)
+          values
+          (#{code},#{teacherCollege},#{teacherMajor},#{teacherId},#{teacherName},#{teacherUnit},#{event},#{eventLevel},#{happenTime},#{userId},#{userName},sysdate)
+    </insert>
+
+    <update id="update">
+        update JXJC_JXSG
+        <set>
+            <if test="teacherCollege != null and teacherCollege != ''">
+                teacher_college = #{teacherCollege}
+            </if>
+            <if test="teacherMajor != null and teacherMajor != ''">
+                , teacher_major = #{teacherMajor}
+            </if>
+            <if test="teacherId !=null and teacherId !=''">
+                , teacher_id = #{teacherId}
+            </if>
+            <if test="teacherName !=null and teacherName !=''">
+                , teacher_name = #{teacherName}
+            </if>
+            <if test="teacherUnit !=null and teacherUnit !=''">
+                , teacher_unit = #{teacherUnit}
+            </if>
+            <if test="event !=null and event !=''">
+                , event = #{event}
+            </if>
+            <if test="eventLevel !=null and eventLevel !=''">
+                , event_level = #{eventLevel}
+            </if>
+            <if test="happenTime !=null">
+                , happen_time = #{happenTime}
+            </if>
+        </set>
+        where code = #{code}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM JXJC_JXSG WHERE CODE = #{objCode}
+    </delete>
+
+</mapper>

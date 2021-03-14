@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -31,9 +28,9 @@ public class Menu {
     private String title //layui-tree
             ,name; //layui-treeSelect
     private List<Menu> children = new ArrayList<>();
-    //
+    //生成菜单树
     public static List<Menu> getMenuTree(List<Menu> menuList){
-        List<Menu> resultMenuList = new ArrayList<>();
+        List<Menu> resultMenuList = new LinkedList<>();
         Map<Long,Menu> map = new HashMap<>();
         for (Menu menu : menuList) {
             map.put(menu.getMenuId(),menu);

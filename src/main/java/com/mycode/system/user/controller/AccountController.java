@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +33,19 @@ public class AccountController {
 
     /**
      * 获取图形验证码
-     * @param len 返回的图形验证码长度，默认4位数
+     * @param length 返回的图形验证码长度，默认4位数
      * @return
      * @throws Exception
      */
     @ResponseBody
     @RequestMapping("/getCaptcha.do")
-    public JsonResult<Object> getCaptcha(@RequestParam(value = "len",required = false,defaultValue = "4") Integer len) {
+    public JsonResult<Object> getCaptcha(@RequestParam(value = "length",required = false,defaultValue = "4") Integer length) {
         //初始化组件
-        SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, len);
+        SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, length);
         specCaptcha.setCharType(Captcha.TYPE_ONLY_NUMBER);
-        //存储到redis，有效时间为3分钟
+        //存储到redis
         String token = StringUtils.guid(32,false);
-        redisUtil.set(token,specCaptcha.text(),180);
+        redisUtil.set(token,specCaptcha.text(),300); //有效时间为5分钟
         //封装结果集
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("token",token);
@@ -54,41 +55,34 @@ public class AccountController {
 
     @ResponseBody
     @RequestMapping("/login.do")
-    public JsonResult<Object> login(@RequestParam("token") String token
-            , @RequestParam("verifyCode") String verifyCode
-            , @RequestParam("userId") String userId
-            , @RequestParam("password") String password, HttpServletRequest request){
-       /* //
-        boolean hasKey = redisUtil.hasKey(token);
+    public JsonResult<Object> login(@RequestParam("token") String token, @RequestParam("imageCode") String imageCode
+            , @RequestParam("userId") String userId, @RequestParam("password") String password
+            , HttpServletRequest request, HttpServletResponse response){
+        //校验图形验证码
+        /*boolean hasKey = redisUtil.hasKey(token);
         if (hasKey) {
-            if(!redisUtil.get(token).toString().equals(verifyCode)){
-                return JsonResult.error(400,"验证码输入有误");
+            if(!redisUtil.get(token).toString().equals(imageCode)){
+                return JsonResult.error(400,"验证码输入有误！");
             }
         }else{
-            return JsonResult.error(404," 验证码已超时，请重新获取");
+            return JsonResult.error(400," 验证码已超时，请重新获取！");
         }*/
-        //
-        User user = null;
-        try{
-            user = userService.getUserById(userId);
-            if(user == null){
-                return JsonResult.error(404,userId+" 账号未注册");
-            }else{
-                if(!user.getUserId().equals(userId) || !user.getPassword().equals(password)){
-                    return JsonResult.error(400,"账号或密码错误");
-                }
+        //校验账号密码
+        User user = userService.getUserById(userId);
+        if(user == null){
+            return JsonResult.error(400,userId+"账号或密码错误！");
+        }else{
+            if(!user.getPassword().equals(password)){
+                return JsonResult.error(400,"账号或密码错误！");
             }
-        } catch (Exception e){
-            e.printStackTrace();
-//            return JsonResult.error("登录失败");
         }
-        request.getSession().setAttribute("user", user);
+        request.getSession().setAttribute("loginUser", user);
         return JsonResult.success("登录成功",user);
     }
 
     @ResponseBody
     @RequestMapping("/logout.do")
-    public JsonResult<Object> logout(HttpServletRequest request){
+    public JsonResult<Object> logout(HttpServletRequest request, HttpServletResponse response){
         request.getSession().invalidate();
         return JsonResult.success();
     }

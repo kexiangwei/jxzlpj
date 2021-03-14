@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jxzlpj.shaungchuangjiaoyu.bkssqzl.mapper.BkssqzlMapper">
+
+    <select id="getPageList" resultType="com.mycode.jxzlpj.shaungchuangjiaoyu.bkssqzl.domian.Bkssqzl">
+        <choose>
+            <when test="shenHeUserId != null and shenHeUserId != ''">
+                select v.*
+                ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                from (
+                    select v.code,v.batch_num
+                    ,count(sn.node_code) total_num
+                    ,count(item.node_code) exec_num
+                    ,max(case when v.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                    from v_scjy_bkssqzl_shenhe v
+                    left join common_shenhe_node sn on sn.shenhe_code = v.shenhe_code
+                    left join common_shenhe_item item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                    group by v.code,v.batch_num
+                )t
+                left join v_scjy_bkssqzl_shenhe v on v.code = t.code and v.batch_num = t.batch_num
+                left join common_shenhe_node sn on sn.shenhe_code = v.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
+                <where>1=1
+                    and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
+                    and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end) -- 排除上一级审核状态为“未通过”，“退回”的数据
+                    and ur.user_id = #{shenHeUserId}
+                    <if test="shenheStatus != null and shenheStatus != ''">
+                        <choose>
+                            <when test="shenheStatus == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatus == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <include refid="queryCondition"/>
+                </where>
+                order by shenhe_status desc
+            </when>
+            <otherwise><!-- 提交列表 -->
+                select v.*
+                from v_scjy_bkssqzl v
+                <where>1=1
+                    <choose>
+                        <when test="status != null and status != '' and status == '待审核'">
+                            and shenhe_code is null
+                        </when>
+                        <when test="status != null and status != ''">
+                            and status = #{status}
+                        </when>
+                    </choose>
+                    <include refid="queryCondition"/>
+                </where>
+            </otherwise>
+        </choose>
+    </select>
+    <sql id="queryCondition">
+        <if test="userId != null and userId != ''">
+            and v.user_id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            and v.USERNAME = #{userName}
+        </if>
+        <if test="userUnit != null and userUnit != ''">
+            and v.user_unit = #{userUnit}
+        </if>
+        <if test="name != null and name != ''">
+            and v.name like concat(concat('%',#{name}),'%')
+        </if>
+    </sql>
+
+    <insert id="insert">
+          insert into SCJY_BKSSQZL
+          (code,name,type,auth_num,approval_time,user_id,USER_NAME,user_unit,create_date)
+          values
+          (#{code},#{name},#{type},#{authNum},#{approvalTime},#{userId},#{userName},#{userUnit},CURRENT_DATE)
+    </insert>
+
+    <update id="update">
+        update SCJY_BKSSQZL
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name}
+            </if>
+            <if test="type != null and type != ''">
+                , type = #{type}
+            </if>
+            <if test="authNum != null and authNum != ''">
+                , auth_num = #{authNum}
+            </if>
+            <if test="approvalTime !=null">
+                , approval_time = #{approvalTime}
+            </if>
+        </set>
+        where code = #{code}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM SCJY_BKSSQZL WHERE CODE = #{code}
+    </delete>
+</mapper>

@@ -7,8 +7,8 @@
         ,c.name college,m.name major
         ,sorted
         from COMMON_STUDENT s
-        left join data_college c on c.code = s.college
-        left join data_major m on m.code = s.major
+        left join SYS_DATA_COLLEGE c on c.code = s.college
+        left join SYS_DATA_MAJOR m on m.code = s.major
         where relation_code = #{relationCode}
     </select>
     <insert id="addStudentInfo">

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jxzlpj.jiaoxueyanjiu.jiaocaijianshe.mapper.JiaoCaiJianSheMapper">
+
+    <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxueyanjiu.jiaocaijianshe.domian.JiaoCaiJianShe">
+        <choose>
+            <when test="shenHeUserId != null and shenHeUserId != ''"><!-- 审核列表 -->
+                select j.*
+                ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
+                from (
+                select j.code,j.batch_num
+                ,count(sn.node_code) total_num
+                ,count(item.node_code) exec_num
+                ,max(case when j.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                from V_JXYJ_JCJS_SHENHE j
+                left join common_shenhe_node sn on sn.shenhe_code = j.shenhe_code
+                left join common_shenhe_item item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+                group by j.code,j.batch_num
+                )t
+                left join V_JXYJ_JCJS_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
+                left join common_shenhe_node sn on sn.shenhe_code = j.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
+                <where>1=1
+                    and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
+                    and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end) -- 排除上一级审核状态为“未通过”，“退回”的数据
+                    and ur.user_id = #{shenHeUserId}
+                    <if test="shenheStatus != null and shenheStatus != ''">
+                        <choose>
+                            <when test="shenheStatus == '已审核'">
+                                and exec_num >= exec_level
+                            </when>
+                            <when test="shenheStatus == '未审核'">
+                                and exec_level > exec_num
+                            </when>
+                        </choose>
+                    </if>
+                    <include refid="queryCondition"/>
+                </where>
+                order by shenhe_status desc
+            </when>
+            <otherwise><!-- 提交列表 -->
+                select j.*
+                from V_JXYJ_JCJS j
+                <where>1=1
+                    <choose>
+                        <when test="status != null and status != '' and status == '待审核'">
+                            and shenhe_code is null
+                        </when>
+                        <when test="status != null and status != ''">
+                            and status = #{status}
+                        </when>
+                    </choose>
+                    <include refid="queryCondition"/>
+                </where>
+            </otherwise>
+        </choose>
+    </select>
+    <sql id="queryCondition">
+        <if test="userId != null and userId != ''">
+            and j.user_id = #{userId}
+        </if>
+        <if test="userName != null and userName != ''">
+            and j.USERNAME = #{userName}
+        </if>
+        <if test="userUnit != null and userUnit != ''">
+            and j.user_unit = #{userUnit}
+        </if>
+        <if test="name != null and name != ''">
+            and name like concat(concat('%',#{name}),'%')
+        </if>
+    </sql>
+
+    <insert id="insert">
+          insert into JXYJ_JCJS
+          (code,name,category,participation_type,isbn,publishers,publishing_time,selected,selected_time,user_id,USER_NAME,user_unit,create_date)
+          values
+          (#{code},#{name},#{category},#{participationType},#{isbn},#{publishers},#{publishingTime},#{selected},#{selectedTime},#{userId},#{userName},#{userUnit},CURRENT_DATE)
+    </insert>
+
+    <update id="update">
+        update JXYJ_JCJS
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name}
+            </if>
+            <if test="category != null and category != ''">
+                , category = #{category}
+            </if>
+            <if test="participationType != null and participationType != ''">
+                , participation_type = #{participationType}
+            </if>
+            <if test="isbn != null and isbn != ''">
+                , isbn = #{isbn}
+            </if>
+            <if test="publishers !=null and publishers !=''">
+                , publishers = #{publishers}
+            </if>
+            <if test="publishingTime !=null">
+                , publishing_time = #{publishingTime}
+            </if>
+            <if test="selected !=null and selected !=''">
+                , selected = #{selected}
+            </if>
+            <if test="selectedTime !=null">
+                , selected_time = #{selectedTime}
+            </if>
+        </set>
+        where code = #{code}
+    </update>
+
+    <delete id="delete">
+        delete from JXYJ_JCJS where code = #{code}
+    </delete>
+</mapper>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jxzlpj.jiaoxuepingjia.xspj.mapper.XspjMapper">
+
+    <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.Xspj">
+        <choose>
+            <when test="accountType == 'student'">
+                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME
+                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
+                FROM SYS_DATA_STUDENT_COURSE sc
+                LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = sc.COURSE_CODE
+                LEFT JOIN (
+                SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
+                ) pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.USER_ID
+                WHERE sc.USER_ID = #{userId}
+            </when>
+            <when test="accountType == 'teacher'">
+                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME
+                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
+                FROM SYS_DATA_TEACHER_COURSE dtc
+                LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = DTC.COURSE_CODE
+                LEFT JOIN (
+                    SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
+                ) pj on pj.COURSE_CODE = c.COURSE_CODE
+                where dtc.USER_ID = #{userId}
+            </when>
+            <otherwise><!-- 若是其他类型的账号访问，则返回所有已评的课程信息 -->
+                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME,1 as isPj
+                FROM (
+                    SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
+                ) pj LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = pj.COURSE_CODE
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert">
+        insert all
+        <foreach collection="paramMap" index="key"  item="val">
+            INTO JXPJ_XSPJ (COURSE_CODE, TEMPLATE_CODE, TARGET_CODE, ANSWER, USER_ID, USERNAME, CREATE_DATE)
+            VALUES(#{xspj.courseCode,jdbcType=VARCHAR},#{xspj.templateCode,jdbcType=VARCHAR}
+            ,#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR},#{xspj.userId},#{xspj.userName},CURRENT_DATE)
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <select id="getPjInfo" resultType="java.util.Map">
+        SELECT pj.template_code,pj.TARGET_CODE,target_content,target_score
+            ,avg(case when answer = '非常同意' then target_score
+            when answer = '比较同意' then target_score*0.8
+            when answer = '一般' then target_score*0.6
+            when answer = '不太同意' then target_score*0.4
+            when answer = '不同意' then target_score*0.2 end) avg_score
+        FROM(
+            SELECT TT.*,target_content,target_score
+            FROM (
+                    SELECT * FROM (
+                            SELECT ROWNUM rn, TEMPLATE_CODE
+                            FROM JXPJ_PJSET_TEMPLATE
+                            where TEMPLATE_TYPE = '学生评教' ORDER BY END_DATE desc
+                    ) where rn = 1
+            ) t
+            LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on TT.TEMPLATE_CODE = t.TEMPLATE_CODE
+            LEFT JOIN JXPJ_PJSET_TARGET tg on tg.target_code = tt.target_code
+        ) t2 LEFT JOIN (
+            SELECT * from JXPJ_XSPJ where course_code = #{courseCode}
+        ) pj on PJ.TEMPLATE_CODE = t2.TEMPLATE_CODE and pj.target_code = t2.target_code
+        GROUP BY pj.template_code,pj.TARGET_CODE,target_content,target_score
+    </select>
+    <select id="getPjInfoSuggestList" resultType="java.lang.String">
+        SELECT ANSWER FROM JXPJ_XSPJ where COURSE_CODE = #{courseCode} and TEMPLATE_CODE = #{templateCode} and TARGET_CODE = 'suggest'
+    </select>
+
+    <select id="getPjInfoTransferData" resultType="java.util.Map">
+SELECT T2.COURSE_CODE "courseCode", T2.COURSE_NAME "courseName", T4.code "teacherCode", T4.name "teacherName"
+FROM SYS_DATA_STUDENT_COURSE T1
+LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+LEFT JOIN SYS_DATA_TEACHER_COURSE T3 ON T3.COURSE_CODE = T2.COURSE_CODE
+LEFT JOIN SYS_DATA_TEACHER T4 ON T4.CODE = T3.USER_ID
+WHERE T1.USER_ID = #{userId}
+    </select>
+
+    <insert id="insertBjpj">
+        insert into JXPJ_XSPJ_BJPJ (CODE, TEMPLATE_CODE, PREFER_TEACHER, USER_ID, USERNAME, CREATE_DATE)
+        VALUES (#{code},#{templateCode},#{preferTeacher},#{userId},#{userName},CURRENT_DATE)
+    </insert>
+    <insert id="insertBjpjTarget">
+        insert all
+        <foreach collection="mapList" index="idx" item="obj">
+            INTO JXPJ_XSPJ_BJPJ_TARGET (RELATION_CODE, COURSE_CODE, TARGET_CODE, SCORE)
+            VALUES (#{obj.relationCode},#{obj.courseCode},#{obj.targetCode},#{obj.score})
+        </foreach>
+        select 1 from dual
+    </insert>
+    <insert id="insertBjpjSuggest">
+        insert into JXPJ_XSPJ_BJPJ_SUGGEST (RELATION_CODE, COURSE_CODE, SUGGEST)
+        values (#{relationCode},#{courseCode},NVL(#{suggest}, '无建议或意见') )
+    </insert>
+    <select id="selectBjpjSuggest" resultType="java.lang.String">
+        select SUGGEST
+        from JXPJ_XSPJ_BJPJ_SUGGEST
+        where RELATION_CODE = #{relationCode} and COURSE_CODE = #{courseCode}
+    </select>
+    <delete id="deleteBjpjSuggest">
+        delete from JXPJ_XSPJ_BJPJ_SUGGEST
+        where RELATION_CODE = #{relationCode} and COURSE_CODE = #{courseCode}
+    </delete>
+
+    <select id="getBjpjPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.Xspj">
+        <choose>
+            <when test="accountType == 'teacher'">
+                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME
+                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
+                FROM SYS_DATA_TEACHER_COURSE dtc
+                LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = DTC.COURSE_CODE
+                LEFT JOIN (
+                    SELECT DISTINCT course_code
+                    FROM (
+                        SELECT TEMPLATE_CODE FROM (
+                            SELECT ROWNUM rn, TEMPLATE_CODE
+                            FROM JXPJ_PJSET_TEMPLATE
+                            where TEMPLATE_TYPE = '学生评教' ORDER BY END_DATE desc
+                        ) where rn = 1
+                    ) t LEFT JOIN JXPJ_XSPJ_BJPJ t1 on t1.TEMPLATE_CODE = t.TEMPLATE_CODE
+                    LEFT JOIN JXPJ_XSPJ_BJPJ_SUGGEST t2 on t2.relation_code = t1.code
+                ) pj on pj.COURSE_CODE = c.COURSE_CODE
+                where dtc.USER_ID = #{userId}
+            </when>
+            <otherwise>
+                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME,1 as isPj
+                FROM (
+                    SELECT DISTINCT course_code
+                    FROM (
+                        SELECT TEMPLATE_CODE FROM (
+                            SELECT ROWNUM rn, TEMPLATE_CODE
+                            FROM JXPJ_PJSET_TEMPLATE
+                            where TEMPLATE_TYPE = '学生评教' ORDER BY END_DATE desc
+                        ) where rn = 1
+                    ) t LEFT JOIN JXPJ_XSPJ_BJPJ t1 on t1.TEMPLATE_CODE = t.TEMPLATE_CODE
+                    LEFT JOIN JXPJ_XSPJ_BJPJ_SUGGEST t2 on t2.relation_code = t1.code
+                ) pj LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = pj.COURSE_CODE
+            </otherwise>
+        </choose>
+
+    </select>
+    <select id="getBjpjPjInfo" resultType="java.util.Map">
+        SELECT pj.template_code,pj.TARGET_CODE,target_content,target_score,avg(score) avg_score
+        FROM(
+                SELECT TT.*,target_content,target_score
+                FROM (
+                        SELECT TEMPLATE_CODE FROM (
+                                        SELECT ROWNUM rn, TEMPLATE_CODE
+                                        FROM JXPJ_PJSET_TEMPLATE
+                                        where TEMPLATE_TYPE = '学生评教' ORDER BY END_DATE desc
+                        ) where rn = 1
+                ) t
+                LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on TT.TEMPLATE_CODE = t.TEMPLATE_CODE
+                LEFT JOIN JXPJ_PJSET_TARGET tg on tg.target_code = tt.target_code
+        ) t2 LEFT JOIN (
+                select template_code,target_code,score
+                FROM JXPJ_XSPJ_BJPJ t1
+                LEFT JOIN JXPJ_XSPJ_BJPJ_TARGET t2 on t2.relation_code = t1.code
+                where course_code = #{courseCode}
+        ) pj on PJ.TEMPLATE_CODE = t2.TEMPLATE_CODE and pj.target_code = t2.target_code
+        GROUP BY pj.template_code,pj.TARGET_CODE,target_content,target_score
+    </select>
+    <select id="getBjpjPjInfoSuggestList" resultType="java.lang.String">
+        SELECT suggest
+        FROM JXPJ_XSPJ_BJPJ t1
+        LEFT JOIN JXPJ_XSPJ_BJPJ_SUGGEST t2 on t2.relation_code = t1.code
+        where t1.TEMPLATE_CODE = #{templateCode} and t2.COURSE_CODE = #{courseCode}
+    </select>
+</mapper>

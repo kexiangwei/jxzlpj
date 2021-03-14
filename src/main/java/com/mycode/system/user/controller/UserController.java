@@ -41,9 +41,9 @@ public class UserController {
     public JsonResult<Object> updateUser(User user){
         boolean bool = userService.updateUser(user);
         if(!bool){
-            return JsonResult.error("修改失败");
+            return JsonResult.error("修改失败！");
         }
-        return JsonResult.success("修改成功",null);
+        return JsonResult.success("修改成功！",null);
     }
 
     @ResponseBody
@@ -55,7 +55,7 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping("/grant.do")
-    public JsonResult<Object> grant(@RequestParam("userId") String userId,String[] roleIdArr){
+    public JsonResult<Object> grant(@RequestParam("userId") String userId, String[] roleIdArr){
         boolean bool = userService.grant(userId,roleIdArr);
         if(!bool){
             return JsonResult.error();
@@ -71,15 +71,15 @@ public class UserController {
     }
 
     /**
-     * 根据menuId,userId 查询用户是否拥有菜单的提交、审核权限
-     * @param menuId
+     * 根据userId,menuId 查询用户是否拥有指定菜单的提交、审核权限
      * @param userId
+     * @param menuId
      * @return
      */
     @ResponseBody
     @RequestMapping("/getUserAuth.do")
-    public JsonResult<Object> getAuthority(@RequestParam("menuId") String menuId,@RequestParam("userId") String userId){
-        Map<String, Integer> resultMap = userService.getAuthority(menuId,userId);
+    public JsonResult<Object> getAuthority(@RequestParam("userId") String userId, @RequestParam("menuId") String menuId){
+        Map<String, Integer> resultMap = userService.getAuthority(userId,menuId);
         return JsonResult.success(resultMap);
     }
 }

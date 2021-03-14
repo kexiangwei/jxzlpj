@@ -3,17 +3,20 @@
 <mapper namespace="com.mycode.system.user.mapper.UserMapper">
 
     <select id="getUserPageList" resultType="com.mycode.system.user.domain.User">
-        SELECT u.USER_ID,USER_NAME,PHONE,user_group
+        SELECT u.USER_ID,USER_NAME,user_group
         FROM SYS_USER u
         LEFT JOIN (
-            SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
+            SELECT user_id,wm_concat(role_name) user_group
+            FROM SYS_USER_ROLE ur
+            LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
+            GROUP BY user_id
         ) t on t.USER_ID = u.USER_ID
         <where>1=1
             <if test="userId != null and userId != ''">
                 and u.user_id = #{userId}
             </if>
             <if test="userName != null and userName != ''">
-                and user_name = #{userName}
+                and USER_NAME like concat(concat('%',#{userName}),'%')
             </if>
             <if test="userGroup != null and userGroup != ''">
                 and user_group like concat(concat('%',#{userGroup}),'%')
@@ -22,43 +25,41 @@
     </select>
 
     <select id="getUserById" resultType="com.mycode.system.user.domain.User">
-        select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,max_auth_level,user_group
+        select u.user_id,USER_NAME,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,max_auth_level,user_group
         from sys_user u
         LEFT JOIN (
-
                 SELECT user_id,MIN(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
                 FROM SYS_USER_ROLE ur
                 LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
                 GROUP BY user_id
-
         ) ur on ur.USER_ID = u.USER_ID
         where u.user_id = #{userId}
     </select>
-
     <select id="getUserDetail" resultType="com.mycode.system.user.domain.User">
         <if test="accountType == 'teacher'">
-            select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,max_auth_level,user_group
-            ,unit user_unit,major_code,major_name,college_code,college_name
+            select u.user_id,u.USER_NAME,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,max_auth_level,user_group
+            ,sex,age,title,MAJOR_CODE,MAJOR_NAME,college_code,college_name
             from sys_user u
             LEFT JOIN (
-
-            SELECT user_id,MIN(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
-            FROM SYS_USER_ROLE ur
-            LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
-            GROUP BY user_id
-
-            ) ur on ur.USER_ID = u.USER_ID
-            LEFT JOIN DATA_TEACHER dt on dt.code = u.USER_ID
+                SELECT user_id,MIN(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
+                FROM SYS_USER_ROLE ur
+                LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
+                GROUP BY user_id
+            ) t on t.USER_ID = u.USER_ID
+            LEFT JOIN SYS_DATA_TEACHER dt on dt.USER_ID = u.USER_ID
             where u.user_id = #{userId}
         </if>
         <if test="accountType == 'student'">
-            select u.user_id,user_name,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,PHONE,user_group
-            ,sex,class_name,grade,major_name,college_name
+            select u.user_id,u.USER_NAME,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,max_auth_level,user_group
+            ,sex,age,CLASSES,MAJOR_CODE,MAJOR_NAME,college_code,college_name
             from sys_user u
             LEFT JOIN (
-                SELECT user_id,wm_concat(role_name) user_group FROM SYS_USER_ROLE ur LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id GROUP BY user_id
-            ) ur on ur.USER_ID = u.USER_ID
-            LEFT JOIN DATA_STUDENT s on s.CODE = u.USER_ID
+                SELECT user_id,MIN(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
+                FROM SYS_USER_ROLE ur
+                LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
+                GROUP BY user_id
+            ) t on t.USER_ID = u.USER_ID
+            LEFT JOIN SYS_DATA_STUDENT ds on ds.USER_ID = u.USER_ID
             where u.user_id = #{userId}
         </if>
     </select>
@@ -66,17 +67,11 @@
     <update id="updateUser">
         update sys_user
         <set>
-            <if test="userName != null and userName != ''">
-                user_name = #{userName}
-            </if>
             <if test="password != null and password != ''">
-                , password = #{password}
+                password = #{password}
             </if>
             <if test="headImg != null and headImg != ''">
                 , head_img = #{headImg}
-            </if>
-            <if test="phone != null and phone != ''">
-                , phone = #{phone}
             </if>
         </set>
         where user_id = #{userId}
@@ -84,7 +79,9 @@
 
 
     <select id="getRoleByUserId" resultType="java.lang.String">
-        select role_id from sys_user_role where user_id = #{userId}
+        select role_id
+        from sys_user_role
+        where user_id = #{userId}
     </select>
 
     <insert id="grant">
@@ -101,22 +98,22 @@
     </delete>
 
     <select id="getUserMenu" resultType="com.mycode.system.menu.domain.Menu">
-        SELECT DISTINCT sm.*
-        from sys_user_role sur
-        LEFT JOIN sys_role_menu srm on srm.role_id = sur.role_id
-        LEFT JOIN sys_menu sm on sm.menu_id = srm.menu_id
+        SELECT m.*
+        from sys_user_role ur
+        LEFT JOIN sys_role_menu rm on rm.role_id = ur.role_id
+        LEFT JOIN sys_menu m on m.menu_id = rm.menu_id
         WHERE user_id = #{userId}
-        order by pid
+        order by pid,m.menu_id
     </select>
 
     <select id="getAuthority" resultType="map">
-            SELECT sum(CASE when m.menu_name = '提交' then 1 else 0 end) "isSubmit"
-            ,sum(CASE when m.menu_name = '审核' then 1 else 0 end) "isShenhe"
-            from sys_user_role ur
-            LEFT JOIN sys_role_menu rm ON rm.role_id = ur.role_id
-            LEFT JOIN sys_menu m on m.menu_id = rm.menu_id
-            WHERE m.pid = #{menuId}
-            and ur.user_id = #{userId}
+        SELECT sum(CASE when m.menu_name = '提交' then 1 else 0 end) "isAuthSubmit" -- 是否授权提交
+        ,sum(CASE when m.menu_name = '审核' then 1 else 0 end) "isAuthShenhe" -- 是否授权审核
+        from sys_user_role ur
+        LEFT JOIN sys_role_menu rm ON rm.role_id = ur.role_id
+        LEFT JOIN sys_menu m on m.menu_id = rm.menu_id
+        WHERE m.pid = #{menuId}
+        and ur.user_id = #{userId}
     </select>
 </mapper>
 

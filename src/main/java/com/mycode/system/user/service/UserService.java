@@ -20,5 +20,5 @@ public interface UserService {
 
     List<Menu> getUserMenu(String userId);
 
-    Map<String, Integer> getAuthority(String menuId, String userId);
+    Map<String, Integer> getAuthority(String userId, String menuId);
 }
