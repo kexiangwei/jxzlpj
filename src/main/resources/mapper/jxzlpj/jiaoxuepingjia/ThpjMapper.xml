@@ -62,7 +62,7 @@
                 and t.name = #{teacher}
             </if>
             <if test="teacherAge !=null and teacherAge !=''">
-                  <!--<choose>
+                  <choose>
                       <when test="teacherAge == '55岁及以上'">
                           and t.age >= 55
                       </when>
@@ -75,7 +75,7 @@
                       <when test="teacherAge == '34岁及以下'">
                           and t.age &lt;= 34
                       </when>
-                  </choose>-->
+                  </choose>
             </if>
             <if test="teacherTitle !=null and teacherTitle !=''">
 --                 and t.title = #{teacherTitle}

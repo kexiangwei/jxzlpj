@@ -20,8 +20,8 @@ public class Skjh extends ShenHeObj {
             ,courseCode //课程编号
             ,courseName //课程名称
             ,courseType //课程类别，可选值【公共必修课/公共选修课/专业必修课（专业基础课）/专业必修课（专业核心课）/专业选修课】
-            ,stuHour //学时
-            ,stuScore //学分
+            ,xs //学时
+            ,xf //学分
             ,mainTeacher //主讲教师
             ,teachClass; //授课班级
 

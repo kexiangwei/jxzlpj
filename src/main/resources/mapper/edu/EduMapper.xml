@@ -7,28 +7,25 @@
         <foreach collection="mapList" index="idx"  item="map">
             <choose>
                 <when test="tab == 'SYS_DATA_COLLEGE'">
-                    INTO SYS_DATA_COLLEGE(CODE, NAME, CREATE_DATE)
+                    INTO SYS_DATA_COLLEGE(CODE, NAME, IMPORT_DATE)
                 </when>
                 <when test="tab == 'SYS_DATA_MAJOR'">
-                    INTO SYS_DATA_MAJOR(CODE, NAME, STU_YEAR, EDU_DEGREE, COLLEGE_CODE, COLLEGE_NAME, CREATE_DATE)
+                    INTO SYS_DATA_MAJOR(CODE, NAME, COLLEGE_CODE, COLLEGE_NAME, IMPORT_DATE)
                 </when>
-                <!--<when test="tab == 'DATA_CLASS'">
-                    INTO DATA_CLASS(CODE, NAME, HEAD_TEACHER, STUDENT_NUM, GRADE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
-                </when>-->
                 <when test="tab == 'SYS_DATA_COURSE'">
-                    INTO SYS_DATA_COURSE(COURSE_CODE, COURSE_NAME, COURSE_TYPE, XS, XF, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
+                    INTO SYS_DATA_COURSE(COURSE_CODE, COURSE_NAME, COURSE_ATTR, XS, XF, XN, XQ, COLLEGE_CODE, COLLEGE_NAME, XI_JIAOYANSHI, MAJOR_CODE, MAJOR_NAME, MIAN_TEACHER, TEACHING_CLASS, STUDENT_NUM, TEACHING_ADDR, IMPORT_DATE)
                 </when>
                 <when test="tab == 'SYS_DATA_TEACHER'">
-                    INTO SYS_DATA_TEACHER(CODE, NAME, SEX, BIRTH_DATE, EDU_DEGREE, TITLE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, AGE, CREATE_DATE)
-                </when>
-                <when test="tab == 'SYS_DATA_STUDENT'">
-                    INTO SYS_DATA_STUDENT(CODE, NAME, SEX, BIRTH_DATE, CLASS_CDOE, CLASS_NAME, GRADE, MAJOR_CODE, MAJOR_NAME, COLLEGE_NAME, CREATE_DATE)
+                    INTO SYS_DATA_TEACHER(USER_ID, USER_NAME, SEX, AGE, TITLE, MAJOR_CODE, COLLEGE_CODE, COLLEGE_NAME, IMPORT_DATE, MAJOR_NAME)
                 </when>
                 <when test="tab == 'SYS_DATA_TEACHER_COURSE'">
-                    INTO SYS_DATA_TEACHER_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
+                    INTO SYS_DATA_TEACHER_COURSE (USER_ID, COURSE_CODE, IMPORT_DATE)
+                </when>
+                <when test="tab == 'SYS_DATA_STUDENT'">
+                    INTO SYS_DATA_STUDENT(USER_ID, USER_NAME, SEX, AGE, CLASSES, MAJOR_CODE, MAJOR_NAME, COLLEGE_CODE, COLLEGE_NAME, IMPORT_DATE)
                 </when>
                 <when test="tab == 'SYS_DATA_STUDENT_COURSE'">
-                    INTO SYS_DATA_STUDENT_COURSE (USER_ID, COURSE_CODE, CREATE_DATE)
+                    INTO SYS_DATA_STUDENT_COURSE (USER_ID, COURSE_CODE, IMPORT_DATE)
                 </when>
             </choose>
             VALUES (
@@ -42,19 +39,18 @@
 
     <insert id="resetSysUserTeacherInfo">
         insert into SYS_USER
-        SELECT code,name,'123qaz','teacher',null,null,CURRENT_DATE
-        FROM SYS_DATA_TEACHER t LEFT JOIN SYS_USER u on u.USER_ID = t.code where u.USER_ID is null
+        SELECT t.USER_ID,t.USER_NAME,'123qaz','teacher',null,CURRENT_DATE
+        FROM SYS_DATA_TEACHER t LEFT JOIN SYS_USER u on u.USER_ID = t.USER_ID where u.USER_ID is null
     </insert>
     <insert id="resetSysUserStudentInfo">
         insert into SYS_USER
-        SELECT code,name,'123qaz','student',null,null,CURRENT_DATE
-        FROM SYS_DATA_STUDENT t LEFT JOIN SYS_USER u on u.USER_ID = t.code where u.USER_ID is null
+        SELECT t.USER_ID,t.USER_NAME,'123qaz','student',null,CURRENT_DATE
+        FROM SYS_DATA_STUDENT t LEFT JOIN SYS_USER u on u.USER_ID = t.USER_ID where u.USER_ID is null
     </insert>
     <!-- 默认授权，老师拥有老师角色，学生拥有学生角色。 -->
     <insert id="resetSysUserRoleInfo">
         insert into SYS_USER_ROLE
-        SELECT u.USER_ID
-        ,(case when u.ACCOUNT_TYPE = 'teacher' then 5 when u.ACCOUNT_TYPE = 'student' then 6 end)
+        SELECT u.USER_ID,(case when u.ACCOUNT_TYPE = 'teacher' then 8 when u.ACCOUNT_TYPE = 'student' then 9 end)
         FROM SYS_USER u LEFT JOIN SYS_USER_ROLE ur on ur.USER_ID = u.USER_ID
         where ur.USER_ID is null
     </insert>

@@ -14,8 +14,8 @@ public class Course {
     private String courseCode //课程编号
             , courseName //课程名称
             , courseAttr //课程性质
-            , stuHour //学时
-            , stuScore //学分
+            , xs //学时
+            , xf //学分
             , majorName  //适用专业
             , collegeName;  //开课学院（部）名称
 }

@@ -20,8 +20,8 @@ public class Ckpj {
     private String courseCode //课程编号
             ,courseName //课程名称
             ,courseAttr //课程性质
-            ,stuScore //
-            ,stuHour //
+            ,xf //
+            ,xs //
             ,majorName //
             ,collegeName; //
     //评审状态

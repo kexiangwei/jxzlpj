@@ -29,15 +29,16 @@ public class EduDataSourceService {
     @Scheduled(cron = "0 0 0 1 * ?") //每月1日00:00执行一次
     public boolean resetEduDataInfo(){
         boolean bool = false;
-        final String[] tabs = {"SYS_DATA_COLLEGE","SYS_DATA_MAJOR"/*,"DATA_CLASS"*/,"SYS_DATA_COURSE","SYS_DATA_TEACHER","SYS_DATA_STUDENT","SYS_DATA_TEACHER_COURSE","SYS_DATA_STUDENT_COURSE"};
-        final String[] sql = {"select jg_id,jgmc from jw_user.v_xy"
-                ,"select zyh_id,zymc,xz,null,zy.jg_id,jgmc from jw_user.v_zy zy left join jw_user.v_xy xy on xy.jg_id = zy.jg_id"
-               /* ,"select bh_id,bj,null,zxrs,njdm_id,bj.zyh_id,zymc,jgmc from jw_user.v_bj bj left join jw_user.v_zy zy on zy.zyh_id = bj.zyh_id left join jw_user.v_xy xy on xy.jg_id = bj.jg_id"*/
-                ,"select kch_id,kcmc,kcxzmc,zxs,xf,null,null,jgmc from jw_user.v_kc kc left join jw_user.v_kcxz kcxz on kcxz.kcxzdm = kc.kch_id left join jw_user.v_xy xy on xy.jg_id = kc.kkbm_id"
-                ,"select jgh_id,xm,null,csrq,null,zcm,null,null,jgmc,null from jw_user.v_jsxx js left join jw_user.v_xy xy on xy.jg_id = js.jg_id"
-                ,"select xh_id,xm,null,csrq,xs.bh_id,bj,xs.njdm_id,xs.zyh_id,zymc,jgmc from jw_user.v_xsxx xs left join jw_user.v_bj bj on bj.bh_id = xs.bh_id left join jw_user.v_zy zy on zy.zyh_id = xs.zyh_id left join jw_user.v_xy xy on xy.jg_id = xs.jg_id"
-                ,"select a.jgh_id,b.kch_id from jw_user.v_jsrk a left join jw_user.v_jxrw b on a.jxb_id = b.jxb_id where b.jxb_id is not null and b.xnm = Extract(year from sysdate)"
-                ,"select a.xh_id,b.kch_id from jw_user.v_xsxk a left join jw_user.v_jxrw b on a.jxb_id = b.jxb_id where b.jxb_id is not null and b.xnm = Extract(year from sysdate)"};
+        final String[] tabs = {
+                "SYS_DATA_COLLEGE","SYS_DATA_MAJOR","SYS_DATA_COURSE"
+                ,"SYS_DATA_TEACHER","SYS_DATA_TEACHER_COURSE"
+                ,"SYS_DATA_STUDENT","SYS_DATA_STUDENT_COURSE"
+        };
+        final String[] sql = {
+                "select * from jw_user.V_JXZLPJ_XY","select * from jw_user.V_JXZLPJ_ZY","select * from jw_user.V_JXZLPJ_KC"
+                ,"select * from jw_user.V_JXZLPJ_JS","select * from jw_user.V_JXZLPJ_JSRK"
+                ,"select * from jw_user.V_JXZLPJ_XS","select * from jw_user.V_JXZLPJ_XSXK"
+        };
 
         try {
             conn = eduDataSource.getConnect();
@@ -58,7 +59,7 @@ public class EduDataSourceService {
                         map.put("col_"+j,rs.getString(j)); //随便定义一个key做占位符就可以了
                     }
                     mapList.add(map);
-                    if(mapList.size() == 500){
+                    if(mapList.size() == 2000){
                         bool = eduMapper.resetEduDataInfo(tabs[i],mapList);
                         if(!bool){
                             System.out.println("====== "+tabs[i]+" 更新失败 ======");
