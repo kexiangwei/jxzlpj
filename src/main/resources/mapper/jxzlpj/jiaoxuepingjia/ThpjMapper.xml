@@ -9,8 +9,8 @@
         SELECT t2.course_code,t2.course_name,t2.course_attr,t2.XF,t2.XS,t2.MAJOR_NAME,t2.COLLEGE_NAME
         ,(case when pj.template_code is not null then 1 else 2 end) is_pj
         ,pj.template_code template_code
-        FROM SYS_DATA_TEACHER_COURSE T1
-        LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+        FROM SYS_DATA_JSRK T1
+        LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
         LEFT JOIN (SELECT DISTINCT template_code,teacher_code,course_code FROM JXPJ_THPJ) pj on pj.teacher_code = T1.USER_ID and pj.course_code = T1.COURSE_CODE
         WHERE T1.USER_ID = #{userId}
         <if test="courseName !=null and courseName !=''">
@@ -39,9 +39,9 @@
         ,t.USER_ID teacher_code,t.user_name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
         ,(case when pj.code is not null then 1 else 2 end) is_pj,pj.code as pj_code, pj.is_submit
         ,(case when total_score >= 90 then 1 else 2 end) is_top
-        FROM SYS_DATA_COURSE c
-        LEFT JOIN SYS_DATA_TEACHER_COURSE tc on tc.course_code = c.course_code
-        LEFT JOIN SYS_DATA_TEACHER t on t.USER_ID = tc.USER_ID
+        FROM SYS_DATA_KC c
+        LEFT JOIN SYS_DATA_JSRK tc on tc.course_code = c.course_code
+        LEFT JOIN SYS_DATA_JS t on t.USER_ID = tc.USER_ID
         LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = tc.USER_ID and pj.course_code = tc.course_code
         LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) pj2 on pj2.RELATION_CODE = pj.code
         <where> tc.USER_ID is not null

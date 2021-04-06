@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.mycode.common.CommonMapper">
+<mapper namespace="com.mycode.common.common.CommonMapper">
 
     <select id="getTableCols" resultType="java.util.Map">
         SELECT c.COLUMN_NAME,c.COMMENTS
@@ -17,13 +17,13 @@
 
     <select id="getCollege" resultType="java.util.Map">
         SELECT distinct code,name
-        FROM SYS_DATA_COLLEGE
+        FROM SYS_DATA_XY
         ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
     </select>
 
     <select id="getMajor" resultType="java.util.Map">
         SELECT distinct m.code,m.name
-        FROM SYS_DATA_MAJOR m /*LEFT JOIN SYS_DATA_COLLEGE c on c.CODE = m.COLLEGE_CODE*/
+        FROM SYS_DATA_ZY m /*LEFT JOIN SYS_DATA_XY c on c.CODE = m.COLLEGE_CODE*/
         <where>1=1
             <if test="collegeCode !=null and collegeCode !=''">
                 and COLLEGE_CODE = #{collegeCode}
@@ -32,15 +32,15 @@
         ORDER BY NLSSORT(m.name,'NLS_SORT = SCHINESE_PINYIN_M')
     </select>
 
-    <select id="getCourseListByUserId" resultType="com.mycode.common.Course">
+    <select id="getCourseListByUserId" resultType="com.mycode.common.common.Course">
         <choose>
             <when test="accountType == 'student'">
                 SELECT T2.*
-                FROM SYS_DATA_STUDENT_COURSE T1 LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+                FROM SYS_DATA_XSXK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
             </when>
             <otherwise>
                 SELECT T2.*
-                FROM SYS_DATA_TEACHER_COURSE T1 LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+                FROM SYS_DATA_JSRK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
             </otherwise>
         </choose>
         <where> T1.USER_ID =#{userId}

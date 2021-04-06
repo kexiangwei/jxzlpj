@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.mapper.KczlfxbgMapper">
 
-    <select id="getPageList" resultType="com.mycode.common.Course">
+    <select id="getPageList" resultType="com.mycode.common.common.Course">
         SELECT T2.*
-        FROM SYS_DATA_TEACHER_COURSE T1 LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+        FROM SYS_DATA_JSRK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
         <where>
             <if test="userId != null and userId != ''">
                 and T1.USER_ID =#{userId}

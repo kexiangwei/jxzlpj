@@ -12,7 +12,7 @@ import java.util.*;
  * @auther kexiangwei
  * @date 2020/6/20
  */
-@EnableScheduling
+//@EnableScheduling
 @Service
 public class EduDataSourceService {
 
@@ -30,9 +30,7 @@ public class EduDataSourceService {
     public boolean resetEduDataInfo(){
         boolean bool = false;
         final String[] tabs = {
-                "SYS_DATA_COLLEGE","SYS_DATA_MAJOR","SYS_DATA_COURSE"
-                ,"SYS_DATA_TEACHER","SYS_DATA_TEACHER_COURSE"
-                ,"SYS_DATA_STUDENT","SYS_DATA_STUDENT_COURSE"
+                "SYS_DATA_XY","SYS_DATA_ZY","SYS_DATA_KC","SYS_DATA_JS","SYS_DATA_JSRK","SYS_DATA_XS","SYS_DATA_XSXK"
         };
         final String[] sql = {
                 "select * from jw_user.V_JXZLPJ_XY","select * from jw_user.V_JXZLPJ_ZY","select * from jw_user.V_JXZLPJ_KC"

@@ -6,46 +6,50 @@
         insert all
         <foreach collection="mapList" index="idx"  item="map">
             <choose>
-                <when test="tab == 'SYS_DATA_COLLEGE'">
-                    INTO SYS_DATA_COLLEGE(CODE, NAME, IMPORT_DATE)
+                <when test="tab == 'SYS_DATA_XY'">
+                    INTO SYS_DATA_XY(CODE, NAME, IMPORT_DATE)
                 </when>
-                <when test="tab == 'SYS_DATA_MAJOR'">
-                    INTO SYS_DATA_MAJOR(CODE, NAME, COLLEGE_CODE, COLLEGE_NAME, IMPORT_DATE)
+                <when test="tab == 'SYS_DATA_ZY'">
+                    INTO SYS_DATA_ZY(CODE, NAME, COLLEGE_CODE, COLLEGE_NAME, IMPORT_DATE)
                 </when>
-                <when test="tab == 'SYS_DATA_COURSE'">
-                    INTO SYS_DATA_COURSE(COURSE_CODE, COURSE_NAME, COURSE_ATTR, XS, XF, XN, XQ, COLLEGE_CODE, COLLEGE_NAME, XI_JIAOYANSHI, MAJOR_CODE, MAJOR_NAME, MIAN_TEACHER, TEACHING_CLASS, STUDENT_NUM, TEACHING_ADDR, IMPORT_DATE)
+                <when test="tab == 'SYS_DATA_KC'">
+                    INTO SYS_DATA_KC(COURSE_CODE, COURSE_NAME, COURSE_ATTR, XS, XF, XN, XQ, COLLEGE_CODE, COLLEGE_NAME, XI_JIAOYANSHI, MAJOR_CODE, MAJOR_NAME, MIAN_TEACHER, TEACHING_CLASS, STUDENT_NUM, TEACHING_ADDR, IMPORT_DATE)
                 </when>
-                <when test="tab == 'SYS_DATA_TEACHER'">
-                    INTO SYS_DATA_TEACHER(USER_ID, USER_NAME, SEX, AGE, TITLE, MAJOR_CODE, COLLEGE_CODE, COLLEGE_NAME, IMPORT_DATE, MAJOR_NAME)
+                <when test="tab == 'SYS_DATA_JS'">
+                    INTO SYS_DATA_JS(USER_ID, USER_NAME, SEX, AGE, TITLE, MAJOR_CODE, COLLEGE_CODE, COLLEGE_NAME, IMPORT_DATE, MAJOR_NAME)
                 </when>
-                <when test="tab == 'SYS_DATA_TEACHER_COURSE'">
-                    INTO SYS_DATA_TEACHER_COURSE (USER_ID, COURSE_CODE, IMPORT_DATE)
+                <when test="tab == 'SYS_DATA_JSRK'">
+                    INTO SYS_DATA_JSRK (USER_ID, COURSE_CODE, IMPORT_DATE)
                 </when>
-                <when test="tab == 'SYS_DATA_STUDENT'">
-                    INTO SYS_DATA_STUDENT(USER_ID, USER_NAME, SEX, AGE, CLASSES, MAJOR_CODE, MAJOR_NAME, COLLEGE_CODE, COLLEGE_NAME, IMPORT_DATE)
+                <when test="tab == 'SYS_DATA_XS'">
+                    INTO SYS_DATA_XS(USER_ID, USER_NAME, SEX, AGE, CLASSES, MAJOR_CODE, MAJOR_NAME, COLLEGE_CODE, COLLEGE_NAME, IMPORT_DATE)
                 </when>
-                <when test="tab == 'SYS_DATA_STUDENT_COURSE'">
-                    INTO SYS_DATA_STUDENT_COURSE (USER_ID, COURSE_CODE, IMPORT_DATE)
+                <when test="tab == 'SYS_DATA_XSXK'">
+                    INTO SYS_DATA_XSXK (USER_ID, COURSE_CODE, IMPORT_DATE)
                 </when>
             </choose>
-            VALUES (
-            <foreach collection="map.values" index="index"  item="item">
-                #{item,jdbcType=VARCHAR},
-            </foreach>
-            CURRENT_DATE)
+            VALUES
+            (
+                <foreach collection="map.values" index="index"  item="item">
+                    #{item,jdbcType=VARCHAR},
+                </foreach>
+                CURRENT_DATE
+            )
         </foreach>
         select 1 from dual
     </insert>
 
+    <!--增量更新教师信息-->
     <insert id="resetSysUserTeacherInfo">
         insert into SYS_USER
-        SELECT t.USER_ID,t.USER_NAME,'123qaz','teacher',null,CURRENT_DATE
-        FROM SYS_DATA_TEACHER t LEFT JOIN SYS_USER u on u.USER_ID = t.USER_ID where u.USER_ID is null
+        SELECT js.USER_ID,js.USER_NAME,'123qaz','teacher',null,CURRENT_DATE
+        FROM SYS_DATA_JS js LEFT JOIN SYS_USER u on u.USER_ID = js.USER_ID where u.USER_ID is null
     </insert>
+    <!--增量更新学生信息-->
     <insert id="resetSysUserStudentInfo">
         insert into SYS_USER
-        SELECT t.USER_ID,t.USER_NAME,'123qaz','student',null,CURRENT_DATE
-        FROM SYS_DATA_STUDENT t LEFT JOIN SYS_USER u on u.USER_ID = t.USER_ID where u.USER_ID is null
+        SELECT xs.USER_ID,xs.USER_NAME,'123qaz','student',null,CURRENT_DATE
+        FROM SYS_DATA_XS xs LEFT JOIN SYS_USER u on u.USER_ID = xs.USER_ID where u.USER_ID is null
     </insert>
     <!-- 默认授权，老师拥有老师角色，学生拥有学生角色。 -->
     <insert id="resetSysUserRoleInfo">

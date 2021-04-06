@@ -1,6 +1,4 @@
-package com.mycode.common;
-
-import com.mycode.common.Course;
+package com.mycode.common.common;
 
 import java.util.List;
 import java.util.Map;

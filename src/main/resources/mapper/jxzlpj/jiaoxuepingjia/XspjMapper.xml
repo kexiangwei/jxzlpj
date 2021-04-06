@@ -7,8 +7,8 @@
             <when test="accountType == 'student'">
                 SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
-                FROM SYS_DATA_STUDENT_COURSE sc
-                LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = sc.COURSE_CODE
+                FROM SYS_DATA_XSXK sc
+                LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = sc.COURSE_CODE
                 LEFT JOIN (
                 SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
                 ) pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.USER_ID
@@ -17,8 +17,8 @@
             <when test="accountType == 'teacher'">
                 SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
-                FROM SYS_DATA_TEACHER_COURSE dtc
-                LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = DTC.COURSE_CODE
+                FROM SYS_DATA_JSRK dtc
+                LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = DTC.COURSE_CODE
                 LEFT JOIN (
                     SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
                 ) pj on pj.COURSE_CODE = c.COURSE_CODE
@@ -28,7 +28,7 @@
                 SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME,1 as isPj
                 FROM (
                     SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
-                ) pj LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = pj.COURSE_CODE
+                ) pj LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = pj.COURSE_CODE
             </otherwise>
         </choose>
     </select>
@@ -72,10 +72,10 @@
 
     <select id="getPjInfoTransferData" resultType="java.util.Map">
 SELECT T2.COURSE_CODE "courseCode", T2.COURSE_NAME "courseName", T4.USER_ID "teacherCode", T4.USER_NAME "teacherName"
-FROM SYS_DATA_STUDENT_COURSE T1
-LEFT JOIN SYS_DATA_COURSE T2 ON T2.COURSE_CODE = T1.COURSE_CODE
-LEFT JOIN SYS_DATA_TEACHER_COURSE T3 ON T3.COURSE_CODE = T2.COURSE_CODE
-LEFT JOIN SYS_DATA_TEACHER T4 ON T4.USER_ID = T3.USER_ID
+FROM SYS_DATA_XSXK T1
+LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+LEFT JOIN SYS_DATA_JSRK T3 ON T3.COURSE_CODE = T2.COURSE_CODE
+LEFT JOIN SYS_DATA_JS T4 ON T4.USER_ID = T3.USER_ID
 WHERE T1.USER_ID = #{userId}
     </select>
 
@@ -110,8 +110,8 @@ WHERE T1.USER_ID = #{userId}
             <when test="accountType == 'teacher'">
                 SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
-                FROM SYS_DATA_TEACHER_COURSE dtc
-                LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = DTC.COURSE_CODE
+                FROM SYS_DATA_JSRK dtc
+                LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = DTC.COURSE_CODE
                 LEFT JOIN (
                     SELECT DISTINCT course_code
                     FROM (
@@ -137,7 +137,7 @@ WHERE T1.USER_ID = #{userId}
                         ) where rn = 1
                     ) t LEFT JOIN JXPJ_XSPJ_BJPJ t1 on t1.TEMPLATE_CODE = t.TEMPLATE_CODE
                     LEFT JOIN JXPJ_XSPJ_BJPJ_SUGGEST t2 on t2.relation_code = t1.code where t1.code  is not null
-                ) pj LEFT JOIN SYS_DATA_COURSE c on c.COURSE_CODE = pj.COURSE_CODE
+                ) pj LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = pj.COURSE_CODE
             </otherwise>
         </choose>
 

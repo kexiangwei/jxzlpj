@@ -46,7 +46,7 @@
                 LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
                 GROUP BY user_id
             ) t on t.USER_ID = u.USER_ID
-            LEFT JOIN SYS_DATA_TEACHER dt on dt.USER_ID = u.USER_ID
+            LEFT JOIN SYS_DATA_JS dt on dt.USER_ID = u.USER_ID
             where u.user_id = #{userId}
         </if>
         <if test="accountType == 'student'">
@@ -59,7 +59,7 @@
                 LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
                 GROUP BY user_id
             ) t on t.USER_ID = u.USER_ID
-            LEFT JOIN SYS_DATA_STUDENT ds on ds.USER_ID = u.USER_ID
+            LEFT JOIN SYS_DATA_XS ds on ds.USER_ID = u.USER_ID
             where u.user_id = #{userId}
         </if>
     </select>

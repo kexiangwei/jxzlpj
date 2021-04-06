@@ -12,8 +12,8 @@
         SELECT j.*
         ,c.name college_name,m.name major_name
         from JXJC_JXSG j
-        LEFT JOIN SYS_DATA_COLLEGE c on c.code = j.teacher_college
-        LEFT JOIN SYS_DATA_MAJOR m on m.code = j.teacher_major
+        LEFT JOIN SYS_DATA_XY c on c.code = j.teacher_college
+        LEFT JOIN SYS_DATA_ZY m on m.code = j.teacher_major
          <where>1=1
              <if test="event != null and event != ''">
                  and event like concat(concat('%',#{event}),'%')

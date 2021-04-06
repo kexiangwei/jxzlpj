@@ -17,7 +17,7 @@
                     SELECT j.code,MAX(BATCH_NUM) BATCH_NUM
                     from JXYJ_JXJY j
                     LEFT JOIN COMMON_SHENHE sh on sh.relation_code = j.code
-                    LEFT JOIN SYS_DATA_TEACHER dt on DT.user_id = j.user_id
+                    LEFT JOIN SYS_DATA_JS dt on DT.user_id = j.user_id
                     where sh.relation_code is not null
                     <if test="maxAuthLevel != null and maxAuthLevel != '' and maxAuthLevel == 6">
                         and DT.COLLEGE_CODE = #{collegeCode}
@@ -60,7 +60,7 @@
                             SELECT j.code,MAX(BATCH_NUM) BATCH_NUM
                             from JXYJ_JXJY j
                             LEFT JOIN COMMON_SHENHE sh on sh.relation_code = j.code
-                            LEFT JOIN SYS_DATA_TEACHER dt on DT.user_id = j.user_id
+                            LEFT JOIN SYS_DATA_JS dt on DT.user_id = j.user_id
                             where sh.relation_code is not null
                             <if test="maxAuthLevel != null and maxAuthLevel != '' and maxAuthLevel == 6">
                                 and DT.COLLEGE_CODE = #{collegeCode}

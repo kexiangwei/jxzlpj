@@ -1,4 +1,4 @@
-package com.mycode.common;
+package com.mycode.common.common;
 
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
