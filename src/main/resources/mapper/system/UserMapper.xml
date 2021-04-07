@@ -3,20 +3,23 @@
 <mapper namespace="com.mycode.system.user.mapper.UserMapper">
 
     <select id="getUserPageList" resultType="com.mycode.system.user.domain.User">
-        SELECT u.USER_ID,USER_NAME,user_group
+        SELECT u.XY_NAME,u.USER_ID,u.USER_NAME,user_group
         FROM SYS_USER u
         LEFT JOIN (
             SELECT user_id,wm_concat(role_name) user_group
             FROM SYS_USER_ROLE ur
             LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
             GROUP BY user_id
-        ) t on t.USER_ID = u.USER_ID
-        <where>1=1
+        ) ur on ur.USER_ID = u.USER_ID
+        <where> u.USER_ID != '111' /*超级管理员不应该显示在用户列表中*/
+            <if test="xyName != null and xyName != ''">
+                and u.XY_NAME = #{xyName}
+            </if>
             <if test="userId != null and userId != ''">
-                and u.user_id = #{userId}
+                and u.USER_ID = #{userId}
             </if>
             <if test="userName != null and userName != ''">
-                and USER_NAME like concat(concat('%',#{userName}),'%')
+                and u.USER_NAME like concat(concat('%',#{userName}),'%')
             </if>
             <if test="userGroup != null and userGroup != ''">
                 and user_group like concat(concat('%',#{userGroup}),'%')
@@ -25,43 +28,16 @@
     </select>
 
     <select id="getUserById" resultType="com.mycode.system.user.domain.User">
-        select u.user_id,USER_NAME,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,max_auth_level,user_group
+        select u.user_id,u.user_name,password,account_type,head_img,max_auth_level,user_group
+        ,sex,age,xy_code,xy_name,zy_code,zy_name,user_unit,title,nj,bj
         from sys_user u
-        LEFT JOIN (
-                SELECT user_id,MIN(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
-                FROM SYS_USER_ROLE ur
-                LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
-                GROUP BY user_id
-        ) ur on ur.USER_ID = u.USER_ID
+        left join (
+            select user_id,min(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
+            from sys_user_role ur
+            left join sys_role r on r.role_id = ur.role_id
+            group by user_id
+        ) ur on ur.user_id = u.user_id
         where u.user_id = #{userId}
-    </select>
-    <select id="getUserDetail" resultType="com.mycode.system.user.domain.User">
-        <if test="accountType == 'teacher'">
-            select u.user_id,u.USER_NAME,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,max_auth_level,user_group
-            ,sex,age,title,MAJOR_CODE,MAJOR_NAME,college_code,college_name
-            from sys_user u
-            LEFT JOIN (
-                SELECT user_id,MIN(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
-                FROM SYS_USER_ROLE ur
-                LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
-                GROUP BY user_id
-            ) t on t.USER_ID = u.USER_ID
-            LEFT JOIN SYS_DATA_JS dt on dt.USER_ID = u.USER_ID
-            where u.user_id = #{userId}
-        </if>
-        <if test="accountType == 'student'">
-            select u.user_id,u.USER_NAME,PASSWORD,ACCOUNT_TYPE,HEAD_IMG,max_auth_level,user_group
-            ,sex,age,CLASSES,MAJOR_CODE,MAJOR_NAME,college_code,college_name
-            from sys_user u
-            LEFT JOIN (
-                SELECT user_id,MIN(ur.role_id) max_auth_level,wm_concat(r.role_name) user_group
-                FROM SYS_USER_ROLE ur
-                LEFT JOIN SYS_ROLE r on r.role_id = ur.role_id
-                GROUP BY user_id
-            ) t on t.USER_ID = u.USER_ID
-            LEFT JOIN SYS_DATA_XS ds on ds.USER_ID = u.USER_ID
-            where u.user_id = #{userId}
-        </if>
     </select>
 
     <update id="updateUser">
@@ -77,16 +53,19 @@
         where user_id = #{userId}
     </update>
 
+    <select id="getRoleListForTransferData" resultType="java.util.Map">
+        select ROLE_NAME as "title", ROLE_ID as "value"
+        from sys_role
+        where ROLE_ID != 1
+    </select>
 
-    <select id="getRoleByUserId" resultType="java.lang.String">
-        select role_id
-        from sys_user_role
-        where user_id = #{userId}
+    <select id="getRoleIdListByUserId" resultType="java.lang.String">
+        select role_id from sys_user_role where user_id = #{userId}
     </select>
 
     <insert id="grant">
         insert all
-        <foreach collection="roleIdArr" index="idx" item="rid">
+        <foreach collection="roleIds" index="idx" item="rid">
             into sys_user_role(user_id,role_id)
             values (#{userId},#{rid})
         </foreach>
@@ -114,6 +93,24 @@
         LEFT JOIN sys_menu m on m.menu_id = rm.menu_id
         WHERE m.pid = #{menuId}
         and ur.user_id = #{userId}
+    </select>
+
+    <select id="getCourseListByUserId" resultType="com.mycode.common.Course">
+        <choose>
+            <when test="accountType == 'student'">
+                SELECT T2.*
+                FROM SYS_DATA_XSXK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+            </when>
+            <otherwise>
+                SELECT T2.*
+                FROM SYS_DATA_JSRK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+            </otherwise>
+        </choose>
+        <where> T1.USER_ID =#{userId}
+            <if test="courseName !=null and courseName !=''">
+                and T2.COURSE_NAME = #{courseName}
+            </if>
+        </where>
     </select>
 </mapper>
 

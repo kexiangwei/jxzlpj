@@ -28,10 +28,18 @@ public class RoleController {
     }
 
     @ResponseBody
+    @RequestMapping("/getRoleList.do")
+    public JsonResult<Object> getRoleList(){
+        List<Role> roleList = roleService.getRoleList();
+        return JsonResult.success(roleList);
+    }
+
+    @ResponseBody
     @RequestMapping("/insertOrUpdateRoleMenu.do")
-    public JsonResult<Object> insertOrUpdateRoleMenu(@RequestParam(value = "roleId",required = false) Long roleId
-            , @RequestParam("roleName") String roleName, String[] menuIdArr){
-        boolean bool = roleService.insertOrUpdateRoleMenu(roleId,roleName,menuIdArr);
+    public JsonResult<Object> insertOrUpdateRoleMenu(@RequestParam(value = "roleId",required = false) String roleId
+            , @RequestParam("roleName") String roleName
+            , String[] menuIds){ //关联的菜单项
+        boolean bool = roleService.insertOrUpdateRoleMenu(roleId,roleName,menuIds);
         if(!bool){
             return JsonResult.error();
         }

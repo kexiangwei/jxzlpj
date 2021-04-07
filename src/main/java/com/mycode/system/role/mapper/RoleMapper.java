@@ -5,20 +5,22 @@ import com.mycode.system.role.domain.Role;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface RoleMapper {
 
     List<Role> getRolePageList(Role role);
 
-    boolean addRole(@Param("roleId") Long roleId, @Param("roleName") String roleName);
+    List<Role> getRoleList();
 
-    boolean updateRole(@Param("roleId") Long roleId, @Param("roleName") String roleName);
+    boolean insertRole(@Param("roleId") String roleId, @Param("roleName") String roleName);
 
-    List<Menu> getMenuListByRoleId(@Param("roleId") Long roleId);
+    boolean updateRole(@Param("roleId") String roleId, @Param("roleName") String roleName);
 
-    boolean addRoleMenu(@Param("roleId") Long roleId, @Param("menuIdArr") String[] menuIdArr);
+    List<Menu> getMenuListByRoleId(@Param("roleId") String roleId);
 
-    boolean deleteRoleMenuByRoleId(@Param("roleId") Long roleId);
+    boolean addRoleMenu(@Param("roleId") String roleId, @Param("menuIds") String[] menuIds);
 
+    boolean deleteRoleMenuByRoleId(@Param("roleId") String roleId);
 }

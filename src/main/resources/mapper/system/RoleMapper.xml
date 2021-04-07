@@ -11,7 +11,11 @@
         </where>
     </select>
 
-    <insert id="addRole">
+    <select id="getRoleList" resultType="com.mycode.system.role.domain.Role">
+        select ROLE_ID,ROLE_NAME from sys_role where ROLE_ID != 1
+    </select>
+
+    <insert id="insertRole">
         insert into sys_role values (#{roleId},#{roleName})
     </insert>
 
@@ -20,14 +24,14 @@
     </update>
 
     <select id="getMenuListByRoleId" resultType="com.mycode.system.menu.domain.Menu">
-        select DISTINCT m.*
+        select m.*
         from sys_role_menu rm LEFT JOIN sys_menu m on m.menu_id = rm.menu_id
         WHERE role_id = #{roleId}
     </select>
 
     <insert id="addRoleMenu">
         insert all
-        <foreach collection="menuIdArr" index="index" item="menuId">
+        <foreach collection="menuIds" index="index" item="menuId">
             into sys_role_menu(role_id,menu_id)
             values(${roleId},${menuId})
         </foreach>

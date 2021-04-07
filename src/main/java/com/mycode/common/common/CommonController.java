@@ -23,6 +23,20 @@ public class CommonController {
     private CommonService commonService;
 
     @ResponseBody
+    @RequestMapping("/getXyList.do")
+    public JsonResult<Object> getXyList(){
+        List<Map<String, Object>> maps = commonService.getXyList();
+        return JsonResult.success(maps);
+    }
+
+    @ResponseBody
+    @RequestMapping("/getZyList.do")
+    public JsonResult<Object> getZyList(@RequestParam(value = "xyCode",required = false) String xyCode){
+        List<Map<String, Object>> maps = commonService.getZyList(xyCode);
+        return JsonResult.success(maps);
+    }
+
+    @ResponseBody
     @RequestMapping("/getTableCols.do")
     public JsonResult<Object> getTableCols(@RequestParam("tableName") String tableName){
         List<Map<String, Object>> tableCols = commonService.getTableCols(tableName);
@@ -34,29 +48,6 @@ public class CommonController {
     public JsonResult<Object> getTeacherTabData(@RequestParam("viewName") String viewName, @RequestParam("userId") String userId){
         List<Map<String, Object>> tableDatas = commonService.getTableDatas(viewName, userId);
         return JsonResult.success(tableDatas);
-    }
-
-    @ResponseBody
-    @RequestMapping("/getCollege.do")
-    public JsonResult<Object> getCollege(){
-        List<Map<String, Object>> maps = commonService.getCollege();
-        return JsonResult.success(maps);
-    }
-
-    @ResponseBody
-    @RequestMapping("/getMajor.do")
-    public JsonResult<Object> getMajor(@RequestParam(value = "collegeCode",required = false) String collegeCode){
-        List<Map<String, Object>> maps = commonService.getMajor(collegeCode);
-        return JsonResult.success(maps);
-    }
-
-    @ResponseBody
-    @RequestMapping("/getCourseListByUserId.do")
-    public JsonResult<Object> getCourseListByUserId(@RequestParam("userId") String userId
-            ,@RequestParam(value = "accountType", required = false, defaultValue = "teacher") String accountType
-            ,@RequestParam(value = "courseName", required = false) String courseName){
-        List<Course> courseList = commonService.getCourseListByUserId(userId, accountType, courseName);
-        return JsonResult.success(courseList);
     }
 
 }

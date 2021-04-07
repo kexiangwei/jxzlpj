@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jxzlpj.jiaoxuepingjia.pjset.mapper.PjSetTargetMapper">
+
+    <select id="getPjSetTargetList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.pjset.domain.PjSetTarget">
+        select t.*
+        ,(case when tt.target_code is not null then 1 else 2 end) is_bind_template
+        from JXPJ_PJSET_TARGET t
+        LEFT JOIN (SELECT DISTINCT target_code from JXPJ_PJSET_TEMPLATE_TARGET) tt on tt.target_code = t.target_code
+        <where>1=1
+            <if test="targetType !=null and targetType !=''">
+                and TARGET_TYPE = #{targetType}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertTarget">
+        insert into JXPJ_PJSET_TARGET (TARGET_CODE, TARGET_TYPE, TARGET_NAME, TARGET_CONTENT, TARGET_SCORE, CREATE_DATE)
+        VALUES (#{targetCode},#{targetType},#{targetName,jdbcType=VARCHAR},#{targetContent},#{targetScore},CURRENT_DATE)
+    </insert>
+
+    <update id="updateTarget">
+        update JXPJ_PJSET_TARGET
+        <set>
+            <if test="targetType != null and targetType != ''">
+                TARGET_TYPE = #{targetType}
+            </if>
+            <if test="targetName != null and targetName != ''">
+                , TARGET_NAME = #{targetName}
+            </if>
+            <if test="targetContent != null and targetContent != ''">
+                , TARGET_CONTENT = #{targetContent}
+            </if>
+            <if test="targetScore != null">
+                , TARGET_SCORE = #{targetScore}
+            </if>
+        </set>
+        where TARGET_CODE = #{targetCode}
+    </update>
+
+    <delete id="deleteTarget">
+        DELETE FROM JXPJ_PJSET_TARGET WHERE TARGET_CODE = #{targetCode}
+    </delete>
+
+</mapper>

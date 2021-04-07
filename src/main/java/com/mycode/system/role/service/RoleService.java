@@ -9,6 +9,7 @@ public interface RoleService {
 
     Map<String,Object> getRolePageList(Role role);
 
-    boolean insertOrUpdateRoleMenu(Long roleId, String roleName, String[] menuIdArr);
+    List<Role> getRoleList();
 
+    boolean insertOrUpdateRoleMenu(String roleId, String roleName, String[] menuIds);
 }

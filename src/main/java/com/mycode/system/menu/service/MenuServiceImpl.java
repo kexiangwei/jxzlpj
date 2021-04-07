@@ -19,23 +19,13 @@ public class MenuServiceImpl implements MenuService {
     private MenuMapper menuMapper;
 
     @Override
-    public Map<String, Object> getMenuPageList(Menu menu) {
-        Map<String, Object> resultMap = new HashMap<>();
-        Page<Object> pageInfo = PageHelper.startPage(menu.getPageIndex(), menu.getPageSize());
-        List<Menu> pageList = menuMapper.getMenuPageList(menu);
-        resultMap.put("totalNum",pageInfo.getTotal());
-        resultMap.put("pageList", pageList);
-        return resultMap;
-    }
-
-    @Override
     public List<Menu> getMenuTree() {
         List<Menu> menuList = menuMapper.getMenuTree();
         return Menu.getMenuTree(menuList);
     }
 
     @Override
-    public List<Menu> getParentMenuList(Long menuId) {
+    public List<Menu> getParentMenuList(String menuId) {
         return menuMapper.getParentMenuList(menuId);
     }
 
@@ -50,21 +40,13 @@ public class MenuServiceImpl implements MenuService {
         for (Map<String,Object> map : menuList) {
             map.put("open",true);
             map.put("checked",false);
-            map.put("children", menuMapper.getShenHeSetEditFormMenuTree(Long.valueOf(map.get("id").toString())));
+            map.put("children", menuMapper.getShenHeSetEditFormMenuTree(map.get("id").toString()));
         }
         return menuList;
     }
 
     @Override
-    public List<Role> getRoleListByMenuId(Long menuId) {
-        List<Role> roleList = menuMapper.getRoleListByMenuId(menuId);
-       /* roleList.forEach((role)-> {
-            if (role.getRoleId().equals("999999")) {
-                role.setDisabled(true);
-            } else {
-                role.setDisabled(false);
-            }
-        });*/
-        return roleList;
+    public List<Role> getRoleListByMenuId(String menuId) {
+        return menuMapper.getRoleListByMenuId(menuId);
     }
 }

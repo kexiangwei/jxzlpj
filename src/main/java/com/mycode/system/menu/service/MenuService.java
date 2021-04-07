@@ -8,15 +8,13 @@ import java.util.Map;
 
 public interface MenuService {
 
-    Map<String, Object> getMenuPageList(Menu menu);
-
     List<Menu> getMenuTree();
 
-    List<Menu> getParentMenuList(Long menuId);
+    List<Menu> getParentMenuList(String menuId);
 
     List<Menu> getChildMenuList();
 
     List<Map<String,Object>> getShenHeSetEditFormMenuTree();
 
-    List<Role> getRoleListByMenuId(Long menuId);
+    List<Role> getRoleListByMenuId(String menuId);
 }

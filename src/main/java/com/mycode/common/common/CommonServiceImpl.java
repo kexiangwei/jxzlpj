@@ -13,6 +13,16 @@ public class CommonServiceImpl implements CommonService {
     private CommonMapper commonMapper;
 
     @Override
+    public List<Map<String, Object>> getXyList() {
+        return commonMapper.getXyList();
+    }
+
+    @Override
+    public List<Map<String, Object>> getZyList(String xyCode) {
+        return commonMapper.getZyList(xyCode);
+    }
+
+    @Override
     public List<Map<String, Object>> getTableCols(String tableName) {
         return commonMapper.getTableCols(tableName);
     }
@@ -20,21 +30,6 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public List<Map<String, Object>> getTableDatas(String viewName, String userId) {
         return commonMapper.getTableDatas(viewName,userId);
-    }
-
-    @Override
-    public List<Map<String, Object>> getCollege() {
-        return commonMapper.getCollege();
-    }
-
-    @Override
-    public List<Map<String, Object>> getMajor(String collegeCode) {
-        return commonMapper.getMajor(collegeCode);
-    }
-
-    @Override
-    public List<Course> getCourseListByUserId(String userId, String accountType, String courseName) {
-        return commonMapper.getCourseListByUserId(userId, accountType, courseName);
     }
 
 }

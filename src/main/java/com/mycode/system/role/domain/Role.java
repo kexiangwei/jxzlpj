@@ -17,11 +17,8 @@ public class Role {
     private Integer pageIndex=1
             ,pageSize=10;
     //业务字段
-    private Long roleId;
-    private String roleName;
+    private String roleId
+            ,roleName;
     private List<Menu> menuList = new ArrayList<>();
-    //
-    /*private Boolean selected
-            ,disabled;*/
 
 }

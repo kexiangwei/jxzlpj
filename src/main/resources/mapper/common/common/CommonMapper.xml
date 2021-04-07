@@ -2,6 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.common.common.CommonMapper">
 
+    <select id="getXyList" resultType="java.util.Map">
+        SELECT distinct code,name
+        FROM SYS_DATA_XY
+        ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
+    </select>
+
+    <select id="getZyList" resultType="java.util.Map">
+        SELECT distinct code,name
+        FROM SYS_DATA_ZY
+        <where>1=1
+            <if test="xyCode !=null and xyCode !=''">
+                and xy_code = #{xyCode}
+            </if>
+        </where>
+        ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
+    </select>
+
     <select id="getTableCols" resultType="java.util.Map">
         SELECT c.COLUMN_NAME,c.COMMENTS
         FROM user_tab_columns t LEFT JOIN user_col_comments c on c.table_name = t.table_name and c.COLUMN_NAME = t.COLUMN_NAME
@@ -15,38 +32,4 @@
         where USER_ID = #{userId}
     </select>
 
-    <select id="getCollege" resultType="java.util.Map">
-        SELECT distinct code,name
-        FROM SYS_DATA_XY
-        ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
-    </select>
-
-    <select id="getMajor" resultType="java.util.Map">
-        SELECT distinct m.code,m.name
-        FROM SYS_DATA_ZY m /*LEFT JOIN SYS_DATA_XY c on c.CODE = m.COLLEGE_CODE*/
-        <where>1=1
-            <if test="collegeCode !=null and collegeCode !=''">
-                and COLLEGE_CODE = #{collegeCode}
-            </if>
-        </where>
-        ORDER BY NLSSORT(m.name,'NLS_SORT = SCHINESE_PINYIN_M')
-    </select>
-
-    <select id="getCourseListByUserId" resultType="com.mycode.common.common.Course">
-        <choose>
-            <when test="accountType == 'student'">
-                SELECT T2.*
-                FROM SYS_DATA_XSXK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
-            </when>
-            <otherwise>
-                SELECT T2.*
-                FROM SYS_DATA_JSRK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
-            </otherwise>
-        </choose>
-        <where> T1.USER_ID =#{userId}
-            <if test="courseName !=null and courseName !=''">
-                and T2.COURSE_NAME = #{courseName}
-            </if>
-        </where>
-    </select>
 </mapper>

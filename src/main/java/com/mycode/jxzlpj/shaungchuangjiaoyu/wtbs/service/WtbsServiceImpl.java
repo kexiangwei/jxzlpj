@@ -2,11 +2,11 @@ package com.mycode.jxzlpj.shaungchuangjiaoyu.wtbs.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.file.domain.FileInfo;
-import com.mycode.common.file.mapper.FileMapper;
+import com.mycode.file.domain.FileInfo;
+import com.mycode.file.mapper.FileMapper;
 import com.mycode.jxzlpj.shaungchuangjiaoyu.wtbs.domian.Wtbs;
 import com.mycode.jxzlpj.shaungchuangjiaoyu.wtbs.mapper.WtbsMapper;
-import com.mycode.common.shenheSet.mapper.ShenHeMapper;
+import com.mycode.shenheSet.mapper.ShenHeMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -11,15 +11,13 @@ import java.util.Map;
 @Mapper
 public interface MenuMapper {
 
-    List<Menu> getMenuPageList(Menu menu);
-
     List<Menu> getMenuTree();
 
-    List<Menu> getParentMenuList(@Param("menuId") Long menuId);
+    List<Menu> getParentMenuList(@Param("menuId") String menuId);
 
     List<Menu> getChildMenuList();
 
-    List<Map<String,Object>> getShenHeSetEditFormMenuTree(@Param("menuId") Long menuId);
+    List<Map<String,Object>> getShenHeSetEditFormMenuTree(@Param("menuId") String menuId);
 
-    List<Role> getRoleListByMenuId(@Param("menuId") Long menuId);
+    List<Role> getRoleListByMenuId(@Param("menuId") String menuId);
 }

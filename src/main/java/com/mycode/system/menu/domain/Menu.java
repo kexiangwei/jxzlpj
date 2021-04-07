@@ -17,21 +17,22 @@ public class Menu {
             ,pageSize=10;
 
     //业务字段
-    private Long pid
+    private String pid
             ,menuId;
     private String menuName
             ,url
             ,icon;
 
     //菜单树属性
-    private Long id;
+    private String id;
     private String title //layui-tree
             ,name; //layui-treeSelect
     private List<Menu> children = new ArrayList<>();
+
     //生成菜单树
     public static List<Menu> getMenuTree(List<Menu> menuList){
         List<Menu> resultMenuList = new LinkedList<>();
-        Map<Long,Menu> map = new HashMap<>();
+        Map<String,Menu> map = new HashMap<>();
         for (Menu menu : menuList) {
             map.put(menu.getMenuId(),menu);
         }

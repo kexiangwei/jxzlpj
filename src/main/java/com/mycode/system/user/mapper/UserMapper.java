@@ -1,5 +1,6 @@
 package com.mycode.system.user.mapper;
 
+import com.mycode.common.Course;
 import com.mycode.system.menu.domain.Menu;
 import com.mycode.system.user.domain.User;
 import org.apache.ibatis.annotations.*;
@@ -11,21 +12,27 @@ import java.util.Set;
 @Mapper
 public interface UserMapper {
 
-    List<User> getUserPageList(User user); //获取用户列表
+    List<User> getUserPageList(User user);
 
-    User getUserById(@Param("userId") String userId); //根据用户编号获取用户信息
+    User getUserById(@Param("userId") String userId);
 
-    User getUserDetail(User user); //获取用户详情
+    boolean updateUser(User user);
 
-    boolean updateUser(User user); //修改用户信息
+    //
+    List<Map<String, Object>> getRoleListForTransferData(); //
 
-    Set<String> getRoleByUserId(@Param("userId") String userId); //获取用户拥有的角色编号
+    Set<String> getRoleIdListByUserId(@Param("userId") String userId); //获取用户拥有的角色编号
 
-    boolean grant(@Param("userId") String userId, @Param("roleIdArr") String[] roleIdArr); //给用户授权
+    boolean grant(@Param("userId") String userId, @Param("roleIds") String[] roleIds); //给用户授权
 
     boolean deleteRoleByUserId(@Param("userId") String userId); //根据用户编号删除用户绑定的所有角色
 
+    //
     List<Menu> getUserMenu(@Param("userId") String userId); //获取用户拥有的菜单项
 
-    Map<String,Integer> getAuthority(@Param("userId") String userId, @Param("menuId") String menuId); //根据userId,menuId 查询用户是否拥有指定菜单的提交、审核权限
+    Map<String,Integer> getAuthority(@Param("userId") String userId, @Param("menuId") String menuId); //
+
+    //
+    List<Course> getCourseListByUserId(@Param("userId") String userId, @Param("accountType") String accountType, @Param("courseName") String courseName);
+
 }

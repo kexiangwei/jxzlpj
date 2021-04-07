@@ -2,9 +2,9 @@ package com.mycode.jxzlpj.jiaoxuejiangcheng.jsgrcgj.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.shenheSet.mapper.ShenHeMapper;
-import com.mycode.common.file.domain.FileInfo;
-import com.mycode.common.file.mapper.FileMapper;
+import com.mycode.shenheSet.mapper.ShenHeMapper;
+import com.mycode.file.domain.FileInfo;
+import com.mycode.file.mapper.FileMapper;
 import com.mycode.jxzlpj.jiaoxuejiangcheng.jsgrcgj.domian.Jsgrcgj;
 import com.mycode.jxzlpj.jiaoxuejiangcheng.jsgrcgj.mapper.JsgrcgjMapper;
 import com.mycode.util.StringUtils;

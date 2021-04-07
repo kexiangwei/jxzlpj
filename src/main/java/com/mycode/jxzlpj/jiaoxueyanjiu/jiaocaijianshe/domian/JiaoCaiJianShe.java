@@ -1,6 +1,6 @@
 package com.mycode.jxzlpj.jiaoxueyanjiu.jiaocaijianshe.domian;
 
-import com.mycode.common.shenheSet.domain.ShenHeObj;
+import com.mycode.shenheSet.domain.ShenHeObj;
 import lombok.Getter;
 import lombok.Setter;
 

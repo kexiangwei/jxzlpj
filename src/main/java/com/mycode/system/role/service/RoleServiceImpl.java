@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -34,14 +35,19 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public boolean insertOrUpdateRoleMenu(Long roleId, String roleName, String[] menuIdArr) {
+    public List<Role> getRoleList() {
+        return roleMapper.getRoleList();
+    }
+
+    @Override
+    public boolean insertOrUpdateRoleMenu(String roleId, String roleName, String[] menuIds) {
         boolean bool = false;
         if(StringUtils.isEmpty(roleId)){
-            roleId = Long.valueOf(StringUtils.guid(16,true));
-            bool = roleMapper.addRole(roleId,roleName);
+            roleId = UUID.randomUUID().toString().replace("-","");
+            bool = roleMapper.insertRole(roleId,roleName);
             if(bool){
-                if(menuIdArr != null && menuIdArr.length >0){
-                    bool = roleMapper.addRoleMenu(roleId,menuIdArr);
+                if(menuIds != null && menuIds.length >0){
+                    bool = roleMapper.addRoleMenu(roleId,menuIds);
                 }
             }
         }else{
@@ -51,8 +57,8 @@ public class RoleServiceImpl implements RoleService {
                 if(menuList !=null && menuList.size() >0){
                     bool = roleMapper.deleteRoleMenuByRoleId(roleId); //执行删除时，没有记录mybatis会返回false
                 }
-                if(menuIdArr != null && menuIdArr.length >0){
-                    bool = roleMapper.addRoleMenu(roleId,menuIdArr);
+                if(menuIds != null && menuIds.length >0){
+                    bool = roleMapper.addRoleMenu(roleId,menuIds);
                 }
             }
         }

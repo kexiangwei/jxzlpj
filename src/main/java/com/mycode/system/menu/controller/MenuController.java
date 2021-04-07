@@ -21,13 +21,6 @@ public class MenuController {
     @Autowired
     private MenuService menuService;
 
-   /* @ResponseBody
-    @RequestMapping("/getMenuPageList.do")
-    public JsonResult<Object> getMenuPageList(Menu menu){
-        Map<String, Object> resultMap = menuService.getMenuPageList(menu);
-        return JsonResult.success(resultMap);
-    }*/
-
     @ResponseBody
     @RequestMapping("/getMenuTree.do")
     public JsonResult<Object> getMenuTree(){
@@ -42,7 +35,7 @@ public class MenuController {
      */
     @ResponseBody
     @RequestMapping("/getParentMenuList.do")
-    public JsonResult<Object> getParentMenuList(@RequestParam(value = "menuId",required = false) Long menuId){
+    public JsonResult<Object> getParentMenuList(@RequestParam(value = "menuId",required = false) String menuId){
         List<Menu> menuList = menuService.getParentMenuList(menuId);
         return JsonResult.success(menuList);
     }
@@ -76,7 +69,7 @@ public class MenuController {
      */
     @ResponseBody
     @RequestMapping("/getRoleListByMenuId.do")
-    public JsonResult<Object> getRoleListByMenuId(@RequestParam("menuId") Long menuId){
+    public JsonResult<Object> getRoleListByMenuId(@RequestParam("menuId") String menuId){
         List<Role> roleList = menuService.getRoleListByMenuId(menuId);
         return JsonResult.success(roleList);
     }

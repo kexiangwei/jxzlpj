@@ -5,10 +5,12 @@
     <select id="getTeacherInfo" resultType="com.mycode.common.teacher.domain.Teacher">
         select * from COMMON_TEACHER where relation_code = #{relationCode}
     </select>
+
     <insert id="addTeacherInfo">
         insert into COMMON_TEACHER (relation_code,teacher_code,teacher_name,teacher_unit)
         values (#{relationCode},#{teacherCode},#{teacherName},#{teacherUnit})
     </insert>
+
     <delete id="delTeacherInfo">
         delete from COMMON_TEACHER
         where relation_code = #{relationCode}

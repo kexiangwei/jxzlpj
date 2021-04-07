@@ -1,5 +1,6 @@
 package com.mycode.system.user.service;
 
+import com.mycode.common.Course;
 import com.mycode.system.menu.domain.Menu;
 import com.mycode.system.user.domain.User;
 
@@ -16,9 +17,12 @@ public interface UserService {
 
     Map<String, Object> toGrant(String userId);
 
-    boolean grant(String userId, String[] roleIdArr);
+    boolean grant(String userId, String[] roleIds);
 
     List<Menu> getUserMenu(String userId);
 
     Map<String, Integer> getAuthority(String userId, String menuId);
+
+    List<Course> getCourseListByUserId(String userId, String accountType, String courseName);
+
 }

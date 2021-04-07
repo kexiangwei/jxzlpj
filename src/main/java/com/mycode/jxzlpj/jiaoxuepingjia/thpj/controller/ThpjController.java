@@ -1,7 +1,7 @@
 package com.mycode.jxzlpj.jiaoxuepingjia.thpj.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.mycode.jxzlpj.jiaoxuepingjia.pjset.service.PjSetService;
+import com.mycode.jxzlpj.jiaoxuepingjia.pjset.service.PjSetTemplateService;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.service.ThpjService;
@@ -30,7 +30,7 @@ public class ThpjController {
     @Autowired
     private ThpjService thpjService;
     @Autowired
-    private PjSetService pjSetService;
+    private PjSetTemplateService pjSetTemplateService;
 
     @ResponseBody
     @RequestMapping("/getPageList.do")
@@ -91,7 +91,7 @@ public class ThpjController {
     public JsonResult<Object> getThpjTargetList(@RequestParam(value = "code",required = false) String code){
         String templateCode = null;
         if(StringUtils.isEmpty(code)){
-            templateCode = pjSetService.getActiveTemplateCode("同行评教");
+            templateCode = pjSetTemplateService.getActiveTemplateCode("同行评教");
         } else {
             templateCode = thpjService.getThpjTemplateCode(code); //城头变幻大王旗
         }

@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.jxzlpj.jiaoxuepingjia.pjset.domain.PjSetTarget;
 import com.mycode.jxzlpj.jiaoxuepingjia.pjset.mapper.PjSetMapper;
+import com.mycode.jxzlpj.jiaoxuepingjia.pjset.mapper.PjSetTemplateMapper;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Ckpj;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.ThpjQuery;
@@ -25,7 +26,7 @@ public class ThpjServiceImpl implements ThpjService {
     @Autowired
     private ThpjMapper thpjMapper;
     @Autowired
-    private PjSetMapper pjSetMapper;
+    private PjSetTemplateMapper pjSetTemplateMapper;
 
     /*
     查看评教
@@ -44,7 +45,7 @@ public class ThpjServiceImpl implements ThpjService {
     public List<Map<String, Object>> getCkpjDetail(Ckpj ckpj) {
         List<Map<String, Object>> mapList = thpjMapper.getPjzb(ckpj.getTemplateCode());
         List<Map<String, Object>> targetAvgList = thpjMapper.getThpjTargetAvgList(ckpj.getUserId(),ckpj.getCourseCode());
-        List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(ckpj.getTemplateCode());
+        List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(ckpj.getTemplateCode());
         pjSetTargetList.stream().forEach(t1 -> {
             targetAvgList.stream().forEach(t2 -> {
                 if(t2.get("targetCode").toString().equals(t1.getTargetCode())){
@@ -90,7 +91,7 @@ public class ThpjServiceImpl implements ThpjService {
     public boolean insert(Thpj thpj, Map<String, Object> paramMap) {
         boolean bool = thpjMapper.insert(thpj);
         if(bool){
-            List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
+            List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
             bool = thpjMapper.insertTarget(thpj.getCode(), pjSetTargetList, paramMap);
         }
         return bool;
@@ -99,7 +100,7 @@ public class ThpjServiceImpl implements ThpjService {
    @Override
     public boolean update(Thpj thpj, Map<String, Object> paramMap) {
        boolean bool = thpjMapper.deleteTargetByRelationCode(thpj.getCode()); //删除以前的记录
-       List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
+       List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
        bool = thpjMapper.insertTarget(thpj.getCode(), pjSetTargetList, paramMap); //然后再重新录入
        if(bool){
            bool = thpjMapper.resetSubmit(thpj.getCode());
@@ -120,7 +121,7 @@ public class ThpjServiceImpl implements ThpjService {
     @Override
     public List<Map<String, Object>> getThpjTargetList(String templateCode) {
         List<Map<String, Object>> mapList = thpjMapper.getPjzb(templateCode);
-        List<PjSetTarget> pjSetTargetList = pjSetMapper.getPjSetTargetListByTemplateCode(templateCode);
+        List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(templateCode);
         Map<String, List<PjSetTarget>> targetListByName = pjSetTargetList.stream().collect(Collectors.groupingBy(PjSetTarget::getTargetName, Collectors.toList()));
         mapList.forEach(m -> {
             targetListByName.forEach((k,v) -> {

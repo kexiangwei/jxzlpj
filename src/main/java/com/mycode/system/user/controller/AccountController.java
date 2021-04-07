@@ -39,13 +39,14 @@ public class AccountController {
      */
     @ResponseBody
     @RequestMapping("/getCaptcha.do")
-    public JsonResult<Object> getCaptcha(@RequestParam(value = "length",required = false,defaultValue = "4") Integer length) {
+    public JsonResult<Object> getCaptcha(@RequestParam(value = "length",required = false,defaultValue = "4") Integer length
+            , HttpServletRequest request) {
         //初始化组件
         SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, length);
         specCaptcha.setCharType(Captcha.TYPE_ONLY_NUMBER);
         //存储到redis
-        String token = StringUtils.guid(32,false);
-        redisUtil.set(token,specCaptcha.text(),300); //有效时间为5分钟
+        String token = request.getSession().getId();
+        redisUtil.set(token,specCaptcha.text(),300); //验证码有效时间为5分钟
         //封装结果集
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("token",token);
@@ -53,6 +54,16 @@ public class AccountController {
         return JsonResult.success(resultMap);
     }
 
+    /**
+     * 登入
+     * @param token
+     * @param imageCode
+     * @param userId
+     * @param password
+     * @param request
+     * @param response
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/login.do")
     public JsonResult<Object> login(@RequestParam("token") String token, @RequestParam("imageCode") String imageCode
@@ -80,9 +91,14 @@ public class AccountController {
         return JsonResult.success("登录成功",user);
     }
 
+    /**
+     * 登出
+     * @param request
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/logout.do")
-    public JsonResult<Object> logout(HttpServletRequest request, HttpServletResponse response){
+    public JsonResult<Object> logout(HttpServletRequest request){
         request.getSession().invalidate();
         return JsonResult.success();
     }
