@@ -5,30 +5,31 @@
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.Xspj">
         <choose>
             <when test="accountType == 'student'">
-                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME
+                SELECT kc.*
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
-                FROM SYS_DATA_XSXK sc
-                LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = sc.COURSE_CODE
+                FROM SYS_DATA_XSXK xk
+                LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = xk.COURSE_CODE
                 LEFT JOIN (
-                SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
-                ) pj on pj.COURSE_CODE = sc.COURSE_CODE and pj.user_id = sc.USER_ID
-                WHERE sc.USER_ID = #{userId}
+                    SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
+                ) pj on pj.user_id = xk.USER_ID and pj.COURSE_CODE = xk.COURSE_CODE
+                WHERE xk.USER_ID = #{userId}
             </when>
             <when test="accountType == 'teacher'">
-                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME
+                SELECT kc.*
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
-                FROM SYS_DATA_JSRK dtc
-                LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = DTC.COURSE_CODE
+                FROM SYS_DATA_JSRK rk
+                LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = rk.COURSE_CODE
                 LEFT JOIN (
                     SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
-                ) pj on pj.COURSE_CODE = c.COURSE_CODE
-                where dtc.USER_ID = #{userId}
+                ) pj on pj.COURSE_CODE = kc.COURSE_CODE
+                where rk.USER_ID = #{userId}
             </when>
-            <otherwise><!-- 若是其他类型的账号访问，则返回所有已评的课程信息 -->
-                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME,1 as isPj
+            <otherwise>/*若是其他类型的账号访问，则返回所有已评的课程信息*/
+                SELECT kc.*
+                ,1 as isPj
                 FROM (
-                    SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
-                ) pj LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = pj.COURSE_CODE
+                SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
+                ) pj LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = pj.COURSE_CODE
             </otherwise>
         </choose>
     </select>
@@ -108,7 +109,7 @@ WHERE T1.USER_ID = #{userId}
     <select id="getBjpjPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.Xspj">
         <choose>
             <when test="accountType == 'teacher'">
-                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.MAJOR_NAME,c.COLLEGE_NAME
+                SELECT c.course_code,c.course_name,c.course_attr,c.XF,c.XS,c.ZY_NAME,c.XY_NAME
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
                 FROM SYS_DATA_JSRK dtc
                 LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = DTC.COURSE_CODE
@@ -126,7 +127,7 @@ WHERE T1.USER_ID = #{userId}
                 where dtc.USER_ID = #{userId}
             </when>
             <otherwise>
-                SELECT c.course_code "courseCode",c.course_name "courseName",c.course_attr "courseAttr",c.xf,c.xs,c.MAJOR_NAME "majorName",c.COLLEGE_NAME "collegeName"
+                SELECT c.course_code "courseCode",c.course_name "courseName",c.course_attr "courseAttr",c.xf,c.xs,c.ZY_NAME "majorName",c.XY_NAME "collegeName"
                 FROM (
                     SELECT DISTINCT course_code
                     FROM (

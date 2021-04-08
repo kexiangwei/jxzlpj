@@ -6,7 +6,7 @@
      查看评教
      -->
     <select id="getCkpjPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Ckpj">
-        SELECT t2.course_code,t2.course_name,t2.course_attr,t2.XF,t2.XS,t2.MAJOR_NAME,t2.COLLEGE_NAME
+        SELECT t2.course_code,t2.course_name,t2.course_attr,t2.XF,t2.XS,t2.ZY_NAME,t2.XY_NAME
         ,(case when pj.template_code is not null then 1 else 2 end) is_pj
         ,pj.template_code template_code
         FROM SYS_DATA_JSRK T1
@@ -36,7 +36,7 @@
     -->
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.ThpjQuery">
         SELECT c.course_code,c.course_name,c.course_attr
-        ,t.USER_ID teacher_code,t.user_name teacher,t.MAJOR_NAME teacher_major,t.COLLEGE_NAME teacher_college
+        ,t.USER_ID teacher_code,t.user_name teacher,t.ZY_NAME teacher_major,t.XY_NAME teacher_college
         ,(case when pj.code is not null then 1 else 2 end) is_pj,pj.code as pj_code, pj.is_submit
         ,(case when total_score >= 90 then 1 else 2 end) is_top
         FROM SYS_DATA_KC c
@@ -51,7 +51,6 @@
             <if test="courseAttr !=null and courseAttr !=''">
                 and c.course_attr = #{courseAttr}
             </if>
-
             <if test="teacherCollege !=null and teacherCollege !=''">
                 and t.xy_code = #{teacherCollege}
             </if>
@@ -128,7 +127,7 @@ UPDATE JXPJ_THPJ set IS_SUBMIT = null where CODE = #{code}
         , TEACH_YEAR, TEACH_MONTH, TEACH_DAY, TEACH_WEEKNUM, TEACH_WEEK, TEACH_LESSONNUM, TEACH_HOUSE, TEACH_CLASSROOM
         , STU_YINGDAO, STU_SHIDAO, STU_CHIDAO, STU_QUEKE
         , DP_TEACHER, DP_STUDENT, DP_CLASSROOM
-        , USER_ID, USERNAME, CREATE_DATE)
+        , USER_ID, USER_NAME, CREATE_DATE)
         values
         (
         #{code},#{templateCode},#{teacherCode},#{teacher},#{teacherCollege},#{courseCode},#{courseName},#{courseAttr},#{stuClass}
