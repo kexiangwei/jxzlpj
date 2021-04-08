@@ -32,5 +32,4 @@ public class ThpjQuery {
             ,teacherCollege //教师所在学院
             ,teachDate //上课时间
             ,teachAddr; //上课地点
-
 }

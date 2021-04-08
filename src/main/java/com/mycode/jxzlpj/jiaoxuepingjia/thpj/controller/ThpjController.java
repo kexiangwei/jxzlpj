@@ -48,27 +48,27 @@ public class ThpjController {
 
     @ResponseBody
     @RequestMapping("/insert.do")
-    public JsonResult<Object> insert(Thpj thpj, @RequestParam("jsonStr") String jsonStr){
-        Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
+    public JsonResult<Object> insert(Thpj thpj, @RequestParam("jsonString") String jsonString){
+        Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
         boolean bool = thpjService.insert(thpj, paramMap);
         if(!bool){
-            return JsonResult.error("保存失败");
+            return JsonResult.error("保存失败！");
         }
-        return JsonResult.success("保存成功",null);
+        return JsonResult.success("保存成功！",null);
     }
 
     @ResponseBody
     @RequestMapping("/update.do")
-    public JsonResult<Object> update(Thpj thpj, @RequestParam("jsonStr") String jsonStr, HttpServletRequest request, HttpServletResponse response){
+    public JsonResult<Object> update(Thpj thpj, @RequestParam("jsonString") String jsonString, HttpServletRequest request, HttpServletResponse response){
         response.setHeader("Access-Control-Allow-Headers","Content-Type,Access-Control-Allow-Headers,Authorization,X-Requested-With");
         response.setHeader("Access-Control-Allow-Origin", "*");
 
-        Map<String,Object> paramMap = JSON.parseObject(jsonStr, Map.class);
+        Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
         boolean bool = thpjService.update(thpj, paramMap);
         if(!bool){
-            return JsonResult.error("修改失败");
+            return JsonResult.error("修改失败！");
         }
-        return JsonResult.success("修改成功",null);
+        return JsonResult.success("修改成功！",null);
     }
 
     /*@ResponseBody
@@ -91,12 +91,12 @@ public class ThpjController {
     public JsonResult<Object> getThpjTargetList(@RequestParam(value = "code",required = false) String code){
         String templateCode = null;
         if(StringUtils.isEmpty(code)){
-            templateCode = pjSetTemplateService.getActiveTemplateCode("同行评教");
+            templateCode = pjSetTemplateService.getActiveTemplateCodeByType("同行评教");
         } else {
             templateCode = thpjService.getThpjTemplateCode(code); //城头变幻大王旗
         }
         if(StringUtils.isEmpty(templateCode)){
-            return JsonResult.error("暂无可用模板");
+            return JsonResult.error("暂无可用模板！");
         }
         List<Map<String, Object>> thpjTargetList = thpjService.getThpjTargetList(templateCode);
         return JsonResult.success(thpjTargetList);

@@ -21,7 +21,7 @@
     </select>
 
     <!-- 查看当前是否有可用的模板信息 -->
-    <select id="getActiveTemplateCode" resultType="java.lang.String">
+    <select id="getActiveTemplateCodeByType" resultType="java.lang.String">
         select template_code
         from JXPJ_PJSET_TEMPLATE
         where template_type = #{templateType} and end_date > current_date

@@ -27,65 +27,60 @@
 
     <!--
     同行评教
-    关于is_pj，对于一门课程查新最新一次的评教信息（是否只查询本学期进行的评教？）
-    (
-        SELECT pj.*
-        from (SELECT teacher_CODE,course_code,max(create_date) create_date FROM JXPJ_THPJ GROUP BY teacher_CODE,course_code) t
-        LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = t.teacher_CODE and pj.course_code = t.course_code and pj.create_date = t.create_date
-    )
     -->
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.ThpjQuery">
-        SELECT c.course_code,c.course_name,c.course_attr
-        ,t.USER_ID teacher_code,t.user_name teacher,t.ZY_NAME teacher_major,t.XY_NAME teacher_college
+        SELECT kc.course_code,kc.course_name,kc.course_attr,kc.SK_SJ teach_date,kc.SK_DD teach_addr
+        ,u.USER_ID teacher_code,u.user_name teacher,u.age teacher_age,u.title teacher_title,u.XY_NAME teacher_college,u.ZY_NAME teacher_major
         ,(case when pj.code is not null then 1 else 2 end) is_pj,pj.code as pj_code, pj.is_submit
         ,(case when total_score >= 90 then 1 else 2 end) is_top
-        FROM SYS_DATA_KC c
-        LEFT JOIN SYS_DATA_JSRK tc on tc.course_code = c.course_code
-        LEFT JOIN SYS_DATA_JS t on t.USER_ID = tc.USER_ID
-        LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = tc.USER_ID and pj.course_code = tc.course_code
-        LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) pj2 on pj2.RELATION_CODE = pj.code
-        <where> tc.USER_ID is not null
-            <if test="courseName !=null and courseName !=''">
-                and c.course_name like concat(concat('%',#{courseName}),'%')
-            </if>
-            <if test="courseAttr !=null and courseAttr !=''">
-                and c.course_attr = #{courseAttr}
-            </if>
+        FROM SYS_DATA_KC kc
+        LEFT JOIN SYS_DATA_JSRK jsrk on jsrk.course_code = kc.course_code
+        LEFT JOIN SYS_USER u on u.USER_ID = jsrk.USER_ID
+        LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = jsrk.USER_ID and pj.course_code = jsrk.course_code
+        LEFT JOIN (
+            SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
+        ) pj2 on pj2.RELATION_CODE = pj.code
+        <where> jsrk.USER_ID is not null
             <if test="teacherCollege !=null and teacherCollege !=''">
-                and t.xy_code = #{teacherCollege}
+                and u.xy_code = #{teacherCollege}
             </if>
             <if test="teacherMajor !=null and teacherMajor !=''">
-                and t.MAJOR_CODE = #{teacherMajor}
+                and u.zy_code = #{teacherMajor}
             </if>
             <if test="teacher !=null and teacher !=''">
-                and t.name = #{teacher}
+                and u.user_name like concat(concat('%',#{teacher}),'%')
             </if>
             <if test="teacherAge !=null and teacherAge !=''">
-                  <choose>
-                      <when test="teacherAge == '55岁及以上'">
-                          and t.age >= 55
-                      </when>
-                      <when test="teacherAge == '45-54岁'">
-                          and t.age BETWEEN 45 and 54
-                      </when>
-                      <when test="teacherAge == '35-44岁'">
-                          and t.age BETWEEN 35 and 44
-                      </when>
-                      <when test="teacherAge == '34岁及以下'">
-                          and t.age &lt;= 34
-                      </when>
-                  </choose>
+                <choose>
+                    <when test="teacherAge == '55岁及以上'">
+                        and u.age >= 55
+                    </when>
+                    <when test="teacherAge == '45-54岁'">
+                        and u.age BETWEEN 45 and 54
+                    </when>
+                    <when test="teacherAge == '35-44岁'">
+                        and u.age BETWEEN 35 and 44
+                    </when>
+                    <when test="teacherAge == '34岁及以下'">
+                        and u.age &lt;= 34
+                    </when>
+                </choose>
             </if>
             <if test="teacherTitle !=null and teacherTitle !=''">
---                 and t.title = #{teacherTitle}
+                and u.title = #{teacherTitle}
             </if>
-
-            <!--<if test="teachDate !=null and teachDate !=''">
-                and jh.dates = to_date(#{teachDate}, 'yyyy-MM-dd')
+            <if test="courseName !=null and courseName !=''">
+                and kc.course_name like concat(concat('%',#{courseName}),'%')
+            </if>
+            <if test="courseAttr !=null and courseAttr !=''">
+                and kc.course_attr = #{courseAttr}
+            </if>
+            <if test="teachDate !=null and teachDate !=''">
+                and kc.SK_SJ = #{teachDate}
             </if>
             <if test="teachAddr !=null and teachAddr !=''">
-                and jh.teach_addr = #{teachAddr}
-            </if>-->
+                and kc.SK_DD = #{teachAddr}
+            </if>
         </where>
     </select>
 

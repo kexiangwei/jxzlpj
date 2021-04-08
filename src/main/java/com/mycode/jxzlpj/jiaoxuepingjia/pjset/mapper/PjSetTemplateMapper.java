@@ -15,7 +15,7 @@ public interface PjSetTemplateMapper {
 
     List<PjSetTemplate> getPjSetTemplateList(PjSetTemplate pjSetTemplate);
 
-    String getActiveTemplateCode(@Param("templateType") String templateType);
+    String getActiveTemplateCodeByType(@Param("templateType") String templateType);
 
     Boolean insertTemplate(PjSetTemplate template);
 

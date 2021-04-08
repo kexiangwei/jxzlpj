@@ -33,8 +33,8 @@ public class PjSetTemplateServiceImpl implements PjSetTemplateService {
     }
 
     @Override
-    public String getActiveTemplateCode(String templateType) {
-        return pjSetTemplateMapper.getActiveTemplateCode(templateType);
+    public String getActiveTemplateCodeByType(String templateType) {
+        return pjSetTemplateMapper.getActiveTemplateCodeByType(templateType);
     }
 
     @Override

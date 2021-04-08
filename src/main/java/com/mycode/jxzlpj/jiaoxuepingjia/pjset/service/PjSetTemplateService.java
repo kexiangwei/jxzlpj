@@ -13,7 +13,7 @@ public interface PjSetTemplateService {
 
     Map<String, Object> getPjSetTemplateList(PjSetTemplate pjSetTemplate);
 
-    String getActiveTemplateCode(String templateType);
+    String getActiveTemplateCodeByType(String templateType);
 
     List<PjSetTarget> getActiveTemplate(String templateCode);
 

@@ -37,7 +37,7 @@
     <insert id="insert">
         insert all
         <foreach collection="paramMap" index="key"  item="val">
-            INTO JXPJ_XSPJ (COURSE_CODE, TEMPLATE_CODE, TARGET_CODE, ANSWER, USER_ID, USERNAME, CREATE_DATE)
+            INTO JXPJ_XSPJ (COURSE_CODE, TEMPLATE_CODE, TARGET_CODE, ANSWER, USER_ID, USER_NAME, CREATE_DATE)
             VALUES(#{xspj.courseCode,jdbcType=VARCHAR},#{xspj.templateCode,jdbcType=VARCHAR}
             ,#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR},#{xspj.userId},#{xspj.userName},CURRENT_DATE)
         </foreach>
@@ -81,7 +81,7 @@ WHERE T1.USER_ID = #{userId}
     </select>
 
     <insert id="insertBjpj">
-        insert into JXPJ_XSPJ_BJPJ (CODE, TEMPLATE_CODE, PREFER_TEACHER, USER_ID, USERNAME, CREATE_DATE)
+        insert into JXPJ_XSPJ_BJPJ (CODE, TEMPLATE_CODE, PREFER_TEACHER, USER_ID, USER_NAME, CREATE_DATE)
         VALUES (#{code},#{templateCode},#{preferTeacher},#{userId},#{userName},CURRENT_DATE)
     </insert>
     <insert id="insertBjpjTarget">
