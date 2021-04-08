@@ -44,9 +44,9 @@ public class KcjxssfaController {
     public JsonResult<Object> insert(KcjxssfaItem item){
         boolean bool = kcjxssfaService.insert(item);
         if(!bool){
-            return JsonResult.error("新增失败");
+            return JsonResult.error("新增失败！");
         }
-        return JsonResult.success("新增成功",null);
+        return JsonResult.success("新增成功！",null);
     }
 
     /*@ResponseBody
@@ -54,9 +54,9 @@ public class KcjxssfaController {
     public JsonResult<Object> update(Kcjxssfa kcjxssfa){
         boolean bool = kcjxssfaService.update(kcjxssfa);
         if(!bool){
-            return JsonResult.error("修改失败");
+            return JsonResult.error("修改失败！");
         }
-        return JsonResult.success("修改成功",null);
+        return JsonResult.success("修改成功！",null);
     }
 
     @ResponseBody
@@ -64,9 +64,9 @@ public class KcjxssfaController {
     public JsonResult<Object> delete(@RequestParam("code") String code){
         boolean bool = kcjxssfaService.delete(code);
         if(!bool){
-            return JsonResult.error("删除失败");
+            return JsonResult.error("删除失败！");
         }
-        return JsonResult.success("删除成功",null);
+        return JsonResult.success("删除成功！",null);
     }*/
 
 }

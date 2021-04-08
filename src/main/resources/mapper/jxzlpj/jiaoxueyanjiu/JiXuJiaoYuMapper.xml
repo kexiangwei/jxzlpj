@@ -19,9 +19,9 @@
                     LEFT JOIN COMMON_SHENHE sh on sh.relation_code = j.code
                     LEFT JOIN SYS_DATA_JS dt on DT.user_id = j.user_id
                     where sh.relation_code is not null
-                    <if test="maxAuthLevel != null and maxAuthLevel != '' and maxAuthLevel == 6">
-                        and DT.COLLEGE_CODE = #{collegeCode}
-                    </if>
+                    <!--<if test="maxAuthLevel != null and maxAuthLevel != '' and maxAuthLevel == 6">
+                        and DT.XY_CODE = #{xyCode}
+                    </if>-->
                     GROUP BY j.code
                 ) t
                 LEFT JOIN JXYJ_JXJY j on j.code = t.code
@@ -62,9 +62,9 @@
                             LEFT JOIN COMMON_SHENHE sh on sh.relation_code = j.code
                             LEFT JOIN SYS_DATA_JS dt on DT.user_id = j.user_id
                             where sh.relation_code is not null
-                            <if test="maxAuthLevel != null and maxAuthLevel != '' and maxAuthLevel == 6">
-                                and DT.COLLEGE_CODE = #{collegeCode}
-                            </if>
+                            <!--<if test="maxAuthLevel != null and maxAuthLevel != '' and maxAuthLevel == 6">
+                                and DT.XY_CODE = #{xyCode}
+                            </if>-->
                             GROUP BY j.code
                         ) t
                         LEFT JOIN JXYJ_JXJY j on j.code = t.code

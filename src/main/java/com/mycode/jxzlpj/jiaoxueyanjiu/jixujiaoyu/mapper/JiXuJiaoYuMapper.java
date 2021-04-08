@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface JiXuJiaoYuMapper {
 
-    Integer getNotShenHeNumByAuth(@Param("shenHeUserId") String shenHeUserId, @Param("maxAuthLevel") String maxAuthLevel, @Param("collegeCode") String collegeCode);
+    Integer getNotShenHeNumByAuth(@Param("shenHeUserId") String shenHeUserId, @Param("maxAuthLevel") String maxAuthLevel, @Param("xyCode") String xyCode);
 
     List<JiXuJiaoYu> getPageList(JiXuJiaoYu jiXuJiaoYu);
 

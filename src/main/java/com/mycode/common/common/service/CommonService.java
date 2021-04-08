@@ -1,4 +1,4 @@
-package com.mycode.common.common;
+package com.mycode.common.common.service;
 
 import java.util.List;
 import java.util.Map;

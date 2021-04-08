@@ -1,4 +1,4 @@
-package com.mycode.common.common;
+package com.mycode.common.common.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

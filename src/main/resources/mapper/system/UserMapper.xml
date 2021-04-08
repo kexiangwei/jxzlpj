@@ -77,7 +77,7 @@
     </delete>
 
     <select id="getUserMenu" resultType="com.mycode.system.menu.domain.Menu">
-        SELECT m.*
+        SELECT DISTINCT m.*
         from sys_user_role ur
         LEFT JOIN sys_role_menu rm on rm.role_id = ur.role_id
         LEFT JOIN sys_menu m on m.menu_id = rm.menu_id
@@ -95,7 +95,7 @@
         and ur.user_id = #{userId}
     </select>
 
-    <select id="getCourseListByUserId" resultType="com.mycode.common.Course">
+    <select id="getCourseListByUserId" resultType="com.mycode.common.common.domain.Course">
         <choose>
             <when test="accountType == 'student'">
                 SELECT T2.*

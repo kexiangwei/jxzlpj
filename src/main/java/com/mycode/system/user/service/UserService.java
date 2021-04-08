@@ -1,6 +1,6 @@
 package com.mycode.system.user.service;
 
-import com.mycode.common.Course;
+import com.mycode.common.common.domain.Course;
 import com.mycode.system.menu.domain.Menu;
 import com.mycode.system.user.domain.User;
 

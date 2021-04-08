@@ -1,5 +1,6 @@
-package com.mycode.common.common;
+package com.mycode.common.common.controller;
 
+import com.mycode.common.common.service.CommonService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

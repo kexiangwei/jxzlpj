@@ -30,7 +30,7 @@ public class JiXuJiaoYuServiceImpl implements JiXuJiaoYuService {
         Map<String, Object> map = new HashMap<>();
         //获取未审核数
         if(StringUtils.isNotEmpty(jiXuJiaoYu.getShenHeUserId())){
-            map.put("unShenHeNum", jiXuJiaoYuMapper.getNotShenHeNumByAuth(jiXuJiaoYu.getShenHeUserId(),jiXuJiaoYu.getMaxAuthLevel(),jiXuJiaoYu.getCollegeCode()));
+            map.put("unShenHeNum", jiXuJiaoYuMapper.getNotShenHeNumByAuth(jiXuJiaoYu.getShenHeUserId(),jiXuJiaoYu.getMaxAuthLevel(),jiXuJiaoYu.getXyCode()));
         }
         Page<Object> pageInfo = PageHelper.startPage(jiXuJiaoYu.getPageIndex(), jiXuJiaoYu.getPageSize());
         List<JiXuJiaoYu> pageList = jiXuJiaoYuMapper.getPageList(jiXuJiaoYu);

@@ -1,5 +1,6 @@
-package com.mycode.common.common;
+package com.mycode.common.common.service;
 
+import com.mycode.common.common.mapper.CommonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

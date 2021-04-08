@@ -31,6 +31,8 @@ public class Kcjxssfa {
             , classLocation  //上课地点
             , openCollege;  //开课学院（部）名称
     //
+    private String xn
+            ,xq;
     private String userId
             ,userName
             ,userUnit;

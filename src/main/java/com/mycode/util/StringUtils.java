@@ -34,7 +34,7 @@ public class StringUtils {
 	}
 
 	public static String uuid(){
-		return org.springframework.util.StringUtils.replace(UUID.randomUUID().toString(), "-", "");
+		return UUID.randomUUID().toString().replace("-","");
 	}
 
 	public static boolean isEmpty(@Nullable Object str) {

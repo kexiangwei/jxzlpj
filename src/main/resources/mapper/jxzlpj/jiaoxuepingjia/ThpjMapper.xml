@@ -53,7 +53,7 @@
             </if>
 
             <if test="teacherCollege !=null and teacherCollege !=''">
-                and t.COLLEGE_CODE = #{teacherCollege}
+                and t.xy_code = #{teacherCollege}
             </if>
             <if test="teacherMajor !=null and teacherMajor !=''">
                 and t.MAJOR_CODE = #{teacherMajor}

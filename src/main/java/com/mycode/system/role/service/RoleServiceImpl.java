@@ -8,6 +8,7 @@ import com.mycode.system.role.mapper.RoleMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,10 +41,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public boolean insertOrUpdateRoleMenu(String roleId, String roleName, String[] menuIds) {
         boolean bool = false;
         if(StringUtils.isEmpty(roleId)){
-            roleId = UUID.randomUUID().toString().replace("-","");
+            roleId = StringUtils.uuid();
             bool = roleMapper.insertRole(roleId,roleName);
             if(bool){
                 if(menuIds != null && menuIds.length >0){

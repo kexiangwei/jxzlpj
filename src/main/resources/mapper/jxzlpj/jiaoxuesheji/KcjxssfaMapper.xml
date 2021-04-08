@@ -3,10 +3,11 @@
 <mapper namespace="com.mycode.jxzlpj.jiaoxuesheji.kcjxssfa.mapper.KcjxssfaMapper">
 
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuesheji.kcjxssfa.domian.Kcjxssfa">
-        SELECT * FROM JXSJ_KCJXSSFA
+        SELECT *
+        FROM JXSJ_KCJXSSFA
         <where> 1=1
-            <if test="courseCode != null and courseCode != ''">
-                and COURSE_CODE = #{courseCode}
+            <if test="courseName != null and courseName != ''">
+                and COURSE_NAME like concat(concat('%',#{courseName}),'%')
             </if>
         </where>
     </select>
@@ -17,11 +18,9 @@
 
     <insert id="insert">
           insert into JXSJ_KCJXSSFA
-          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, COURSE_LEADER, TEACH_CLASS, STUDENT_NUM, CLASS_LOCATION, OPEN_COLLEGE
-          , USER_ID, USER_NAME, USER_UNIT, CREATE_DATE)
+          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, COURSE_LEADER, TEACH_CLASS, STUDENT_NUM, CLASS_LOCATION, OPEN_COLLEGE, XN, XQ, USER_ID, USER_NAME, USER_UNIT, CREATE_DATE)
           values
-          (#{code},#{courseCode},#{courseName},#{courseAttr},#{courseLeader},#{teachClass},#{studentNum},#{classLocation},#{openCollege}
-          ,#{userId},#{userName},#{userUnit},CURRENT_DATE)
+          (#{code},#{courseCode},#{courseName},#{courseAttr},#{courseLeader},#{teachClass},#{studentNum},#{classLocation},#{openCollege},#{xn},#{xq},#{userId},#{userName},#{userUnit},CURRENT_DATE)
     </insert>
     <insert id="insertItem">
         insert into JXSJ_KCJXSSFA_ITEM

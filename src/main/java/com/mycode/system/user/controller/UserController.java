@@ -3,7 +3,7 @@ package com.mycode.system.user.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.mycode.common.Course;
+import com.mycode.common.common.domain.Course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
