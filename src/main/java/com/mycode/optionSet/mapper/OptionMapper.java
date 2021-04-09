@@ -20,6 +20,6 @@ public interface OptionMapper {
 
     boolean updateOption(@Param("code") Long code, @Param("name") String name);
 
-    int deleteOption(@Param("code") Long code);
+    boolean deleteOption(@Param("code") Long code);
 
 }

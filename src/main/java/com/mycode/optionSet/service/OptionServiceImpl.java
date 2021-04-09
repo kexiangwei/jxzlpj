@@ -40,7 +40,6 @@ public class OptionServiceImpl implements OptionService {
 
     @Override
     public boolean deleteOption(Long code) {
-        int execNum = optionMapper.deleteOption(code);
-        return execNum == -1; //mybatis一次对多条数据进行操作成功后返回值为 -1
+        return optionMapper.deleteOption(code);
     }
 }

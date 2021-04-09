@@ -3,7 +3,11 @@
 <mapper namespace="com.mycode.optionSet.mapper.OptionMapper">
 
     <select id="getOptionPageList" resultType="java.util.Map">
-        SELECT * FROM COMMON_OPTION_SET_OPTION order by CREATE_DATE desc
+        SELECT CODE,NAME,(case when OPTION_CODE is not null then 1 else 2 end) is_bind
+        FROM COMMON_OPTION_SET_OPTION t LEFT JOIN (
+            SELECT DISTINCT OPTION_CODE FROM COMMON_OPTION_SET
+        ) t2 on T2.OPTION_CODE = t.CODE
+         order by CREATE_DATE desc
     </select>
 
     <select id="getOption" resultType="java.util.Map">
@@ -19,9 +23,6 @@
     </update>
 
     <delete id="deleteOption">
-        begin
-        DELETE FROM COMMON_OPTION_SET_OPTION where CODE = #{code};
-        DELETE FROM COMMON_OPTION_SET where OPTION_CODE = #{code}; <!-- 根据选项编号删除已关联的数据 -->
-        end;
+        DELETE FROM COMMON_OPTION_SET_OPTION where CODE = #{code}
     </delete>
 </mapper>
