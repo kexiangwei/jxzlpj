@@ -10,8 +10,8 @@
                 FROM SYS_DATA_XSXK xk
                 LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = xk.COURSE_CODE
                 LEFT JOIN (
-                    SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ
-                ) pj on pj.user_id = xk.USER_ID and pj.COURSE_CODE = xk.COURSE_CODE
+                    SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ_DFPJ
+                ) pj on pj.COURSE_CODE = xk.COURSE_CODE and pj.user_id = xk.USER_ID
                 WHERE xk.USER_ID = #{userId}
             </when>
             <when test="accountType == 'teacher'">
@@ -20,7 +20,7 @@
                 FROM SYS_DATA_JSRK rk
                 LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = rk.COURSE_CODE
                 LEFT JOIN (
-                    SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
+                    SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ_DFPJ
                 ) pj on pj.COURSE_CODE = kc.COURSE_CODE
                 where rk.USER_ID = #{userId}
             </when>
@@ -28,7 +28,7 @@
                 SELECT kc.*
                 ,1 as isPj
                 FROM (
-                SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ
+                    SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ_DFPJ
                 ) pj LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = pj.COURSE_CODE
             </otherwise>
         </choose>
