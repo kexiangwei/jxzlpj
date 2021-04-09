@@ -35,7 +35,8 @@ public class XspjServiceImpl implements XspjService {
     }
 
     @Override
-    public boolean insert(Xspj xspj, Map<String,Object> paramMap) {
+    public boolean insert(Xspj xspj, String jsonString) {
+        Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
         return xspjMapper.insert(xspj, paramMap);
     }
 

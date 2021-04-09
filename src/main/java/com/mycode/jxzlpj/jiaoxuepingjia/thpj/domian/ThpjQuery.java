@@ -16,6 +16,7 @@ public class ThpjQuery {
     private Integer pageIndex=1
             ,pageSize=10;
     //评审状态
+    private String userId;
     private Integer isPj; //1已评2未评
     private String pjCode; //评教编号
     private Integer isTop //本次评分是否90分及以上，1是2否

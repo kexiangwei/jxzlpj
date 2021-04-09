@@ -1,6 +1,7 @@
 package com.mycode.jxzlpj.jiaoxuepingjia.thpj.controller;
 
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Ckpj;
+import com.mycode.jxzlpj.jiaoxuepingjia.thpj.service.CkpjService;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.service.ThpjService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +22,19 @@ import java.util.Map;
 public class CkpjController {
 
     @Autowired
-    private ThpjService thpjService;
+    private CkpjService ckpjService;
 
     @ResponseBody
     @RequestMapping("/getCkpjPageList.do")
     public JsonResult<Object> getCkpjPageList(Ckpj ckpj){
-        Map<String, Object> resultMap = thpjService.getCkpjPageList(ckpj);
+        Map<String, Object> resultMap = ckpjService.getCkpjPageList(ckpj);
         return JsonResult.success(resultMap);
     }
 
     @ResponseBody
     @RequestMapping("/getCkpjDetail.do")
     public JsonResult<Object> getCkpjDetail(Ckpj ckpj){
-        List<Map<String, Object>> mapList = thpjService.getCkpjDetail(ckpj);
+        List<Map<String, Object>> mapList = ckpjService.getCkpjDetail(ckpj);
         return JsonResult.success(mapList);
     }
 

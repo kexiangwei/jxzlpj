@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.jxzlpj.jiaoxuepingjia.thpj.mapper.ThpjMapper">
+
+    <select id="getThpjTemplateCode" resultType="java.lang.String">
+        SELECT TEMPLATE_CODE from JXPJ_THPJ WHERE CODE = #{pjCode}
+    </select>
+
+    <!--
+    返回值：name 指标名称
+            num 指标名称关联的指标项个数
+            score 指标名称关联的指标项分数合计
+            最后按照‘一二三...’排序。
+    -->
+    <select id="getPjzb" resultType="java.util.Map">
+        SELECT TARGET_NAME as "name",count(0) as "num",sum(TARGET_SCORE) as "score"
+        FROM JXPJ_PJSET_TEMPLATE_TARGET tt
+        LEFT JOIN JXPJ_PJSET_TARGET t on t.TARGET_CODE = TT.TARGET_CODE
+        where TT.TEMPLATE_CODE = #{templateCode}
+        GROUP BY TARGET_NAME
+        order by decode(SUBSTR(TARGET_NAME, 0, 1),'一',1,'二',2,'三',3,'四',4,'五',5,'六',6,'七',7,'八',8,'九',9,'零',0)
+    </select>
+
+    <!--
+    同行评教-比较评价-優秀率算法
+    -->
+    <select id="isTopFull" resultType="java.lang.Integer">
+        SELECT (case when pj_num = 0 then 2
+            when pj_num = 1 and top_num = 0 then 2
+            when pj_num = 1 and top_num = 1 then 1
+            when ROUND(pj_num*0.3) = top_num then 1 else 2 end) is_top_full
+        FROM(
+            SELECT count(t.code) pj_num
+            , NVL(sum(case when total_score >= 90 then 1 else 0 end), 0) top_num
+            FROM JXPJ_THPJ t
+            LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) t2 on T2.RELATION_CODE = t.code
+            where is_submit = 1 and USER_ID = #{userId}
+        )t
+    </select>
+
+    <update id="submit">
+        UPDATE JXPJ_THPJ set IS_SUBMIT = 1 where CODE = #{code}
+    </update>
+    <update id="resetSubmit">
+        UPDATE JXPJ_THPJ set IS_SUBMIT = null where CODE = #{code}
+    </update>
+</mapper>

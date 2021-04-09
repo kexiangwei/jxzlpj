@@ -42,12 +42,11 @@ public class XspjController {
     @ResponseBody
     @RequestMapping("/insert.do")
     public JsonResult<Object> insert(Xspj xspj, @RequestParam("jsonString") String jsonString){
-        Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
-        boolean bool = xspjService.insert(xspj, paramMap);
+        boolean bool = xspjService.insert(xspj, jsonString);
         if(!bool){
-            return JsonResult.error("新增失败");
+            return JsonResult.error("新增失败！");
         }
-        return JsonResult.success("新增成功",null);
+        return JsonResult.success("新增成功！",null);
     }
 
     /**
@@ -79,9 +78,9 @@ public class XspjController {
     public JsonResult<Object> insertBjpj(BjpjParams params){
         boolean bool = xspjService.insertBjpj(params);
         if(!bool){
-            return JsonResult.error("新增失败");
+            return JsonResult.error("新增失败！");
         }
-        return JsonResult.success("新增成功",null);
+        return JsonResult.success("新增成功！",null);
     }
 
     @ResponseBody
@@ -91,9 +90,9 @@ public class XspjController {
             , @RequestParam("suggest") String suggest){
         boolean bool = xspjService.insertBjpjSuggest(relationCode, courseCode, suggest);
         if(!bool){
-            return JsonResult.error("新增失败");
+            return JsonResult.error("新增失败！");
         }
-        return JsonResult.success("新增成功",null);
+        return JsonResult.success("新增成功！",null);
     }
 
     @ResponseBody

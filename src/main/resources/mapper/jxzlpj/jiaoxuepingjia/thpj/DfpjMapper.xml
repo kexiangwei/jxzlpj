@@ -1,46 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.mycode.jxzlpj.jiaoxuepingjia.thpj.mapper.ThpjMapper">
+<mapper namespace="com.mycode.jxzlpj.jiaoxuepingjia.thpj.mapper.DfpjMapper">
 
-    <!--
-     查看评教
-     -->
-    <select id="getCkpjPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Ckpj">
-        SELECT t2.course_code,t2.course_name,t2.course_attr,t2.XF,t2.XS,t2.ZY_NAME,t2.XY_NAME
-        ,(case when pj.template_code is not null then 1 else 2 end) is_pj
-        ,pj.template_code template_code
-        FROM SYS_DATA_JSRK T1
-        LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
-        LEFT JOIN (SELECT DISTINCT template_code,teacher_code,course_code FROM JXPJ_THPJ) pj on pj.teacher_code = T1.USER_ID and pj.course_code = T1.COURSE_CODE
-        WHERE T1.USER_ID = #{userId}
-        <if test="courseName !=null and courseName !=''">
-            and t2.course_name like concat(concat('%',#{courseName}),'%')
-        </if>
-    </select>
-
-    <select id="getThpjTargetAvgList" resultType="java.util.Map">
-        SELECT TARGET_CODE "targetCode",AVG(ANSWER) "avgScore"
-        from JXPJ_THPJ t1 LEFT JOIN JXPJ_THPJ_ITEM t2 on T2.RELATION_CODE = T1.CODE
-        where T1.TEACHER_CODE = #{userId} and COURSE_CODE = #{courseCode}
-        GROUP BY TARGET_CODE
-    </select>
-
-    <!--
-    同行评教
-    -->
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.ThpjQuery">
         SELECT kc.course_code,kc.course_name,kc.course_attr,kc.SK_SJ teach_date,kc.SK_DD teach_addr
         ,u.USER_ID teacher_code,u.user_name teacher,u.age teacher_age,u.title teacher_title,u.XY_NAME teacher_college,u.ZY_NAME teacher_major
         ,(case when pj.code is not null then 1 else 2 end) is_pj,pj.code as pj_code, pj.is_submit
-        ,(case when total_score >= 90 then 1 else 2 end) is_top
-        FROM SYS_DATA_KC kc
-        LEFT JOIN SYS_DATA_JSRK jsrk on jsrk.course_code = kc.course_code
+        ,(case when pj2.total_score >= 90 then 1 else 2 end) is_top
+        FROM SYS_DATA_JSRK jsrk
+        LEFT JOIN SYS_DATA_KC kc on kc.course_code = jsrk.course_code
         LEFT JOIN SYS_USER u on u.USER_ID = jsrk.USER_ID
-        LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = jsrk.USER_ID and pj.course_code = jsrk.course_code
+        LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = jsrk.USER_ID and pj.course_code = jsrk.course_code and pj.user_id = #{userId}
         LEFT JOIN (
             SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
         ) pj2 on pj2.RELATION_CODE = pj.code
-        <where> jsrk.USER_ID is not null
+        <where>
+            JSRK.USER_ID != #{userId}
             <if test="teacherCollege !=null and teacherCollege !=''">
                 and u.xy_code = #{teacherCollege}
             </if>
@@ -85,7 +60,7 @@
     </select>
 
     <select id="getThpjInfo" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj">
-        SELECT * FROM JXPJ_THPJ where CODE = #{code}
+        SELECT * FROM JXPJ_THPJ where CODE = #{pjCode}
     </select>
     <select id="getThpjItemListByRelationCode" resultType="java.util.Map">
         select NVL(TARGET_CODE,'totalScore') as "targetCode"
@@ -94,27 +69,6 @@
         where RELATION_CODE = #{relationCode}
         GROUP BY rollup(TARGET_CODE)
     </select>
-
-    <!-- 優秀率算法 -->
-    <select id="isTopFull" resultType="java.lang.Integer">
-        SELECT (case when pj_num = 0 then 2
-            when pj_num = 1 and top_num = 0 then 2
-            when pj_num = 1 and top_num = 1 then 1
-            when ROUND(pj_num*0.3) = top_num then 1 else 2 end) is_top_full
-        FROM(
-            SELECT count(t.code) pj_num
-            , NVL(sum(case when total_score >= 90 then 1 else 0 end), 0) top_num
-            FROM JXPJ_THPJ t
-            LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) t2 on T2.RELATION_CODE = t.code
-            where is_submit = 1 and USER_ID = #{userId}
-        )t
-    </select>
-    <update id="submit">
-UPDATE JXPJ_THPJ set IS_SUBMIT = 1 where CODE = #{code}
-    </update>
-    <update id="resetSubmit">
-UPDATE JXPJ_THPJ set IS_SUBMIT = null where CODE = #{code}
-    </update>
 
     <insert id="insert">
         insert into JXPJ_THPJ
@@ -148,22 +102,4 @@ UPDATE JXPJ_THPJ set IS_SUBMIT = null where CODE = #{code}
         delete from JXPJ_THPJ_ITEM where RELATION_CODE = #{relationCode}
     </delete>
 
-    <select id="getThpjTemplateCode" resultType="java.lang.String">
-        SELECT TEMPLATE_CODE from JXPJ_THPJ WHERE CODE = #{code}
-    </select>
-
-    <!--
-    返回值：name 指标名称
-        num 指标名称关联的指标项个数
-        score 指标名称关联的指标项分数合计
-    最后按照‘一二三...’排序。
-    -->
-    <select id="getPjzb" resultType="java.util.Map">
-        SELECT TARGET_NAME as "name",count(0) as "num",sum(TARGET_SCORE) as "score"
-        FROM JXPJ_PJSET_TEMPLATE_TARGET tt
-        LEFT JOIN JXPJ_PJSET_TARGET t on t.TARGET_CODE = TT.TARGET_CODE
-        where TT.TEMPLATE_CODE = #{templateCode}
-        GROUP BY TARGET_NAME
-        order by decode(SUBSTR(TARGET_NAME, 0, 1),'一',1,'二',2,'三',3,'四',4,'五',5,'六',6,'七',7,'八',8,'九',9,'零',0)
-    </select>
 </mapper>
