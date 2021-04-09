@@ -30,16 +30,16 @@ public class OptionServiceImpl implements OptionService {
 
     @Override
     public boolean insertOption(String name) {
-        return optionMapper.insertOption(StringUtils.uuid(), name);
+        return optionMapper.insertOption(System.currentTimeMillis(), name);
     }
 
     @Override
-    public boolean updateOption(String code, String name) {
+    public boolean updateOption(Long code, String name) {
         return optionMapper.updateOption(code,name);
     }
 
     @Override
-    public boolean deleteOption(String code) {
+    public boolean deleteOption(Long code) {
         int execNum = optionMapper.deleteOption(code);
         return execNum == -1; //mybatis一次对多条数据进行操作成功后返回值为 -1
     }

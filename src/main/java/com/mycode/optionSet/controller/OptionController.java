@@ -42,7 +42,7 @@ public class OptionController {
     }
 
     @RequestMapping("/updateOption.do")
-    public JsonResult<Object> updateOption(@RequestParam("code") String code, @RequestParam("name") String name){
+    public JsonResult<Object> updateOption(@RequestParam("code") Long code, @RequestParam("name") String name){
         Map<String, Object> option = optionService.getOption(name);
         if(option !=null){
             return JsonResult.error("选项已存在！");
@@ -55,7 +55,7 @@ public class OptionController {
     }
 
     @RequestMapping("/deleteOption.do")
-    public JsonResult<Object> deleteOption(@RequestParam("code") String code){
+    public JsonResult<Object> deleteOption(@RequestParam("code") Long code){
         boolean bool = optionService.deleteOption(code);
         if(!bool){
             return JsonResult.error("删除失败！");

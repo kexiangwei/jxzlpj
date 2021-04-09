@@ -3,7 +3,7 @@
 <mapper namespace="com.mycode.optionSet.mapper.OptionMapper">
 
     <select id="getOptionPageList" resultType="java.util.Map">
-        SELECT * FROM COMMON_OPTION_SET_OPTION
+        SELECT * FROM COMMON_OPTION_SET_OPTION order by CREATE_DATE desc
     </select>
 
     <select id="getOption" resultType="java.util.Map">
@@ -11,7 +11,7 @@
     </select>
 
     <insert id="insertOption">
-        INSERT INTO COMMON_OPTION_SET_OPTION (CODE,NAME) VALUES (#{code},#{name})
+        INSERT INTO COMMON_OPTION_SET_OPTION (CODE, NAME, CREATE_DATE) VALUES (#{code},#{name},CURRENT_DATE)
     </insert>
 
     <update id="updateOption">

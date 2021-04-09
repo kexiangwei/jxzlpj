@@ -16,10 +16,10 @@ public interface OptionMapper {
 
     Map<String, Object> getOption(@Param("name") String name);
 
-    boolean insertOption(@Param("code") String code, @Param("name") String name);
+    boolean insertOption(@Param("code") Long code, @Param("name") String name);
 
-    boolean updateOption(@Param("code") String code, @Param("name") String name);
+    boolean updateOption(@Param("code") Long code, @Param("name") String name);
 
-    int deleteOption(@Param("code") String code);
+    int deleteOption(@Param("code") Long code);
 
 }

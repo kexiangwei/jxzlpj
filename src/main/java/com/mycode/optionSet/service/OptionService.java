@@ -14,8 +14,8 @@ public interface OptionService {
 
     boolean insertOption(String name);
 
-    boolean updateOption(String code, String name);
+    boolean updateOption(Long code, String name);
 
-    boolean deleteOption(String code);
+    boolean deleteOption(Long code);
 
 }

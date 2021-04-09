@@ -22,18 +22,34 @@ public class OptionSetController {
     @Autowired
     private OptionSetService optionSetService;
 
+    /**
+     * 获取模块下拉选项
+     * @param pid 获取二级模块时传递的一级模块编号
+     * @return
+     */
     @RequestMapping("/getOptionSetMenuList.do")
     public JsonResult<Object> getOptionSetMenuList(@RequestParam(value = "pid",required = false) String pid){
         List<Map<String, Object>> mapList = optionSetService.getOptionSetMenuList(pid);
         return JsonResult.success(mapList);
     }
 
+    /**
+     * 获取模块属性
+     * @param menuId
+     * @return
+     */
     @RequestMapping("/getOptionSetAttrList.do")
     public JsonResult<Object> getOptionSetAttrList(@RequestParam(value = "menuId") String menuId){
         List<Map<String, Object>> mapList = optionSetService.getOptionSetAttrList(menuId);
         return JsonResult.success(mapList);
     }
 
+    /**
+     * 获取已选选项
+     * @param menuId
+     * @param attr
+     * @return
+     */
     @RequestMapping("/getOptionSetList.do")
     public JsonResult<Object> getOptionSetList(@RequestParam("menuId") String menuId, @RequestParam("attr") String attr){
         List<Map<String, Object>> mapList = optionSetService.getOptionSetList(menuId,attr);

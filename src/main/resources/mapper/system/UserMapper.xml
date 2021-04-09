@@ -3,7 +3,7 @@
 <mapper namespace="com.mycode.system.user.mapper.UserMapper">
 
     <select id="getUserPageList" resultType="com.mycode.system.user.domain.User">
-        SELECT u.XY_NAME,u.USER_ID,u.USER_NAME,user_group
+        SELECT u.*,user_group
         FROM SYS_USER u
         LEFT JOIN (
             SELECT user_id,wm_concat(role_name) user_group
