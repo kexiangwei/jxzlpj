@@ -5,7 +5,7 @@
      查看评教
      -->
     <select id="getCkpjPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Ckpj">
-        SELECT t2.course_code,t2.course_name,t2.course_attr,t2.XF,t2.XS,t2.ZY_NAME,t2.XY_NAME
+        SELECT t2.course_code,t2.course_name,t2.course_attr,t2.XS,t2.XF,t2.XN,t2.XQ,t2.ZY_NAME,t2.XY_NAME
         ,(case when pj.template_code is not null then 1 else 2 end) is_pj
         ,pj.template_code template_code
         FROM SYS_DATA_JSRK T1

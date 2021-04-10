@@ -16,11 +16,13 @@ public interface XspjMapper {
 
     List<Xspj> getPageList(Xspj xspj);
 
-    boolean insert(@Param("xspj") Xspj xspj, @Param("paramMap") Map<String,Object> paramMap);
+    boolean insert(Xspj xspj);
 
-    List<Map<String, Object>> getPjInfo(@Param("courseCode") String courseCode);
+    boolean insertItem(@Param("xspj") Xspj xspj, @Param("paramMap") Map<String,Object> paramMap);
 
-    List<String> getPjInfoSuggestList(@Param("courseCode") String courseCode, @Param("templateCode") String templateCode);
+    List<Map<String, Object>> getPjInfo(@Param("courseCode") String courseCode, @Param("userId") String userId);
+
+    List<String> getPjInfoSuggestList(@Param("courseCode") String courseCode, @Param("userId") String userId);
 
     List<Map<String,Object>> getPjInfoTransferData(@Param("userId") String userId);
 
@@ -43,4 +45,5 @@ public interface XspjMapper {
     List<Map<String, Object>> getBjpjPjInfo(@Param("courseCode") String courseCode);
 
     List<String> getBjpjPjInfoSuggestList(@Param("courseCode") String courseCode, @Param("templateCode") String templateCode);
+
 }

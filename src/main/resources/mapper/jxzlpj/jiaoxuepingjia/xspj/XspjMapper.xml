@@ -5,14 +5,17 @@
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.Xspj">
         <choose>
             <when test="accountType == 'student'">
-                SELECT kc.*
+                SELECT T2.COURSE_CODE, T2.COURSE_NAME, T2.COURSE_ATTR, T2.SK_SJ,T2.SK_DD
+                , T4.USER_ID "teacherCode", T4.USER_NAME "teacherName", T4.title "teacherTitle",t4.xy_name "teacherXy",t4.zy_name "teacherZy"
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
-                FROM SYS_DATA_XSXK xk
-                LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = xk.COURSE_CODE
+                FROM SYS_DATA_XSXK T1
+                LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+                LEFT JOIN SYS_DATA_JSRK T3 ON T3.COURSE_CODE = T2.COURSE_CODE
+                LEFT JOIN SYS_USER T4 ON T4.USER_ID = T3.USER_ID
                 LEFT JOIN (
-                    SELECT DISTINCT COURSE_CODE,user_id FROM JXPJ_XSPJ_DFPJ
-                ) pj on pj.COURSE_CODE = xk.COURSE_CODE and pj.user_id = xk.USER_ID
-                WHERE xk.USER_ID = #{userId}
+                    SELECT DISTINCT COURSE_CODE,teacher_code,user_id FROM JXPJ_XSPJ_DFPJ
+                ) pj on pj.COURSE_CODE = T1.COURSE_CODE and pj.user_id = T1.USER_ID and pj.teacher_code = T4.USER_ID
+                WHERE T1.USER_ID = #{userId}
             </when>
             <when test="accountType == 'teacher'">
                 SELECT kc.*
@@ -35,11 +38,14 @@
     </select>
 
     <insert id="insert">
+        insert into JXPJ_XSPJ_DFPJ (CODE, COURSE_CODE, TEACHER_CODE, USER_ID, USER_NAME, CREATE_DATE)
+        values (#{code},#{courseCode},#{teacherCode},#{userId},#{userName},CURRENT_DATE)
+    </insert>
+    <insert id="insertItem">
         insert all
         <foreach collection="paramMap" index="key"  item="val">
-            INTO JXPJ_XSPJ (COURSE_CODE, TEMPLATE_CODE, TARGET_CODE, ANSWER, USER_ID, USER_NAME, CREATE_DATE)
-            VALUES(#{xspj.courseCode,jdbcType=VARCHAR},#{xspj.templateCode,jdbcType=VARCHAR}
-            ,#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR},#{xspj.userId},#{xspj.userName},CURRENT_DATE)
+            into JXPJ_XSPJ_DFPJ_ITEM (RELATION_CODE, TEMPLATE_CODE, TARGET_CODE, ANSWER)
+            VALUES(#{xspj.code},#{xspj.templateCode},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
         </foreach>
         select 1 from dual
     </insert>
@@ -63,12 +69,16 @@
             LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on TT.TEMPLATE_CODE = t.TEMPLATE_CODE
             LEFT JOIN JXPJ_PJSET_TARGET tg on tg.target_code = tt.target_code
         ) t2 LEFT JOIN (
-            SELECT * from JXPJ_XSPJ where course_code = #{courseCode}
+            SELECT *
+            from JXPJ_XSPJ_DFPJ pj LEFT JOIN JXPJ_XSPJ_DFPJ_ITEM it on IT.RELATION_CODE = PJ.CODE
+            where course_code = #{courseCode} and TEACHER_CODE = #{userId}
         ) pj on PJ.TEMPLATE_CODE = t2.TEMPLATE_CODE and pj.target_code = t2.target_code
         GROUP BY pj.template_code,pj.TARGET_CODE,target_content,target_score
     </select>
     <select id="getPjInfoSuggestList" resultType="java.lang.String">
-        SELECT ANSWER FROM JXPJ_XSPJ where COURSE_CODE = #{courseCode} and TEMPLATE_CODE = #{templateCode} and TARGET_CODE = 'suggest'
+        SELECT ANSWER
+        from JXPJ_XSPJ_DFPJ pj LEFT JOIN JXPJ_XSPJ_DFPJ_ITEM it on IT.RELATION_CODE = PJ.CODE
+        where course_code = #{courseCode} and TEACHER_CODE = #{userId} and TARGET_CODE = 'suggest'
     </select>
 
     <select id="getPjInfoTransferData" resultType="java.util.Map">
@@ -96,6 +106,7 @@ WHERE T1.USER_ID = #{userId}
         insert into JXPJ_XSPJ_BJPJ_SUGGEST (RELATION_CODE, COURSE_CODE, SUGGEST)
         values (#{relationCode},#{courseCode},NVL(#{suggest}, '无建议或意见') )
     </insert>
+
     <select id="selectBjpjSuggest" resultType="java.lang.String">
         select SUGGEST
         from JXPJ_XSPJ_BJPJ_SUGGEST

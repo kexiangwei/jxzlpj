@@ -35,17 +35,23 @@ public class XspjServiceImpl implements XspjService {
     }
 
     @Override
+    @Transactional
     public boolean insert(Xspj xspj, String jsonString) {
-        Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
-        return xspjMapper.insert(xspj, paramMap);
+        xspj.setCode(System.currentTimeMillis());
+        boolean bool = xspjMapper.insert(xspj);
+        if(bool){
+            Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
+            bool = xspjMapper.insertItem(xspj, paramMap);
+        }
+        return bool;
     }
 
     @Override
-    public Map<String, Object> getPjInfo(String courseCode) {
+    public Map<String, Object> getPjInfo(String courseCode, String userId) {
         Map<String,Object> pjInfo = new HashMap<>();
-        List<Map<String, Object>> targetList = xspjMapper.getPjInfo(courseCode);
+        List<Map<String, Object>> targetList = xspjMapper.getPjInfo(courseCode,userId);
         OptionalDouble totalAvg = targetList.stream().mapToDouble(m -> Double.parseDouble(m.get("AVG_SCORE").toString())).average();
-        List<String> suggestList = xspjMapper.getPjInfoSuggestList(courseCode, targetList.get(0).get("TEMPLATE_CODE").toString());
+        List<String> suggestList = xspjMapper.getPjInfoSuggestList(courseCode,userId);
         pjInfo.put("targetList",targetList);
         pjInfo.put("suggestList",suggestList);
         pjInfo.put("totalAvg",totalAvg);

@@ -56,8 +56,8 @@ public class XspjController {
      */
     @ResponseBody
     @RequestMapping("/getPjInfo.do")
-    public JsonResult<Object> getPjInfo(@RequestParam("courseCode") String courseCode){
-        Map<String,Object> resultMap = xspjService.getPjInfo(courseCode);
+    public JsonResult<Object> getPjInfo(@RequestParam("courseCode") String courseCode, @RequestParam("userId") String userId){
+        Map<String,Object> resultMap = xspjService.getPjInfo(courseCode,userId);
         return JsonResult.success(resultMap);
     }
 
