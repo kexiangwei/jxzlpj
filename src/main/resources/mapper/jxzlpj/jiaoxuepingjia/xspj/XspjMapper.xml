@@ -23,8 +23,8 @@
                 FROM SYS_DATA_JSRK rk
                 LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = rk.COURSE_CODE
                 LEFT JOIN (
-                    SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ_DFPJ
-                ) pj on pj.COURSE_CODE = kc.COURSE_CODE
+                    SELECT DISTINCT COURSE_CODE,TEACHER_CODE FROM JXPJ_XSPJ_DFPJ
+                ) pj on pj.COURSE_CODE = rk.COURSE_CODE and pj.TEACHER_CODE = rk.user_id
                 where rk.USER_ID = #{userId}
             </when>
             <otherwise>/*若是其他类型的账号访问，则返回所有已评的课程信息*/
