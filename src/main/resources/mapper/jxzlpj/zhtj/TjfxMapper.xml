@@ -52,7 +52,7 @@
 		,nvl(sum(WTBS_country),0) WTBS_country,nvl(sum(WTBS_province),0) WTBS_province,nvl(sum(WTBS_school),0) WTBS_school
 		,nvl(sum(XKZYBS_country),0) XKZYBS_country,nvl(sum(XKZYBS_province),0) XKZYBS_province,nvl(sum(XKZYBS_school),0) XKZYBS_school
 		-- 教学事故
-		,nvl(sum(jxsg.total_num),0) jxsg_total_num,nvl(sum(jxsg.zdsg),0) jxsg_total_zdsg,nvl(sum(jxsg.ybsg),0) jxsg_total_ybsg,nvl(sum(jxsg.gs),0) jxsg_total_gs,nvl(sum(jxsg.fmqd),0) jxsg_total_fmqd
+		,nvl(sum(jxsg.jxsg_total_num),0) jxsg_total_num,nvl(sum(jxsg.jxsg_zdsg),0) jxsg_zdsg,nvl(sum(jxsg.jxsg_ybsg),0) jxsg_ybsg,nvl(sum(jxsg.jxsg_gs),0) jxsg_gs,nvl(sum(jxsg.jxsg_fmqd),0) jxsg_fmqd
 		-- 同行评教
 		,count(thpj.user_id) thpj_pj_rs ,nvl(sum(thpj.total_num),0) thpj_pj_rc, nvl(ROUND(AVG(thpj.avg_score), 2),0) thpj_avg_score
 		,count(thpj2.TEACHER_CODE) thpj2_pj_rs ,nvl(sum(thpj2.total_num),0) thpj2_pj_rc, nvl(ROUND(AVG(thpj2.avg_score),2),0) thpj2_avg_score
@@ -60,7 +60,7 @@
 		-- 学生评教
 		,count(xspj1.user_id) xspj1_pj_rs ,nvl(sum(xspj1.total_num),0) xspj1_pj_rc, nvl(ROUND(AVG(xspj1.avg_score), 2),0) xspj1_avg_score
 		,count(xspj2.TEACHER_CODE) xspj2_pj_rs ,nvl(sum(xspj2.total_num),0) xspj2_pj_rc, nvl(ROUND(AVG(xspj2.avg_score), 2),0) xspj2_avg_score
-		,sum(xspj3.kc_num) xspj3_1 ,nvl(sum(xspj3.pj_num),0) xspj3_2
+		,nvl(sum(xspj3.kc_num),0) xspj3_1, nvl(sum(xspj3.pj_num),0) xspj3_2
 		--
 		FROM SYS_USER u
 		-- 继续教育
@@ -192,12 +192,14 @@
 		) XKZYBS on XKZYBS.USER_ID = u.USER_ID
 		-- 教学事故
 		LEFT JOIN (
-			SELECT teacher_id, count(code) total_num
-			,sum(case when event_level = '重大事故' then 1 else 0 end) zdsg
-			,sum(case when event_level = '一般事故' then 1 else 0 end) ybsg
-			,sum(case when event_level = '过失' then 1 else 0 end) gs
-			,sum(case when event_level = '负面清单' then 1 else 0 end) fmqd
-			FROM JXJC_JXSG GROUP BY teacher_id
+			SELECT teacher_id
+			, count(code) jxsg_total_num
+			,sum(case when event_level = '重大事故' then 1 else 0 end) jxsg_zdsg
+			,sum(case when event_level = '一般事故' then 1 else 0 end) jxsg_ybsg
+			,sum(case when event_level = '过失' then 1 else 0 end) jxsg_gs
+			,sum(case when event_level = '负面清单' then 1 else 0 end) jxsg_fmqd
+			FROM JXJC_JXSG
+			GROUP BY teacher_id
 		) jxsg on jxsg.teacher_id = u.USER_ID
 		-- 同行评教
 		LEFT JOIN (
