@@ -7,25 +7,38 @@
         ,ROUND((thpj_avg_score*0.6 + xspj1_avg_score*0.4),2) zp
         FROM (
             <choose>
-                <when test="zyCode != null and zyCode != ''">
-                    SELECT u.USER_ID code,u.USER_NAME name
-                    <include refid="sql"/>
-                    where ZY_CODE = #{zyCode}
-                    GROUP BY u.USER_ID,u.USER_NAME
-                </when>
-                <when test="xyCode != null and xyCode != ''">
+				<when test="tjType == 'xy'">
+					SELECT u.XY_CODE code,u.XY_NAME name
+					<include refid="sql"/>
+					where u.XY_CODE is not null
+					GROUP BY u.XY_CODE,u.XY_NAME
+				</when>
+				<when test="tjType == 'zy'">
                     SELECT u.ZY_CODE code,u.ZY_NAME name
                     <include refid="sql"/>
-                    where u.ZY_CODE is not null and XY_CODE = #{xyCode}
+                    where u.ZY_CODE is not null
+					<if test="xyCode != null and xyCode != ''">
+						and u.XY_CODE = #{xyCode}
+					</if>
                     GROUP BY u.ZY_CODE,u.ZY_NAME
                 </when>
-                <otherwise>
-                    SELECT u.XY_CODE code,u.XY_NAME name
-                    <include refid="sql"/>
-                    where u.XY_CODE is not null
-                    GROUP BY u.XY_CODE,u.XY_NAME
-                </otherwise>
-            </choose>
+				<when test="tjType == 'js'">
+					SELECT u.USER_ID code,u.USER_NAME name
+					<include refid="sql"/>
+					<where> u.ACCOUNT_TYPE = 'teacher'
+						<if test="xyCode != null and xyCode != ''">
+							and u.XY_CODE = #{xyCode}
+						</if>
+						<if test="zyCode != null and zyCode != ''">
+							and u.ZY_CODE = #{zyCode}
+						</if>
+						<if test="userId != null and userId != ''">
+							and u.USER_id = #{userId}
+						</if>
+					</where>
+					GROUP BY u.USER_ID,u.USER_NAME
+				</when>
+			</choose>
         ) t
     </select>
 
