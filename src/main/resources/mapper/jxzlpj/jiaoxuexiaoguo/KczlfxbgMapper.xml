@@ -2,29 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.mapper.KczlfxbgMapper">
 
-    <select id="getPageList" resultType="com.mycode.common.common.domain.Course">
-        SELECT T2.*
-        FROM SYS_DATA_JSRK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+    <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg">
+        SELECT t1.COURSE_CODE,t1.COURSE_NAME,t1.COURSE_ATTR,t1.XY_NAME,T1.ZY_NAME,xn,XQ, wm_concat(js.user_name) skjs, t1.sk_bj skbj
+        FROM SYS_DATA_KC t1
+        LEFT JOIN SYS_DATA_JSRK t2 ON T2.COURSE_CODE = T1.COURSE_CODE
+        LEFT JOIN SYS_DATA_JS js on js.user_id = t2.USER_ID
         <where>
-            <if test="userId != null and userId != ''">
-                and T1.USER_ID =#{userId}
-            </if>
             <if test="courseName != null and courseName != ''">
-                and T2.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+                and t1.COURSE_NAME like concat(concat('%',#{courseName}),'%')
             </if>
         </where>
+        GROUP BY t1.COURSE_CODE,t1.COURSE_NAME,t1.COURSE_ATTR,t1.XY_NAME,T1.ZY_NAME,xn,XQ, t1.sk_bj
     </select>
-
-    <!--<sql id="queryCondition">
-
-        <if test="userName != null and userName != ''">
-            and USERNAME = #{userName}
-        </if>
-        <if test="userUnit != null and userUnit != ''">
-            and USER_UNIT = #{userUnit}
-        </if>
-
-    </sql>-->
 
     <insert id="insert">
           insert into JXXG_KCZLFXBG

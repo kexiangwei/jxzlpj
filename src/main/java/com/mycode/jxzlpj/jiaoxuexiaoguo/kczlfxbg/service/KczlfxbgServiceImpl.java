@@ -21,7 +21,7 @@ public class KczlfxbgServiceImpl implements KczlfxbgService {
     @Override
     public Map<String, Object> getPageList(Kczlfxbg kczlfxbg) {
         Page<Object> pageInfo = PageHelper.startPage(kczlfxbg.getPageIndex(), kczlfxbg.getPageSize());
-        List<Course> pageList = kczlfxbgMapper.getPageList(kczlfxbg);
+        List<Kczlfxbg> pageList = kczlfxbgMapper.getPageList(kczlfxbg);
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("totalNum", pageInfo.getTotal());
         resultMap.put("pageList", pageList);

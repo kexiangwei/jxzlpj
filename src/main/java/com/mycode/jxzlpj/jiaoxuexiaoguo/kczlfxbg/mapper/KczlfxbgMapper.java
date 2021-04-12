@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 public interface KczlfxbgMapper {
 
-    List<Course> getPageList(Kczlfxbg kczlfxbg);
+    List<Kczlfxbg> getPageList(Kczlfxbg kczlfxbg);
 
     boolean insert(Kczlfxbg kczlfxbg);
 
