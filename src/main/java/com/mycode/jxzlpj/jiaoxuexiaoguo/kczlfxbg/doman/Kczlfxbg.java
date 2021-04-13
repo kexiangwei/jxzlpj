@@ -23,8 +23,8 @@ public class Kczlfxbg {
             ,xq //学期
             ,xyName //开课学院（部）
             ,zyName //系（教研室）
-            ,skjs //授课教师：填写该课程的所有讲授教师
-            ,skbj; //授课班级：公共选修课无需填写授课班级
+            ,skJs //授课教师：填写该课程的所有讲授教师
+            ,skBj; //授课班级：公共选修课无需填写授课班级
 
     private String userId
             ,userName;

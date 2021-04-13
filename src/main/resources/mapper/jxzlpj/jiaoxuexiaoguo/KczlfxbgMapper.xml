@@ -3,7 +3,7 @@
 <mapper namespace="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.mapper.KczlfxbgMapper">
 
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg">
-        SELECT t1.COURSE_CODE,t1.COURSE_NAME,t1.COURSE_ATTR,t1.XY_NAME,T1.ZY_NAME,xn,XQ, wm_concat(js.user_name) skjs, t1.sk_bj skbj
+        SELECT t1.COURSE_CODE,t1.COURSE_NAME,t1.COURSE_ATTR,t1.XY_NAME,T1.ZY_NAME,xn,XQ, wm_concat(js.user_name) sk_js, t1.sk_bj
         FROM SYS_DATA_KC t1
         LEFT JOIN SYS_DATA_JSRK t2 ON T2.COURSE_CODE = T1.COURSE_CODE
         LEFT JOIN SYS_DATA_JS js on js.user_id = t2.USER_ID
@@ -17,9 +17,9 @@
 
     <insert id="insert">
           insert into JXXG_KCZLFXBG
-          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, XUE_NIAN, XUE_QI, OPEN_COLLEGE, XI_JIAOYANSHI, TEACHERS, TEACH_CLASS, USER_ID, USER_NAME, USER_UNIT, CREATE_DATE)
+          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, XN, XQ, XY_NAME, ZY_NAME, SK_JS, SK_BJ, USER_ID, USER_NAME, CREATE_DATE)
           values
-          (#{code},#{courseCode},#{courseName},#{courseAttr},#{xueNian},#{xueQi},#{openCollege},#{xiJiaoyanshi},#{teachers},#{teachClass},#{userId},#{userName},#{userUnit},CURRENT_DATE)
+          (#{code},#{courseCode},#{courseName},#{courseAttr},#{xn},#{xq},#{xyName},#{zyName},#{skJs},#{skBj},#{userId},#{userName},CURRENT_DATE)
     </insert>
 
     <update id="update">
@@ -33,24 +33,6 @@
             </if>
             <if test="courseAttr != null and courseAttr != ''">
                 , COURSE_ATTR = #{courseAttr}
-            </if>
-            <if test="xueNian != null and xueNian != ''">
-                , XUE_NIAN = #{xueNian}
-            </if>
-            <if test="xueQi != null and xueQi != ''">
-                , XUE_QI = #{xueQi}
-            </if>
-            <if test="openCollege != null and openCollege != ''">
-                , OPEN_COLLEGE = #{openCollege}
-            </if>
-            <if test="xiJiaoyanshi != null and xiJiaoyanshi != ''">
-                , XI_JIAOYANSHI = #{xiJiaoyanshi}
-            </if>
-            <if test="teachers != null and teachers != ''">
-                , TEACHERS = #{teachers}
-            </if>
-            <if test="teachClass != null and teachClass != ''">
-                , TEACH_CLASS = #{teachClass}
             </if>
         </set>
         where code = #{code}

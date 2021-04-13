@@ -29,27 +29,27 @@ public class KczlfxbgController {
     public JsonResult<Object> insert(Kczlfxbg kczlfxbg){
         boolean bool = kczlfxbgService.insert(kczlfxbg);
         if(!bool){
-            return JsonResult.error("新增失败");
+            return JsonResult.error("新增失败！");
         }
-        return JsonResult.success("新增成功",null);
+        return JsonResult.success("新增成功！",null);
     }
 
     @RequestMapping("/update.do")
     public JsonResult<Object> update(Kczlfxbg kczlfxbg){
         boolean bool = kczlfxbgService.update(kczlfxbg);
         if(!bool){
-            return JsonResult.error("修改失败");
+            return JsonResult.error("修改失败！");
         }
-        return JsonResult.success("修改成功",null);
+        return JsonResult.success("修改成功！",null);
     }
 
     @RequestMapping("/delete.do")
     public JsonResult<Object> delete(@RequestParam("code") String code){
         boolean bool = kczlfxbgService.delete(code);
         if(!bool){
-            return JsonResult.error("删除失败");
+            return JsonResult.error("删除失败！");
         }
-        return JsonResult.success("删除成功",null);
+        return JsonResult.success("删除成功！",null);
     }
 
 }
