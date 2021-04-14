@@ -44,9 +44,9 @@ public class DfpjController {
     public JsonResult<Object> insert(Thpj thpj, @RequestParam("jsonString") String jsonString){
         boolean bool = dfpjService.insert(thpj, jsonString);
         if(!bool){
-            return JsonResult.error("保存失败！");
+            return JsonResult.error("保存失败");
         }
-        return JsonResult.success("保存成功！",null);
+        return JsonResult.success("保存成功",null);
     }
 
     @ResponseBody
@@ -54,9 +54,9 @@ public class DfpjController {
     public JsonResult<Object> update(Thpj thpj, @RequestParam("jsonString") String jsonString){
         boolean bool = dfpjService.update(thpj,jsonString);
         if(!bool){
-            return JsonResult.error("修改失败！");
+            return JsonResult.error("修改失败");
         }
-        return JsonResult.success("修改成功！",null);
+        return JsonResult.success("修改成功",null);
     }
 
     /*@ResponseBody

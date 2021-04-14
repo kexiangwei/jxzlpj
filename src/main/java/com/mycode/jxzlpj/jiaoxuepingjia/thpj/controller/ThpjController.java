@@ -65,8 +65,8 @@ public class ThpjController {
     public JsonResult<Object> submit(@RequestParam("code") String code){
         boolean bool = thpjService.submit(code);
         if(!bool){
-            return JsonResult.error("提交失败！");
+            return JsonResult.error("提交失败");
         }
-        return JsonResult.success("提交成功！",null);
+        return JsonResult.success("提交成功",null);
     }
 }

@@ -35,9 +35,9 @@ public class JiaoXueTuanDuiSchoolController {
     public JsonResult<Object> insert(JiaoXueTuanDuiSchool jiaoXueTuanDuiSchool){
         boolean bool = jiaoXueTuanDuiSchoolService.insert(jiaoXueTuanDuiSchool);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("新增成功",null);
     }
 
     @ResponseBody
@@ -45,9 +45,9 @@ public class JiaoXueTuanDuiSchoolController {
     public JsonResult<Object> update(JiaoXueTuanDuiSchool jiaoXueTuanDuiSchool){
         boolean bool = jiaoXueTuanDuiSchoolService.update(jiaoXueTuanDuiSchool);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("修改失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("修改成功",null);
     }
 
     @ResponseBody
@@ -55,8 +55,8 @@ public class JiaoXueTuanDuiSchoolController {
     public JsonResult<Object> delete(@RequestParam("code") String code){
         boolean bool = jiaoXueTuanDuiSchoolService.delete(code);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("删除失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("删除成功",null);
     }
 }

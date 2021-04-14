@@ -85,9 +85,9 @@ public class UserController {
     public JsonResult<Object> grant(@RequestParam("userId") String userId, String[] roleIds){
         boolean bool = userService.grant(userId,roleIds);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("授权失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("授权成功",null);
     }
 
     /**

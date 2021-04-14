@@ -35,9 +35,9 @@ public class JiaoXueTuanDuiProvinceController {
     public JsonResult<Object> insert(JiaoXueTuanDuiProvince jiaoXueTuanDuiProvince){
         boolean bool = jiaoXueTuanDuiProvinceService.insert(jiaoXueTuanDuiProvince);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("新增成功",null);
     }
 
     @ResponseBody
@@ -45,9 +45,9 @@ public class JiaoXueTuanDuiProvinceController {
     public JsonResult<Object> update(JiaoXueTuanDuiProvince jiaoXueTuanDuiProvince){
         boolean bool = jiaoXueTuanDuiProvinceService.update(jiaoXueTuanDuiProvince);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("修改失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("修改成功",null);
     }
 
     @ResponseBody
@@ -55,8 +55,8 @@ public class JiaoXueTuanDuiProvinceController {
     public JsonResult<Object> delete(@RequestParam("code") String code){
         boolean bool = jiaoXueTuanDuiProvinceService.delete(code);
         if(!bool){
-            return JsonResult.error();
+            return JsonResult.error("删除失败");
         }
-        return JsonResult.success();
+        return JsonResult.success("删除成功",null);
     }
 }
