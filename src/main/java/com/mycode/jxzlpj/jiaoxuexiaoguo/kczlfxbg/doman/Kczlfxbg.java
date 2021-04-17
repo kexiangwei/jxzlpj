@@ -14,6 +14,8 @@ public class Kczlfxbg {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
+    private Integer isBg; //是否填写报告1是2否
+    private String bgCode; //若已填写则把报告编号返回
 
     private String code //业务编号
             ,courseCode //课程编号
@@ -70,3 +72,5 @@ public class Kczlfxbg {
     @JsonIgnore
     private Date createDate;
 }
+
+

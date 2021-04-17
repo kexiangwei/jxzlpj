@@ -29,6 +29,11 @@ public class KczlfxbgServiceImpl implements KczlfxbgService {
     }
 
     @Override
+    public Kczlfxbg getKczlfxbg(String code) {
+        return kczlfxbgMapper.getKczlfxbg(code);
+    }
+
+    @Override
     public boolean insert(Kczlfxbg kczlfxbg) {
         return kczlfxbgMapper.insert(kczlfxbg);
     }

@@ -8,10 +8,11 @@ public interface KczlfxbgService {
 
     Map<String, Object> getPageList(Kczlfxbg kczlfxbg);
 
+    Kczlfxbg getKczlfxbg(String code);
+
     boolean insert(Kczlfxbg kczlfxbg);
 
     boolean update(Kczlfxbg kczlfxbg);
 
     boolean delete(String code);
-
 }

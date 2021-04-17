@@ -3,23 +3,154 @@
 <mapper namespace="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.mapper.KczlfxbgMapper">
 
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg">
-        SELECT t1.COURSE_CODE,t1.COURSE_NAME,t1.COURSE_ATTR,t1.XY_NAME,T1.ZY_NAME,xn,XQ, wm_concat(js.user_name) sk_js, t1.sk_bj
-        FROM SYS_DATA_KC t1
-        LEFT JOIN SYS_DATA_JSRK t2 ON T2.COURSE_CODE = T1.COURSE_CODE
-        LEFT JOIN SYS_DATA_JS js on js.user_id = t2.USER_ID
+        SELECT t2.COURSE_CODE,t2.COURSE_NAME,t2.COURSE_ATTR,t2.XY_NAME,t2.ZY_NAME,t2.XN,t2.XQ,wm_concat(js.user_name) sk_js, t2.sk_bj
+        ,max(case when bg.COURSE_CODE is not null then 1 else 2 end) is_bg, max(bg.code) bg_code
+        FROM SYS_DATA_JSRK t1
+        LEFT JOIN SYS_DATA_KC t2 ON T2.COURSE_CODE = T1.COURSE_CODE
+        LEFT JOIN SYS_DATA_JS js on js.user_id = t1.USER_ID
+        LEFT JOIN JXXG_KCZLFXBG bg on bg.COURSE_CODE = T2.COURSE_CODE
         <where>
             <if test="courseName != null and courseName != ''">
-                and t1.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+                and t2.COURSE_NAME like concat(concat('%',#{courseName}),'%')
             </if>
         </where>
-        GROUP BY t1.COURSE_CODE,t1.COURSE_NAME,t1.COURSE_ATTR,t1.XY_NAME,T1.ZY_NAME,xn,XQ, t1.sk_bj
+        GROUP BY t2.COURSE_CODE,t2.COURSE_NAME,t2.COURSE_ATTR,t2.XY_NAME,t2.ZY_NAME,t2.XN,T2.XQ, T2.SK_BJ
+    </select>
+
+    <resultMap id="resultMap" type="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg">
+        <id column="code" property="code"/>
+        <result column="b1_1_1" property="b1_1_1"/>
+        <result column="b1_1_2" property="b1_1_2"/>
+        <result column="b1_1_3" property="b1_1_3"/>
+        <result column="b1_1_4_1" property="b1_1_4_1"/>
+        <result column="b1_1_4_2" property="b1_1_4_2"/>
+        <result column="b1_1_5" property="b1_1_5"/>
+        <result column="b1_1_6_1" property="b1_1_6_1"/>
+        <result column="b1_1_6_2" property="b1_1_6_2"/>
+        <result column="b1_1_6_3" property="b1_1_6_3"/>
+        <result column="b1_1_6_4" property="b1_1_6_4"/>
+        <result column="b1_1_6_5" property="b1_1_6_5"/>
+        <result column="b1_1_6_6" property="b1_1_6_6"/>
+        <result column="b1_1_6_7" property="b1_1_6_7"/>
+        <result column="b1_1_7_1" property="b1_1_7_1"/>
+        <result column="b1_1_7_2" property="b1_1_7_2"/>
+        <result column="b1_1_7_3" property="b1_1_7_3"/>
+        <result column="b1_1_7_4" property="b1_1_7_4"/>
+        <result column="b1_1_7_5" property="b1_1_7_5"/>
+        <result column="b1_1_7_6" property="b1_1_7_6"/>
+        <result column="b1_1_7_7" property="b1_1_7_7"/>
+        <result column="b1_1_8" property="b1_1_8"/>
+        <result column="b1_1_9" property="b1_1_9"/>
+        <result column="b1_1_10" property="b1_1_10"/>
+        <result column="b1_2_1_1" property="b1_2_1_1"/>
+        <result column="b1_2_1_2" property="b1_2_1_2"/>
+        <result column="b1_2_1_3" property="b1_2_1_3"/>
+        <result column="b1_2_1_4" property="b1_2_1_4"/>
+        <result column="b1_2_1_5" property="b1_2_1_5"/>
+        <result column="b1_2_1_6" property="b1_2_1_6"/>
+        <result column="b1_2_1_7" property="b1_2_1_7"/>
+        <result column="b1_2_2_1" property="b1_2_2_1"/>
+        <result column="b1_2_2_2" property="b1_2_2_2"/>
+        <result column="b1_2_2_3" property="b1_2_2_3"/>
+        <result column="b1_2_2_4" property="b1_2_2_4"/>
+        <result column="b1_2_2_5" property="b1_2_2_5"/>
+        <result column="b1_2_2_6" property="b1_2_2_6"/>
+        <result column="b1_2_2_7" property="b1_2_2_7"/>
+        <result column="b1_2_3" property="b1_2_3"/>
+        <result column="b1_2_4" property="b1_2_4"/>
+        <result column="b1_2_5" property="b1_2_5"/>
+        <result column="b1_3_1_1" property="b1_3_1_1"/>
+        <result column="b1_3_1_2" property="b1_3_1_2"/>
+        <result column="b1_3_1_3" property="b1_3_1_3"/>
+        <result column="b1_3_1_4" property="b1_3_1_4"/>
+        <result column="b1_3_1_5" property="b1_3_1_5"/>
+        <result column="b1_3_1_6" property="b1_3_1_6"/>
+        <result column="b1_3_1_7" property="b1_3_1_7"/>
+        <result column="b1_3_2_1" property="b1_3_2_1"/>
+        <result column="b1_3_2_2" property="b1_3_2_2"/>
+        <result column="b1_3_2_3" property="b1_3_2_3"/>
+        <result column="b1_3_2_4" property="b1_3_2_4"/>
+        <result column="b1_3_2_5" property="b1_3_2_5"/>
+        <result column="b1_3_2_6" property="b1_3_2_6"/>
+        <result column="b1_3_2_7" property="b1_3_2_7"/>
+        <result column="b1_3_3" property="b1_3_3"/>
+        <result column="b1_3_4" property="b1_3_4"/>
+        <result column="b1_3_5" property="b1_3_5"/>
+        <result column="b1_4_1_1" property="b1_4_1_1"/>
+        <result column="b1_4_1_2" property="b1_4_1_2"/>
+        <result column="b1_4_1_3" property="b1_4_1_3"/>
+        <result column="b1_4_1_4" property="b1_4_1_4"/>
+        <result column="b1_4_1_5" property="b1_4_1_5"/>
+        <result column="b1_4_1_6" property="b1_4_1_6"/>
+        <result column="b1_4_1_7" property="b1_4_1_7"/>
+        <result column="b1_4_2_1" property="b1_4_2_1"/>
+        <result column="b1_4_2_2" property="b1_4_2_2"/>
+        <result column="b1_4_2_3" property="b1_4_2_3"/>
+        <result column="b1_4_2_4" property="b1_4_2_4"/>
+        <result column="b1_4_2_5" property="b1_4_2_5"/>
+        <result column="b1_4_2_6" property="b1_4_2_6"/>
+        <result column="b1_4_2_7" property="b1_4_2_7"/>
+        <result column="b1_4_3" property="b1_4_3"/>
+        <result column="b1_4_4" property="b1_4_4"/>
+        <result column="b1_4_5" property="b1_4_5"/>
+        <result column="b2_1" property="b2_1"/>
+        <result column="b2_2" property="b2_2"/>
+        <result column="b2_3" property="b2_3"/>
+        <result column="b2_4" property="b2_4"/>
+        <result column="b2_5" property="b2_5"/>
+        <result column="b2_6" property="b2_6"/>
+        <result column="c1_1" property="c1_1"/>
+        <result column="c1_2" property="c1_2"/>
+        <result column="c1_3" property="c1_3"/>
+        <result column="c1_4" property="c1_4"/>
+        <result column="c1_5" property="c1_5"/>
+        <result column="c1_6" property="c1_6"/>
+        <result column="c1_7" property="c1_7"/>
+        <result column="c1_8" property="c1_8"/>
+        <result column="c1_9" property="c1_9"/>
+    </resultMap>
+
+    <select id="getKczlfxbg" resultMap="resultMap">
+        select * from JXXG_KCZLFXBG where code = #{code}
     </select>
 
     <insert id="insert">
           insert into JXXG_KCZLFXBG
-          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, XN, XQ, XY_NAME, ZY_NAME, SK_JS, SK_BJ, USER_ID, USER_NAME, CREATE_DATE)
+          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, XN, XQ, XY_NAME, ZY_NAME, SK_JS, SK_BJ
+          , B1_1_1, B1_1_2, B1_1_3, B1_1_4_1, B1_1_4_2, B1_1_5
+          , B1_1_6_1, B1_1_6_2, B1_1_6_3, B1_1_6_4, B1_1_6_5, B1_1_6_6, B1_1_6_7
+          , B1_1_7_1, B1_1_7_2, B1_1_7_3, B1_1_7_4, B1_1_7_5, B1_1_7_6, B1_1_7_7
+          , B1_1_8, B1_1_9, B1_1_10
+          , B1_2_1_1, B1_2_1_2, B1_2_1_3, B1_2_1_4, B1_2_1_5, B1_2_1_6, B1_2_1_7
+          , B1_2_2_1, B1_2_2_2, B1_2_2_3, B1_2_2_4, B1_2_2_5, B1_2_2_6, B1_2_2_7
+          , B1_2_3, B1_2_4, B1_2_5
+          , B1_3_1_1, B1_3_1_2, B1_3_1_3, B1_3_1_4, B1_3_1_5, B1_3_1_6, B1_3_1_7
+          , B1_3_2_1, B1_3_2_2, B1_3_2_3, B1_3_2_4, B1_3_2_5, B1_3_2_6, B1_3_2_7
+          , B1_3_3, B1_3_4, B1_3_5
+          , B1_4_1_1, B1_4_1_2, B1_4_1_3, B1_4_1_4, B1_4_1_5, B1_4_1_6, B1_4_1_7
+          , B1_4_2_1, B1_4_2_2, B1_4_2_3, B1_4_2_4, B1_4_2_5, B1_4_2_6, B1_4_2_7
+          , B1_4_3, B1_4_4, B1_4_5
+          , B2_1, B2_2, B2_3, B2_4, B2_5, B2_6, B2
+          , C1_1, C1_2, C1_3, C1_4, C1_5, C1_6, C1_7, C1_8, C1_9, C1, C2, D1, D2
+          , USER_ID, USER_NAME, CREATE_DATE)
           values
-          (#{code},#{courseCode},#{courseName},#{courseAttr},#{xn},#{xq},#{xyName},#{zyName},#{skJs},#{skBj},#{userId},#{userName},CURRENT_DATE)
+          (#{code},#{courseCode},#{courseName},#{courseAttr},#{xn},#{xq},#{xyName},#{zyName},#{skJs},#{skBj}
+            ,#{b1_1_1},#{b1_1_2},#{b1_1_3},#{b1_1_4_1},#{b1_1_4_2},#{b1_1_5}
+            ,#{b1_1_6_1},#{b1_1_6_2},#{b1_1_6_3},#{b1_1_6_4},#{b1_1_6_5},#{b1_1_6_6},#{b1_1_6_7}
+            ,#{b1_1_7_1},#{b1_1_7_2},#{b1_1_7_3},#{b1_1_7_4},#{b1_1_7_5},#{b1_1_7_6},#{b1_1_7_7}
+            ,#{b1_1_8},#{b1_1_9},#{b1_1_10}
+            ,#{b1_2_1_1},#{b1_2_1_2},#{b1_2_1_3},#{b1_2_1_4},#{b1_2_1_5},#{b1_2_1_6},#{b1_2_1_7}
+            ,#{b1_2_2_1},#{b1_2_2_2},#{b1_2_2_3},#{b1_2_2_4},#{b1_2_2_5},#{b1_2_2_6},#{b1_2_2_7}
+            ,#{b1_2_3},#{b1_2_4},#{b1_2_5}
+            ,#{b1_3_1_1},#{b1_3_1_2},#{b1_3_1_3},#{b1_3_1_4},#{b1_3_1_5},#{b1_3_1_6},#{b1_3_1_7}
+            ,#{b1_3_2_1},#{b1_3_2_2},#{b1_3_2_3},#{b1_3_2_4},#{b1_3_2_5},#{b1_3_2_6},#{b1_3_2_7}
+            ,#{b1_3_3},#{b1_3_4},#{b1_3_5}
+            ,#{b1_4_1_1},#{b1_4_1_2},#{b1_4_1_3},#{b1_4_1_4},#{b1_4_1_5},#{b1_4_1_6},#{b1_4_1_7}
+            ,#{b1_4_2_1},#{b1_4_2_2},#{b1_4_2_3},#{b1_4_2_4},#{b1_4_2_5},#{b1_4_2_6},#{b1_4_2_7}
+            ,#{b1_4_3},#{b1_4_4},#{b1_4_5}
+            ,#{b2_1},#{b2_2},#{b2_3},#{b2_4},#{b2_5},#{b2_6},#{b2}
+            ,#{c1_1},#{c1_2},#{c1_3},#{c1_4},#{c1_5},#{c1_6},#{c1_7},#{c1_8},#{c1_9},#{c1},#{c2},#{d1},#{d2}
+          ,#{userId},#{userName},CURRENT_DATE)
     </insert>
 
     <update id="update">

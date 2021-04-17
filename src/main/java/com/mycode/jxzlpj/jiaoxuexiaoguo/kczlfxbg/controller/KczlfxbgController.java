@@ -4,10 +4,7 @@ import com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg;
 import com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.service.KczlfxbgService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -23,6 +20,12 @@ public class KczlfxbgController {
     public JsonResult<Object> getPageList(Kczlfxbg kczlfxbg){
         Map<String, Object> resultMap = kczlfxbgService.getPageList(kczlfxbg);
         return JsonResult.success(resultMap);
+    }
+
+    @GetMapping("/getKczlfxbg.do")
+    public JsonResult<Object> getKczlfxbg(@RequestParam("code") String code){
+        Kczlfxbg kczlfxbg = kczlfxbgService.getKczlfxbg(code);
+        return JsonResult.success(kczlfxbg);
     }
 
     @RequestMapping("/insert.do")

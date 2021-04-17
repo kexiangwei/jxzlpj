@@ -12,6 +12,8 @@ public interface KczlfxbgMapper {
 
     List<Kczlfxbg> getPageList(Kczlfxbg kczlfxbg);
 
+    Kczlfxbg getKczlfxbg(@Param("code") String code);
+
     boolean insert(Kczlfxbg kczlfxbg);
 
     boolean update(Kczlfxbg kczlfxbg);
