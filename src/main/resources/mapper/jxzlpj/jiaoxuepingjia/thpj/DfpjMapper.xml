@@ -8,7 +8,7 @@
         ,(case when pj.code is not null then 1 else 2 end) is_pj,pj.code as pj_code, pj.is_submit
         ,(case when pj2.total_score >= 90 then 1 else 2 end) is_top
         FROM SYS_DATA_JSRK jsrk
-        LEFT JOIN SYS_DATA_KC kc on kc.course_code = jsrk.course_code
+        LEFT JOIN SYS_DATA_KC kc on kc.SKJS_CODE = jsrk.USER_ID and kc.course_code = jsrk.course_code
         LEFT JOIN SYS_USER u on u.USER_ID = jsrk.USER_ID
         LEFT JOIN JXPJ_THPJ pj on pj.teacher_CODE = jsrk.USER_ID and pj.course_code = jsrk.course_code and pj.user_id = #{userId}
         LEFT JOIN (

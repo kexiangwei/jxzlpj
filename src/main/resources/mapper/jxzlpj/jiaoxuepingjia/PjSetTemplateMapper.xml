@@ -14,17 +14,29 @@
             </when>
             <otherwise>
                 select t.*
-                ,(case when end_date > current_date then 1 else 2 end) is_active
+                ,(case when pj.template_code is not null then 1 else 2 end) is_use
                 from JXPJ_PJSET_TEMPLATE t
+                LEFT JOIN (
+                    SELECT DISTINCT template_code FROM JXPJ_THPJ
+                    UNION
+                    SELECT DISTINCT template_code FROM JXPJ_XSPJ_DFPJ_ITEM
+                    UNION
+                    SELECT DISTINCT template_code FROM JXPJ_XSPJ_BJPJ
+                ) pj on pj.template_code = t.template_code
             </otherwise>
         </choose>
     </select>
 
-    <!-- 查看当前是否有可用的模板信息 -->
+    <!--
+     查看当前是否有可用的模板信息
+        若有多条则取最新创建的一条模板信息，并且这一条模板信息的结束时间要大于当前时间
+     -->
     <select id="getActiveTemplateCodeByType" resultType="java.lang.String">
-        select template_code
-        from JXPJ_PJSET_TEMPLATE
-        where template_type = #{templateType} and end_date > current_date
+        SELECT * FROM (
+            select template_code FROM JXPJ_PJSET_TEMPLATE
+            where template_type = #{templateType} and end_date > current_date
+            ORDER BY CREATE_DATE DESC
+        ) t where ROWNUM = 1
     </select>
 
     <insert id="insertTemplate">

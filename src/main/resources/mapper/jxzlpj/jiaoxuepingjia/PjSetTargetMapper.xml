@@ -6,12 +6,18 @@
         select t.*
         ,(case when tt.target_code is not null then 1 else 2 end) is_bind_template
         from JXPJ_PJSET_TARGET t
-        LEFT JOIN (SELECT DISTINCT target_code from JXPJ_PJSET_TEMPLATE_TARGET) tt on tt.target_code = t.target_code
+        LEFT JOIN (
+            SELECT DISTINCT target_code from JXPJ_PJSET_TEMPLATE_TARGET
+        ) tt on tt.target_code = t.target_code
         <where>1=1
             <if test="targetType !=null and targetType !=''">
                 and TARGET_TYPE = #{targetType}
             </if>
         </where>
+    </select>
+
+    <select id="getPjSetTargetCodes" resultType="java.lang.String">
+        SELECT TARGET_CODE FROM JXPJ_PJSET_TEMPLATE_TARGET where TEMPLATE_CODE = #{templateCode}
     </select>
 
     <insert id="insertTarget">

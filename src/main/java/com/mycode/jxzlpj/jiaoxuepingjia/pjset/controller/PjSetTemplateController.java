@@ -39,10 +39,13 @@ public class PjSetTemplateController {
      */
     @ResponseBody
     @RequestMapping("/getActiveTemplate.do")
-    public JsonResult<Object> getExecTemplate(@RequestParam("templateType") String templateType){
-        String templateCode = pjSetTemplateService.getActiveTemplateCodeByType(templateType); //当前是否评教时间（即查看当前是否有执行中的模板信息）
-        if(StringUtils.isEmpty(templateCode)){
-            return JsonResult.error("暂无可用模板！");
+    public JsonResult<Object> getExecTemplate(@RequestParam("templateType") String templateType
+            , @RequestParam(value = "templateCode",required = false) String templateCode){ //学生评教-比较评教-点击未评按钮事件参数
+        if(templateCode == null){
+            templateCode = pjSetTemplateService.getActiveTemplateCodeByType(templateType); //查看当前是否有执行中的模板信息
+            if(StringUtils.isEmpty(templateCode)){
+                return JsonResult.error("暂无可用模板！");
+            }
         }
         List<PjSetTarget> pjSetTargetList = pjSetTemplateService.getActiveTemplate(templateCode);
         return JsonResult.success(pjSetTargetList);
@@ -54,9 +57,9 @@ public class PjSetTemplateController {
             , @RequestParam(value = "targetCodes[]",required = false) String[] targetCodes){
         Boolean bool = pjSetTemplateService.insertOrUpdateTemplate(template,targetCodes);
         if(!bool){
-            JsonResult.error("保存失败！");
+            JsonResult.error("保存失败");
         }
-        return JsonResult.success("保存成功！",null);
+        return JsonResult.success("保存成功",null);
     }
 
     @ResponseBody
@@ -64,9 +67,9 @@ public class PjSetTemplateController {
     public JsonResult<Object> deleteTemplate(@RequestParam("templateCode") String templateCode){
         Boolean bool = pjSetTemplateService.deleteTemplate(templateCode);
         if(!bool){
-            return JsonResult.error("删除失败！");
+            return JsonResult.error("删除失败");
         }
-        return JsonResult.success("删除成功！",null);
+        return JsonResult.success("删除成功",null);
     }
 
 }

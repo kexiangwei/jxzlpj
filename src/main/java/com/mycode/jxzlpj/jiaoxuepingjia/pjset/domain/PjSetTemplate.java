@@ -17,10 +17,15 @@ public class PjSetTemplate {
     //
     private Integer isActive; //模板是否启用（即是否可执行编辑&删除操作），取值：【1是，2否】
 
+    private Integer isUse; //
+
     //分页参数
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
+    //
+    private String userId;
+    private Integer isPj; //是否评教，取值：【1是，2否】
 
     private String templateCode
             ,templateType
@@ -31,7 +36,4 @@ public class PjSetTemplate {
             ,endDate
             ,createDate;
 
-    //
-    private String userId;
-    private Integer isPj; //是否评教，取值：【1是，2否】
 }

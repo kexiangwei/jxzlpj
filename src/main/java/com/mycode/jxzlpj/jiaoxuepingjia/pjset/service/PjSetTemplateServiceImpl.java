@@ -8,6 +8,7 @@ import com.mycode.jxzlpj.jiaoxuepingjia.pjset.mapper.PjSetTemplateMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,7 @@ public class PjSetTemplateServiceImpl implements PjSetTemplateService {
     }
 
     @Override
+    @Transactional
     public Boolean insertOrUpdateTemplate(PjSetTemplate template, String[] targetCodes) {
         Boolean bool = false;
         if(template == null){

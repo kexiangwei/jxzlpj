@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 教学评价-评教设置
@@ -20,6 +21,11 @@ public class PjSetTargetServiceImpl implements PjSetTargetService {
     @Override
     public List<PjSetTarget> getPjSetTargetList(PjSetTarget target) {
         return pjSetTargetMapper.getPjSetTargetList(target);
+    }
+
+    @Override
+    public Set<String> getPjSetTargetCodes(String templateCode) {
+        return pjSetTargetMapper.getPjSetTargetCodes(templateCode);
     }
 
     @Override

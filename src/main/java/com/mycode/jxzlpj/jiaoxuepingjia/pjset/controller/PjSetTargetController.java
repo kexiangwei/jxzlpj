@@ -5,12 +5,10 @@ import com.mycode.jxzlpj.jiaoxuepingjia.pjset.service.PjSetTargetService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 教学评价-评教设置
@@ -27,6 +25,13 @@ public class PjSetTargetController {
     public JsonResult<Object> getPjSetTargetList(PjSetTarget target){
         List<PjSetTarget> mapList = pjSetTargetService.getPjSetTargetList(target);
         return JsonResult.success(mapList);
+    }
+
+    @ResponseBody
+    @GetMapping("/getPjSetTargetCodes.do")
+    public JsonResult<Object> getPjSetTargetCodes(@RequestParam("templateCode") String templateCode){
+        Set<String> stringSet = pjSetTargetService.getPjSetTargetCodes(templateCode);
+        return JsonResult.success(stringSet);
     }
 
     @ResponseBody

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 教学评价-评教设置
@@ -14,6 +15,8 @@ import java.util.List;
 public interface PjSetTargetMapper {
 
     List<PjSetTarget> getPjSetTargetList(PjSetTarget target);
+
+    Set<String> getPjSetTargetCodes(@Param("templateCode") String templateCode);
 
     Boolean insertTarget(PjSetTarget target);
 
