@@ -29,8 +29,8 @@ public class Thpj {
                 ,teachMonth
                 ,teachDay
                 ,teachWeekNum
-                ,teachWeek
                 ,teachLessonNum;
+    private String teachWeek;
     private String teachHouse
                 ,teachClassroom;
     private Integer stuYingdao
