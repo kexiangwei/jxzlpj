@@ -74,6 +74,7 @@
         select tt.TEMPLATE_CODE,t.*
         from jxpj_pjset_template_target tt left join jxpj_pjset_target t on t.target_code = tt.target_code
         where tt.template_code = #{templateCode}
+        order by t.target_code
     </select>
 
     <insert id="insertPjSetTemplateTargets">

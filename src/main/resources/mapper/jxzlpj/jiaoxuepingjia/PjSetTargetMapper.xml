@@ -14,6 +14,7 @@
                 and TARGET_TYPE = #{targetType}
             </if>
         </where>
+        order by t.target_code
     </select>
 
     <select id="getPjSetTargetCodes" resultType="java.lang.String">

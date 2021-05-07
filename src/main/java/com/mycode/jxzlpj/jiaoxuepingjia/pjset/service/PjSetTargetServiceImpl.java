@@ -34,8 +34,10 @@ public class PjSetTargetServiceImpl implements PjSetTargetService {
         if(target == null){
             return bool;
         }
-        if(StringUtils.isEmpty(target.getTargetCode())){
-            target.setTargetCode(StringUtils.uuid());
+        String targetCode = target.getTargetCode();
+        if(targetCode == null || "".equals(targetCode)){
+            targetCode = String.valueOf(System.currentTimeMillis());
+            target.setTargetCode(targetCode);
             bool = pjSetTargetMapper.insertTarget(target);
         }else{
             bool = pjSetTargetMapper.updateTarget(target);

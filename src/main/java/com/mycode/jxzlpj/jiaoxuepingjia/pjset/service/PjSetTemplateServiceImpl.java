@@ -50,8 +50,10 @@ public class PjSetTemplateServiceImpl implements PjSetTemplateService {
         if(template == null){
             return bool;
         }
-        if(StringUtils.isEmpty(template.getTemplateCode())){
-            template.setTemplateCode(StringUtils.uuid());
+        String templateCode = template.getTemplateCode();
+        if(templateCode == null || "".equals(templateCode)){
+            templateCode = String.valueOf(System.currentTimeMillis());
+            template.setTemplateCode(templateCode);
             bool = pjSetTemplateMapper.insertTemplate(template);
         }else{
             bool = pjSetTemplateMapper.updateTemplate(template);
