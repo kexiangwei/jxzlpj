@@ -44,8 +44,8 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     public boolean insertOrUpdateRoleMenu(String roleId, String roleName, String[] menuIds) {
         boolean bool = false;
-        if(StringUtils.isEmpty(roleId)){
-            roleId = StringUtils.uuid();
+        if(roleId == null || "".equals(roleId)){
+            roleId = String.valueOf(System.currentTimeMillis());
             bool = roleMapper.insertRole(roleId,roleName);
             if(bool){
                 if(menuIds != null && menuIds.length >0){
