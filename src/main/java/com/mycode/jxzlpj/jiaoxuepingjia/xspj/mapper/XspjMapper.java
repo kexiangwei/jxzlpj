@@ -24,18 +24,18 @@ public interface XspjMapper {
 
     List<String> getPjInfoSuggestList(@Param("xn") String xn, @Param("xq") String xq, @Param("courseCode") String courseCode, @Param("teacherCode") String teacherCode);
 
-    List<Map<String,Object>> getPjInfoTransferData(@Param("userId") String userId);
+    List<Map<String,Object>> getBjpjTransferData(@Param("userId") String userId);
 
     boolean insertBjpj(BjpjParams params);
 
     boolean insertBjpjTarget(@Param("mapList") List<Map<String, Object>> mapList);
 
+    String selectBjpjSuggest(@Param("relationCode") String relationCode
+            , @Param("courseCode") String courseCode);
+
     boolean insertBjpjSuggest(@Param("relationCode") String relationCode
             , @Param("courseCode") String courseCode
             , @Param("suggest") String suggest);
-
-    String selectBjpjSuggest(@Param("relationCode") String relationCode
-            , @Param("courseCode") String courseCode);
 
     boolean deleteBjpjSuggest(@Param("relationCode") String relationCode
             , @Param("courseCode") String courseCode);

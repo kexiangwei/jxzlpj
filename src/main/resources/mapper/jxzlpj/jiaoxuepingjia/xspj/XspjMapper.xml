@@ -99,13 +99,13 @@
         where xn = #{xn} and xq = #{xq} and course_code = #{courseCode} and teacher_code = #{teacherCode} and target_code = 'suggest'
     </select>
 
-    <select id="getPjInfoTransferData" resultType="java.util.Map">
-SELECT T2.COURSE_CODE "courseCode", T2.COURSE_NAME "courseName", T4.USER_ID "teacherCode", T4.USER_NAME "teacherName"
-FROM SYS_DATA_XSXK T1
-LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
-LEFT JOIN SYS_DATA_JSRK T3 ON T3.USER_ID = T2.SKJS_CODE AND T3.COURSE_CODE = T2.COURSE_CODE
-LEFT JOIN SYS_DATA_JS T4 ON T4.USER_ID = T3.USER_ID
-WHERE T1.USER_ID = #{userId}
+    <select id="getBjpjTransferData" resultType="java.util.Map">
+        SELECT T2.COURSE_CODE "courseCode", T2.COURSE_NAME "courseName", wm_concat(T2.SKJS_NAME) "teacherNames"
+        FROM SYS_DATA_XSXK T1
+        LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE and T2.XN = T1.XN and T2.XQ = T1.XQ
+        LEFT JOIN SYS_DATA_XNXQ t3 on t3.XN = T1.XN and t3.XQ = T1.XQ
+        WHERE CURRENT_DATE BETWEEN begin_date and end_date and T1.USER_ID = #{userId} /*根据userId 获取【本学期】的课程信息*/
+        GROUP BY T2.COURSE_CODE, T2.COURSE_NAME
     </select>
 
     <insert id="insertBjpj">
@@ -120,16 +120,16 @@ WHERE T1.USER_ID = #{userId}
         </foreach>
         select 1 from dual
     </insert>
-    <insert id="insertBjpjSuggest">
-        insert into JXPJ_XSPJ_BJPJ_SUGGEST (RELATION_CODE, COURSE_CODE, SUGGEST)
-        values (#{relationCode},#{courseCode},NVL(#{suggest}, '无建议或意见') )
-    </insert>
 
     <select id="selectBjpjSuggest" resultType="java.lang.String">
         select SUGGEST
         from JXPJ_XSPJ_BJPJ_SUGGEST
         where RELATION_CODE = #{relationCode} and COURSE_CODE = #{courseCode}
     </select>
+    <insert id="insertBjpjSuggest">
+        insert into JXPJ_XSPJ_BJPJ_SUGGEST (RELATION_CODE, COURSE_CODE, SUGGEST)
+        values (#{relationCode},#{courseCode},NVL(#{suggest}, '无建议或意见') )
+    </insert>
     <delete id="deleteBjpjSuggest">
         delete from JXPJ_XSPJ_BJPJ_SUGGEST
         where RELATION_CODE = #{relationCode} and COURSE_CODE = #{courseCode}
@@ -173,8 +173,8 @@ WHERE T1.USER_ID = #{userId}
                 ) pj LEFT JOIN SYS_DATA_KC c on c.COURSE_CODE = pj.COURSE_CODE
             </otherwise>
         </choose>
-
     </select>
+
     <select id="getBjpjPjInfo" resultType="java.util.Map">
         SELECT pj.template_code,pj.TARGET_CODE,target_content,target_score,avg(score) avg_score
         FROM(

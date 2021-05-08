@@ -17,13 +17,13 @@ public interface XspjService {
 
     Map<String, Object> getPjInfo(String xn, String xq, String courseCode, String teacherCode);
 
-    List<Map<String,Object>> getPjInfoTransferData(String userId);
+    List<Map<String,Object>> getBjpjTransferData(String userId);
 
     boolean insertBjpj(BjpjParams params);
 
-    boolean insertBjpjSuggest(String relationCode, String courseCode, String suggest);
-
     String selectBjpjSuggest(String relationCode, String courseCode);
+
+    boolean insertBjpjSuggest(String relationCode, String courseCode, String suggest);
 
     Map<String, Object> getBjpjPageList(Xspj xspj);
 

@@ -4,7 +4,7 @@
 
     <select id="getPjSetTemplateList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.pjset.domain.PjSetTemplate">
         <choose>
-            <when test="templateType != null and templateType == '学生评教'">
+            <when test="templateType == '学生评教'">
                 select t.*
                 ,(case when end_date > current_date then 1 else 2 end) is_active
                 ,(case when PJ.TEMPLATE_CODE is not null then 1 else 2 end) is_pj

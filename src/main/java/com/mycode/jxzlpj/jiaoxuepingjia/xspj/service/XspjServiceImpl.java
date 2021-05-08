@@ -55,8 +55,8 @@ public class XspjServiceImpl implements XspjService {
     }
 
     @Override
-    public List<Map<String,Object>> getPjInfoTransferData(String userId) {
-        return xspjMapper.getPjInfoTransferData(userId);
+    public List<Map<String,Object>> getBjpjTransferData(String userId) {
+        return xspjMapper.getBjpjTransferData(userId);
     }
 
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
@@ -87,6 +87,11 @@ public class XspjServiceImpl implements XspjService {
     }
 
     @Override
+    public String selectBjpjSuggest(String relationCode, String courseCode) {
+        return xspjMapper.selectBjpjSuggest(relationCode, courseCode);
+    }
+
+    @Override
     public boolean insertBjpjSuggest(String relationCode, String courseCode, String suggest) {
         boolean bool = false;
         String dbSuggest = xspjMapper.selectBjpjSuggest(relationCode, courseCode);
@@ -95,11 +100,6 @@ public class XspjServiceImpl implements XspjService {
         }
         bool = xspjMapper.insertBjpjSuggest(relationCode, courseCode, suggest);
         return bool;
-    }
-
-    @Override
-    public String selectBjpjSuggest(String relationCode, String courseCode) {
-        return xspjMapper.selectBjpjSuggest(relationCode, courseCode);
     }
 
     @Override

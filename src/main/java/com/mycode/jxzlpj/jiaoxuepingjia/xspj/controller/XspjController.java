@@ -68,9 +68,9 @@ public class XspjController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/getPjInfoTransferData.do")
-    public JsonResult<Object> getPjInfoTransferData(@RequestParam("userId") String userId){
-        List<Map<String,Object>> mapList = xspjService.getPjInfoTransferData(userId);
+    @RequestMapping("/getBjpjTransferData.do")
+    public JsonResult<Object> getBjpjTransferData(@RequestParam("userId") String userId){
+        List<Map<String,Object>> mapList = xspjService.getBjpjTransferData(userId);
         return JsonResult.success(mapList);
     }
 
@@ -85,6 +85,14 @@ public class XspjController {
     }
 
     @ResponseBody
+    @RequestMapping("/selectBjpjSuggest.do")
+    public JsonResult<Object> selectBjpjSuggest(@RequestParam("relationCode") String relationCode
+            , @RequestParam("courseCode") String courseCode){
+        String suggest = xspjService.selectBjpjSuggest(relationCode, courseCode);
+        return JsonResult.success(suggest);
+    }
+
+    @ResponseBody
     @RequestMapping("/insertBjpjSuggest.do")
     public JsonResult<Object> insertBjpjSuggest(@RequestParam("relationCode") String relationCode
             , @RequestParam("courseCode") String courseCode
@@ -94,14 +102,6 @@ public class XspjController {
             return JsonResult.error("新增失败");
         }
         return JsonResult.success("新增成功",null);
-    }
-
-    @ResponseBody
-    @RequestMapping("/selectBjpjSuggest.do")
-    public JsonResult<Object> selectBjpjSuggest(@RequestParam("relationCode") String relationCode
-            , @RequestParam("courseCode") String courseCode){
-        String suggest = xspjService.selectBjpjSuggest(relationCode, courseCode);
-        return JsonResult.success(suggest);
     }
 
     @ResponseBody
