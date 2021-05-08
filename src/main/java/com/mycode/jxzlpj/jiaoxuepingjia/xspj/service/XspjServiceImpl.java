@@ -47,13 +47,9 @@ public class XspjServiceImpl implements XspjService {
     }
 
     @Override
-    public Map<String, Object> getPjInfo(String courseCode, String userId) {
-        Map<String,Object> pjInfo = new HashMap<>();
-        List<Map<String, Object>> targetList = xspjMapper.getPjInfo(courseCode,userId);
-        pjInfo.put("targetList",targetList);
-        OptionalDouble totalAvg = targetList.stream().mapToDouble(m -> Double.parseDouble(m.get("AVG_SCORE").toString())).average();
-        pjInfo.put("totalAvg",totalAvg);
-        List<String> suggestList = xspjMapper.getPjInfoSuggestList(courseCode,userId);
+    public Map<String, Object> getPjInfo(String xn, String xq, String courseCode, String teacherCode) {
+        Map<String,Object> pjInfo = xspjMapper.getPjInfo(xn,xq,courseCode,teacherCode);
+        List<String> suggestList = xspjMapper.getPjInfoSuggestList(xn,xq,courseCode,teacherCode);
         pjInfo.put("suggestList",suggestList);
         return pjInfo;
     }

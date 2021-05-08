@@ -35,7 +35,7 @@ public class XspjController {
 
     /**
      *
-     * @param xspj [courseCode，templateCode，userId，userName]
+     * @param xspj [xn, xq, courseCode，templateCode，userId，userName]
      * @param jsonString 指标项
      * @return
      */
@@ -44,20 +44,21 @@ public class XspjController {
     public JsonResult<Object> insert(Xspj xspj, @RequestParam("jsonString") String jsonString){
         boolean bool = xspjService.insert(xspj, jsonString);
         if(!bool){
-            return JsonResult.error("新增失败！");
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success("新增成功！",null);
+        return JsonResult.success("新增成功",null);
     }
 
     /**
-     *
+     *  教师查看学生评教
      * @param courseCode
      * @return
      */
     @ResponseBody
     @RequestMapping("/getPjInfo.do")
-    public JsonResult<Object> getPjInfo(@RequestParam("courseCode") String courseCode, @RequestParam("userId") String userId){
-        Map<String,Object> resultMap = xspjService.getPjInfo(courseCode,userId);
+    public JsonResult<Object> getPjInfo(@RequestParam("xn") String xn, @RequestParam("xq") String xq
+            , @RequestParam("courseCode") String courseCode, @RequestParam("teacherCode") String teacherCode){
+        Map<String,Object> resultMap = xspjService.getPjInfo(xn,xq,courseCode,teacherCode);
         return JsonResult.success(resultMap);
     }
 
@@ -78,9 +79,9 @@ public class XspjController {
     public JsonResult<Object> insertBjpj(BjpjParams params){
         boolean bool = xspjService.insertBjpj(params);
         if(!bool){
-            return JsonResult.error("新增失败！");
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success("新增成功！",null);
+        return JsonResult.success("新增成功",null);
     }
 
     @ResponseBody
@@ -90,9 +91,9 @@ public class XspjController {
             , @RequestParam("suggest") String suggest){
         boolean bool = xspjService.insertBjpjSuggest(relationCode, courseCode, suggest);
         if(!bool){
-            return JsonResult.error("新增失败！");
+            return JsonResult.error("新增失败");
         }
-        return JsonResult.success("新增成功！",null);
+        return JsonResult.success("新增成功",null);
     }
 
     @ResponseBody

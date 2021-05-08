@@ -5,41 +5,71 @@
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.Xspj">
         <choose>
             <when test="accountType == 'student'">
-                SELECT T2.COURSE_CODE, T2.COURSE_NAME, T2.COURSE_ATTR, T2.SK_SJ,T2.SK_DD
-                , T4.USER_ID "teacherCode", T4.USER_NAME "teacherName", T4.title "teacherTitle",t4.xy_name "teacherXy",t4.zy_name "teacherZy"
-                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
+                SELECT T2.*
+                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj,pjSuggest
                 FROM SYS_DATA_XSXK T1
-                LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
-                LEFT JOIN SYS_DATA_JSRK T3 ON T3.USER_ID = T2.SKJS_CODE AND T3.COURSE_CODE = T2.COURSE_CODE
-                LEFT JOIN SYS_USER T4 ON T4.USER_ID = T3.USER_ID
+                LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE AND T2.XN = T1.XN AND T2.XQ = T1.XQ
+                LEFT JOIN SYS_DATA_JSRK T3 ON T3.XN = T2.XN AND T3.XQ = T2.XQ AND T3.USER_ID = T2.SKJS_CODE AND T3.COURSE_CODE = T2.COURSE_CODE
+--                 LEFT JOIN SYS_DATA_JS T4 ON T4.USER_ID = T3.USER_ID
                 LEFT JOIN (
-                    SELECT DISTINCT COURSE_CODE,teacher_code,user_id FROM JXPJ_XSPJ_DFPJ
-                ) pj on pj.COURSE_CODE = T1.COURSE_CODE and pj.user_id = T1.USER_ID and pj.teacher_code = T4.USER_ID
+                    SELECT xn, xq, COURSE_CODE, teacher_code, user_id, t2.answer as pjSuggest
+                    FROM JXPJ_XSPJ_DFPJ t1 LEFT JOIN JXPJ_XSPJ_DFPJ_ITEM t2 on t2.relation_code = t1.code
+                    where t2.target_code = 'suggest'
+                ) pj on pj.xn = T1.xn and pj.xq = T1.xq and pj.COURSE_CODE = T1.COURSE_CODE and pj.teacher_code = T3.USER_ID and pj.user_id = T1.USER_ID
                 WHERE T1.USER_ID = #{userId}
+                <if test="xn != null and xn != ''">/*学年*/
+                    and T1.XN = #{xn}
+                </if>
+                <if test="xq != null and xq != ''">/*学期*/
+                    and T1.XQ = #{xq}
+                </if>
             </when>
             <when test="accountType == 'teacher'">
-                SELECT kc.*
+                SELECT T2.*
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
-                FROM SYS_DATA_JSRK rk
-                LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = rk.COURSE_CODE
+                FROM SYS_DATA_JSRK T1
+                LEFT JOIN SYS_DATA_KC T2 on T2.XN = T1.XN AND T2.XQ = T1.XQ AND T2.COURSE_CODE = T1.COURSE_CODE and T2.SKJS_CODE = T1.USER_ID
                 LEFT JOIN (
-                    SELECT DISTINCT COURSE_CODE,TEACHER_CODE FROM JXPJ_XSPJ_DFPJ
-                ) pj on pj.COURSE_CODE = rk.COURSE_CODE and pj.TEACHER_CODE = rk.user_id
-                where rk.USER_ID = #{userId}
+                    SELECT DISTINCT XN, XQ, COURSE_CODE, TEACHER_CODE FROM JXPJ_XSPJ_DFPJ
+                ) pj on pj.xn = T2.xn and pj.xq = T2.xq and pj.COURSE_CODE = T2.COURSE_CODE and pj.teacher_code = T2.SKJS_CODE
+                where T1.USER_ID = #{userId}
+                <if test="xn != null and xn != ''">/*学年*/
+                    and T1.XN = #{xn}
+                </if>
+                <if test="xq != null and xq != ''">/*学期*/
+                    and T1.XQ = #{xq}
+                </if>
             </when>
             <otherwise>/*若是其他类型的账号访问，则返回所有已评的课程信息*/
-                SELECT kc.*
+                SELECT DISTINCT t2.*
                 ,1 as isPj
-                FROM (
-                    SELECT DISTINCT COURSE_CODE FROM JXPJ_XSPJ_DFPJ
-                ) pj LEFT JOIN SYS_DATA_KC kc on kc.COURSE_CODE = pj.COURSE_CODE
+                FROM JXPJ_XSPJ_DFPJ pj
+                LEFT JOIN SYS_DATA_KC t2 on t2.xn = pj.xn and t2.xq = pj.xq and t2.COURSE_CODE = pj.COURSE_CODE and t2.SKJS_CODE = pj.TEACHER_CODE
+                where 1=1
+                <if test="xn != null and xn != ''">/*学年*/
+                    and pj.XN = #{xn}
+                </if>
+                <if test="xq != null and xq != ''">/*学期*/
+                    and pj.XQ = #{xq}
+                </if>
             </otherwise>
         </choose>
+        <if test="courseName != null and courseName != ''">/*课程名称*/
+            and T2.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+        </if>
+        <if test="isPj != null and isPj != ''">/*评教状态*/
+            <if test="isPj == 1">
+                and pj.COURSE_CODE is not null
+            </if>
+            <if test="isPj == 2">
+                and pj.COURSE_CODE is null
+            </if>
+        </if>
     </select>
 
     <insert id="insert">
-        insert into JXPJ_XSPJ_DFPJ (CODE, COURSE_CODE, TEACHER_CODE, USER_ID, USER_NAME, CREATE_DATE)
-        values (#{code},#{courseCode},#{teacherCode},#{userId},#{userName},CURRENT_DATE)
+        insert into JXPJ_XSPJ_DFPJ (CODE, XN, XQ, COURSE_CODE, TEACHER_CODE, USER_ID, USER_NAME, CREATE_DATE)
+        values (#{code},#{xn},#{xq},#{courseCode},#{teacherCode},#{userId},#{userName},CURRENT_DATE)
     </insert>
     <insert id="insertItem">
         insert all
@@ -51,34 +81,22 @@
     </insert>
 
     <select id="getPjInfo" resultType="java.util.Map">
-        SELECT pj.template_code,pj.TARGET_CODE,target_content,target_score
-            ,avg(case when answer = '非常同意' then target_score
-            when answer = '比较同意' then target_score*0.8
-            when answer = '一般' then target_score*0.6
-            when answer = '不太同意' then target_score*0.4
-            when answer = '不同意' then target_score*0.2 end) avg_score
-        FROM(
-            SELECT TT.*,target_content,target_score
-            FROM (
-                    SELECT * FROM (
-                            select template_code FROM JXPJ_PJSET_TEMPLATE
-                            where template_type = '学生评教'  and end_date > current_date
-                            ORDER BY CREATE_DATE DESC
-                    ) t where ROWNUM = 1
-            ) t
-            LEFT JOIN JXPJ_PJSET_TEMPLATE_TARGET tt on TT.TEMPLATE_CODE = t.TEMPLATE_CODE
-            LEFT JOIN JXPJ_PJSET_TARGET tg on tg.target_code = tt.target_code
-        ) t2 LEFT JOIN (
-            SELECT *
-            from JXPJ_XSPJ_DFPJ pj LEFT JOIN JXPJ_XSPJ_DFPJ_ITEM it on IT.RELATION_CODE = PJ.CODE
-            where course_code = #{courseCode} and TEACHER_CODE = #{userId}
-        ) pj on PJ.TEMPLATE_CODE = t2.TEMPLATE_CODE and pj.target_code = t2.target_code
-        GROUP BY pj.template_code,pj.TARGET_CODE,target_content,target_score
+        select count(distinct code) as "pjNum"
+        ,sum(case when answer = '非常同意' then target_score
+                when answer = '比较同意' then target_score*0.8
+                when answer = '一般' then target_score*0.6
+                when answer = '不太同意' then target_score*0.4
+                when answer = '不同意' then target_score*0.2 end)/count(distinct code) as "totalAvgScore"
+        from jxpj_xspj_dfpj pj
+        left join jxpj_xspj_dfpj_item it on it.relation_code = pj.code
+        left join jxpj_pjset_template_target tt on tt.template_code = it.template_code and tt.target_code = it.target_code
+        left join jxpj_pjset_target tg on tg.target_code = tt.target_code
+        where xn = #{xn} and xq = #{xq} and course_code = #{courseCode} and teacher_code = #{teacherCode}
     </select>
     <select id="getPjInfoSuggestList" resultType="java.lang.String">
-        SELECT ANSWER
-        from JXPJ_XSPJ_DFPJ pj LEFT JOIN JXPJ_XSPJ_DFPJ_ITEM it on IT.RELATION_CODE = PJ.CODE
-        where course_code = #{courseCode} and TEACHER_CODE = #{userId} and TARGET_CODE = 'suggest'
+        select answer as "pjSuggest"
+        from jxpj_xspj_dfpj pj left join jxpj_xspj_dfpj_item it on it.relation_code = pj.code
+        where xn = #{xn} and xq = #{xq} and course_code = #{courseCode} and teacher_code = #{teacherCode} and target_code = 'suggest'
     </select>
 
     <select id="getPjInfoTransferData" resultType="java.util.Map">

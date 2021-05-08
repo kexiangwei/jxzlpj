@@ -15,7 +15,7 @@ public interface XspjService {
 
     boolean insert(Xspj xspj, String jsonString);
 
-    Map<String, Object> getPjInfo(String courseCode, String userId);
+    Map<String, Object> getPjInfo(String xn, String xq, String courseCode, String teacherCode);
 
     List<Map<String,Object>> getPjInfoTransferData(String userId);
 

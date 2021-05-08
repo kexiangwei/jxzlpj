@@ -20,15 +20,15 @@ public class Xspj extends Course {
     private String accountType //账号类别
             ,userId
             ,userName;
-
+    //
+    private Integer isPj; //评教状态【1已评2未评】
+    private String pjSuggest //评教建议
+            ,templateCode;
+    //
     private Long code;
-    private String teacherCode
+    /*private String teacherCode
             ,teacherName
             ,teacherTitle
             ,teacherXy
-            ,teacherZy;
-    //
-    private Integer isPj; //评教状态【1已评2未评】
-    private String templateCode;
-
+            ,teacherZy;*/
 }

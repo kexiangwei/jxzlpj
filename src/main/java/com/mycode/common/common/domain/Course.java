@@ -22,8 +22,8 @@ public class Course {
             , xyName //开课学院（部）名称
             ,zyCode //专业编号
             ,zyName //专业名称
-            ,skjsCode //主讲教师编号
-            ,skjsName //主讲教师姓名
+            ,skjsCode //授课教师编号
+            ,skjsName //授课教师姓名
             ,skSj //授课时间
             ,skDd //授课地点
             ,skBj //授课班级

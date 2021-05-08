@@ -20,9 +20,9 @@ public interface XspjMapper {
 
     boolean insertItem(@Param("xspj") Xspj xspj, @Param("paramMap") Map<String,Object> paramMap);
 
-    List<Map<String, Object>> getPjInfo(@Param("courseCode") String courseCode, @Param("userId") String userId);
+    Map<String,Object> getPjInfo(@Param("xn") String xn, @Param("xq") String xq, @Param("courseCode") String courseCode, @Param("teacherCode") String teacherCode);
 
-    List<String> getPjInfoSuggestList(@Param("courseCode") String courseCode, @Param("userId") String userId);
+    List<String> getPjInfoSuggestList(@Param("xn") String xn, @Param("xq") String xq, @Param("courseCode") String courseCode, @Param("teacherCode") String teacherCode);
 
     List<Map<String,Object>> getPjInfoTransferData(@Param("userId") String userId);
 
