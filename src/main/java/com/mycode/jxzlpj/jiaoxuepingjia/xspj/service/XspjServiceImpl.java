@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.BjpjParams;
 import com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.Xspj;
 import com.mycode.jxzlpj.jiaoxuepingjia.xspj.mapper.XspjMapper;
 import com.mycode.util.StringUtils;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 教学评价-学生评教
@@ -40,7 +40,7 @@ public class XspjServiceImpl implements XspjService {
         xspj.setCode(System.currentTimeMillis());
         boolean bool = xspjMapper.insert(xspj);
         if(bool){
-            Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
+            Map<String,Object> paramMap = JSON.parseObject(jsonString, ConcurrentHashMap.class);
             bool = xspjMapper.insertItem(xspj, paramMap);
         }
         return bool;
@@ -61,11 +61,11 @@ public class XspjServiceImpl implements XspjService {
 
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @Override
-    public boolean insertBjpj(BjpjParams params) {
-        boolean bool = xspjMapper.insertBjpj(params);
+    public boolean insertBjpj(Xspj xspj) {
+        boolean bool = xspjMapper.insertBjpj(xspj);
         if(bool){
             List<Map<String,Object>>  mapList = new ArrayList<>();
-            JSONArray jsonArray = JSON.parseArray(params.getTransferSelectedDataArr());
+            JSONArray jsonArray = JSON.parseArray(xspj.getTransferSelectedDatas());
             jsonArray.stream().forEach(obj -> {
                 JSONObject jsonObject = JSON.parseObject(obj.toString());
                 String targetCode = jsonObject.getString("targetCode");
@@ -73,7 +73,7 @@ public class XspjServiceImpl implements XspjService {
                 JSONArray arr = JSONArray.parseArray(jsonObject.getString("arr"));
                 for (int i = 0; i < arr.size(); i++) {
                     Map<String,Object> map = new HashMap<>();
-                    map.put("relationCode",params.getCode());
+                    map.put("relationCode",xspj.getCode());
                     map.put("courseCode",arr.getString(i));
                     map.put("targetCode",targetCode);
                     //计算每道题的得分 = 每道题的分值/2 + 每道题的分值/2 * (课程总数 - 课程排序后的序号 + 1) / 课程总数

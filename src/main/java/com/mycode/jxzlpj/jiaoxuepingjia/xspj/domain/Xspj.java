@@ -17,18 +17,15 @@ public class Xspj extends Course {
     private Integer pageIndex=1
             ,pageSize=10;
     //查询字段
-    private String accountType //账号类别
-            ,userId
-            ,userName;
+    private String accountType; //账号类别
     //
     private Integer isPj; //评教状态【1已评2未评】
-    private String pjSuggest //评教建议
-            ,templateCode;
+    private String templateCode;
     //
     private Long code;
-    /*private String teacherCode
-            ,teacherName
-            ,teacherTitle
-            ,teacherXy
-            ,teacherZy;*/
+    private String bestTeacher
+            ,pjSuggest //评教建议
+            ,transferSelectedDatas
+            ,userId
+            ,userName;
 }

@@ -6,15 +6,13 @@
         <choose>
             <when test="accountType == 'student'">
                 SELECT T2.*
-                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj,pjSuggest
+                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj,pj_suggest
                 FROM SYS_DATA_XSXK T1
                 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE AND T2.XN = T1.XN AND T2.XQ = T1.XQ
                 LEFT JOIN SYS_DATA_JSRK T3 ON T3.XN = T2.XN AND T3.XQ = T2.XQ AND T3.USER_ID = T2.SKJS_CODE AND T3.COURSE_CODE = T2.COURSE_CODE
 --                 LEFT JOIN SYS_DATA_JS T4 ON T4.USER_ID = T3.USER_ID
                 LEFT JOIN (
-                    SELECT xn, xq, COURSE_CODE, teacher_code, user_id, t2.answer as pjSuggest
-                    FROM JXPJ_XSPJ_DFPJ t1 LEFT JOIN JXPJ_XSPJ_DFPJ_ITEM t2 on t2.relation_code = t1.code
-                    where t2.target_code = 'suggest'
+                    select xn, xq, course_code, teacher_code, pj_suggest, user_id from jxpj_xspj_dfpj
                 ) pj on pj.xn = T1.xn and pj.xq = T1.xq and pj.COURSE_CODE = T1.COURSE_CODE and pj.teacher_code = T3.USER_ID and pj.user_id = T1.USER_ID
                 WHERE T1.USER_ID = #{userId}
                 <if test="xn != null and xn != ''">/*学年*/
@@ -68,13 +66,13 @@
     </select>
 
     <insert id="insert">
-        insert into JXPJ_XSPJ_DFPJ (CODE, XN, XQ, COURSE_CODE, TEACHER_CODE, USER_ID, USER_NAME, CREATE_DATE)
-        values (#{code},#{xn},#{xq},#{courseCode},#{teacherCode},#{userId},#{userName},CURRENT_DATE)
+        insert into JXPJ_XSPJ_DFPJ (CODE, XN, XQ, COURSE_CODE, TEACHER_CODE, PJ_SUGGEST, USER_ID, USER_NAME, CREATE_DATE)
+        values (#{code},#{xn},#{xq},#{courseCode},#{skjsCode},#{pjSuggest},#{userId},#{userName},CURRENT_DATE)
     </insert>
     <insert id="insertItem">
         insert all
         <foreach collection="paramMap" index="key"  item="val">
-            into JXPJ_XSPJ_DFPJ_ITEM (RELATION_CODE, TEMPLATE_CODE, TARGET_CODE, ANSWER)
+            into JXPJ_XSPJ_DFPJ_ITEM (RELATION_CODE, TEMPLATE_CODE, TARGET_CODE, SELECTED)
             VALUES(#{xspj.code},#{xspj.templateCode},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
         </foreach>
         select 1 from dual
@@ -82,11 +80,7 @@
 
     <select id="getPjInfo" resultType="java.util.Map">
         select count(distinct code) as "pjNum"
-        ,sum(case when answer = '非常同意' then target_score
-                when answer = '比较同意' then target_score*0.8
-                when answer = '一般' then target_score*0.6
-                when answer = '不太同意' then target_score*0.4
-                when answer = '不同意' then target_score*0.2 end)/count(distinct code) as "totalAvgScore"
+        ,nvl(sum(case SELECTED when '非常同意' then target_score  when '比较同意' then target_score*0.8 when '一般' then target_score*0.6 when '不太同意' then target_score*0.4 when '不同意' then target_score*0.2 else 0 end)/count(distinct code),0) as "totalAvgScore"
         from jxpj_xspj_dfpj pj
         left join jxpj_xspj_dfpj_item it on it.relation_code = pj.code
         left join jxpj_pjset_template_target tt on tt.template_code = it.template_code and tt.target_code = it.target_code
@@ -94,29 +88,36 @@
         where xn = #{xn} and xq = #{xq} and course_code = #{courseCode} and teacher_code = #{teacherCode}
     </select>
     <select id="getPjInfoSuggestList" resultType="java.lang.String">
-        select answer as "pjSuggest"
-        from jxpj_xspj_dfpj pj left join jxpj_xspj_dfpj_item it on it.relation_code = pj.code
-        where xn = #{xn} and xq = #{xq} and course_code = #{courseCode} and teacher_code = #{teacherCode} and target_code = 'suggest'
+        select pj_suggest
+        from jxpj_xspj_dfpj
+        where xn = #{xn} and xq = #{xq} and course_code = #{courseCode} and teacher_code = #{teacherCode}
     </select>
-
+<!--
+    根据userId 获取【本学期】的课程信息
+SELECT T2.COURSE_CODE "courseCode", T2.COURSE_NAME "courseName", wm_concat(T2.SKJS_NAME) "teacherNames"
+FROM SYS_DATA_XSXK T1
+LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE and T2.XN = T1.XN and T2.XQ = T1.XQ
+LEFT JOIN SYS_DATA_XNXQ t3 on t3.XN = T1.XN and t3.XQ = T1.XQ
+WHERE CURRENT_DATE BETWEEN begin_date and end_date and T1.USER_ID = #{userId}
+GROUP BY T2.COURSE_CODE, T2.COURSE_NAME
+-->
     <select id="getBjpjTransferData" resultType="java.util.Map">
-        SELECT T2.COURSE_CODE "courseCode", T2.COURSE_NAME "courseName", wm_concat(T2.SKJS_NAME) "teacherNames"
+        SELECT T2.COURSE_CODE as "courseCode", T2.COURSE_NAME as "courseName", T2.SKJS_CODE as "skjsCode", T2.SKJS_NAME as "skjsName"
         FROM SYS_DATA_XSXK T1
         LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE and T2.XN = T1.XN and T2.XQ = T1.XQ
         LEFT JOIN SYS_DATA_XNXQ t3 on t3.XN = T1.XN and t3.XQ = T1.XQ
-        WHERE CURRENT_DATE BETWEEN begin_date and end_date and T1.USER_ID = #{userId} /*根据userId 获取【本学期】的课程信息*/
-        GROUP BY T2.COURSE_CODE, T2.COURSE_NAME
+        WHERE CURRENT_DATE BETWEEN begin_date and end_date and T1.USER_ID = #{userId}
     </select>
 
     <insert id="insertBjpj">
-        insert into JXPJ_XSPJ_BJPJ (CODE, TEMPLATE_CODE, PREFER_TEACHER, USER_ID, USER_NAME, CREATE_DATE)
-        VALUES (#{code},#{templateCode},#{preferTeacher},#{userId},#{userName},CURRENT_DATE)
+        insert into JXPJ_XSPJ_BJPJ (CODE, BEST_TEACHER, USER_ID, USER_NAME, CREATE_DATE)
+        values (#{code},#{bestTeacher},#{userId},#{userName},current_date)
     </insert>
     <insert id="insertBjpjTarget">
         insert all
         <foreach collection="mapList" index="idx" item="obj">
-            INTO JXPJ_XSPJ_BJPJ_TARGET (RELATION_CODE, COURSE_CODE, TARGET_CODE, SCORE)
-            VALUES (#{obj.relationCode},#{obj.courseCode},#{obj.targetCode},#{obj.score})
+            INTO JXPJ_XSPJ_BJPJ_SCORE (RELATION_CODE, TEMPLATE_CODE, TARGET_CODE, SCORE)
+            VALUES (#{obj.relationCode},#{obj.templateCode},#{obj.targetCode},#{obj.score})
         </foreach>
         select 1 from dual
     </insert>

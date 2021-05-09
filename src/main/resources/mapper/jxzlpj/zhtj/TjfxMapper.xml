@@ -250,7 +250,7 @@
 				from JXPJ_XSPJ_DFPJ t
 				LEFT JOIN (
 						SELECT RELATION_CODE
-						,sum(case ANSWER when '非常同意' then target_score  when '比较同意' then target_score*0.8 when '一般' then target_score*0.6
+						,sum(case SELECTED when '非常同意' then target_score  when '比较同意' then target_score*0.8 when '一般' then target_score*0.6
 														when '不太同意' then target_score*0.4 when '不同意' then target_score*0.2 else 0 end) total_score
 						FROM JXPJ_XSPJ_DFPJ_ITEM t1
 						LEFT JOIN (
@@ -271,7 +271,7 @@
 				from JXPJ_XSPJ_DFPJ t
 				LEFT JOIN (
 						SELECT RELATION_CODE
-						,sum(case ANSWER when '非常同意' then target_score  when '比较同意' then target_score*0.8 when '一般' then target_score*0.6
+						,sum(case SELECTED when '非常同意' then target_score  when '比较同意' then target_score*0.8 when '一般' then target_score*0.6
 														when '不太同意' then target_score*0.4 when '不同意' then target_score*0.2 else 0 end) total_score
 						FROM JXPJ_XSPJ_DFPJ_ITEM t1
 						LEFT JOIN (

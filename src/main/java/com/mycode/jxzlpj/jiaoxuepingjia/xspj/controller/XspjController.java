@@ -1,7 +1,5 @@
 package com.mycode.jxzlpj.jiaoxuepingjia.xspj.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.BjpjParams;
 import com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.Xspj;
 import com.mycode.jxzlpj.jiaoxuepingjia.xspj.service.XspjService;
 import com.mycode.util.JsonResult;
@@ -76,8 +74,8 @@ public class XspjController {
 
     @ResponseBody
     @RequestMapping("/insertBjpj.do")
-    public JsonResult<Object> insertBjpj(BjpjParams params){
-        boolean bool = xspjService.insertBjpj(params);
+    public JsonResult<Object> insertBjpj(Xspj xspj){
+        boolean bool = xspjService.insertBjpj(xspj);
         if(!bool){
             return JsonResult.error("新增失败");
         }
@@ -87,7 +85,8 @@ public class XspjController {
     @ResponseBody
     @RequestMapping("/selectBjpjSuggest.do")
     public JsonResult<Object> selectBjpjSuggest(@RequestParam("relationCode") String relationCode
-            , @RequestParam("courseCode") String courseCode){
+            , @RequestParam("xn") String xn, @RequestParam("xq") String xq
+            , @RequestParam("courseCode") String courseCode, @RequestParam("teacherCode") String teacherCode){
         String suggest = xspjService.selectBjpjSuggest(relationCode, courseCode);
         return JsonResult.success(suggest);
     }
