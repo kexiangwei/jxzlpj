@@ -9,7 +9,11 @@
                 ,(case when end_date > current_date then 1 else 2 end) is_active
                 ,(case when PJ.TEMPLATE_CODE is not null then 1 else 2 end) is_pj
                 from JXPJ_PJSET_TEMPLATE t
-                LEFT JOIN (SELECT * FROM JXPJ_XSPJ_BJPJ where user_id = #{userId}) pj on PJ.TEMPLATE_CODE = t.TEMPLATE_CODE
+                LEFT JOIN (
+                    SELECT distinct TEMPLATE_CODE
+                    FROM JXPJ_XSPJ_BJPJ t1 LEFT JOIN JXPJ_XSPJ_BJPJ_ITEM t2 on T2.RELATION_CODE = T1.CODE
+                    where user_id = #{userId}
+                ) pj on PJ.TEMPLATE_CODE = t.TEMPLATE_CODE
                 where TEMPLATE_TYPE = '学生评教'
             </when>
             <otherwise>
@@ -21,7 +25,7 @@
                     UNION
                     SELECT DISTINCT template_code FROM JXPJ_XSPJ_DFPJ_ITEM
                     UNION
-                    SELECT DISTINCT template_code FROM JXPJ_XSPJ_BJPJ
+                    SELECT DISTINCT template_code FROM JXPJ_XSPJ_BJPJ_ITEM
                 ) pj on pj.template_code = t.template_code
             </otherwise>
         </choose>
