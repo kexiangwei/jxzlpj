@@ -26,6 +26,7 @@ public class Course {
             ,skjsName //授课教师姓名
             ,skSj //授课时间
             ,skDd //授课地点
+            ,skbjCode //授课班级编号
             ,skBj //授课班级
             ,xsrs; //学生人数
 }

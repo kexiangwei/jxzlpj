@@ -5,68 +5,47 @@
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.xspj.domain.Xspj">
         <choose>
             <when test="accountType == 'student'">
-                SELECT T2.*
-                ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj,pj_suggest
+                SELECT DISTINCT T2.xn,T2.xq,T2.COURSE_CODE,T2.COURSE_name
+                ,(case when pj.code is not null then 1 else 2 end) isPj,  pj_suggest
                 FROM SYS_DATA_XSXK T1
-                LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE AND T2.XN = T1.XN AND T2.XQ = T1.XQ
-                LEFT JOIN SYS_DATA_JSRK T3 ON T3.XN = T2.XN AND T3.XQ = T2.XQ AND T3.USER_ID = T2.SKJS_CODE AND T3.COURSE_CODE = T2.COURSE_CODE
---                 LEFT JOIN SYS_DATA_JS T4 ON T4.USER_ID = T3.USER_ID
-                LEFT JOIN (
-                    select xn, xq, course_code, teacher_code, pj_suggest, user_id from jxpj_xspj_dfpj
-                ) pj on pj.xn = T1.xn and pj.xq = T1.xq and pj.COURSE_CODE = T1.COURSE_CODE and pj.teacher_code = T3.USER_ID and pj.user_id = T1.USER_ID
+                LEFT JOIN SYS_DATA_XS xs on XS.USER_ID = T1.USER_ID
+                LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE and T2.xn = T1.xn and T2.xq = T1.xq and (t2.skbj_code = t1.bh or t2.skbj_code is null)
+                LEFT JOIN jxpj_xspj_dfpj pj on pj.xn = T2.xn and pj.xq = T2.xq and pj.COURSE_CODE = T2.COURSE_CODE /*and pj.SKJS_CODE = T2.SKJS_CODE*/ and pj.user_id = T1.USER_ID
                 WHERE T1.USER_ID = #{userId}
-                <if test="xn != null and xn != ''">/*学年*/
-                    and T1.XN = #{xn}
-                </if>
-                <if test="xq != null and xq != ''">/*学期*/
-                    and T1.XQ = #{xq}
-                </if>
             </when>
-            <when test="accountType == 'teacher'">
-                SELECT T2.*
+            <otherwise>
+                SELECT DISTINCT T2.xn,T2.xq,T2.COURSE_CODE,T2.COURSE_name
                 ,(case when pj.COURSE_CODE is not null then 1 else 2 end) isPj
                 FROM SYS_DATA_JSRK T1
-                LEFT JOIN SYS_DATA_KC T2 on T2.XN = T1.XN AND T2.XQ = T1.XQ AND T2.COURSE_CODE = T1.COURSE_CODE and T2.SKJS_CODE = T1.USER_ID
-                LEFT JOIN (
-                    SELECT DISTINCT XN, XQ, COURSE_CODE, TEACHER_CODE FROM JXPJ_XSPJ_DFPJ
-                ) pj on pj.xn = T2.xn and pj.xq = T2.xq and pj.COURSE_CODE = T2.COURSE_CODE and pj.teacher_code = T2.SKJS_CODE
-                where T1.USER_ID = #{userId}
-                <if test="xn != null and xn != ''">/*学年*/
-                    and T1.XN = #{xn}
-                </if>
-                <if test="xq != null and xq != ''">/*学期*/
-                    and T1.XQ = #{xq}
-                </if>
-            </when>
-            <otherwise>/*若是其他类型的账号访问，则返回所有已评的课程信息*/
-                SELECT DISTINCT t2.*
-                ,1 as isPj
-                FROM JXPJ_XSPJ_DFPJ pj
-                LEFT JOIN SYS_DATA_KC t2 on t2.xn = pj.xn and t2.xq = pj.xq and t2.COURSE_CODE = pj.COURSE_CODE and t2.SKJS_CODE = pj.TEACHER_CODE
+                LEFT JOIN SYS_DATA_KC T2 on T2.SKJS_CODE = T1.USER_ID AND T2.COURSE_CODE = T1.COURSE_CODE and T2.XN = T1.XN AND T2.XQ = T1.XQ
+                LEFT JOIN JXPJ_XSPJ_DFPJ pj on pj.xn = T2.xn and pj.xq = T2.xq and pj.COURSE_CODE = T2.COURSE_CODE
                 where 1=1
-                <if test="xn != null and xn != ''">/*学年*/
-                    and pj.XN = #{xn}
-                </if>
-                <if test="xq != null and xq != ''">/*学期*/
-                    and pj.XQ = #{xq}
+                <if test="accountType == 'teacher'">
+                    and T1.USER_ID = #{userId}
                 </if>
             </otherwise>
         </choose>
+        <if test="xn != null and xn != ''">/*学年*/
+            and T1.XN = #{xn}
+        </if>
+        <if test="xq != null and xq != ''">/*学期*/
+            and T1.XQ = #{xq}
+        </if>
         <if test="courseName != null and courseName != ''">/*课程名称*/
             and T2.COURSE_NAME like concat(concat('%',#{courseName}),'%')
         </if>
         <if test="isPj != null and isPj != ''">/*评教状态*/
             <if test="isPj == 1">
-                and pj.COURSE_CODE is not null
+                and pj.code is not null
             </if>
             <if test="isPj == 2">
-                and pj.COURSE_CODE is null
+                and pj.code is null
             </if>
         </if>
     </select>
 
     <insert id="insert">
-        insert into JXPJ_XSPJ_DFPJ (CODE, XN, XQ, COURSE_CODE, TEACHER_CODE, PJ_SUGGEST, USER_ID, USER_NAME, CREATE_DATE)
+        insert into JXPJ_XSPJ_DFPJ (CODE, XN, XQ, COURSE_CODE, SKJS_CODE, PJ_SUGGEST, USER_ID, USER_NAME, CREATE_DATE)
         values (#{code},#{xn},#{xq},#{courseCode},#{skjsCode},#{pjSuggest},#{userId},#{userName},CURRENT_DATE)
     </insert>
     <insert id="insertItem">
@@ -85,12 +64,12 @@
         left join jxpj_xspj_dfpj_item it on it.relation_code = pj.code
         left join jxpj_pjset_template_target tt on tt.template_code = it.template_code and tt.target_code = it.target_code
         left join jxpj_pjset_target tg on tg.target_code = tt.target_code
-        where xn = #{xn} and xq = #{xq} and course_code = #{courseCode} and teacher_code = #{teacherCode}
+        where xn = #{xn} and xq = #{xq} and course_code = #{courseCode}
     </select>
     <select id="getPjInfoSuggestList" resultType="java.lang.String">
         select pj_suggest
         from jxpj_xspj_dfpj
-        where xn = #{xn} and xq = #{xq} and course_code = #{courseCode} and teacher_code = #{teacherCode}
+        where xn = #{xn} and xq = #{xq} and course_code = #{courseCode}
     </select>
 <!--
     根据userId 获取【本学期】的课程信息

@@ -12,20 +12,20 @@ import lombok.Setter;
 @Setter
 public class Xspj extends Course {
 
+    //查询字段
+    private String accountType; //账号类别
     //分页参数
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-    //查询字段
-    private String accountType; //账号类别
     //
     private Integer isPj; //评教状态【1已评2未评】
-    private String templateCode;
     //
     private Long code;
-    private String bestTeacher
-            ,pjSuggest //评教建议
-            ,transferSelectedDatas
+    private String templateCode
+            ,transferSelectedDatas;
+    private String pjSuggest //评教建议
             ,userId
             ,userName;
+
 }

@@ -40,7 +40,7 @@ public class XspjServiceImpl implements XspjService {
         xspj.setCode(System.currentTimeMillis());
         boolean bool = xspjMapper.insert(xspj);
         if(bool){
-            Map<String,Object> paramMap = JSON.parseObject(jsonString, ConcurrentHashMap.class);
+            Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
             bool = xspjMapper.insertItem(xspj, paramMap);
         }
         return bool;
