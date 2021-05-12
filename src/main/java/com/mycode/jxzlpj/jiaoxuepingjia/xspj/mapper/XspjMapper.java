@@ -25,24 +25,15 @@ public interface XspjMapper {
 
     List<Map<String,Object>> getBjpjTransferData(@Param("userId") String userId);
 
-    boolean insertBjpj(Xspj xspj);
+    boolean insertBjpj(@Param("xspjList") List<Map<String,Object>> xspjList);
 
-    boolean insertBjpjTarget(@Param("mapList") List<Map<String, Object>> mapList);
+    boolean insertBjpjItem(@Param("itemList") List<Map<String, Object>> itemList);
 
-    String selectBjpjSuggest(@Param("relationCode") String relationCode
-            , @Param("courseCode") String courseCode);
-
-    boolean insertBjpjSuggest(@Param("relationCode") String relationCode
-            , @Param("courseCode") String courseCode
-            , @Param("suggest") String suggest);
-
-    boolean deleteBjpjSuggest(@Param("relationCode") String relationCode
-            , @Param("courseCode") String courseCode);
+    List<Map<String, Object>> getBjpjPjSuggestList(@Param("userId") String userId, @Param("templateCode") String templateCode);
 
     List<Xspj> getBjpjPageList(Xspj xspj);
 
-    List<Map<String, Object>> getBjpjPjInfo(@Param("courseCode") String courseCode);
+    Map<String,Object> getBjpjPjInfo(@Param("xn") String xn, @Param("xq") String xq, @Param("courseCode") String courseCode, @Param("teacherCode") String teacherCode);
 
-    List<String> getBjpjPjInfoSuggestList(@Param("courseCode") String courseCode, @Param("templateCode") String templateCode);
-
+    List<String> getBjpjPjInfoSuggestList(@Param("xn") String xn, @Param("xq") String xq, @Param("courseCode") String courseCode, @Param("teacherCode") String teacherCode);
 }

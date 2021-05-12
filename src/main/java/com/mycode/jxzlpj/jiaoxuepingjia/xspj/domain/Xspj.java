@@ -21,11 +21,12 @@ public class Xspj extends Course {
     //
     private Integer isPj; //评教状态【1已评2未评】
     //
-    private Long code;
-    private String templateCode
-            ,transferSelectedDatas;
-    private String pjSuggest //评教建议
-            ,userId
+    private String code
+            ,templateCode
+            ,transferDatas
+            ,pjSuggestJsonString
+            ,pjSuggest; //评教建议
+    private String userId
             ,userName;
 
 }

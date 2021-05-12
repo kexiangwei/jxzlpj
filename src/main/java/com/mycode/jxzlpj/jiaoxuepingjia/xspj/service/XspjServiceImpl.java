@@ -37,7 +37,7 @@ public class XspjServiceImpl implements XspjService {
     @Override
     @Transactional
     public boolean insert(Xspj xspj, String jsonString) {
-        xspj.setCode(System.currentTimeMillis());
+        xspj.setCode(xspj.getXn() + ("3".equals(xspj.getXq())?"-03-":"-12-") + xspj.getCourseCode() + "-"+ xspj.getUserId());
         boolean bool = xspjMapper.insert(xspj);
         if(bool){
             Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
@@ -62,10 +62,24 @@ public class XspjServiceImpl implements XspjService {
     @Transactional(rollbackFor = {RuntimeException.class, Error.class})
     @Override
     public boolean insertBjpj(Xspj xspj) {
-        boolean bool = xspjMapper.insertBjpj(xspj);
+
+        List<Map<String,Object>> xspjList = new ArrayList<>();
+        JSONObject pjSuggestJson = JSON.parseObject(xspj.getPjSuggestJsonString());
+        for (Map.Entry<String, Object> pjSuggest : pjSuggestJson.entrySet()) {
+            Map<String,Object> map = new HashMap<>();
+            map.put("code",xspj.getXn() + ("3".equals(xspj.getXq())?"-03-":"-12-") + pjSuggest.getKey() + "-" + xspj.getUserId());
+            map.put("xn",xspj.getXn());
+            map.put("xq",xspj.getXq());
+            map.put("courseCode",pjSuggest.getKey());
+            map.put("pjSuggest",StringUtils.isNotEmpty(pjSuggest.getValue().toString())?pjSuggest.getValue().toString():"无建议或意见");
+            map.put("userId",xspj.getUserId());
+            map.put("userName",xspj.getUserName());
+            xspjList.add(map);
+        }
+        boolean bool = xspjMapper.insertBjpj(xspjList);
         if(bool){
-            List<Map<String,Object>>  mapList = new ArrayList<>();
-            JSONArray jsonArray = JSON.parseArray(xspj.getTransferSelectedDatas());
+            List<Map<String,Object>> itemList = new ArrayList<>();
+            JSONArray jsonArray = JSON.parseArray(xspj.getTransferDatas());
             jsonArray.stream().forEach(obj -> {
                 JSONObject jsonObject = JSON.parseObject(obj.toString());
                 String targetCode = jsonObject.getString("targetCode");
@@ -73,33 +87,22 @@ public class XspjServiceImpl implements XspjService {
                 JSONArray arr = JSONArray.parseArray(jsonObject.getString("arr"));
                 for (int i = 0; i < arr.size(); i++) {
                     Map<String,Object> map = new HashMap<>();
-                    map.put("relationCode",xspj.getCode());
-                    map.put("courseCode",arr.getString(i));
+                    map.put("relationCode",xspj.getXn() + ("3".equals(xspj.getXq())?"-03-":"-12-") + arr.getString(i) + "-" + xspj.getUserId());
+                    map.put("templateCode",xspj.getTemplateCode());
                     map.put("targetCode",targetCode);
                     //计算每道题的得分 = 每道题的分值/2 + 每道题的分值/2 * (课程总数 - 课程排序后的序号 + 1) / 课程总数
                     map.put("score",new Double(targetScore/2 + targetScore/2 * (arr.size() - i) / arr.size()));
-                    mapList.add(map);
+                    itemList.add(map);
                 }
             });
-            bool = xspjMapper.insertBjpjTarget(mapList);
+            bool = xspjMapper.insertBjpjItem(itemList);
         }
         return bool;
     }
 
     @Override
-    public String selectBjpjSuggest(String relationCode, String courseCode) {
-        return xspjMapper.selectBjpjSuggest(relationCode, courseCode);
-    }
-
-    @Override
-    public boolean insertBjpjSuggest(String relationCode, String courseCode, String suggest) {
-        boolean bool = false;
-        String dbSuggest = xspjMapper.selectBjpjSuggest(relationCode, courseCode);
-        if(StringUtils.isNotEmpty(dbSuggest)){
-            bool = xspjMapper.deleteBjpjSuggest(relationCode, courseCode);
-        }
-        bool = xspjMapper.insertBjpjSuggest(relationCode, courseCode, suggest);
-        return bool;
+    public List<Map<String, Object>> getBjpjPjSuggestList(String userId, String templateCode) {
+        return xspjMapper.getBjpjPjSuggestList(userId,templateCode);
     }
 
     @Override
@@ -113,14 +116,10 @@ public class XspjServiceImpl implements XspjService {
     }
 
     @Override
-    public Map<String, Object> getBjpjPjInfo(String courseCode) {
-        Map<String,Object> pjInfo = new HashMap<>();
-        List<Map<String, Object>> targetList = xspjMapper.getBjpjPjInfo(courseCode);
-        OptionalDouble totalAvg = targetList.stream().mapToDouble(m -> Double.parseDouble(m.get("AVG_SCORE").toString())).average();
-        List<String> suggestList = xspjMapper.getBjpjPjInfoSuggestList(courseCode, targetList.get(0).get("TEMPLATE_CODE").toString());
-        pjInfo.put("targetList",targetList);
+    public Map<String, Object> getBjpjPjInfo(String xn, String xq, String courseCode, String teacherCode) {
+        Map<String,Object> pjInfo = xspjMapper.getBjpjPjInfo(xn,xq,courseCode,teacherCode);
+        List<String> suggestList = xspjMapper.getBjpjPjInfoSuggestList(xn,xq,courseCode,teacherCode);
         pjInfo.put("suggestList",suggestList);
-        pjInfo.put("totalAvg",totalAvg);
         return pjInfo;
     }
 
