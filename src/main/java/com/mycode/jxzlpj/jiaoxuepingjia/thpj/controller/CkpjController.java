@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @CrossOrigin
 @Controller
-@RequestMapping("/jxpj_thpj")
+@RequestMapping("/thpj")
 public class CkpjController {
 
     @Autowired

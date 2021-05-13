@@ -1,5 +1,6 @@
 package com.mycode.jxzlpj.jiaoxuepingjia.thpj.mapper;
 
+import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -11,6 +12,9 @@ import java.util.Map;
  */
 @Mapper
 public interface ThpjMapper {
+
+
+    List<Thpj> getPageList(Thpj thpj);
 
     String getThpjTemplateCode(String pjCode);
 

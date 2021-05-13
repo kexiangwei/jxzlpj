@@ -1,8 +1,6 @@
 package com.mycode.jxzlpj.jiaoxuepingjia.thpj.controller;
 
-import com.mycode.jxzlpj.jiaoxuepingjia.pjset.service.PjSetTemplateService;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj;
-import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.service.DfpjService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,25 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Map;
-
 /**
  * 教学评价-同行评教-打分評教
  */
 @CrossOrigin
 @Controller
-@RequestMapping("/jxpj_thpj")
+@RequestMapping("/thpj")
 public class DfpjController {
 
     @Autowired
     private DfpjService dfpjService;
 
-    @ResponseBody
-    @RequestMapping("/getPageList.do")
-    public JsonResult<Object> getPageList(ThpjQuery thpjQuery){
-        Map<String, Object> resultMap = dfpjService.getPageList(thpjQuery);
-        return JsonResult.success(resultMap);
-    }
+
 
     @ResponseBody
     @RequestMapping("/detail.do")

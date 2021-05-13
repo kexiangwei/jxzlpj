@@ -2,6 +2,79 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jxzlpj.jiaoxuepingjia.thpj.mapper.ThpjMapper">
 
+    <!--
+    在显示列表中显示课程名称、课程性质、任课教师、教师所在单位和专业、上课时间、上课地点、学生班级的信息。
+    -->
+    <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj">
+        SELECT DISTINCT kc.XN, kc.XQ, kc.course_code, kc.course_name, kc.course_attr
+        , kc.SKJS_CODE, kc.SKJS_NAME, js.XY_NAME as "skjsXy", js.ZY_NAME as "skjsZy", kc.SK_SJ, kc.SK_DD, kc.sk_bj
+        ,(case when pj.code is not null then 1 else 2 end) as "isPj",	pj.code as "pjCode", pj.is_submit
+        -- ,(case when pj2.total_score >= 90 then 1 else 2 end) as "isGte90"
+        FROM SYS_DATA_XNXQ t
+        LEFT JOIN SYS_DATA_JSRK rk on rk.XN = t.XN and rk.XQ = t.XQ
+        LEFT JOIN SYS_DATA_JS js on js.USER_ID = rk.USER_ID
+        LEFT JOIN SYS_DATA_KC kc on kc.course_code = rk.course_code and kc.XN = rk.XN and KC.XQ = rk.XQ and kc.SKJS_CODE = rk.USER_ID
+        LEFT JOIN JXPJ_THPJ pj on pj.course_code = rk.course_code and pj.teacher_CODE = rk.USER_ID and  pj.user_id = #{userId}
+        -- LEFT JOIN (
+        -- 		SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
+        -- ) pj2 on pj2.RELATION_CODE = pj.code
+        <where> (current_date - interval '1' year) between begin_date and end_date
+            AND rk.USER_ID != #{userId}
+            <if test="courseXy !=null and courseXy !=''">
+                and kc.xy_code = #{courseXy}
+            </if>
+            <if test="courseZy !=null and courseZy !=''">
+                and kc.zy_code = #{courseZy}
+            </if>
+            <if test="courseCode !=null and courseCode !=''">
+                and kc.course_code #{courseCode}
+            </if>
+            <if test="courseName !=null and courseName !=''">
+                and kc.course_name like concat(concat('%',#{courseName}),'%')
+            </if>
+            <if test="courseAttr !=null and courseAttr !=''">
+                and kc.course_attr = #{courseAttr}
+            </if>
+            <if test="skjsXy !=null and skjsXy !=''">
+                and js.XY_code = #{skjsXy}
+            </if>
+            <if test="skjsZy !=null and skjsZy !=''">
+                and js.ZY_code = #{skjsZy}
+            </if>
+            <if test="skjsCode !=null and skjsCode !=''">
+                and kc.SKJS_CODE = #{skjsCode}
+            </if>
+            <if test="skjsName !=null and skjsName !=''">
+                and kc.SKJS_NAME like concat(concat('%',#{skjsName}),'%')
+            </if>
+            <if test="age !=null and age !=''">
+                <choose>
+                    <when test="age == '55岁及以上'">
+                        and js.age >= 55
+                    </when>
+                    <when test="age == '45-54岁'">
+                        and js.age BETWEEN 45 and 54
+                    </when>
+                    <when test="age == '35-44岁'">
+                        and js.age BETWEEN 35 and 44
+                    </when>
+                    <when test="age == '34岁及以下'">
+                        and js.age &lt;= 34
+                    </when>
+                </choose>
+            </if>
+            <if test="title !=null and title !=''">
+                and js.title = #{title}
+            </if>
+            <if test="skSj !=null and skSj !=''">
+                and kc.SK_SJ = #{skSj}
+            </if>
+            <if test="skDd !=null and skDd !=''">
+                and kc.SK_DD = #{skDd}
+            </if>
+        </where>
+    </select>
+
     <select id="getThpjTemplateCode" resultType="java.lang.String">
         SELECT TEMPLATE_CODE from JXPJ_THPJ WHERE CODE = #{pjCode}
     </select>

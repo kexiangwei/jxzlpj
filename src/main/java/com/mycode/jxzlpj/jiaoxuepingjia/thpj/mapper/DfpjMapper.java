@@ -2,7 +2,6 @@ package com.mycode.jxzlpj.jiaoxuepingjia.thpj.mapper;
 
 import com.mycode.jxzlpj.jiaoxuepingjia.pjset.domain.PjSetTarget;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj;
-import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.ThpjQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,8 +13,6 @@ import java.util.Map;
  */
 @Mapper
 public interface DfpjMapper {
-
-    List<ThpjQuery> getPageList(ThpjQuery thpjQuery);
 
     Thpj getThpjInfo(@Param("pjCode") String pjCode);
 

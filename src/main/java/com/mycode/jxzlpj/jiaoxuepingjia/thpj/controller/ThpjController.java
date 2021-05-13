@@ -1,6 +1,7 @@
 package com.mycode.jxzlpj.jiaoxuepingjia.thpj.controller;
 
 import com.mycode.jxzlpj.jiaoxuepingjia.pjset.service.PjSetTemplateService;
+import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.service.ThpjService;
 import com.mycode.util.JsonResult;
 import com.mycode.util.StringUtils;
@@ -19,13 +20,20 @@ import java.util.Map;
  */
 @CrossOrigin
 @Controller
-@RequestMapping("/jxpj_thpj")
+@RequestMapping("/thpj")
 public class ThpjController {
 
     @Autowired
     private ThpjService thpjService;
     @Autowired
     private PjSetTemplateService pjSetTemplateService;
+
+    @ResponseBody
+    @RequestMapping("/getPageList.do")
+    public JsonResult<Object> getPageList(Thpj thpj){
+        Map<String, Object> resultMap = thpjService.getPageList(thpj);
+        return JsonResult.success(resultMap);
+    }
 
     /**
      * 获取模板信息
