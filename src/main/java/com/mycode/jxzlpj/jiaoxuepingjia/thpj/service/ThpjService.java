@@ -13,6 +13,15 @@ public interface ThpjService {
 
     Map<String, Object> getPageList(Thpj thpj);
 
+
+    Thpj detail(String pjCode);
+
+    boolean insert(Thpj thpj, String jsonString);
+
+    boolean update(Thpj thpj, String jsonString);
+
+    //    boolean delete(String pjCode);
+
     String getThpjTemplateCode(String pjCode);
 
     List<Map<String, Object>> getThpjTargetList(String templateCode);

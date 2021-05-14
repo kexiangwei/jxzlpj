@@ -1,5 +1,6 @@
 package com.mycode.jxzlpj.jiaoxuepingjia.thpj.service;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.jxzlpj.jiaoxuepingjia.pjset.domain.PjSetTarget;
@@ -8,6 +9,7 @@ import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.mapper.ThpjMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +36,46 @@ public class ThpjServiceImpl implements ThpjService {
         resultMap.put("pageList", pageList);
         return resultMap;
     }
+
+    @Override
+    public Thpj detail(String pjCode) {
+        Thpj thpj = thpjMapper.getThpjInfo(pjCode);
+        if(thpj != null){
+            List<Map<String,Object>> thpjItemList = thpjMapper.getThpjItemListByRelationCode(pjCode);
+            thpj.setThpjItemList(thpjItemList);
+        }
+        return thpj;
+    }
+
+    @Override
+    @Transactional
+    public boolean insert(Thpj thpj, String jsonString) {
+        boolean bool = thpjMapper.insert(thpj);
+        if(bool){
+            List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
+            Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
+            bool = thpjMapper.insertTarget(thpj.getCode(), pjSetTargetList, paramMap);
+        }
+        return bool;
+    }
+
+    @Override
+    @Transactional
+    public boolean update(Thpj thpj, String jsonString) {
+        boolean bool = thpjMapper.deleteTargetByRelationCode(thpj.getCode()); //删除以前的记录
+        List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
+        Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
+        bool = thpjMapper.insertTarget(thpj.getCode(), pjSetTargetList, paramMap); //然后再重新录入
+        if(bool){
+            bool = thpjMapper.resetSubmit(thpj.getCode());
+        }
+        return bool;
+    }
+
+    /*@Override
+    public boolean delete(String pjCode) {
+        return thpjMapper.delete(pjCode);
+    }*/
 
     @Override
     public String getThpjTemplateCode(String pjCode) {

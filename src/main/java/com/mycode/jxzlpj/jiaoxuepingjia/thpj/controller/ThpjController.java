@@ -35,6 +35,43 @@ public class ThpjController {
         return JsonResult.success(resultMap);
     }
 
+    @ResponseBody
+    @RequestMapping("/detail.do")
+    public JsonResult<Object> detail(@RequestParam("code") String pjCode){
+        Thpj thpj = thpjService.detail(pjCode);
+        return JsonResult.success(thpj);
+    }
+
+    @ResponseBody
+    @RequestMapping("/insert.do")
+    public JsonResult<Object> insert(Thpj thpj, @RequestParam("jsonString") String jsonString){
+        boolean bool = thpjService.insert(thpj, jsonString);
+        if(!bool){
+            return JsonResult.error("保存失败");
+        }
+        return JsonResult.success("保存成功",null);
+    }
+
+    @ResponseBody
+    @RequestMapping("/update.do")
+    public JsonResult<Object> update(Thpj thpj, @RequestParam("jsonString") String jsonString){
+        boolean bool = thpjService.update(thpj,jsonString);
+        if(!bool){
+            return JsonResult.error("修改失败");
+        }
+        return JsonResult.success("修改成功",null);
+    }
+
+    /*@ResponseBody
+    @RequestMapping("/delete.do")
+    public JsonResult<Object> delete(@RequestParam("code") String pjCode){
+        boolean bool = thpjService.delete(pjCode);
+        if(!bool){
+            return JsonResult.error();
+        }
+        return JsonResult.success();
+    }*/
+
     /**
      * 获取模板信息
      * @param pjCode 查询详情时使用的参数

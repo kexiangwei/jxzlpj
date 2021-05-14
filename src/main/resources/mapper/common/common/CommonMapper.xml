@@ -2,14 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.common.common.mapper.CommonMapper">
 
+    <!--
+    SELECT DISTINCT name FROM SYS_DATA_XY;
+    SELECT DISTINCT XY_NAME FROM SYS_DATA_KC;
+    SELECT DISTINCT XY_NAME FROM SYS_DATA_JS;
+    SELECT DISTINCT XY_NAME FROM SYS_DATA_XS;
+    -->
     <select id="getXyList" resultType="java.util.Map">
-        SELECT distinct code,name
-        FROM SYS_DATA_XY
-        ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
+        <choose>
+            <when test="dataType == 'xy'">
+                SELECT distinct code as "code", name as "name"
+                FROM SYS_DATA_XY
+                ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
+            </when>
+            <when test="dataType == 'kc'">
+                SELECT distinct XY_CODE as "code",XY_NAME as "name"
+                FROM SYS_DATA_KC
+                WHERE XY_CODE IS NOT NULL
+                ORDER BY NLSSORT(XY_NAME,'NLS_SORT = SCHINESE_PINYIN_M')
+            </when>
+            <when test="dataType == 'js'">
+                SELECT distinct XY_CODE as "code",XY_NAME as "name"
+                FROM SYS_DATA_JS
+                WHERE XY_CODE IS NOT NULL
+                ORDER BY NLSSORT(XY_NAME,'NLS_SORT = SCHINESE_PINYIN_M')
+            </when>
+            <when test="dataType == 'xs'">
+                SELECT distinct XY_CODE as "code",XY_NAME as "name"
+                FROM SYS_DATA_XS
+                WHERE XY_CODE IS NOT NULL
+                ORDER BY NLSSORT(XY_NAME,'NLS_SORT = SCHINESE_PINYIN_M')
+            </when>
+        </choose>
     </select>
 
     <select id="getZyList" resultType="java.util.Map">
-        SELECT distinct code,name
+        SELECT distinct code as "code", name as "name"
         FROM SYS_DATA_ZY
         <where>1=1
             <if test="xyCode !=null and xyCode !=''">
@@ -17,19 +45,6 @@
             </if>
         </where>
         ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
-    </select>
-
-    <select id="getTableCols" resultType="java.util.Map">
-        SELECT c.COLUMN_NAME,c.COMMENTS
-        FROM user_tab_columns t LEFT JOIN user_col_comments c on c.table_name = t.table_name and c.COLUMN_NAME = t.COLUMN_NAME
-        where t.table_name = #{tableName} and t.COLUMN_NAME not in ('CODE','USER_ID','USERNAME','USER_UNIT')
-        ORDER BY column_id
-    </select>
-
-    <select id="getTableDatas" resultType="java.util.Map">
-        SELECT *
-        FROM ${viewName}
-        where USER_ID = #{userId}
     </select>
 
 </mapper>

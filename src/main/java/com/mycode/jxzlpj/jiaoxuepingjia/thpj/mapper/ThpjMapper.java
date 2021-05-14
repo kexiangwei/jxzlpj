@@ -1,5 +1,6 @@
 package com.mycode.jxzlpj.jiaoxuepingjia.thpj.mapper;
 
+import com.mycode.jxzlpj.jiaoxuepingjia.pjset.domain.PjSetTarget;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,6 +16,20 @@ public interface ThpjMapper {
 
 
     List<Thpj> getPageList(Thpj thpj);
+
+
+    Thpj getThpjInfo(@Param("pjCode") String pjCode);
+
+    List<Map<String,Object>> getThpjItemListByRelationCode(@Param("relationCode") String relationCode);
+
+    boolean insert(Thpj thpj);
+
+    boolean insertTarget(@Param("relationCode") String relationCode, @Param("pjSetTargetList") List<PjSetTarget> pjSetTargetList, @Param("paramMap") Map<String, Object> paramMap);
+
+    boolean deleteTargetByRelationCode(@Param("relationCode") String relationCode);
+
+    //    boolean delete(String pjCode);
+
 
     String getThpjTemplateCode(String pjCode);
 

@@ -75,6 +75,50 @@
         </where>
     </select>
 
+    <select id="getThpjInfo" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj">
+        SELECT * FROM JXPJ_THPJ where CODE = #{pjCode}
+    </select>
+    <select id="getThpjItemListByRelationCode" resultType="java.util.Map">
+        select NVL(TARGET_CODE,'totalScore') as "targetCode"
+        ,sum(ANSWER) as "answer"
+        from JXPJ_THPJ_ITEM
+        where RELATION_CODE = #{relationCode}
+        GROUP BY rollup(TARGET_CODE)
+    </select>
+
+    <insert id="insert">
+        insert into JXPJ_THPJ
+        (CODE, TEMPLATE_CODE, TEACHER_CODE, TEACHER, TEACHER_COLLEGE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, STU_CLASS
+        , TEACH_YEAR, TEACH_MONTH, TEACH_DAY, TEACH_WEEKNUM, TEACH_WEEK, TEACH_LESSONNUM, TEACH_HOUSE, TEACH_CLASSROOM
+        , STU_YINGDAO, STU_SHIDAO, STU_CHIDAO, STU_QUEKE
+        , DP_TEACHER, DP_STUDENT, DP_CLASSROOM
+        , USER_ID, USER_NAME, CREATE_DATE)
+        values
+        (
+        #{code},#{templateCode},#{teacherCode},#{teacher},#{teacherCollege},#{courseCode},#{courseName},#{courseAttr},#{stuClass}
+        ,#{teachYear},#{teachMonth},#{teachDay},#{teachWeekNum},#{teachWeek},#{teachLessonNum},#{teachHouse},#{teachClassroom}
+        ,#{stuYingdao},#{stuShidao},#{stuChidao},#{stuQueke},#{dpTeacher},#{dpStudent},#{dpClassroom}
+        ,#{userId},#{userName},CURRENT_DATE
+        )
+    </insert>
+    <insert id="insertTarget">
+        insert all
+        <foreach collection="pjSetTargetList" index="idx" item="obj">
+            <foreach collection="paramMap" index="key"  item="val">
+                <if test="key == obj.targetCode">
+                    INTO JXPJ_THPJ_ITEM(RELATION_CODE,TARGET_CODE,ANSWER)
+                    VALUES (#{relationCode},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
+                </if>
+            </foreach>
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <delete id="deleteTargetByRelationCode">
+        delete from JXPJ_THPJ_ITEM where RELATION_CODE = #{relationCode}
+    </delete>
+
+
     <select id="getThpjTemplateCode" resultType="java.lang.String">
         SELECT TEMPLATE_CODE from JXPJ_THPJ WHERE CODE = #{pjCode}
     </select>

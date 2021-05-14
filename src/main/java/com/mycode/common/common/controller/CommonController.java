@@ -17,17 +17,21 @@ import java.util.Map;
  */
 @CrossOrigin
 @Controller
-@RequestMapping("/common")
 public class CommonController {
 
     @Autowired
     private CommonService commonService;
 
+    /**
+     * 获取学院列表
+     * @param dataType 数据类型，可选值【xy,kc,js,xs】,默认获取学院中的学院信息
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getXyList.do")
-    public JsonResult<Object> getXyList(){
-        List<Map<String, Object>> maps = commonService.getXyList();
-        return JsonResult.success(maps);
+    public JsonResult<Object> getXyList(@RequestParam(value = "dataType",required = false, defaultValue = "xy") String dataType){
+        List<Map<String, Object>> mapList = commonService.getXyList(dataType);
+        return JsonResult.success(mapList);
     }
 
     @ResponseBody
@@ -35,20 +39,6 @@ public class CommonController {
     public JsonResult<Object> getZyList(@RequestParam(value = "xyCode",required = false) String xyCode){
         List<Map<String, Object>> maps = commonService.getZyList(xyCode);
         return JsonResult.success(maps);
-    }
-
-    @ResponseBody
-    @RequestMapping("/getTableCols.do")
-    public JsonResult<Object> getTableCols(@RequestParam("tableName") String tableName){
-        List<Map<String, Object>> tableCols = commonService.getTableCols(tableName);
-        return JsonResult.success(tableCols);
-    }
-
-    @ResponseBody
-    @RequestMapping("/getTableDatas.do")
-    public JsonResult<Object> getTeacherTabData(@RequestParam("viewName") String viewName, @RequestParam("userId") String userId){
-        List<Map<String, Object>> tableDatas = commonService.getTableDatas(viewName, userId);
-        return JsonResult.success(tableDatas);
     }
 
 }
