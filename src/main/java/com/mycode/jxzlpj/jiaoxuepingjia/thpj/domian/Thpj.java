@@ -45,14 +45,9 @@ public class Thpj {
                 ,skDd //上课地点
                 ,skBj; //授课班级
 
-    private Integer teachYear
-                ,teachMonth
-                ,teachDay
-                ,teachWeekNum
-                ,teachLessonNum;
-    private String teachWeek;
-    private String teachHouse
-                ,teachClassroom;
+    private String teachWeek
+                ,weekNum
+                ,lessonNum;
 
     private Integer stuYd
                 ,stuSd

@@ -14,7 +14,7 @@
         LEFT JOIN SYS_DATA_JSRK rk on rk.XN = t.XN and rk.XQ = t.XQ
         LEFT JOIN SYS_DATA_JS js on js.USER_ID = rk.USER_ID
         LEFT JOIN SYS_DATA_KC kc on kc.course_code = rk.course_code and kc.XN = rk.XN and KC.XQ = rk.XQ and kc.SKJS_CODE = rk.USER_ID
-        LEFT JOIN JXPJ_THPJ pj on pj.course_code = rk.course_code and pj.teacher_CODE = rk.USER_ID and  pj.user_id = #{userId}
+        LEFT JOIN JXPJ_THPJ_DFPJ pj on pj.XN = kc.XN and pj.XQ = kc.XQ and pj.course_code = rk.course_code and pj.SKJS_CODE = rk.USER_ID and pj.skbj = kc.sk_bj and pj.user_id = #{userId}
         -- LEFT JOIN (
         -- 		SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
         -- ) pj2 on pj2.RELATION_CODE = pj.code
@@ -66,61 +66,32 @@
             <if test="title !=null and title !=''">
                 and js.title = #{title}
             </if>
-            <if test="skSj !=null and skSj !=''">
+            <if test="skSj !=null and skSj !=''">/*上课时间*/
                 and kc.SK_SJ = #{skSj}
             </if>
-            <if test="skDd !=null and skDd !=''">
+            <if test="skDd !=null and skDd !=''">/*上课地点*/
                 and kc.SK_DD = #{skDd}
+            </if>
+
+            <if test="lessonNum !=null and lessonNum !=''">/*节次*/
+                and kc.SK_SJ like concat(concat('%',#{lessonNum}),'%')
+            </if>
+            <if test="isPj !=null">/*评教状态*/
+                <if test="isPj == 1">
+                    and pj.code is not null
+                </if>
+                <if test="isPj == 2">
+                    and pj.code is null
+                </if>
+            </if>
+            <if test="isSubmit !=null">/*提交状态*/
+                and pj.is_submit = #{isSubmit}
             </if>
         </where>
     </select>
 
-    <select id="getThpjInfo" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj">
-        SELECT * FROM JXPJ_THPJ where CODE = #{pjCode}
-    </select>
-    <select id="getThpjItemListByRelationCode" resultType="java.util.Map">
-        select NVL(TARGET_CODE,'totalScore') as "targetCode"
-        ,sum(ANSWER) as "answer"
-        from JXPJ_THPJ_ITEM
-        where RELATION_CODE = #{relationCode}
-        GROUP BY rollup(TARGET_CODE)
-    </select>
-
-    <insert id="insert">
-        insert into JXPJ_THPJ
-        (CODE, TEMPLATE_CODE, TEACHER_CODE, TEACHER, TEACHER_COLLEGE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, STU_CLASS
-        , TEACH_YEAR, TEACH_MONTH, TEACH_DAY, TEACH_WEEKNUM, TEACH_WEEK, TEACH_LESSONNUM, TEACH_HOUSE, TEACH_CLASSROOM
-        , STU_YINGDAO, STU_SHIDAO, STU_CHIDAO, STU_QUEKE
-        , DP_TEACHER, DP_STUDENT, DP_CLASSROOM
-        , USER_ID, USER_NAME, CREATE_DATE)
-        values
-        (
-        #{code},#{templateCode},#{teacherCode},#{teacher},#{teacherCollege},#{courseCode},#{courseName},#{courseAttr},#{stuClass}
-        ,#{teachYear},#{teachMonth},#{teachDay},#{teachWeekNum},#{teachWeek},#{teachLessonNum},#{teachHouse},#{teachClassroom}
-        ,#{stuYingdao},#{stuShidao},#{stuChidao},#{stuQueke},#{dpTeacher},#{dpStudent},#{dpClassroom}
-        ,#{userId},#{userName},CURRENT_DATE
-        )
-    </insert>
-    <insert id="insertTarget">
-        insert all
-        <foreach collection="pjSetTargetList" index="idx" item="obj">
-            <foreach collection="paramMap" index="key"  item="val">
-                <if test="key == obj.targetCode">
-                    INTO JXPJ_THPJ_ITEM(RELATION_CODE,TARGET_CODE,ANSWER)
-                    VALUES (#{relationCode},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
-                </if>
-            </foreach>
-        </foreach>
-        select 1 from dual
-    </insert>
-
-    <delete id="deleteTargetByRelationCode">
-        delete from JXPJ_THPJ_ITEM where RELATION_CODE = #{relationCode}
-    </delete>
-
-
     <select id="getThpjTemplateCode" resultType="java.lang.String">
-        SELECT TEMPLATE_CODE from JXPJ_THPJ WHERE CODE = #{pjCode}
+        select distinct template_code from jxpj_thpj_dfpj_item where relation_code = #{pjCode}
     </select>
 
     <!--
@@ -137,6 +108,45 @@
         GROUP BY TARGET_NAME
         order by decode(SUBSTR(TARGET_NAME, 0, 1),'一',1,'二',2,'三',3,'四',4,'五',5,'六',6,'七',7,'八',8,'九',9,'零',0)
     </select>
+
+    <select id="getThpjInfo" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj">
+        SELECT * FROM JXPJ_THPJ_DFPJ where CODE = #{pjCode}
+    </select>
+    <select id="getThpjItemList" resultType="java.util.Map">
+        select NVL(TARGET_CODE,'totalScore') as "targetCode"
+        ,sum(SCORE) as "score"
+        from JXPJ_THPJ_DFPJ_ITEM
+        where RELATION_CODE = #{relationCode}
+        GROUP BY rollup(TARGET_CODE)
+    </select>
+
+    <insert id="insert">
+        insert into JXPJ_THPJ_DFPJ
+        (CODE, XN, XQ, COURSE_CODE, COURSE_NAME, COURSE_ATTR, SKJS_CODE, SKJS_NAME, SKJS_XY, SKBJ
+        , TEACH_WEEK, WEEK_NUM, LESSON_NUM, SKDD, STU_YD, STU_SD, STU_CD, STU_QK
+        , TEACHER_DP1, TEACHER_DP2, STUDENT_DP1, STUDENT_DP2, CLASSROOM_DP, USER_ID, USER_NAME, IS_SUBMIT, CREATE_DATE)
+        values
+        (
+        #{code},#{xn},#{xq},#{courseCode},#{courseName},#{courseAttr},#{skjsCode},#{skjsName},#{skjsXy},#{skBj}
+        ,#{teachWeek},#{weekNum},#{lessonNum},#{skDd},#{stuYd},#{stuSd},#{stuCd},#{stuQk}
+        ,#{teacherDp1},#{teacherDp2},#{studentDp1},#{studentDp2},#{classroomDp},#{userId},#{userName},2,CURRENT_DATE
+        )
+    </insert>
+    <insert id="insertTarget">
+        insert all
+        <foreach collection="pjSetTargetList" index="idx" item="obj">
+            <foreach collection="paramMap" index="key"  item="val">
+                <if test="key == obj.targetCode">
+                    INTO JXPJ_THPJ_DFPJ_ITEM (RELATION_CODE, TEMPLATE_CODE, TARGET_CODE, SCORE) VALUES (#{relationCode},#{templateCode},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
+                </if>
+            </foreach>
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <delete id="deleteItems">
+        delete from JXPJ_THPJ_DFPJ_ITEM where RELATION_CODE = #{relationCode}
+    </delete>
 
     <!--
     同行评教-比较评价-優秀率算法
@@ -156,9 +166,9 @@
     </select>
 
     <update id="submit">
-        UPDATE JXPJ_THPJ set IS_SUBMIT = 1 where CODE = #{code}
+        UPDATE JXPJ_THPJ_DFPJ set IS_SUBMIT = 1 where CODE = #{pjCode}
     </update>
     <update id="resetSubmit">
-        UPDATE JXPJ_THPJ set IS_SUBMIT = null where CODE = #{code}
+        UPDATE JXPJ_THPJ_DFPJ set IS_SUBMIT = 2 where CODE = #{pjCode}
     </update>
 </mapper>

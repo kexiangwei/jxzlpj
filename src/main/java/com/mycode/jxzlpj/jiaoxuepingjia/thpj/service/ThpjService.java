@@ -13,6 +13,9 @@ public interface ThpjService {
 
     Map<String, Object> getPageList(Thpj thpj);
 
+    String getThpjTemplateCode(String pjCode);
+
+    List<Map<String, Object>> getThpjTemplate(String templateCode);
 
     Thpj detail(String pjCode);
 
@@ -20,16 +23,10 @@ public interface ThpjService {
 
     boolean update(Thpj thpj, String jsonString);
 
-    //    boolean delete(String pjCode);
-
-    String getThpjTemplateCode(String pjCode);
-
-    List<Map<String, Object>> getThpjTargetList(String templateCode);
-
     /*
     同行评教-比较评价
      */
     Integer isTopFull(String userId);
 
-    boolean submit(String code);
+    boolean submit(String pjCode);
 }

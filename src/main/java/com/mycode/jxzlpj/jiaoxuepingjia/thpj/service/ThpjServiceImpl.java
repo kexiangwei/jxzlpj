@@ -38,52 +38,12 @@ public class ThpjServiceImpl implements ThpjService {
     }
 
     @Override
-    public Thpj detail(String pjCode) {
-        Thpj thpj = thpjMapper.getThpjInfo(pjCode);
-        if(thpj != null){
-            List<Map<String,Object>> thpjItemList = thpjMapper.getThpjItemListByRelationCode(pjCode);
-            thpj.setThpjItemList(thpjItemList);
-        }
-        return thpj;
-    }
-
-    @Override
-    @Transactional
-    public boolean insert(Thpj thpj, String jsonString) {
-        boolean bool = thpjMapper.insert(thpj);
-        if(bool){
-            List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
-            Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
-            bool = thpjMapper.insertTarget(thpj.getCode(), pjSetTargetList, paramMap);
-        }
-        return bool;
-    }
-
-    @Override
-    @Transactional
-    public boolean update(Thpj thpj, String jsonString) {
-        boolean bool = thpjMapper.deleteTargetByRelationCode(thpj.getCode()); //删除以前的记录
-        List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
-        Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
-        bool = thpjMapper.insertTarget(thpj.getCode(), pjSetTargetList, paramMap); //然后再重新录入
-        if(bool){
-            bool = thpjMapper.resetSubmit(thpj.getCode());
-        }
-        return bool;
-    }
-
-    /*@Override
-    public boolean delete(String pjCode) {
-        return thpjMapper.delete(pjCode);
-    }*/
-
-    @Override
     public String getThpjTemplateCode(String pjCode) {
         return thpjMapper.getThpjTemplateCode(pjCode);
     }
 
     @Override
-    public List<Map<String, Object>> getThpjTargetList(String templateCode) {
+    public List<Map<String, Object>> getThpjTemplate(String templateCode) {
         //
         List<Map<String, Object>> mapList = thpjMapper.getPjzb(templateCode);
         //
@@ -99,6 +59,42 @@ public class ThpjServiceImpl implements ThpjService {
         return mapList;
     }
 
+    @Override
+    public Thpj detail(String pjCode) {
+        Thpj thpj = thpjMapper.getThpjInfo(pjCode);
+        if(thpj != null){
+            List<Map<String,Object>> thpjItemList = thpjMapper.getThpjItemList(pjCode);
+            thpj.setThpjItemList(thpjItemList);
+        }
+        return thpj;
+    }
+
+    @Override
+    @Transactional
+    public boolean insert(Thpj thpj, String jsonString) {
+        thpj.setCode(thpj.getXn() + ("3".equals(thpj.getXq())?"-03-":"-12-") + thpj.getCourseCode() + "-" + thpj.getSkjsCode() + "-"+ thpj.getUserId());
+        boolean bool = thpjMapper.insert(thpj);
+        if(bool){
+            List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
+            Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
+            bool = thpjMapper.insertTarget(thpj.getCode(), thpj.getTemplateCode(), pjSetTargetList, paramMap);
+        }
+        return bool;
+    }
+
+    @Override
+    @Transactional
+    public boolean update(Thpj thpj, String jsonString) {
+        boolean bool = thpjMapper.deleteItems(thpj.getCode()); //删除以前的记录
+        List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());
+        Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
+        bool = thpjMapper.insertTarget(thpj.getCode(), thpj.getTemplateCode(), pjSetTargetList, paramMap); //然后再重新录入
+        if(bool){
+            bool = thpjMapper.resetSubmit(thpj.getCode());
+        }
+        return bool;
+    }
+
     /*
     同行评教-比较评价
      */
@@ -108,7 +104,7 @@ public class ThpjServiceImpl implements ThpjService {
     }
 
     @Override
-    public boolean submit(String code) {
-        return thpjMapper.submit(code);
+    public boolean submit(String pjCode) {
+        return thpjMapper.submit(pjCode);
     }
 }

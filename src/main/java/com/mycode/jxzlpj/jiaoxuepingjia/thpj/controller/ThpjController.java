@@ -35,9 +35,30 @@ public class ThpjController {
         return JsonResult.success(resultMap);
     }
 
+    /**
+     * 获取模板信息
+     * @param pjCode 查询详情时使用的参数
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getThpjTemplate.do")
+    public JsonResult<Object> getThpjTemplate(@RequestParam(value = "pjCode",required = false) String pjCode){
+        String templateCode = null;
+        if(StringUtils.isEmpty(pjCode)){
+            templateCode = pjSetTemplateService.getActiveTemplateCodeByType("同行评教");
+            if(StringUtils.isEmpty(templateCode)){
+                return JsonResult.error("暂无可用模板！");
+            }
+        } else {
+            templateCode = thpjService.getThpjTemplateCode(pjCode); //城头变幻大王旗
+        }
+        List<Map<String, Object>> thpjTargetList = thpjService.getThpjTemplate(templateCode);
+        return JsonResult.success(thpjTargetList);
+    }
+
     @ResponseBody
     @RequestMapping("/detail.do")
-    public JsonResult<Object> detail(@RequestParam("code") String pjCode){
+    public JsonResult<Object> detail(@RequestParam("pjCode") String pjCode){
         Thpj thpj = thpjService.detail(pjCode);
         return JsonResult.success(thpj);
     }
@@ -62,39 +83,8 @@ public class ThpjController {
         return JsonResult.success("修改成功",null);
     }
 
-    /*@ResponseBody
-    @RequestMapping("/delete.do")
-    public JsonResult<Object> delete(@RequestParam("code") String pjCode){
-        boolean bool = thpjService.delete(pjCode);
-        if(!bool){
-            return JsonResult.error();
-        }
-        return JsonResult.success();
-    }*/
-
     /**
-     * 获取模板信息
-     * @param pjCode 查询详情时使用的参数
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("/getThpjTargetList.do")
-    public JsonResult<Object> getThpjTargetList(@RequestParam(value = "code",required = false) String pjCode){
-        String templateCode = null;
-        if(StringUtils.isEmpty(pjCode)){
-            templateCode = pjSetTemplateService.getActiveTemplateCodeByType("同行评教");
-        } else {
-            templateCode = thpjService.getThpjTemplateCode(pjCode); //城头变幻大王旗
-        }
-        if(StringUtils.isEmpty(templateCode)){
-            return JsonResult.error("暂无可用模板！");
-        }
-        List<Map<String, Object>> thpjTargetList = thpjService.getThpjTargetList(templateCode);
-        return JsonResult.success(thpjTargetList);
-    }
-
-    /**
-     * 查看优秀名额是否已满
+     * 同行比较评教-查看优秀名额是否已满
      * @param userId
      * @return
      */
@@ -107,8 +97,8 @@ public class ThpjController {
 
     @ResponseBody
     @RequestMapping("/submit.do")
-    public JsonResult<Object> submit(@RequestParam("code") String code){
-        boolean bool = thpjService.submit(code);
+    public JsonResult<Object> submit(@RequestParam("pjCode") String pjCode){
+        boolean bool = thpjService.submit(pjCode);
         if(!bool){
             return JsonResult.error("提交失败");
         }

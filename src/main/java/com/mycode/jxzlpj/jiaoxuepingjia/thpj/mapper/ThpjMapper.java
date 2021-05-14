@@ -17,30 +17,27 @@ public interface ThpjMapper {
 
     List<Thpj> getPageList(Thpj thpj);
 
-
-    Thpj getThpjInfo(@Param("pjCode") String pjCode);
-
-    List<Map<String,Object>> getThpjItemListByRelationCode(@Param("relationCode") String relationCode);
-
-    boolean insert(Thpj thpj);
-
-    boolean insertTarget(@Param("relationCode") String relationCode, @Param("pjSetTargetList") List<PjSetTarget> pjSetTargetList, @Param("paramMap") Map<String, Object> paramMap);
-
-    boolean deleteTargetByRelationCode(@Param("relationCode") String relationCode);
-
-    //    boolean delete(String pjCode);
-
-
     String getThpjTemplateCode(String pjCode);
 
     List<Map<String, Object>> getPjzb(@Param("templateCode") String templateCode);
+
+    Thpj getThpjInfo(@Param("pjCode") String pjCode);
+
+    List<Map<String,Object>> getThpjItemList(@Param("relationCode") String relationCode);
+
+    boolean insert(Thpj thpj);
+
+    boolean insertTarget(@Param("relationCode") String relationCode, @Param("templateCode") String templateCode
+            , @Param("pjSetTargetList") List<PjSetTarget> pjSetTargetList, @Param("paramMap") Map<String, Object> paramMap);
+
+    boolean deleteItems(@Param("relationCode") String relationCode);
 
     /*
    同行评教-比较评价
     */
     Integer isTopFull(@Param("userId") String userId);
 
-    boolean submit(@Param("code") String code);
+    boolean submit(@Param("pjCode") String pjCode);
 
-    boolean resetSubmit(@Param("code") String code);
+    boolean resetSubmit(@Param("pjCode") String pjCode);
 }
