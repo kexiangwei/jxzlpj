@@ -2,9 +2,9 @@ package com.mycode.jxzlpj.jiaoxueyanjiu.jiaogailunwen.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.file.domain.FileInfo;
-import com.mycode.file.mapper.FileMapper;
-import com.mycode.shenheSet.mapper.ShenHeMapper;
+import com.mycode.common.file.domain.FileInfo;
+import com.mycode.common.file.mapper.FileMapper;
+import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaogailunwen.domian.JiaoGaiLunWen;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaogailunwen.mapper.JiaoGaiLunWenMapper;
 import com.mycode.util.StringUtils;

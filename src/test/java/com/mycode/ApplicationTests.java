@@ -14,19 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ApplicationTests {
 
     @Test
-    public void test() {
-        Map<String,Object> map = new ConcurrentHashMap<>();
-        map.put("a",1);
-        map.put("b",2);
-        map.put("c",3);
-        map.forEach((k,v) -> {
-            if("b".equals(k)){
-                map.remove(k);
-            }
-        });
-        map.forEach((k,v) -> System.out.println(k));
-    }
-    @Test
     public void contextLoads() {
 
         for (int i = 0; i < 10; i++) {
@@ -38,6 +25,20 @@ public class ApplicationTests {
             System.out.println(i);
         }
         System.out.println("test");
+    }
+
+    @Test
+    public void test() {
+        Map<String,Object> map = new ConcurrentHashMap<>();
+        map.put("a",1);
+        map.put("b",2);
+        map.put("c",3);
+        map.forEach((k,v) -> {
+            if("b".equals(k)){
+                map.remove(k);
+            }
+        });
+        map.forEach((k,v) -> System.out.println(k));
     }
 
 }

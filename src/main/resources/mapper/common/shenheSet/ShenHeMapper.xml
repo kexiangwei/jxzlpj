@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mycode.common.shenheSet.mapper.ShenHeMapper">
+
+    <select id="getShenheByRelationCode" resultType="com.mycode.common.shenheSet.domain.ShenHe">
+        SELECT * from COMMON_SHENHE where relation_code = #{relationCode} order by batch_num
+    </select>
+
+    <select id="getShenheItem" resultType="com.mycode.common.shenheSet.domain.ShenHeItem">
+        SELECT * FROM COMMON_SHENHE_ITEM where relation_code = #{relationCode} and batch_num = #{batchNum} ORDER BY CREATE_DATE
+    </select>
+
+    <select id="getActiveShenheCode" resultType="string">
+        select shenhe_code from COMMON_SHENHE_SET where menu_id = #{menuId} and status = 1
+    </select>
+
+    <update id="batchSubimt">
+        insert all
+        <foreach collection ="objList" item="obj" index= "idx">
+            into COMMON_SHENHE
+            (shenhe_code,relation_code,batch_num,status,user_id,USER_NAME,create_date)
+            values
+            (#{obj.shenheCode},#{obj.code},#{obj.batchNum},'审核中',#{obj.userId},#{obj.userName},CURRENT_DATE)
+        </foreach>
+        select 1 from dual
+    </update>
+
+    <select id="getShenheNode" resultType="com.mycode.common.shenheSet.domain.ShenHeNode">
+        SELECT sn.*
+        from ${viewName} v
+        LEFT JOIN COMMON_SHENHE_NODE sn ON sn.shenhe_code = v.shenhe_code
+        LEFT JOIN sys_user_role ur ON ur.role_id = sn.role_id
+        where code = #{relationCode} and ur.user_id = #{userId}
+    </select>
+
+    <insert id="toShenhe">
+        insert into COMMON_SHENHE_ITEM
+        (relation_code,batch_num,shenhe_type,status,opinion,node_code,node_name,user_id,USER_NAME,create_date)
+        values
+        (#{relationCode},#{batchNum},#{shenheType,jdbcType=VARCHAR},#{status},#{opinion},#{nodeCode},#{nodeName},#{userId},#{userName},CURRENT_DATE)
+    </insert>
+
+    <insert id="toZjShenhe">
+        INSERT INTO COMMON_SHENHE_ZJSH
+        (XM_CODE,BATCH_NUM,STATUS,OPINION,USER_ID,USER_NAME,CREATE_DATE)
+        VALUES
+        (#{relationCode},#{batchNum},#{status},#{opinion},#{userId},#{userName},CURRENT_DATE)
+    </insert>
+
+    <select id="isShenhePass" resultType="int">
+        SELECT (case when total_num = exec_num then 1 else 0 end) isPass
+        from (
+            SELECT v.code,v.batch_num
+            ,count(sn.node_code) total_num
+            ,count(item.node_code) exec_num
+            from ${viewName} v
+            left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+            left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+            WHERE v.code = #{relationCode} and v.batch_num = #{batchNum}
+            GROUP BY v.code,v.batch_num
+        )t
+    </select>
+
+    <update id="changeStatus">
+        update COMMON_SHENHE set status = #{status} where relation_code = #{relationCode} and batch_num = #{batchNum}
+    </update>
+
+    <select id="getNotShenHeNum" resultType="int">
+        <choose>
+            <when test="isZjshAccount == 1">
+                SELECT NVL(sum(case when ZJ.CREATE_DATE is null then 1 else 0 end), 0)
+                FROM ${viewName} ct
+                LEFT JOIN COMMON_SHENHE_ITEM it on IT.RELATION_CODE = ct.code
+                LEFT JOIN COMMON_SHENHE_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM  and ZJ.USER_ID = #{shenHeUserId}
+                where IT.SHENHE_TYPE = '初审' and IT.STATUS = '通过'
+            </when>
+            <when test="jwcGly == 1">
+                SELECT NVL(sum(case when shenhe_status_first = '未审核' or shenhe_status_final = '未审核' then 1 else 0 end), 0)
+                FROM (
+                    SELECT (case when exec_num = exec_level and v.status = '未通过' then '未通过'
+                        when exec_num = exec_level and v.status = '退回' then '退回'
+                        when exec_num >= exec_level then '通过' else '未审核' end ) shenhe_status_first
+                        ,(case when exec_num > exec_level then v.status
+                        when exec_num = exec_level and (v.status = '未通过' or v.status = '退回') then ''
+                        when exec_num = exec_level and isZjshAll =1 then '未审核' else '待审核' end ) shenhe_status_final
+                    from (
+                        SELECT v.code,v.batch_num
+                            ,count(sn.node_code) total_num
+                            ,count(item.node_code) exec_num
+                            ,max(case when item.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                            ,max(NVL(isZjshAll, 0)) isZjshAll
+                        from ${viewName} v
+                        left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                        left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                        LEFT JOIN (
+                            SELECT xm_code,BATCH_NUM
+                            ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = 3) then 1 else 0 end) isZjshAll
+                            from COMMON_SHENHE_ZJSH
+                            GROUP BY xm_code,BATCH_NUM
+                        ) zj on zj.xm_code = v.code and zj.batch_num = v.batch_num
+                        GROUP BY v.code,v.batch_num
+                    )t left join ${viewName} v on v.code = t.code and v.batch_num = t.batch_num
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                    left join sys_user_role ur on ur.role_id = sn.role_id
+                    where 1=1
+                        and exec_num >= exec_level-1
+                        and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end)
+                        and ur.user_id = #{shenHeUserId}
+                )
+            </when>
+            <otherwise>
+                SELECT count(0)
+                from (
+                    SELECT j.code,j.batch_num
+                        ,count(sn.node_code) total_num
+                        ,count(item.node_code) exec_num
+                        ,max(case when item.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                    from ${viewName} j
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+                    left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+                    group by j.code,j.batch_num
+                )t
+                left join ${viewName} j on j.code = t.code and j.batch_num = t.batch_num
+                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
+                left join sys_user_role ur on ur.role_id = sn.role_id
+                where 1=1
+                    and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
+                    and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end) -- 排除上一级审核状态为“未通过”，“退回”的数据
+                    and exec_level > exec_num
+                    and ur.user_id = #{shenHeUserId}
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getZjshProcess" resultType="com.mycode.common.shenheSet.domain.ZjshItem">
+        SELECT * FROM COMMON_SHENHE_ZJSH WHERE XM_CODE = #{xmCode} AND BATCH_NUM = #{batchNum}
+    </select>
+
+    <select id="isZjshAll" resultType="java.lang.Integer">
+        SELECT case when count(ZJSH.USER_ID) = count(ZJ.USER_ID) then 1 else 0 end as isZjshAll
+        FROM (SELECT * FROM SYS_USER_ROLE where role_id = 3) zj
+        LEFT JOIN (
+          SELECT * FROM COMMON_SHENHE_ZJSH WHERE XM_CODE = #{relationCode} AND BATCH_NUM = #{batchNum}
+        ) zjsh on ZJSH.USER_ID = ZJ.USER_ID
+    </select>
+</mapper>
+

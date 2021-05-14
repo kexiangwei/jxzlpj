@@ -2,7 +2,6 @@ package com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.common.common.domain.Course;
 import com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg;
 import com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.mapper.KczlfxbgMapper;
 import org.springframework.beans.factory.annotation.Autowired;

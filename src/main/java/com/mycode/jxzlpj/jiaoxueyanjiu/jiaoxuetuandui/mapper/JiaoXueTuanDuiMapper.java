@@ -1,7 +1,7 @@
 package com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.mapper;
 
-import com.mycode.shenheSet.domain.ShenHeItem;
-import com.mycode.shenheSet.domain.ZjshItem;
+import com.mycode.common.shenheSet.domain.ShenHeItem;
+import com.mycode.common.shenheSet.domain.ZjshItem;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;

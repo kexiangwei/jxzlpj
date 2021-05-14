@@ -2,9 +2,9 @@ package com.mycode.jxzlpj.jiaoxuesheji.skjh.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.mycode.shenheSet.domain.ShenHeItem;
-import com.mycode.shenheSet.domain.ShenHeNode;
-import com.mycode.shenheSet.mapper.ShenHeMapper;
+import com.mycode.common.shenheSet.domain.ShenHeItem;
+import com.mycode.common.shenheSet.domain.ShenHeNode;
+import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.jxzlpj.jiaoxuesheji.skjh.domian.Skjh;
 import com.mycode.jxzlpj.jiaoxuesheji.skjh.domian.SkjhItem;
 import com.mycode.jxzlpj.jiaoxuesheji.skjh.mapper.SkjhMapper;

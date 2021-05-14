@@ -4,7 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.jxzlpj.shaungchuangjiaoyu.zdxscjcyxm.domian.Zdxscjcyxm;
 import com.mycode.jxzlpj.shaungchuangjiaoyu.zdxscjcyxm.mapper.ZdxscjcyxmMapper;
-import com.mycode.shenheSet.mapper.ShenHeMapper;
+import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

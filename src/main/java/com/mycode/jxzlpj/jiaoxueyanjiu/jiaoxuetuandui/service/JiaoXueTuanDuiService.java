@@ -1,6 +1,6 @@
 package com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.service;
 
-import com.mycode.shenheSet.domain.ShenHeItem;
+import com.mycode.common.shenheSet.domain.ShenHeItem;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;

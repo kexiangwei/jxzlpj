@@ -1,6 +1,5 @@
 package com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.mapper;
 
-import com.mycode.common.common.domain.Course;
 import com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

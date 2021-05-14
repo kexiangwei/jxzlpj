@@ -4,7 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMuProvince;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuProvinceMapper;
-import com.mycode.shenheSet.mapper.ShenHeMapper;
+import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

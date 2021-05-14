@@ -1,8 +1,8 @@
 package com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.mycode.shenheSet.domain.ShenHeItem;
-import com.mycode.shenheSet.service.ShenHeService;
+import com.mycode.common.shenheSet.domain.ShenHeItem;
+import com.mycode.common.shenheSet.service.ShenHeService;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.domain.JiaoXueTuanDui;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShen;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.domain.PingShenTemplate;
