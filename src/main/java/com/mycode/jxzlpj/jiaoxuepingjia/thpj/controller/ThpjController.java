@@ -104,4 +104,16 @@ public class ThpjController {
         }
         return JsonResult.success("提交成功",null);
     }
+
+    /**
+     * 查看评教
+     * @param thpj
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/ckpj.do")
+    public JsonResult<Object> ckpj(Thpj thpj){
+        Map<String,Object> resultMap = thpjService.ckpj(thpj);
+        return JsonResult.success(resultMap);
+    }
 }

@@ -40,4 +40,6 @@ public interface ThpjMapper {
     boolean submit(@Param("pjCode") String pjCode);
 
     boolean resetSubmit(@Param("pjCode") String pjCode);
+
+    List<Map<String,Object>> ckpj(Thpj thpj);
 }

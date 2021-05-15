@@ -21,6 +21,8 @@ public class Thpj {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
+    private  String accountType;
+
     //评审状态
     private Integer isPj; //是否评教，1是2否
     private String pjCode; //评教编号

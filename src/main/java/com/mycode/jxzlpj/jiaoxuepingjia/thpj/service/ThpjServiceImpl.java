@@ -107,4 +107,14 @@ public class ThpjServiceImpl implements ThpjService {
     public boolean submit(String pjCode) {
         return thpjMapper.submit(pjCode);
     }
+
+    @Override
+    public Map<String, Object> ckpj(Thpj thpj) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Page<Object> pageInfo = PageHelper.startPage(thpj.getPageIndex(), thpj.getPageSize());
+        List<Map<String,Object>> pageList = thpjMapper.ckpj(thpj);
+        resultMap.put("totalNum", pageInfo.getTotal());
+        resultMap.put("pageList", pageList);
+        return resultMap;
+    }
 }

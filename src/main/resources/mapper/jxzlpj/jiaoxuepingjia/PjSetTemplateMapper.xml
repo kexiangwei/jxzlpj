@@ -21,7 +21,7 @@
                 ,(case when pj.template_code is not null then 1 else 2 end) is_use
                 from JXPJ_PJSET_TEMPLATE t
                 LEFT JOIN (
-                    SELECT DISTINCT template_code FROM JXPJ_THPJ
+                    SELECT DISTINCT template_code FROM JXPJ_THPJ_ITEM
                     UNION
                     SELECT DISTINCT template_code FROM JXPJ_XSPJ_DFPJ_ITEM
                     UNION

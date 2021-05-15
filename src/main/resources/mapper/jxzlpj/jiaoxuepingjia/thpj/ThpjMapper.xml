@@ -175,4 +175,23 @@
     <update id="resetSubmit">
         UPDATE JXPJ_THPJ set IS_SUBMIT = 2 where CODE = #{pjCode}
     </update>
+
+    <select id="ckpj" resultType="java.util.Map">
+        SELECT js.USER_ID as "userId"
+        ,js.USER_NAME as "userName"
+        , sum(case when PJ.USER_ID = js.USER_ID then 1 else 0 end) as "pjNum"
+        , sum(case when PJ.skjs_code = js.USER_ID then 1 else 0 end) as "bpNum"
+        FROM SYS_DATA_JS js LEFT JOIN JXPJ_THPJ pj on PJ.USER_ID = js.USER_ID or PJ.skjs_code = js.USER_ID
+        WHERE 1=1
+        <if test="accountType == 'teacher'">
+            and js.USER_ID = #{userId}
+        </if>
+        <if test="skjsCode !=null and skjsCode !=''">
+            and js.USER_ID = #{skjsCode}
+        </if>
+        <if test="skjsName !=null and skjsName !=''">
+            and js.USER_NAME like concat(concat('%',#{skjsName}),'%')
+        </if>
+        GROUP BY js.USER_ID,js.USER_NAME
+    </select>
 </mapper>

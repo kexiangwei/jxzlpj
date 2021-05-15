@@ -29,4 +29,6 @@ public interface ThpjService {
     Integer isTopFull(String userId);
 
     boolean submit(String pjCode);
+
+    Map<String, Object> ckpj(Thpj thpj);
 }

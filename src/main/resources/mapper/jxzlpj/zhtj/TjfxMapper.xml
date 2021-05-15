@@ -68,7 +68,7 @@
 		,nvl(sum(jxsg.jxsg_total_num),0) jxsg_total_num,nvl(sum(jxsg.jxsg_zdsg),0) jxsg_zdsg,nvl(sum(jxsg.jxsg_ybsg),0) jxsg_ybsg,nvl(sum(jxsg.jxsg_gs),0) jxsg_gs,nvl(sum(jxsg.jxsg_fmqd),0) jxsg_fmqd
 		-- 同行评教
 		,count(thpj.user_id) thpj_pj_rs ,nvl(sum(thpj.total_num),0) thpj_pj_rc, nvl(ROUND(AVG(thpj.avg_score), 2),0) thpj_avg_score
-		,count(thpj2.TEACHER_CODE) thpj2_pj_rs ,nvl(sum(thpj2.total_num),0) thpj2_pj_rc, nvl(ROUND(AVG(thpj2.avg_score),2),0) thpj2_avg_score
+		,count(thpj2.SKJS_CODE) thpj2_pj_rs ,nvl(sum(thpj2.total_num),0) thpj2_pj_rc, nvl(ROUND(AVG(thpj2.avg_score),2),0) thpj2_avg_score
 		,nvl(sum(thpj3.kc_num),0) thpj3_1 ,nvl(sum(thpj3.pj_num),0) thpj3_2
 		-- 学生评教
 		,nvl(sum(xspj1.pop_num),0) xspj1_pj_rs ,nvl(sum(xspj1.pj_num),0) xspj1_pj_rc, nvl(ROUND(AVG(xspj1.avg_score), 2),0) xspj1_avg_score
@@ -220,29 +220,29 @@
 				SELECT USER_ID,count(USER_ID) total_num ,AVG(total_score) avg_score
 				from JXPJ_THPJ t
 				LEFT JOIN (
-						SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
+						SELECT RELATION_CODE,sum(SCORE) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
 				) t2 on T2.RELATION_CODE = t.code
 				GROUP BY USER_ID
 		) thpj on thpj.USER_ID = u.USER_ID
 		LEFT JOIN (
 				-- 被评价人信息
-				SELECT TEACHER_CODE,count(TEACHER_CODE) total_num ,AVG(total_score) avg_score
+				SELECT SKJS_CODE,count(SKJS_CODE) total_num ,AVG(total_score) avg_score
 				from JXPJ_THPJ t
 				LEFT JOIN (
-						SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
+						SELECT RELATION_CODE,sum(SCORE) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
 				) t2 on T2.RELATION_CODE = t.code
-				GROUP BY TEACHER_CODE
-		) thpj2 on thpj2.TEACHER_CODE = u.USER_ID
+				GROUP BY SKJS_CODE
+		) thpj2 on thpj2.SKJS_CODE = u.USER_ID
 		LEFT JOIN (
 				-- 课程信息
-				SELECT TEACHER_CODE,count(COURSE_CODE) kc_num,sum(total_num) pj_num
+				SELECT SKJS_CODE,count(COURSE_CODE) kc_num,sum(total_num) pj_num
 				FROM (
-					SELECT TEACHER_CODE,COURSE_CODE,count(COURSE_CODE) total_num
+					SELECT SKJS_CODE,COURSE_CODE,count(COURSE_CODE) total_num
 					from JXPJ_THPJ
-					GROUP BY TEACHER_CODE,COURSE_CODE
+					GROUP BY SKJS_CODE,COURSE_CODE
 				) t
-				GROUP BY TEACHER_CODE
-		) thpj3 on thpj3.TEACHER_CODE = u.USER_ID
+				GROUP BY SKJS_CODE
+		) thpj3 on thpj3.SKJS_CODE = u.USER_ID
 		-- 学生评教
 		LEFT JOIN (
 				-- 评价人信息
