@@ -14,7 +14,7 @@ public class Kczlfxbg {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-    private Integer isBg; //是否填写报告1是2否
+    private Integer isTxbg; //是否填写报告1是2否
     private String bgCode; //若已填写则把报告编号返回
 
     private String code //业务编号
@@ -25,8 +25,8 @@ public class Kczlfxbg {
             ,xq //学期
             ,xyName //开课学院（部）
             ,zyName //系（教研室）
-            ,skJs //授课教师：填写该课程的所有讲授教师
-            ,skBj; //授课班级：公共选修课无需填写授课班级
+            ,skjsAll //授课教师：填写该课程的所有讲授教师
+            ,skbjAll; //授课班级：公共选修课无需填写授课班级
 
     //二、学生学习达成度分析
         //（一）考核情况分析

@@ -33,8 +33,9 @@ public class KczlfxbgServiceImpl implements KczlfxbgService {
     }
 
     @Override
-    public boolean insert(Kczlfxbg kczlfxbg) {
-        return kczlfxbgMapper.insert(kczlfxbg);
+    public boolean insert(Kczlfxbg bg) {
+        bg.setCode(bg.getXn() + ("3".equals(bg.getXq())?"03-":"12-") + bg.getCourseCode() + "-" + bg.getUserId());
+        return kczlfxbgMapper.insert(bg);
     }
 
     @Override

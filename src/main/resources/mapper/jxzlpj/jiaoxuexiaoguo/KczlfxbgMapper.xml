@@ -2,19 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.mapper.KczlfxbgMapper">
 
+    <!--
+    ORDER BY isTxbg 会报错：[Err] ORA-00904: "ISTXBG": invalid identifier
+    需要改为：ORDER BY "isTxbg"
+    -->
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg">
-        SELECT t2.COURSE_CODE,t2.COURSE_NAME,t2.COURSE_ATTR,t2.XY_NAME,t2.ZY_NAME,t2.XN,t2.XQ,wm_concat(js.user_name) sk_js, t2.sk_bj
-        ,max(case when bg.COURSE_CODE is not null then 1 else 2 end) is_bg, max(bg.code) bg_code
-        FROM SYS_DATA_JSRK t1
-        LEFT JOIN SYS_DATA_KC t2 ON T2.COURSE_CODE = T1.COURSE_CODE
-        LEFT JOIN SYS_DATA_JS js on js.user_id = t1.USER_ID
-        LEFT JOIN JXXG_KCZLFXBG bg on bg.COURSE_CODE = T2.COURSE_CODE
-        <where>
-            <if test="courseName != null and courseName != ''">
-                and t2.COURSE_NAME like concat(concat('%',#{courseName}),'%')
-            </if>
-        </where>
-        GROUP BY t2.COURSE_CODE,t2.COURSE_NAME,t2.COURSE_ATTR,t2.XY_NAME,t2.ZY_NAME,t2.XN,T2.XQ, T2.SK_BJ
+        SELECT * FROM (
+            SELECT DISTINCT kc.course_code, kc.course_name, kc.course_attr, kc.XN, kc.XQ, kc.xy_name, kc.zy_name
+            , wm_concat(DISTINCT kc.SKJS_NAME) as "skjsAll", wm_concat(DISTINCT kc.sk_bj) as "skbjAll"
+            , max(case when bg.COURSE_CODE is not null then 1 else 2 end) as "isTxbg", max(bg.code) as "bgCode"
+            FROM SYS_DATA_XNXQ t
+            LEFT JOIN SYS_DATA_JSRK rk on rk.XN = t.XN and rk.XQ = t.XQ
+            LEFT JOIN SYS_DATA_JS js on js.USER_ID = rk.USER_ID
+            LEFT JOIN SYS_DATA_KC kc on kc.course_code = rk.course_code and kc.XN = rk.XN and KC.XQ = rk.XQ and kc.SKJS_CODE = rk.USER_ID
+            LEFT JOIN JXXG_KCZLFXBG bg on bg.course_code = kc.course_code and bg.XN = kc.XN and bg.XQ = kc.XQ
+            <where> (current_date - interval '1' year) between begin_date and end_date
+                <if test="courseName != null and courseName != ''">
+                    and kc.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+                </if>
+            </where>
+            GROUP BY kc.course_code, kc.course_name, kc.course_attr, kc.XN, kc.XQ, kc.xy_name, kc.zy_name
+            ORDER BY kc.course_code
+        ) t ORDER BY "isTxbg"
     </select>
 
     <resultMap id="resultMap" type="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg">
@@ -115,8 +124,7 @@
     </select>
 
     <insert id="insert">
-          insert into JXXG_KCZLFXBG
-          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, XN, XQ, XY_NAME, ZY_NAME, SK_JS, SK_BJ
+          insert into JXXG_KCZLFXBG (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, XN, XQ, XY_NAME, ZY_NAME, SKJS_ALL, SKBJ_ALL
           , B1_1_1, B1_1_2, B1_1_3, B1_1_4_1, B1_1_4_2, B1_1_5
           , B1_1_6_1, B1_1_6_2, B1_1_6_3, B1_1_6_4, B1_1_6_5, B1_1_6_6, B1_1_6_7
           , B1_1_7_1, B1_1_7_2, B1_1_7_3, B1_1_7_4, B1_1_7_5, B1_1_7_6, B1_1_7_7
@@ -133,8 +141,7 @@
           , B2_1, B2_2, B2_3, B2_4, B2_5, B2_6, B2
           , C1_1, C1_2, C1_3, C1_4, C1_5, C1_6, C1_7, C1_8, C1_9, C1, C2, D1, D2
           , USER_ID, USER_NAME, CREATE_DATE)
-          values
-          (#{code},#{courseCode},#{courseName},#{courseAttr},#{xn},#{xq},#{xyName},#{zyName},#{skJs},#{skBj}
+          values (#{code},#{courseCode},#{courseName},#{courseAttr},#{xn},#{xq},#{xyName},#{zyName},#{skjsAll},#{skbjAll}
             ,#{b1_1_1},#{b1_1_2},#{b1_1_3},#{b1_1_4_1},#{b1_1_4_2},#{b1_1_5}
             ,#{b1_1_6_1},#{b1_1_6_2},#{b1_1_6_3},#{b1_1_6_4},#{b1_1_6_5},#{b1_1_6_6},#{b1_1_6_7}
             ,#{b1_1_7_1},#{b1_1_7_2},#{b1_1_7_3},#{b1_1_7_4},#{b1_1_7_5},#{b1_1_7_6},#{b1_1_7_7}
