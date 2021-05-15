@@ -9,15 +9,16 @@
         SELECT DISTINCT kc.XN, kc.XQ, kc.course_code, kc.course_name, kc.course_attr
         , kc.SKJS_CODE, kc.SKJS_NAME, js.XY_NAME as "skjsXy", js.ZY_NAME as "skjsZy", kc.SK_SJ, kc.SK_DD, kc.sk_bj
         ,(case when pj.code is not null then 1 else 2 end) as "isPj",	pj.code as "pjCode", pj.is_submit
-        -- ,(case when pj2.total_score >= 90 then 1 else 2 end) as "isGte90"
+        ,(case when pj2.total_score >= 90 then 1 else 2 end) as "isTop"
         FROM SYS_DATA_XNXQ t
         LEFT JOIN SYS_DATA_JSRK rk on rk.XN = t.XN and rk.XQ = t.XQ
         LEFT JOIN SYS_DATA_JS js on js.USER_ID = rk.USER_ID
         LEFT JOIN SYS_DATA_KC kc on kc.course_code = rk.course_code and kc.XN = rk.XN and KC.XQ = rk.XQ and kc.SKJS_CODE = rk.USER_ID
-        LEFT JOIN JXPJ_THPJ_DFPJ pj on pj.XN = kc.XN and pj.XQ = kc.XQ and pj.course_code = rk.course_code and pj.SKJS_CODE = rk.USER_ID and pj.skbj = kc.sk_bj and pj.user_id = #{userId}
-        -- LEFT JOIN (
-        -- 		SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
-        -- ) pj2 on pj2.RELATION_CODE = pj.code
+        LEFT JOIN JXPJ_THPJ pj on pj.XN = kc.XN and pj.XQ = kc.XQ and pj.course_code = rk.course_code and pj.SKJS_CODE = rk.USER_ID and pj.skbj = kc.sk_bj
+        and pj.pj_type = #{pjType} and pj.user_id = #{userId}
+        LEFT JOIN (
+            SELECT RELATION_CODE,sum(score) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
+        ) pj2 on pj2.RELATION_CODE = pj.code
         <where> (current_date - interval '1' year) between begin_date and end_date
             AND rk.USER_ID != #{userId}
             <if test="courseXy !=null and courseXy !=''">
@@ -88,10 +89,11 @@
                 and pj.is_submit = #{isSubmit}
             </if>
         </where>
+        ORDER BY pj.code
     </select>
 
     <select id="getThpjTemplateCode" resultType="java.lang.String">
-        select distinct template_code from jxpj_thpj_dfpj_item where relation_code = #{pjCode}
+        select distinct template_code from JXPJ_THPJ_item where relation_code = #{pjCode}
     </select>
 
     <!--
@@ -110,24 +112,24 @@
     </select>
 
     <select id="getThpjInfo" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Thpj">
-        SELECT * FROM JXPJ_THPJ_DFPJ where CODE = #{pjCode}
+        SELECT * FROM JXPJ_THPJ where CODE = #{pjCode}
     </select>
     <select id="getThpjItemList" resultType="java.util.Map">
         select NVL(TARGET_CODE,'totalScore') as "targetCode"
         ,sum(SCORE) as "score"
-        from JXPJ_THPJ_DFPJ_ITEM
+        from JXPJ_THPJ_ITEM
         where RELATION_CODE = #{relationCode}
         GROUP BY rollup(TARGET_CODE)
     </select>
 
     <insert id="insert">
-        insert into JXPJ_THPJ_DFPJ
-        (CODE, XN, XQ, COURSE_CODE, COURSE_NAME, COURSE_ATTR, SKJS_CODE, SKJS_NAME, SKJS_XY, SKBJ
+        insert into JXPJ_THPJ
+        (CODE,PJ_TYPE, XN, XQ, COURSE_CODE, COURSE_NAME, COURSE_ATTR, SKJS_CODE, SKJS_NAME, SKJS_XY, SKBJ
         , TEACH_WEEK, WEEK_NUM, LESSON_NUM, SKDD, STU_YD, STU_SD, STU_CD, STU_QK
         , TEACHER_DP1, TEACHER_DP2, STUDENT_DP1, STUDENT_DP2, CLASSROOM_DP, USER_ID, USER_NAME, IS_SUBMIT, CREATE_DATE)
         values
         (
-        #{code},#{xn},#{xq},#{courseCode},#{courseName},#{courseAttr},#{skjsCode},#{skjsName},#{skjsXy},#{skBj}
+        #{code},#{pjType},#{xn},#{xq},#{courseCode},#{courseName},#{courseAttr},#{skjsCode},#{skjsName},#{skjsXy},#{skBj}
         ,#{teachWeek},#{weekNum},#{lessonNum},#{skDd},#{stuYd},#{stuSd},#{stuCd},#{stuQk}
         ,#{teacherDp1},#{teacherDp2},#{studentDp1},#{studentDp2},#{classroomDp},#{userId},#{userName},2,CURRENT_DATE
         )
@@ -137,7 +139,7 @@
         <foreach collection="pjSetTargetList" index="idx" item="obj">
             <foreach collection="paramMap" index="key"  item="val">
                 <if test="key == obj.targetCode">
-                    INTO JXPJ_THPJ_DFPJ_ITEM (RELATION_CODE, TEMPLATE_CODE, TARGET_CODE, SCORE) VALUES (#{relationCode},#{templateCode},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
+                    INTO JXPJ_THPJ_ITEM (RELATION_CODE, TEMPLATE_CODE, TARGET_CODE, SCORE) VALUES (#{relationCode},#{templateCode},#{key,jdbcType=VARCHAR},#{val,jdbcType=VARCHAR})
                 </if>
             </foreach>
         </foreach>
@@ -145,7 +147,7 @@
     </insert>
 
     <delete id="deleteItems">
-        delete from JXPJ_THPJ_DFPJ_ITEM where RELATION_CODE = #{relationCode}
+        delete from JXPJ_THPJ_ITEM where RELATION_CODE = #{relationCode}
     </delete>
 
     <!--
@@ -153,22 +155,24 @@
     -->
     <select id="isTopFull" resultType="java.lang.Integer">
         SELECT (case when pj_num = 0 then 2
-            when pj_num = 1 and top_num = 0 then 2
-            when pj_num = 1 and top_num = 1 then 1
-            when ROUND(pj_num*0.3) = top_num then 1 else 2 end) is_top_full
+		    when pj_num = 1 and top_num = 0 then 2
+		    when pj_num = 1 and top_num = 1 then 1
+		    when ROUND(pj_num*0.3) = top_num then 1 else 2 end) is_top_full
         FROM(
             SELECT count(t.code) pj_num
             , NVL(sum(case when total_score >= 90 then 1 else 0 end), 0) top_num
             FROM JXPJ_THPJ t
-            LEFT JOIN (SELECT RELATION_CODE,sum(ANSWER) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE) t2 on T2.RELATION_CODE = t.code
-            where is_submit = 1 and USER_ID = #{userId}
+            LEFT JOIN (
+                SELECT RELATION_CODE,sum(SCORE) total_score FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
+            ) t2 on T2.RELATION_CODE = t.code
+            where PJ_TYPE = 2 and is_submit = 1 and USER_ID = #{userId}
         )t
     </select>
 
     <update id="submit">
-        UPDATE JXPJ_THPJ_DFPJ set IS_SUBMIT = 1 where CODE = #{pjCode}
+        UPDATE JXPJ_THPJ set IS_SUBMIT = 1 where CODE = #{pjCode}
     </update>
     <update id="resetSubmit">
-        UPDATE JXPJ_THPJ_DFPJ set IS_SUBMIT = 2 where CODE = #{pjCode}
+        UPDATE JXPJ_THPJ set IS_SUBMIT = 2 where CODE = #{pjCode}
     </update>
 </mapper>

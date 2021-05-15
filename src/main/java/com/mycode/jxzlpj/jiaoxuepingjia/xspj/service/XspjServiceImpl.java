@@ -37,7 +37,7 @@ public class XspjServiceImpl implements XspjService {
     @Override
     @Transactional
     public boolean insert(Xspj xspj, String jsonString) {
-        xspj.setCode(xspj.getXn() + ("3".equals(xspj.getXq())?"-03-":"-12-") + xspj.getCourseCode() + "-"+ xspj.getUserId());
+        xspj.setCode(xspj.getXn() + ("3".equals(xspj.getXq())?"03-":"12-") + xspj.getCourseCode() + "-"+ xspj.getUserId());
         boolean bool = xspjMapper.insert(xspj);
         if(bool){
             Map<String,Object> paramMap = JSON.parseObject(jsonString, Map.class);
@@ -67,7 +67,7 @@ public class XspjServiceImpl implements XspjService {
         JSONObject pjSuggestJson = JSON.parseObject(xspj.getPjSuggestJsonString());
         for (Map.Entry<String, Object> pjSuggest : pjSuggestJson.entrySet()) {
             Map<String,Object> map = new HashMap<>();
-            map.put("code",xspj.getXn() + ("3".equals(xspj.getXq())?"-03-":"-12-") + pjSuggest.getKey() + "-" + xspj.getUserId());
+            map.put("code",xspj.getXn() + ("3".equals(xspj.getXq())?"03-":"12-") + pjSuggest.getKey() + "-" + xspj.getUserId());
             map.put("xn",xspj.getXn());
             map.put("xq",xspj.getXq());
             map.put("courseCode",pjSuggest.getKey());
@@ -87,7 +87,7 @@ public class XspjServiceImpl implements XspjService {
                 JSONArray arr = JSONArray.parseArray(jsonObject.getString("arr"));
                 for (int i = 0; i < arr.size(); i++) {
                     Map<String,Object> map = new HashMap<>();
-                    map.put("relationCode",xspj.getXn() + ("3".equals(xspj.getXq())?"-03-":"-12-") + arr.getString(i) + "-" + xspj.getUserId());
+                    map.put("relationCode",xspj.getXn() + ("3".equals(xspj.getXq())?"03-":"12-") + arr.getString(i) + "-" + xspj.getUserId());
                     map.put("templateCode",xspj.getTemplateCode());
                     map.put("targetCode",targetCode);
                     //计算每道题的得分 = 每道题的分值/2 + 每道题的分值/2 * (课程总数 - 课程排序后的序号 + 1) / 课程总数

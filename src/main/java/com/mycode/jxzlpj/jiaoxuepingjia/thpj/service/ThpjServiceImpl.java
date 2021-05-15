@@ -72,7 +72,7 @@ public class ThpjServiceImpl implements ThpjService {
     @Override
     @Transactional
     public boolean insert(Thpj thpj, String jsonString) {
-        thpj.setCode(thpj.getXn() + ("3".equals(thpj.getXq())?"-03-":"-12-") + thpj.getCourseCode() + "-" + thpj.getSkjsCode() + "-"+ thpj.getUserId());
+        thpj.setCode(thpj.getXn() + ("3".equals(thpj.getXq())?"03-":"12-") + thpj.getCourseCode() + "-" + thpj.getSkjsCode() + "-" + thpj.getUserId()+ "-" + thpj.getPjType());
         boolean bool = thpjMapper.insert(thpj);
         if(bool){
             List<PjSetTarget> pjSetTargetList = pjSetTemplateMapper.getPjSetTargetListByTemplateCode(thpj.getTemplateCode());

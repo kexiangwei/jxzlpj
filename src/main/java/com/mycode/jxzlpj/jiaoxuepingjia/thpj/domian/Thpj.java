@@ -24,8 +24,9 @@ public class Thpj {
     //评审状态
     private Integer isPj; //是否评教，1是2否
     private String pjCode; //评教编号
-    private Integer isSubmit //是否提交，1是2否
-            ,isGte90; //本次评分是否90分及以上，1是2否
+    private Integer pjType //评教类型，1打分评教，2比较评价
+            ,isSubmit //是否提交，1是2否
+            ,isTop; //本次评分是否90分及以上，1是2否
 
     private String code
             ,xn
