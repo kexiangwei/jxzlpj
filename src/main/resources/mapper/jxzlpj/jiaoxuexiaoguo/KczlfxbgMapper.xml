@@ -10,15 +10,32 @@
         SELECT * FROM (
             SELECT DISTINCT kc.course_code, kc.course_name, kc.course_attr, kc.XN, kc.XQ, kc.xy_name, kc.zy_name
             , wm_concat(DISTINCT kc.SKJS_NAME) as "skjsAll", wm_concat(DISTINCT kc.sk_bj) as "skbjAll"
-            , max(case when bg.COURSE_CODE is not null then 1 else 2 end) as "isTxbg", max(bg.code) as "bgCode"
+            , max(case when bg.COURSE_CODE is not null then 1 else 2 end) as "isTxbg", max(bg.code) as "bgCode", max(is_submit) as is_submit
             FROM SYS_DATA_XNXQ t
             LEFT JOIN SYS_DATA_JSRK rk on rk.XN = t.XN and rk.XQ = t.XQ
             LEFT JOIN SYS_DATA_JS js on js.USER_ID = rk.USER_ID
             LEFT JOIN SYS_DATA_KC kc on kc.course_code = rk.course_code and kc.XN = rk.XN and KC.XQ = rk.XQ and kc.SKJS_CODE = rk.USER_ID
-            LEFT JOIN JXXG_KCZLFXBG bg on bg.course_code = kc.course_code and bg.XN = kc.XN and bg.XQ = kc.XQ
-            <where> (current_date - interval '1' year) between begin_date and end_date
+        LEFT JOIN JXXG_KCZLFXBG bg on bg.course_code = kc.course_code and bg.course_name = kc.course_name and bg.course_attr = kc.course_attr
+            and bg.XN = kc.XN and bg.XQ = kc.XQ /*and bg.xy_name = kc.xy_name and bg.zy_name = kc.zy_name*/
+        <where> (current_date - interval '1' year) between begin_date and end_date
                 <if test="courseName != null and courseName != ''">
                     and kc.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+                </if>
+                <if test="isTxbg != null">
+                    <if test="isTxbg == 1">
+                        and bg.code is not null
+                    </if>
+                    <if test="isTxbg == 2">
+                        and bg.code is null
+                    </if>
+                </if>
+                <if test="isSubmit != null">
+                    <if test="isSubmit == 1">
+                        and bg.is_submit = 1
+                    </if>
+                    <if test="isSubmit == 2">
+                        and bg.is_submit = 2
+                    </if>
                 </if>
             </where>
             GROUP BY kc.course_code, kc.course_name, kc.course_attr, kc.XN, kc.XQ, kc.xy_name, kc.zy_name
@@ -122,7 +139,16 @@
     <select id="getKczlfxbg" resultMap="resultMap">
         select * from JXXG_KCZLFXBG where code = #{code}
     </select>
+    <select id="getKczlfxbgA1" resultType="java.util.Map">
+        SELECT * FROM JXXG_KCZLFXBG_A1 where RELATION_CODE = #{relationCode}
+    </select>
+    <select id="getKczlfxbgA2" resultType="java.util.Map">
+        SELECT * FROM JXXG_KCZLFXBG_A2 where RELATION_CODE = #{relationCode}
+    </select>
 
+    <!--
+    MyBatis 插入空值时，需要指定JdbcType ，否则会报错：org.mybatis.spring.MyBatisSystemException: nested exception is org.apache.ibatis.type.TypeException: Could not set parameters for mapping: ParameterMapping{property='b1_1_1', mode=IN, javaType=class java.lang.Object, jdbcType=null, numericScale=null, resultMapId='null', jdbcTypeName='null', expression='null'}. Cause: org.apache.ibatis.type.TypeException: Error setting null for parameter #11 with JdbcType OTHER . Try setting a different JdbcType for this parameter or a different jdbcTypeForNull configuration property. Cause: java.sql.SQLException: 无效的列类型: 1111
+    -->
     <insert id="insert">
           insert into JXXG_KCZLFXBG (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, XN, XQ, XY_NAME, ZY_NAME, SKJS_ALL, SKBJ_ALL
           , B1_1_1, B1_1_2, B1_1_3, B1_1_4_1, B1_1_4_2, B1_1_5
@@ -140,44 +166,370 @@
           , B1_4_3, B1_4_4, B1_4_5
           , B2_1, B2_2, B2_3, B2_4, B2_5, B2_6, B2
           , C1_1, C1_2, C1_3, C1_4, C1_5, C1_6, C1_7, C1_8, C1_9, C1, C2, D1, D2
-          , USER_ID, USER_NAME, CREATE_DATE)
-          values (#{code},#{courseCode},#{courseName},#{courseAttr},#{xn},#{xq},#{xyName},#{zyName},#{skjsAll},#{skbjAll}
-            ,#{b1_1_1},#{b1_1_2},#{b1_1_3},#{b1_1_4_1},#{b1_1_4_2},#{b1_1_5}
-            ,#{b1_1_6_1},#{b1_1_6_2},#{b1_1_6_3},#{b1_1_6_4},#{b1_1_6_5},#{b1_1_6_6},#{b1_1_6_7}
-            ,#{b1_1_7_1},#{b1_1_7_2},#{b1_1_7_3},#{b1_1_7_4},#{b1_1_7_5},#{b1_1_7_6},#{b1_1_7_7}
-            ,#{b1_1_8},#{b1_1_9},#{b1_1_10}
-            ,#{b1_2_1_1},#{b1_2_1_2},#{b1_2_1_3},#{b1_2_1_4},#{b1_2_1_5},#{b1_2_1_6},#{b1_2_1_7}
-            ,#{b1_2_2_1},#{b1_2_2_2},#{b1_2_2_3},#{b1_2_2_4},#{b1_2_2_5},#{b1_2_2_6},#{b1_2_2_7}
-            ,#{b1_2_3},#{b1_2_4},#{b1_2_5}
-            ,#{b1_3_1_1},#{b1_3_1_2},#{b1_3_1_3},#{b1_3_1_4},#{b1_3_1_5},#{b1_3_1_6},#{b1_3_1_7}
-            ,#{b1_3_2_1},#{b1_3_2_2},#{b1_3_2_3},#{b1_3_2_4},#{b1_3_2_5},#{b1_3_2_6},#{b1_3_2_7}
-            ,#{b1_3_3},#{b1_3_4},#{b1_3_5}
-            ,#{b1_4_1_1},#{b1_4_1_2},#{b1_4_1_3},#{b1_4_1_4},#{b1_4_1_5},#{b1_4_1_6},#{b1_4_1_7}
-            ,#{b1_4_2_1},#{b1_4_2_2},#{b1_4_2_3},#{b1_4_2_4},#{b1_4_2_5},#{b1_4_2_6},#{b1_4_2_7}
-            ,#{b1_4_3},#{b1_4_4},#{b1_4_5}
-            ,#{b2_1},#{b2_2},#{b2_3},#{b2_4},#{b2_5},#{b2_6},#{b2}
-            ,#{c1_1},#{c1_2},#{c1_3},#{c1_4},#{c1_5},#{c1_6},#{c1_7},#{c1_8},#{c1_9},#{c1},#{c2},#{d1},#{d2}
-          ,#{userId},#{userName},CURRENT_DATE)
+          , USER_ID, USER_NAME, IS_SUBMIT, CREATE_DATE)
+          values (#{code},#{courseCode},#{courseName,jdbcType=VARCHAR},#{courseAttr,jdbcType=VARCHAR},#{xn,jdbcType=VARCHAR},#{xq,jdbcType=VARCHAR},#{xyName,jdbcType=VARCHAR},#{zyName,jdbcType=VARCHAR},#{skjsAll,jdbcType=VARCHAR},#{skbjAll,jdbcType=VARCHAR}
+            ,#{b1_1_1,jdbcType=VARCHAR},#{b1_1_2,jdbcType=VARCHAR},#{b1_1_3,jdbcType=VARCHAR},#{b1_1_4_1,jdbcType=DOUBLE},#{b1_1_4_2,jdbcType=DOUBLE},#{b1_1_5,jdbcType=VARCHAR}
+            ,#{b1_1_6_1,jdbcType=INTEGER},#{b1_1_6_2,jdbcType=INTEGER},#{b1_1_6_3,jdbcType=INTEGER},#{b1_1_6_4,jdbcType=INTEGER},#{b1_1_6_5,jdbcType=INTEGER},#{b1_1_6_6,jdbcType=INTEGER},#{b1_1_6_7,jdbcType=INTEGER}
+            ,#{b1_1_7_1,jdbcType=INTEGER},#{b1_1_7_2,jdbcType=INTEGER},#{b1_1_7_3,jdbcType=INTEGER},#{b1_1_7_4,jdbcType=INTEGER},#{b1_1_7_5,jdbcType=INTEGER},#{b1_1_7_6,jdbcType=INTEGER},#{b1_1_7_7,jdbcType=INTEGER}
+            ,#{b1_1_8,jdbcType=INTEGER},#{b1_1_9,jdbcType=INTEGER},#{b1_1_10,jdbcType=VARCHAR}
+            ,#{b1_2_1_1,jdbcType=INTEGER},#{b1_2_1_2,jdbcType=INTEGER},#{b1_2_1_3,jdbcType=INTEGER},#{b1_2_1_4,jdbcType=INTEGER},#{b1_2_1_5,jdbcType=INTEGER},#{b1_2_1_6,jdbcType=INTEGER},#{b1_2_1_7,jdbcType=INTEGER}
+            ,#{b1_2_2_1,jdbcType=INTEGER},#{b1_2_2_2,jdbcType=INTEGER},#{b1_2_2_3,jdbcType=INTEGER},#{b1_2_2_4,jdbcType=INTEGER},#{b1_2_2_5,jdbcType=INTEGER},#{b1_2_2_6,jdbcType=INTEGER},#{b1_2_2_7,jdbcType=INTEGER}
+            ,#{b1_2_3,jdbcType=INTEGER},#{b1_2_4,jdbcType=INTEGER},#{b1_2_5,jdbcType=VARCHAR}
+            ,#{b1_3_1_1,jdbcType=INTEGER},#{b1_3_1_2,jdbcType=INTEGER},#{b1_3_1_3,jdbcType=INTEGER},#{b1_3_1_4,jdbcType=INTEGER},#{b1_3_1_5,jdbcType=INTEGER},#{b1_3_1_6,jdbcType=INTEGER},#{b1_3_1_7,jdbcType=INTEGER}
+            ,#{b1_3_2_1,jdbcType=INTEGER},#{b1_3_2_2,jdbcType=INTEGER},#{b1_3_2_3,jdbcType=INTEGER},#{b1_3_2_4,jdbcType=INTEGER},#{b1_3_2_5,jdbcType=INTEGER},#{b1_3_2_6,jdbcType=INTEGER},#{b1_3_2_7,jdbcType=INTEGER}
+            ,#{b1_3_3,jdbcType=INTEGER},#{b1_3_4,jdbcType=INTEGER},#{b1_3_5,jdbcType=VARCHAR}
+            ,#{b1_4_1_1,jdbcType=INTEGER},#{b1_4_1_2,jdbcType=INTEGER},#{b1_4_1_3,jdbcType=INTEGER},#{b1_4_1_4,jdbcType=INTEGER},#{b1_4_1_5,jdbcType=INTEGER},#{b1_4_1_6,jdbcType=INTEGER},#{b1_4_1_7,jdbcType=INTEGER}
+            ,#{b1_4_2_1,jdbcType=INTEGER},#{b1_4_2_2,jdbcType=INTEGER},#{b1_4_2_3,jdbcType=INTEGER},#{b1_4_2_4,jdbcType=INTEGER},#{b1_4_2_5,jdbcType=INTEGER},#{b1_4_2_6,jdbcType=INTEGER},#{b1_4_2_7,jdbcType=INTEGER}
+            ,#{b1_4_3,jdbcType=INTEGER},#{b1_4_4,jdbcType=INTEGER},#{b1_4_5,jdbcType=VARCHAR}
+            ,#{b2_1,jdbcType=VARCHAR},#{b2_2,jdbcType=VARCHAR},#{b2_3,jdbcType=VARCHAR},#{b2_4,jdbcType=VARCHAR},#{b2_5,jdbcType=VARCHAR},#{b2_6,jdbcType=VARCHAR},#{b2,jdbcType=VARCHAR}
+            ,#{c1_1,jdbcType=VARCHAR},#{c1_2,jdbcType=VARCHAR},#{c1_3,jdbcType=VARCHAR},#{c1_4,jdbcType=VARCHAR},#{c1_5,jdbcType=VARCHAR},#{c1_6,jdbcType=VARCHAR},#{c1_7,jdbcType=VARCHAR},#{c1_8,jdbcType=VARCHAR},#{c1_9,jdbcType=VARCHAR},#{c1,jdbcType=VARCHAR},#{c2,jdbcType=VARCHAR},#{d1,jdbcType=VARCHAR},#{d2,jdbcType=VARCHAR}
+            ,#{userId},#{userName},2,CURRENT_DATE)
+    </insert>
+    <insert id="insertA1">
+        insert all
+        <foreach collection="maplist" index="idx" item="map">
+            INTO JXXG_KCZLFXBG_A1 (RELATION_CODE, A1_1, A1_2, A1_3)
+            VALUES (
+                #{relationCode}
+                <foreach collection="map" index="key"  item="val">
+                    ,#{val,jdbcType=VARCHAR}
+                </foreach>
+            )
+        </foreach>
+        select 1 from dual
+    </insert>
+    <insert id="insertA2">
+        insert all
+        <foreach collection="maplist" index="idx" item="map">
+            INTO JXXG_KCZLFXBG_A2 (RELATION_CODE, A2_1, A2_2, A2_3, A2_4_1, A2_4_2, A2_4_3, A2_4_4, A2_4_5, A2_5)
+            VALUES (
+            #{relationCode}
+            <foreach collection="map" index="key"  item="val">
+                ,#{val,jdbcType=VARCHAR}
+            </foreach>
+            )
+        </foreach>
+        select 1 from dual
     </insert>
 
     <update id="update">
         update JXXG_KCZLFXBG
         <set>
-            <if test="courseCode != null and courseCode != ''">
+            <!--<if test="courseCode != null and courseCode != ''">
                 COURSE_CODE = #{courseCode}
-            </if>
+            </if>-->
             <if test="courseName != null and courseName != ''">
-                , COURSE_NAME = #{courseName}
+                COURSE_NAME = #{courseName}
             </if>
             <if test="courseAttr != null and courseAttr != ''">
                 , COURSE_ATTR = #{courseAttr}
+            </if>
+            <!--<if test="xn != null and xn != ''">
+                , XN = #{xn}
+            </if>
+            <if test="xq != null and xq != ''">
+                , XQ = #{xq}
+            </if>-->
+            <if test="xyName != null and xyName != ''">
+                , XY_NAME = #{xyName}
+            </if>
+            <if test="zyName != null and zyName != ''">
+                , ZY_NAME = #{zyName}
+            </if>
+            <if test="skjsAll != null and skjsAll != ''">
+                , SKJS_ALL = #{skjsAll}
+            </if>
+            <if test="skbjAll != null and skbjAll != ''">
+                , SKBJ_ALL = #{skbjAll}
+            </if>
+            <if test="b1_1_1 != null">
+                , b1_1_1 = #{b1_1_1}
+            </if>
+            <if test="b1_1_2 != null">
+                , b1_1_2 = #{b1_1_2}
+            </if>
+            <if test="b1_1_3 != null">
+                , b1_1_3 = #{b1_1_3}
+            </if>
+            <if test="b1_1_4_1 != null">
+                , b1_1_4_1 = #{b1_1_4_1}
+            </if>
+            <if test="b1_1_4_2 != null">
+                , b1_1_4_2 = #{b1_1_4_2}
+            </if>
+            <if test="b1_1_5 != null">
+                , b1_1_5 = #{b1_1_5}
+            </if>
+            <if test="b1_1_6_1 != null">
+                , b1_1_6_1 = #{b1_1_6_1}
+            </if>
+            <if test="b1_1_6_2 != null">
+                , b1_1_6_2 = #{b1_1_6_2}
+            </if>
+            <if test="b1_1_6_3 != null">
+                , b1_1_6_3 = #{b1_1_6_3}
+            </if>
+            <if test="b1_1_6_4 != null">
+                , b1_1_6_4 = #{b1_1_6_4}
+            </if>
+            <if test="b1_1_6_5 != null">
+                , b1_1_6_5 = #{b1_1_6_5}
+            </if>
+            <if test="b1_1_6_6 != null">
+                , b1_1_6_6 = #{b1_1_6_6}
+            </if>
+            <if test="b1_1_6_7 != null">
+                , b1_1_6_7 = #{b1_1_6_7}
+            </if>
+            <if test="b1_1_7_1 != null">
+                , b1_1_7_1 = #{b1_1_7_1}
+            </if>
+            <if test="b1_1_7_2 != null">
+                , b1_1_7_2 = #{b1_1_7_2}
+            </if>
+            <if test="b1_1_7_3 != null">
+                , b1_1_7_3 = #{b1_1_7_3}
+            </if>
+            <if test="b1_1_7_4 != null">
+                , b1_1_7_4 = #{b1_1_7_4}
+            </if>
+            <if test="b1_1_7_5 != null">
+                , b1_1_7_5 = #{b1_1_7_5}
+            </if>
+            <if test="b1_1_7_6 != null">
+                , b1_1_7_6 = #{b1_1_7_6}
+            </if>
+            <if test="b1_1_7_7 != null">
+                , b1_1_7_7 = #{b1_1_7_7}
+            </if>
+            <if test="b1_1_8 != null">
+                , b1_1_8 = #{b1_1_8}
+            </if>
+            <if test="b1_1_9 != null">
+                , b1_1_9 = #{b1_1_9}
+            </if>
+            <if test="b1_1_10 != null">
+                , b1_1_10 = #{b1_1_10}
+            </if>
+            <if test="b1_2_1_1 != null">
+                , b1_2_1_1 = #{b1_2_1_1}
+            </if>
+            <if test="b1_2_1_2 != null">
+                , b1_2_1_2 = #{b1_2_1_2}
+            </if>
+            <if test="b1_2_1_3 != null">
+                , b1_2_1_3 = #{b1_2_1_3}
+            </if>
+            <if test="b1_2_1_4 != null">
+                , b1_2_1_4 = #{b1_2_1_4}
+            </if>
+            <if test="b1_2_1_5 != null">
+                , b1_2_1_5 = #{b1_2_1_5}
+            </if>
+            <if test="b1_2_1_6 != null">
+                , b1_2_1_6 = #{b1_2_1_6}
+            </if>
+            <if test="b1_2_1_7 != null">
+                , b1_2_1_7 = #{b1_2_1_7}
+            </if>
+            <if test="b1_2_2_1 != null">
+                , b1_2_2_1 = #{b1_2_2_1}
+            </if>
+            <if test="b1_2_2_2 != null">
+                , b1_2_2_2 = #{b1_2_2_2}
+            </if>
+            <if test="b1_2_2_3 != null">
+                , b1_2_2_3 = #{b1_2_2_3}
+            </if>
+            <if test="b1_2_2_4 != null">
+                , b1_2_2_4 = #{b1_2_2_4}
+            </if>
+            <if test="b1_2_2_5 != null">
+                , b1_2_2_5 = #{b1_2_2_5}
+            </if>
+            <if test="b1_2_2_6 != null">
+                , b1_2_2_6 = #{b1_2_2_6}
+            </if>
+            <if test="b1_2_2_7 != null">
+                , b1_2_2_7 = #{b1_2_2_7}
+            </if>
+            <if test="b1_2_3 != null">
+                , b1_2_3 = #{b1_2_3}
+            </if>
+            <if test="b1_2_4 != null">
+                , b1_2_4 = #{b1_2_4}
+            </if>
+            <if test="b1_2_5 != null">
+                , b1_2_5 = #{b1_2_5}
+            </if>
+            <if test="b1_3_1_1 != null">
+                , b1_3_1_1 = #{b1_3_1_1}
+            </if>
+            <if test="b1_3_1_2 != null">
+                , b1_3_1_2 = #{b1_3_1_2}
+            </if>
+            <if test="b1_3_1_3 != null">
+                , b1_3_1_3 = #{b1_3_1_3}
+            </if>
+            <if test="b1_3_1_4 != null">
+                , b1_3_1_4 = #{b1_3_1_4}
+            </if>
+            <if test="b1_3_1_5 != null">
+                , b1_3_1_5 = #{b1_3_1_5}
+            </if>
+            <if test="b1_3_1_6 != null">
+                , b1_3_1_6 = #{b1_3_1_6}
+            </if>
+            <if test="b1_3_1_7 != null">
+                , b1_3_1_7 = #{b1_3_1_7}
+            </if>
+            <if test="b1_3_2_1 != null">
+                , b1_3_2_1 = #{b1_3_2_1}
+            </if>
+            <if test="b1_3_2_2 != null">
+                , b1_3_2_2 = #{b1_3_2_2}
+            </if>
+            <if test="b1_3_2_3 != null">
+                , b1_3_2_3 = #{b1_3_2_3}
+            </if>
+            <if test="b1_3_2_4 != null">
+                , b1_3_2_4 = #{b1_3_2_4}
+            </if>
+            <if test="b1_3_2_5 != null">
+                , b1_3_2_5 = #{b1_3_2_5}
+            </if>
+            <if test="b1_3_2_6 != null">
+                , b1_3_2_6 = #{b1_3_2_6}
+            </if>
+            <if test="b1_3_2_7 != null">
+                , b1_3_2_7 = #{b1_3_2_7}
+            </if>
+            <if test="b1_3_3 != null">
+                , b1_3_3 = #{b1_3_3}
+            </if>
+            <if test="b1_3_4 != null">
+                , b1_3_4 = #{b1_3_4}
+            </if>
+            <if test="b1_3_5 != null">
+                , b1_3_5 = #{b1_3_5}
+            </if>
+            <if test="b1_4_1_1 != null">
+                , b1_4_1_1 = #{b1_4_1_1}
+            </if>
+            <if test="b1_4_1_2 != null">
+                , b1_4_1_2 = #{b1_4_1_2}
+            </if>
+            <if test="b1_4_1_3 != null">
+                , b1_4_1_3 = #{b1_4_1_3}
+            </if>
+            <if test="b1_4_1_4 != null">
+                , b1_4_1_4 = #{b1_4_1_4}
+            </if>
+            <if test="b1_4_1_5 != null">
+                , b1_4_1_5 = #{b1_4_1_5}
+            </if>
+            <if test="b1_4_1_6 != null">
+                , b1_4_1_6 = #{b1_4_1_6}
+            </if>
+            <if test="b1_4_1_7 != null">
+                , b1_4_1_7 = #{b1_4_1_7}
+            </if>
+            <if test="b1_4_2_1 != null">
+                , b1_4_2_1 = #{b1_4_2_1}
+            </if>
+            <if test="b1_4_2_2 != null">
+                , b1_4_2_2 = #{b1_4_2_2}
+            </if>
+            <if test="b1_4_2_3 != null">
+                , b1_4_2_3 = #{b1_4_2_3}
+            </if>
+            <if test="b1_4_2_4 != null">
+                , b1_4_2_4 = #{b1_4_2_4}
+            </if>
+            <if test="b1_4_2_5 != null">
+                , b1_4_2_5 = #{b1_4_2_5}
+            </if>
+            <if test="b1_4_2_6 != null">
+                , b1_4_2_6 = #{b1_4_2_6}
+            </if>
+            <if test="b1_4_2_7 != null">
+                , b1_4_2_7 = #{b1_4_2_7}
+            </if>
+            <if test="b1_4_3 != null">
+                , b1_4_3 = #{b1_4_3}
+            </if>
+            <if test="b1_4_4 != null">
+                , b1_4_4 = #{b1_4_4}
+            </if>
+            <if test="b1_4_5 != null">
+                , b1_4_5 = #{b1_4_5}
+            </if>
+            <if test="b2_1 != null">
+                , b2_1 = #{b2_1}
+            </if>
+            <if test="b2_2 != null">
+                , b2_2 = #{b2_2}
+            </if>
+            <if test="b2_3 != null">
+                , b2_3 = #{b2_3}
+            </if>
+            <if test="b2_4 != null">
+                , b2_4 = #{b2_4}
+            </if>
+            <if test="b2_5 != null">
+                , b2_5 = #{b2_5}
+            </if>
+            <if test="b2_6 != null">
+                , b2_6 = #{b2_6}
+            </if>
+            <if test="b2 != null">
+                , b2 = #{b2}
+            </if>
+            <if test="c1_1 != null">
+                , c1_1 = #{c1_1}
+            </if>
+            <if test="c1_2 != null">
+                , c1_2 = #{c1_2}
+            </if>
+            <if test="c1_3 != null">
+                , c1_3 = #{c1_3}
+            </if>
+            <if test="c1_4 != null">
+                , c1_4 = #{c1_4}
+            </if>
+            <if test="c1_5 != null">
+                , c1_5 = #{c1_5}
+            </if>
+            <if test="c1_6 != null">
+                , c1_6 = #{c1_6}
+            </if>
+            <if test="c1_7 != null">
+                , c1_7 = #{c1_7}
+            </if>
+            <if test="c1_8 != null">
+                , c1_8 = #{c1_8}
+            </if>
+            <if test="c1_9 != null">
+                , c1_9 = #{c1_9}
+            </if>
+            <if test="c1 != null">
+                , c1 = #{c1}
+            </if>
+            <if test="c2 != null">
+                , c2 = #{c2}
+            </if>
+            <if test="d1 != null">
+                , d1 = #{d1}
+            </if>
+            <if test="d2 != null">
+                , d2 = #{d2}
             </if>
         </set>
         where code = #{code}
     </update>
 
-    <delete id="delete">
-        delete from JXXG_KCZLFXBG where code = #{code}
-    </delete>
+    <update id="submit">
+        UPDATE JXXG_KCZLFXBG set IS_SUBMIT = 1 where CODE = #{code}
+    </update>
 
 </mapper>

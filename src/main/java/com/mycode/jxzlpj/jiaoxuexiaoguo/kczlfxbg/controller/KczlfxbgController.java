@@ -6,6 +6,7 @@ import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin
@@ -24,13 +25,27 @@ public class KczlfxbgController {
 
     @GetMapping("/getKczlfxbg.do")
     public JsonResult<Object> getKczlfxbg(@RequestParam("code") String code){
-        Kczlfxbg kczlfxbg = kczlfxbgService.getKczlfxbg(code);
-        return JsonResult.success(kczlfxbg);
+        Map<String,Object> resultMap = kczlfxbgService.getKczlfxbg(code);
+        return JsonResult.success(resultMap);
     }
 
-    @RequestMapping("/insert.do")
+    /*@RequestMapping("/insert.do")
     public JsonResult<Object> insert(Kczlfxbg kczlfxbg){
         boolean bool = kczlfxbgService.insert(kczlfxbg);
+        if(!bool){
+            return JsonResult.error("新增失败");
+        }
+        return JsonResult.success("新增成功",null);
+    }*/
+
+    /**
+     * 新增
+     * @param params 获取所有的请求参数
+     * @return
+     */
+    @RequestMapping("/insert.do")
+    public JsonResult<Object> insert(@RequestParam Map<String,Object> params){
+        boolean bool = kczlfxbgService.insert2(params);
         if(!bool){
             return JsonResult.error("新增失败");
         }
@@ -46,13 +61,13 @@ public class KczlfxbgController {
         return JsonResult.success("修改成功",null);
     }
 
-    @RequestMapping("/delete.do")
-    public JsonResult<Object> delete(@RequestParam("code") String code){
-        boolean bool = kczlfxbgService.delete(code);
+    @RequestMapping("/submit.do")
+    public JsonResult<Object> submit(@RequestParam("code") String code){
+        boolean bool = kczlfxbgService.submit(code);
         if(!bool){
-            return JsonResult.error("删除失败");
+            return JsonResult.error("提交失败");
         }
-        return JsonResult.success("删除成功",null);
+        return JsonResult.success("提交成功",null);
     }
 
 }

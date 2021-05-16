@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
 @Mapper
 public interface KczlfxbgMapper {
@@ -13,9 +15,17 @@ public interface KczlfxbgMapper {
 
     Kczlfxbg getKczlfxbg(@Param("code") String code);
 
+    List<Map<String, Object>> getKczlfxbgA1(@Param("relationCode") String relationCode);
+
+    List<Map<String, Object>> getKczlfxbgA2(@Param("relationCode") String relationCode);
+
     boolean insert(Kczlfxbg kczlfxbg);
+
+    boolean insertA1(@Param("relationCode") String relationCode, @Param("maplist") List<SortedMap<String, Object>> maplist);
+
+    boolean insertA2(@Param("relationCode") String relationCode, @Param("maplist") List<SortedMap<String, Object>> maplist);
 
     boolean update(Kczlfxbg kczlfxbg);
 
-    boolean delete(@Param("code") String code);
+    boolean submit(@Param("code") String code);
 }
