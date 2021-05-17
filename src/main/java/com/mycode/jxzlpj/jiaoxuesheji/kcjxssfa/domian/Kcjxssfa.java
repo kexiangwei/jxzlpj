@@ -34,8 +34,7 @@ public class Kcjxssfa {
     private String xn
             ,xq;
     private String userId
-            ,userName
-            ,userUnit;
+            ,userName;
     //数据录入时间
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")

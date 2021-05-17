@@ -95,22 +95,39 @@
         and ur.user_id = #{userId}
     </select>
 
+    <!--
+    select t2.* from sys_data_jsrk t1 left join sys_data_kc t2 on t2.course_code = t1.course_code
+    -->
     <select id="getCourseListByUserId" resultType="com.mycode.common.common.domain.Course">
         <choose>
             <when test="accountType == 'student'">
-                SELECT T2.*
-                FROM SYS_DATA_XSXK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+                select t2.*
+                from sys_data_xnxq t
+                left join sys_data_xsxk t1 on t1.xn = t.xn and t1.xq = t.xq
+                left join sys_data_kc t2 on t2.course_code = t1.course_code and t2.xn = t1.xn and t2.xq = t1.xq and t2.skjs_code = t1.user_id
+                <where> (current_date - interval '1' year) between begin_date and end_date
+                    and t1.user_id =#{userId}
+                    <if test="courseName !=null and courseName !=''">
+                        and t2.course_name = #{courseName}
+                    </if>
+                </where>
             </when>
             <otherwise>
-                SELECT T2.*
-                FROM SYS_DATA_JSRK T1 LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
+                select distinct t2.xn, t2.xq, t2.course_code, t2.course_name, t2.course_attr, t2.xy_name, t2.zy_name, t2.skjs_name
+                , wm_concat(DISTINCT t2.sk_bj) as sk_bj, wm_concat(DISTINCT t2.xsrs) as xsrs, wm_concat(DISTINCT t2.sk_dd) as sk_dd
+                from sys_data_xnxq t
+                left join sys_data_jsrk t1 on t1.xn = t.xn and t1.xq = t.xq
+                left join sys_data_kc t2 on t2.course_code = t1.course_code and t2.xn = t1.xn and t2.xq = t1.xq and t2.skjs_code = t1.user_id
+                <where> (current_date - interval '1' year) between begin_date and end_date
+                    and t1.user_id =#{userId}
+                    <if test="courseName !=null and courseName !=''">
+                        and t2.course_name = #{courseName}
+                    </if>
+                </where>
+                GROUP BY t2.xn, t2.xq, t2.course_code, t2.course_name, t2.course_attr, t2.xy_name, t2.zy_name, t2.skjs_name
+                ORDER BY t2.course_name
             </otherwise>
         </choose>
-        <where> T1.USER_ID =#{userId}
-            <if test="courseName !=null and courseName !=''">
-                and T2.COURSE_NAME = #{courseName}
-            </if>
-        </where>
     </select>
 </mapper>
 

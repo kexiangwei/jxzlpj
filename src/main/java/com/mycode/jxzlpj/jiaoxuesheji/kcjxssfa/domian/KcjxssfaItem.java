@@ -22,7 +22,8 @@ public class KcjxssfaItem extends Kcjxssfa {
             ,weekNum //周次
             ,lessonNum //节次
             ,lessonHour //学时,课程时长
-            ,teacher; //任课老师
+            ,skjsCode
+            ,skjsName; //任课老师
 
     private String teachTarget, //授课目标,填写本次授课的目标。
             teachDesign //教学组织，围绕教学目标，教师采用什么方式？讲授什么内容？培养学生什么知识、能力和素养？

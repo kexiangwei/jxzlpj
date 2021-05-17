@@ -8,6 +8,7 @@ import com.mycode.jxzlpj.jiaoxuesheji.kcjxssfa.mapper.KcjxssfaMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,11 +39,12 @@ public class KcjxssfaServiceImpl implements KcjxssfaService {
     }
 
     @Override
+    @Transactional
     public boolean insert(KcjxssfaItem item) {
         if(StringUtils.isEmpty(item.getCode())){
             List<Kcjxssfa> pageList = kcjxssfaMapper.getPageList(item);
             if(pageList.size() == 0){
-                item.setCode(StringUtils.uuid());
+                item.setCode(item.getXn() + ("3".equals(item.getXq())?"03-":"12-") + item.getCourseCode() + "-" + item.getUserId());
                 boolean bool = kcjxssfaMapper.insert(item);
                 if(!bool){
                     return false;
@@ -51,6 +53,7 @@ public class KcjxssfaServiceImpl implements KcjxssfaService {
                 item.setCode(pageList.get(0).getCode());
             }
         }
+        item.setItemCode(item.getXn() + ("3".equals(item.getXq())?"03-":"12-") + item.getCourseCode() + "-" + item.getSkjsCode() + "-" + item.getUserId());
         return kcjxssfaMapper.insertItem(item);
     }
 
