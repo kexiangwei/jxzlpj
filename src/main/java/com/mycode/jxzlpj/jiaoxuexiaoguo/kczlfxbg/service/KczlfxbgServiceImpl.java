@@ -52,35 +52,10 @@ public class KczlfxbgServiceImpl implements KczlfxbgService {
         bg.setCode(bg.getXn() + ("3".equals(bg.getXq())?"03-":"12-") + bg.getCourseCode() + "-" + bg.getUserId());
         boolean bool = kczlfxbgMapper.insert(bg);
         if(bool){
-            //提取a1开头的属性
-            TreeMap<String, Object> treeMap = new TreeMap();
-            params.forEach((k,v) -> {
-                if(k.startsWith("a1")){
-                    treeMap.put(k,v);
-                }
-            });
-            //按照指定的前缀分组
-            List<SortedMap<String, Object>> maplist = new ArrayList<>();
-            for (int i = 1; i <= treeMap.size()/3; i++) {
-                maplist.add(treeMap.subMap("a1_"+i, "a1_"+i + Character.MAX_VALUE ));
-            }
-            //执行新增操作
-            bool = kczlfxbgMapper.insertA1(bg.getCode(),maplist);
-
-            //提取a2开头的属性
-            TreeMap<String, Object> treeMap2 = new TreeMap();
-            params.forEach((k,v) -> {
-                if(k.startsWith("a2")){
-                    treeMap2.put(k,v);
-                }
-            });
-            //按照指定的前缀分组
-            List<SortedMap<String, Object>> maplist2 = new ArrayList<>();
-            for (int i = 1; i <= treeMap2.size()/9; i++) {
-                maplist2.add(treeMap2.subMap("a2_"+i, "a2_"+i + Character.MAX_VALUE ));
-            }
-            //执行新增操作
-            bool = kczlfxbgMapper.insertA2(bg.getCode(),maplist2);
+            //执行a1新增操作
+            bool = kczlfxbgMapper.insertA1(bg.getCode(),this.getBgA1Params(params));
+            //执行a2新增操作
+            bool = kczlfxbgMapper.insertA2(bg.getCode(),this.getBgA2Params(params));
         }
         return bool;
     }
@@ -91,8 +66,64 @@ public class KczlfxbgServiceImpl implements KczlfxbgService {
     }
 
     @Override
+    @Transactional
+    public boolean update2(Map<String, Object> params) {
+        Kczlfxbg bg = JSONObject.parseObject(JSONObject.toJSONString(params), Kczlfxbg.class); //用fastjson将map转成实体类
+        boolean bool = kczlfxbgMapper.update(bg);
+        if(bool){
+            //执行a1删除操作
+            bool = kczlfxbgMapper.deleteA1(bg.getCode());
+            //执行a1新增操作
+            bool = kczlfxbgMapper.insertA1(bg.getCode(),this.getBgA1Params(params));
+            //执行a2删除操作
+            bool = kczlfxbgMapper.deleteA2(bg.getCode());
+            //执行a2新增操作
+            bool = kczlfxbgMapper.insertA2(bg.getCode(),this.getBgA2Params(params));
+        }
+        return bool;
+    }
+
+    @Override
     public boolean submit(String code) {
         return kczlfxbgMapper.submit(code);
+    }
+
+    //
+    private List<SortedMap<String, Object>> getBgA1Params(Map<String, Object> params){
+        //提取a1开头的属性
+        TreeMap<String, Object> treeMap = new TreeMap();
+        Set<String> stringSet = new HashSet<>();
+        params.forEach((k,v) -> {
+            if(k.startsWith("a1")){
+                treeMap.put(k,v);
+                stringSet.add(k.substring(0,4));
+            }
+        });
+        //按照指定前缀分组
+        List<SortedMap<String, Object>> maplist = new ArrayList<>();
+        stringSet.forEach(prefix -> {
+            maplist.add(treeMap.subMap(prefix, prefix + Character.MAX_VALUE ));
+        });
+        return maplist;
+    }
+
+    //
+    private List<SortedMap<String, Object>> getBgA2Params(Map<String, Object> params){
+        //提取a2开头的属性
+        TreeMap<String, Object> treeMap2 = new TreeMap();
+        Set<String> stringSet2 = new HashSet<>();
+        params.forEach((k,v) -> {
+            if(k.startsWith("a2")){
+                treeMap2.put(k,v);
+                stringSet2.add(k.substring(0,4));
+            }
+        });
+        //按照指定前缀分组
+        List<SortedMap<String, Object>> maplist2 = new ArrayList<>();
+        stringSet2.forEach(prefix -> {
+            maplist2.add(treeMap2.subMap(prefix, prefix + Character.MAX_VALUE ));
+        });
+        return maplist2;
     }
 
 }

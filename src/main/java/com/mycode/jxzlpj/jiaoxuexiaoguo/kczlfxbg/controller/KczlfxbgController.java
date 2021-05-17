@@ -52,9 +52,18 @@ public class KczlfxbgController {
         return JsonResult.success("新增成功",null);
     }
 
-    @RequestMapping("/update.do")
+    /*@RequestMapping("/update.do")
     public JsonResult<Object> update(Kczlfxbg kczlfxbg){
         boolean bool = kczlfxbgService.update(kczlfxbg);
+        if(!bool){
+            return JsonResult.error("修改失败");
+        }
+        return JsonResult.success("修改成功",null);
+    }*/
+
+    @RequestMapping("/update.do")
+    public JsonResult<Object> update(@RequestParam Map<String,Object> params){
+        boolean bool = kczlfxbgService.update2(params);
         if(!bool){
             return JsonResult.error("修改失败");
         }

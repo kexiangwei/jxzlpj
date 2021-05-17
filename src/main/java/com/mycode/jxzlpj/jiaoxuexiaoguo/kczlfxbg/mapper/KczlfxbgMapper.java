@@ -28,4 +28,8 @@ public interface KczlfxbgMapper {
     boolean update(Kczlfxbg kczlfxbg);
 
     boolean submit(@Param("code") String code);
+
+    boolean deleteA1(@Param("relationCode") String relationCode);
+
+    boolean deleteA2(@Param("relationCode") String relationCode);
 }

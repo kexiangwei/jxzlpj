@@ -532,4 +532,10 @@
         UPDATE JXXG_KCZLFXBG set IS_SUBMIT = 1 where CODE = #{code}
     </update>
 
+    <delete id="deleteA1">
+        delete from jxxg_kczlfxbg_a1 where relation_code = #{relationCode}
+    </delete>
+    <delete id="deleteA2">
+        delete from jxxg_kczlfxbg_a2 where relation_code = #{relationCode}
+    </delete>
 </mapper>

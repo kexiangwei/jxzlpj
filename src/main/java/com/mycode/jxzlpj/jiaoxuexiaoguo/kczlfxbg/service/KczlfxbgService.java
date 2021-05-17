@@ -17,5 +17,7 @@ public interface KczlfxbgService {
 
     boolean update(Kczlfxbg kczlfxbg);
 
+    boolean update2(Map<String, Object> params);
+
     boolean submit(String code);
 }
