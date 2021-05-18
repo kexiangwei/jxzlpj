@@ -70,14 +70,14 @@ public class AccountController {
             , @RequestParam("userId") String userId, @RequestParam("password") String password
             , HttpServletRequest request, HttpServletResponse response){
         //校验图形验证码
-        /*boolean hasKey = redisUtil.hasKey(token);
+        boolean hasKey = redisUtil.hasKey(token);
         if (hasKey) {
             if(!redisUtil.get(token).toString().equals(imageCode)){
                 return JsonResult.error(400,"验证码输入有误！");
             }
         }else{
             return JsonResult.error(400," 验证码已超时，请重新获取！");
-        }*/
+        }
         //校验账号密码
         User user = userService.getUserById(userId);
         if(user == null){
