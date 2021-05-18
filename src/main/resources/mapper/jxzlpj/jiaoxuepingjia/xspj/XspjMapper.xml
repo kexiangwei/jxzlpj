@@ -75,12 +75,12 @@
     教务系统中教师授课有2021年度的数据，学生选课最新的数据只有2020年的，所以这里的当前学年减了一年：(CURRENT_DATE - interval '1' year)
 -->
     <select id="getBjpjTransferData" resultType="java.util.Map">
-        SELECT T2.XN, T2.XQ, T2.COURSE_CODE "courseCode", T2.COURSE_NAME "courseName", wm_concat(DISTINCT T2.SKJS_NAME) "teacherNames"
+        SELECT distinct T2.XN, T2.XQ, T2.COURSE_CODE as "courseCode", T2.COURSE_NAME as "courseName"/*, wm_concat(DISTINCT T2.SKJS_NAME) as "teacherNames"*/
         FROM SYS_DATA_XSXK T1
         LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE and T2.xn = T1.xn and T2.xq = T1.xq and (t2.skbj_code = t1.bh or t2.skbj_code is null)
         LEFT JOIN SYS_DATA_XNXQ t3 on t3.XN = T1.XN and t3.XQ = T1.XQ
         WHERE (CURRENT_DATE - interval '1' year) BETWEEN begin_date and end_date and T1.USER_ID = #{userId}
-        GROUP BY T2.XN, T2.XQ, T2.COURSE_CODE, T2.COURSE_NAME
+--         GROUP BY T2.XN, T2.XQ, T2.COURSE_CODE, T2.COURSE_NAME
     </select>
 
     <insert id="insertBjpj">

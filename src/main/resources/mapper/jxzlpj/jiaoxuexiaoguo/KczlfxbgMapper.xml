@@ -8,7 +8,7 @@
     -->
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg">
         SELECT * FROM (
-            SELECT DISTINCT kc.course_code, kc.course_name, kc.course_attr, kc.XN, kc.XQ, kc.xy_name, kc.zy_name
+            SELECT /*DISTINCT*/ kc.course_code, kc.course_name, kc.course_attr, kc.XN, kc.XQ, kc.xy_name, kc.zy_name
             , wm_concat(DISTINCT kc.SKJS_NAME) as "skjsAll", wm_concat(DISTINCT kc.sk_bj) as "skbjAll"
             , max(case when bg.COURSE_CODE is not null then 1 else 2 end) as "isTxbg", max(bg.code) as "bgCode", max(is_submit) as is_submit
             FROM SYS_DATA_XNXQ t
