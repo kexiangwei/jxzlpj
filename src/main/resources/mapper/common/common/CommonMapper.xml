@@ -47,4 +47,12 @@
         ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
     </select>
 
+    <select id="getCourseAttrOptions" resultType="java.lang.String">
+        SELECT DISTINCT COURSE_ATTR FROM SYS_DATA_KC
+    </select>
+
+    <select id="getUserTitleOptions" resultType="java.lang.String">
+        SELECT DISTINCT TITLE FROM SYS_DATA_JS
+    </select>
+
 </mapper>

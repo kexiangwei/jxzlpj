@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Mapper
 public interface CommonMapper {
@@ -13,4 +14,7 @@ public interface CommonMapper {
 
     List<Map<String, Object>> getZyList(@Param("xyCode") String xyCode);
 
+    Set<String> getCourseAttrOptions();
+
+    Set<String> getUserTitleOptions();
 }

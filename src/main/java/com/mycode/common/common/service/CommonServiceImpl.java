@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class CommonServiceImpl implements CommonService {
@@ -21,6 +22,16 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public List<Map<String, Object>> getZyList(String xyCode) {
         return commonMapper.getZyList(xyCode);
+    }
+
+    @Override
+    public Set<String> getCourseAttrOptions() {
+        return commonMapper.getCourseAttrOptions();
+    }
+
+    @Override
+    public Set<String> getUserTitleOptions() {
+        return commonMapper.getUserTitleOptions();
     }
 
 }

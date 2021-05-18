@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 教学质量评价-通用接口
@@ -41,4 +42,25 @@ public class CommonController {
         return JsonResult.success(maps);
     }
 
+    /**
+     * 获取课程属性下拉选项
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getCourseAttrOptions.do")
+    public JsonResult<Object> getCourseAttrOptions(){
+        Set<String> stringSet = commonService.getCourseAttrOptions();
+        return JsonResult.success(stringSet);
+    }
+
+    /**
+     * 获取教师职称下拉选项
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getUserTitleOptions.do")
+    public JsonResult<Object> getUserTitleOptions(){
+        Set<String> stringSet = commonService.getUserTitleOptions();
+        return JsonResult.success(stringSet);
+    }
 }
