@@ -8,14 +8,14 @@
                 select j.*
                 ,(case when exec_num >= exec_level then '已审核' else '未审核' end ) shenhe_status
                 from (
-                select j.code,j.batch_num
-                ,count(sn.node_code) total_num
-                ,count(item.node_code) exec_num
-                ,max(case when j.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
-                from V_JXYJ_JCJS_SHENHE j
-                left join common_shenhe_node sn on sn.shenhe_code = j.shenhe_code
-                left join common_shenhe_item item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
-                group by j.code,j.batch_num
+                    select j.code,j.batch_num
+                    ,count(sn.node_code) total_num
+                    ,count(item.node_code) exec_num
+                    ,max(case when j.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                    from V_JXYJ_JCJS_SHENHE j
+                    left join common_shenhe_node sn on sn.shenhe_code = j.shenhe_code
+                    left join common_shenhe_item item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
+                    group by j.code,j.batch_num
                 )t
                 left join V_JXYJ_JCJS_SHENHE j on j.code = t.code and j.batch_num = t.batch_num
                 left join common_shenhe_node sn on sn.shenhe_code = j.shenhe_code

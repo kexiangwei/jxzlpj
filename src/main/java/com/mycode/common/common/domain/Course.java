@@ -24,9 +24,9 @@ public class Course {
             ,zyName //专业名称
             ,skjsCode //授课教师编号
             ,skjsName //授课教师姓名
-            ,skSj //授课时间
-            ,skDd //授课地点
             ,skbjCode //授课班级编号
             ,skBj //授课班级
-            ,xsrs; //学生人数
+            ,xsrs //学生人数
+            ,skSj //授课时间
+            ,skDd; //授课地点
 }

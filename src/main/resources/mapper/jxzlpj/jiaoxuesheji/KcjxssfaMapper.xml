@@ -3,24 +3,40 @@
 <mapper namespace="com.mycode.jxzlpj.jiaoxuesheji.kcjxssfa.mapper.KcjxssfaMapper">
 
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuesheji.kcjxssfa.domian.Kcjxssfa">
-        SELECT *
-        FROM JXSJ_KCJXSSFA
-        <where> 1=1
+        select DISTINCT t2.course_code, t2.course_name, t2.course_attr, t2.xn, t2.xq, t2.xy_name, t2.skjs_code, t2.skjs_name, t2.sk_bj, t2.xsrs, t2.sk_dd
+        ,(case when t3.code is not null then 1 else 2 end) as "isTxfa", t3.code
+        from sys_data_xnxq t
+        left join sys_data_jsrk t1 on t1.xn = t.xn and t1.xq = t.xq
+        left join sys_data_kc t2 on t2.xn = t1.xn and t2.xq = t1.xq and t2.course_code = t1.course_code and t2.skjs_code = t1.user_id
+        LEFT JOIN JXSJ_KCJXSSFA t3 on t3.xn = t2.xn and t3.xq = t2.xq and t3.course_code = t2.course_code and t3.skbj = t2.sk_bj and t3.user_id = t2.skjs_code
+        <where> (current_date - interval '1' year) between begin_date and end_date
+            <if test="accountType !=null and accountType == 'teacher'">
+                and t1.user_id = #{userId}
+            </if>
             <if test="courseName != null and courseName != ''">
-                and COURSE_NAME like concat(concat('%',#{courseName}),'%')
+                and t2.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+            </if>
+            <if test="isTxfa != null">
+                <if test="isTxfa == 1">
+                    and t3.code is not null
+                </if>
+                <if test="isTxfa == 2">
+                    and t3.code is null
+                </if>
             </if>
         </where>
+        ORDER BY t2.course_name
     </select>
 
-    <select id="getItemListByRelationCode" resultType="com.mycode.jxzlpj.jiaoxuesheji.kcjxssfa.domian.KcjxssfaItem">
+    <select id="getItemList" resultType="com.mycode.jxzlpj.jiaoxuesheji.kcjxssfa.domian.KcjxssfaItem">
         SELECT * FROM JXSJ_KCJXSSFA_ITEM where RELATION_CODE = #{relationCode} ORDER BY CREATE_DATE
     </select>
 
     <insert id="insert">
           insert into JXSJ_KCJXSSFA
-          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, COURSE_LEADER, TEACH_CLASS, STUDENT_NUM, CLASS_LOCATION, OPEN_COLLEGE, XN, XQ, USER_ID, USER_NAME, CREATE_DATE)
+          (CODE, COURSE_CODE, COURSE_NAME, COURSE_ATTR, OPEN_COLLEGE, XN, XQ, SKJS, SKBJ, XSRS, SKDD, USER_ID, USER_NAME, CREATE_DATE)
           values
-          (#{code},#{courseCode},#{courseName},#{courseAttr},#{courseLeader},#{teachClass},#{studentNum},#{classLocation},#{openCollege},#{xn},#{xq},#{userId},#{userName},CURRENT_DATE)
+          (#{code},#{courseCode},#{courseName},#{courseAttr},#{xyName},#{xn},#{xq},#{skjsName},#{skBj},#{xsrs},#{skDd},#{userId},#{userName},CURRENT_DATE)
     </insert>
     <insert id="insertItem">
         insert into JXSJ_KCJXSSFA_ITEM

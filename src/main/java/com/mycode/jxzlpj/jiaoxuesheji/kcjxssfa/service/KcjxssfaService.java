@@ -13,7 +13,7 @@ public interface KcjxssfaService {
 
     Map<String, Object> getPageList(Kcjxssfa kcjxssfa);
 
-    List<KcjxssfaItem> getItemListByRelationCode(String relationCode);
+    List<KcjxssfaItem> getItemList(String relationCode);
 
     boolean insert(KcjxssfaItem item);
 

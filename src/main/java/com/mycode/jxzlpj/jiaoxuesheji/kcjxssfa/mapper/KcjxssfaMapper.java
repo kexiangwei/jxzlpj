@@ -15,9 +15,9 @@ public interface KcjxssfaMapper {
 
     List<Kcjxssfa> getPageList(Kcjxssfa kcjxssfa);
 
-    List<KcjxssfaItem> getItemListByRelationCode(@Param("relationCode") String relationCode);
+    List<KcjxssfaItem> getItemList(@Param("relationCode") String relationCode);
 
-    boolean insert(KcjxssfaItem item);
+    boolean insert(Kcjxssfa kcjxssfa);
 
     boolean insertItem(KcjxssfaItem item);
 

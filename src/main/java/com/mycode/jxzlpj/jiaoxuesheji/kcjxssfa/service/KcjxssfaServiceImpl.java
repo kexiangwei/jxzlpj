@@ -34,27 +34,21 @@ public class KcjxssfaServiceImpl implements KcjxssfaService {
     }
 
     @Override
-    public List<KcjxssfaItem> getItemListByRelationCode(String relationCode) {
-        return kcjxssfaMapper.getItemListByRelationCode(relationCode);
+    public List<KcjxssfaItem> getItemList(String relationCode) {
+        return kcjxssfaMapper.getItemList(relationCode);
     }
 
     @Override
     @Transactional
     public boolean insert(KcjxssfaItem item) {
+        boolean bool = false;
         if(StringUtils.isEmpty(item.getCode())){
-            List<Kcjxssfa> pageList = kcjxssfaMapper.getPageList(item);
-            if(pageList.size() == 0){
-                item.setCode(item.getXn() + ("3".equals(item.getXq())?"03-":"12-") + item.getCourseCode() + "-" + item.getUserId());
-                boolean bool = kcjxssfaMapper.insert(item);
-                if(!bool){
-                    return false;
-                }
-            } else {
-                item.setCode(pageList.get(0).getCode());
-            }
+            item.setCode(item.getXn() + ("3".equals(item.getXq())?"03-":"12-") + item.getCourseCode() + "-" + item.getUserId());
+            bool = kcjxssfaMapper.insert(item);
         }
         item.setItemCode(item.getXn() + ("3".equals(item.getXq())?"03-":"12-") + item.getCourseCode() + "-" + item.getSkjsCode() + "-" + item.getUserId());
-        return kcjxssfaMapper.insertItem(item);
+        bool = kcjxssfaMapper.insertItem(item);
+        return bool;
     }
 
     /*@Override
