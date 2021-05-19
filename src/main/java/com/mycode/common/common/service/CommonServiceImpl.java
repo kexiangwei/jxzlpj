@@ -20,8 +20,8 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public List<Map<String, Object>> getZyList(String xyCode) {
-        return commonMapper.getZyList(xyCode);
+    public List<Map<String, Object>> getZyList(String dataType, String xyCode) {
+        return commonMapper.getZyList(dataType,xyCode);
     }
 
     @Override

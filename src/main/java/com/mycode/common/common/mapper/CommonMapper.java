@@ -12,7 +12,7 @@ public interface CommonMapper {
 
     List<Map<String, Object>> getXyList(@Param("dataType") String dataType);
 
-    List<Map<String, Object>> getZyList(@Param("xyCode") String xyCode);
+    List<Map<String, Object>> getZyList(@Param("dataType") String dataType, @Param("xyCode") String xyCode);
 
     Set<String> getCourseAttrOptions();
 

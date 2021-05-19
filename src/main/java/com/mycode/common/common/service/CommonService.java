@@ -8,7 +8,7 @@ public interface CommonService {
 
     List<Map<String, Object>> getXyList(String dataType);
 
-    List<Map<String, Object>> getZyList(String xyCode);
+    List<Map<String, Object>> getZyList(String dataType, String xyCode);
 
     Set<String> getCourseAttrOptions();
 

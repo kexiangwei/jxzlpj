@@ -37,8 +37,9 @@ public class CommonController {
 
     @ResponseBody
     @RequestMapping("/getZyList.do")
-    public JsonResult<Object> getZyList(@RequestParam(value = "xyCode",required = false) String xyCode){
-        List<Map<String, Object>> maps = commonService.getZyList(xyCode);
+    public JsonResult<Object> getZyList(@RequestParam(value = "dataType",required = false, defaultValue = "zy") String dataType
+            , @RequestParam(value = "xyCode",required = false) String xyCode){
+        List<Map<String, Object>> maps = commonService.getZyList(dataType,xyCode);
         return JsonResult.success(maps);
     }
 

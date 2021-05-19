@@ -113,8 +113,8 @@
                 </where>
             </when>
             <otherwise>
-                select distinct t2.xn, t2.xq, t2.course_code, t2.course_name, t2.course_attr, t2.xy_name, t2.zy_name, t2.skjs_name
-                , wm_concat(DISTINCT t2.sk_bj) as sk_bj, wm_concat(DISTINCT t2.xsrs) as xsrs, wm_concat(DISTINCT t2.sk_dd) as sk_dd
+                select distinct t2.xn, t2.xq, t2.course_code, t2.course_name, t2.course_attr, t2.xy_name, t2.zy_name, t2.skjs_name, t2.sk_bj, t2.xsrs, t2.sk_dd
+--                 , wm_concat(DISTINCT t2.sk_bj) as sk_bj, wm_concat(DISTINCT t2.xsrs) as xsrs, wm_concat(DISTINCT t2.sk_dd) as sk_dd
                 from sys_data_xnxq t
                 left join sys_data_jsrk t1 on t1.xn = t.xn and t1.xq = t.xq
                 left join sys_data_kc t2 on t2.course_code = t1.course_code and t2.xn = t1.xn and t2.xq = t1.xq and t2.skjs_code = t1.user_id
@@ -124,7 +124,7 @@
                         and t2.course_name = #{courseName}
                     </if>
                 </where>
-                GROUP BY t2.xn, t2.xq, t2.course_code, t2.course_name, t2.course_attr, t2.xy_name, t2.zy_name, t2.skjs_name
+--                 GROUP BY t2.xn, t2.xq, t2.course_code, t2.course_name, t2.course_attr, t2.xy_name, t2.zy_name, t2.skjs_name
                 ORDER BY t2.course_name
             </otherwise>
         </choose>

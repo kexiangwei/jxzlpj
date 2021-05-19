@@ -36,15 +36,52 @@
         </choose>
     </select>
 
+    <!--
+SELECT DISTINCT name FROM SYS_DATA_ZY;
+SELECT DISTINCT XY_NAME FROM SYS_DATA_KC;
+SELECT DISTINCT XY_NAME FROM SYS_DATA_JS;
+SELECT DISTINCT XY_NAME FROM SYS_DATA_XS;
+-->
     <select id="getZyList" resultType="java.util.Map">
-        SELECT distinct code as "code", name as "name"
-        FROM SYS_DATA_ZY
-        <where>1=1
-            <if test="xyCode !=null and xyCode !=''">
-                and xy_code = #{xyCode}
-            </if>
-        </where>
-        ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
+        <choose>
+            <when test="dataType == 'zy'">
+                SELECT distinct code as "code", name as "name"
+                FROM SYS_DATA_ZY
+                <where>
+                    <if test="xyCode !=null and xyCode !=''">
+                        xy_code = #{xyCode}
+                    </if>
+                </where>
+                ORDER BY NLSSORT(name,'NLS_SORT = SCHINESE_PINYIN_M')
+            </when>
+            <when test="dataType == 'kc'">
+                SELECT distinct ZY_CODE as "code",ZY_NAME as "name"
+                FROM SYS_DATA_KC
+                WHERE ZY_CODE IS NOT NULL
+                <if test="xyCode !=null and xyCode !=''">
+                    and xy_code = #{xyCode}
+                </if>
+                ORDER BY NLSSORT(ZY_NAME,'NLS_SORT = SCHINESE_PINYIN_M')
+            </when>
+            <when test="dataType == 'js'">
+                SELECT distinct ZY_CODE as "code",ZY_NAME as "name"
+                FROM SYS_DATA_JS
+                WHERE ZY_CODE IS NOT NULL
+                <if test="xyCode !=null and xyCode !=''">
+                    and xy_code = #{xyCode}
+                </if>
+                ORDER BY NLSSORT(ZY_NAME,'NLS_SORT = SCHINESE_PINYIN_M')
+            </when>
+            <when test="dataType == 'xs'">
+                SELECT distinct ZY_CODE as "code",ZY_NAME as "name"
+                FROM SYS_DATA_XS
+                WHERE ZY_CODE IS NOT NULL
+                <if test="xyCode !=null and xyCode !=''">
+                    and xy_code = #{xyCode}
+                </if>
+                ORDER BY NLSSORT(ZY_NAME,'NLS_SORT = SCHINESE_PINYIN_M')
+            </when>
+        </choose>
     </select>
 
     <select id="getCourseAttrOptions" resultType="java.lang.String">
