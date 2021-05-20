@@ -18,6 +18,7 @@ public interface CkpjMapper {
      */
     List<Ckpj> getCkpjPageList(Ckpj ckpj);
 
-    List<Map<String, Object>> getThpjTargetAvgList(@Param("userId") String userId, @Param("courseCode") String courseCode);
+    Map<String, Object> getPjInfo(@Param("courseCode") String courseCode, @Param("skjsCode") String skjsCode);
 
+    List<Map<String, Object>> getPjInfoSuggestList(@Param("courseCode") String courseCode, @Param("skjsCode") String skjsCode);
 }

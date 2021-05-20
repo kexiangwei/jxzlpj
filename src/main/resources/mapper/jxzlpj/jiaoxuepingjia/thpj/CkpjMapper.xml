@@ -5,23 +5,67 @@
      查看评教
      -->
     <select id="getCkpjPageList" resultType="com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Ckpj">
-        SELECT t2.course_code,t2.course_name,t2.course_attr,t2.XS,t2.XF,t2.XN,t2.XQ,t2.ZY_NAME,t2.XY_NAME
-        ,(case when pj.template_code is not null then 1 else 2 end) is_pj
-        ,pj.template_code template_code
-        FROM SYS_DATA_JSRK T1
-        LEFT JOIN SYS_DATA_KC T2 ON T2.COURSE_CODE = T1.COURSE_CODE
-        LEFT JOIN (SELECT DISTINCT template_code,teacher_code,course_code FROM JXPJ_THPJ) pj on pj.teacher_code = T1.USER_ID and pj.course_code = T1.COURSE_CODE
-        WHERE T1.USER_ID = #{userId}
-        <if test="courseName !=null and courseName !=''">
-            and t2.course_name like concat(concat('%',#{courseName}),'%')
-        </if>
+        SELECT DISTINCT kc.course_code, kc.course_name, kc.course_attr, kc.XN, kc.XQ, kc.SKJS_CODE, kc.SKJS_NAME
+        ,(case when pj.code is not null then 1 else 2 end) as "isPj"
+        FROM SYS_DATA_JSRK rk
+        LEFT JOIN SYS_DATA_KC kc on kc.course_code = rk.course_code and kc.XN = rk.XN and KC.XQ = rk.XQ and kc.SKJS_CODE = rk.USER_ID
+        LEFT JOIN JXPJ_THPJ pj on pj.course_code = rk.course_code and pj.XN = kc.XN and pj.XQ = kc.XQ and pj.SKJS_CODE = kc.SKJS_CODE
+        <where> 1=1
+            <if test="accountType !=null and accountType == 'teacher'">
+                and rk.user_id = #{userId}
+            </if>
+
+            <if test="courseCode != null and courseCode != ''">
+                and kc.course_code = #{courseCode}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                and kc.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+            </if>
+
+            <if test="xn != null and xn != ''">
+                and kc.xn = #{xn}
+            </if>
+            <if test="xq != null and xq != ''">
+                and kc.xq = #{xq}
+            </if>
+
+            <if test="isPj !=null">/*评教状态*/
+                <if test="isPj == 1">
+                    and pj.code is not null
+                </if>
+                <if test="isPj == 2">
+                    and pj.code is null
+                </if>
+            </if>
+
+            <choose>
+                <when test="pjStartDate != null and pjEndDate != null">
+                    and pj.create_date between #{pjStartDate} and #{pjEndDate}
+                </when>
+                <when test="pjStartDate != null">
+                    and pj.create_date &gt;= #{pjStartDate}
+                </when>
+                <when test="pjEndDate != null">
+                    and pj.create_date &lt;= #{pjEndDate}
+                </when>
+            </choose>
+        </where>
     </select>
 
-    <select id="getThpjTargetAvgList" resultType="java.util.Map">
-        SELECT TARGET_CODE "targetCode",AVG(ANSWER) "avgScore"
-        from JXPJ_THPJ t1 LEFT JOIN JXPJ_THPJ_ITEM t2 on T2.RELATION_CODE = T1.CODE
-        where T1.TEACHER_CODE = #{userId} and COURSE_CODE = #{courseCode}
-        GROUP BY TARGET_CODE
+    <select id="getPjInfo" resultType="java.util.Map">
+        SELECT count(distinct code) as "pjNum"
+        , nvl(sum(t2.score)/count(distinct code),0) as "totalAvgScore"
+        FROM JXPJ_THPJ t1 LEFT JOIN JXPJ_THPJ_ITEM t2 on t2.relation_code = t1.code
+        where course_code = #{courseCode} and SKJS_CODE = #{skjsCode}
+    </select>
+
+    <select id="getPjInfoSuggestList" resultType="java.util.Map">
+        select teacher_Dp1,teacher_Dp2,student_dp1,student_dp2,classroom_dp,SCORE,TO_CHAR(CREATE_DATE,'yyyy-mm-dd') as "pjDate"
+        from JXPJ_THPJ t1
+        LEFT JOIN (
+            SELECT RELATION_CODE,sum(SCORE) as SCORE FROM JXPJ_THPJ_ITEM GROUP BY RELATION_CODE
+        ) t2 on t2.relation_code = t1.code
+        where course_code = #{courseCode} and SKJS_CODE = #{skjsCode}
     </select>
 
 </mapper>

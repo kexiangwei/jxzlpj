@@ -20,9 +20,9 @@ public class KcjxssfaItem extends Kcjxssfa {
             ,courseNum //课次
             ,week //星期
             ,weekNum //周次
-            ,lessonNum //节次
-            ,lessonHour //学时,课程时长
-            ,skjsCode
+            ,lessonNum; //节次
+    private Integer lessonHour; //学时,课程时长
+    private String skjsCode
             ,skjsName; //任课老师
 
     private String teachTarget, //授课目标,填写本次授课的目标。

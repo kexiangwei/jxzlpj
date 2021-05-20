@@ -9,35 +9,38 @@
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuexiaoguo.kczlfxbg.doman.Kczlfxbg">
         SELECT * FROM (
             SELECT /*DISTINCT*/ kc.course_code, kc.course_name, kc.course_attr, kc.XN, kc.XQ, kc.xy_name, kc.zy_name
-            , wm_concat(DISTINCT kc.SKJS_NAME) as "skjsAll", wm_concat(DISTINCT kc.sk_bj) as "skbjAll"
+            , wm_concat(DISTINCT kc.SKJS_NAME) as "skjsAll"
+            , wm_concat(DISTINCT kc.sk_bj) as "skbjAll"
             , max(case when bg.COURSE_CODE is not null then 1 else 2 end) as "isTxbg", max(bg.code) as "bgCode", max(is_submit) as is_submit
-            FROM SYS_DATA_XNXQ t
-            LEFT JOIN SYS_DATA_JSRK rk on rk.XN = t.XN and rk.XQ = t.XQ
+            FROM SYS_DATA_JSRK rk
             LEFT JOIN SYS_DATA_JS js on js.USER_ID = rk.USER_ID
             LEFT JOIN SYS_DATA_KC kc on kc.course_code = rk.course_code and kc.XN = rk.XN and KC.XQ = rk.XQ and kc.SKJS_CODE = rk.USER_ID
-        LEFT JOIN JXXG_KCZLFXBG bg on bg.course_code = kc.course_code and bg.course_name = kc.course_name and bg.course_attr = kc.course_attr
+            LEFT JOIN JXXG_KCZLFXBG bg on bg.course_code = kc.course_code and bg.course_name = kc.course_name and bg.course_attr = kc.course_attr
             and bg.XN = kc.XN and bg.XQ = kc.XQ /*and bg.xy_name = kc.xy_name and bg.zy_name = kc.zy_name*/
-        <where> (current_date - interval '1' year) between begin_date and end_date
-                <if test="courseName != null and courseName != ''">
-                    and kc.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+          <where> 1=1
+            <if test="accountType !=null and accountType == 'teacher'">
+                and rk.user_id = #{userId}
+            </if>
+            <if test="courseName != null and courseName != ''">
+                and kc.COURSE_NAME like concat(concat('%',#{courseName}),'%')
+            </if>
+            <if test="isTxbg != null">
+                <if test="isTxbg == 1">
+                    and bg.code is not null
                 </if>
-                <if test="isTxbg != null">
-                    <if test="isTxbg == 1">
-                        and bg.code is not null
-                    </if>
-                    <if test="isTxbg == 2">
-                        and bg.code is null
-                    </if>
+                <if test="isTxbg == 2">
+                    and bg.code is null
                 </if>
-                <if test="isSubmit != null">
-                    <if test="isSubmit == 1">
-                        and bg.is_submit = 1
-                    </if>
-                    <if test="isSubmit == 2">
-                        and bg.is_submit = 2
-                    </if>
+            </if>
+            <if test="isSubmit != null">
+                <if test="isSubmit == 1">
+                    and bg.is_submit = 1
                 </if>
-            </where>
+                <if test="isSubmit == 2">
+                    and bg.is_submit = 2
+                </if>
+            </if>
+          </where>
             GROUP BY kc.course_code, kc.course_name, kc.course_attr, kc.XN, kc.XQ, kc.xy_name, kc.zy_name
             ORDER BY kc.course_code
         ) t ORDER BY "isTxbg"

@@ -68,7 +68,8 @@ public class Kczlfxbg {
     private String d1 //（一）存在的问题
         ,d2; //（二）改进措施
 
-    private String userId
+    private String accountType
+            ,userId
             ,userName;
     @JsonIgnore
     private Date createDate;

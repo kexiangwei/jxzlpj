@@ -12,6 +12,5 @@ public interface CkpjService {
 
     Map<String, Object> getCkpjPageList(Ckpj ckpj);
 
-    List<Map<String, Object>> getCkpjDetail(Ckpj ckpj);
-
+    Map<String, Object> getPjInfo(String courseCode, String skjsCode);
 }

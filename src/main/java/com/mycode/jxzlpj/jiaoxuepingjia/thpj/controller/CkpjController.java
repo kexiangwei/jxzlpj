@@ -2,15 +2,14 @@ package com.mycode.jxzlpj.jiaoxuepingjia.thpj.controller;
 
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.domian.Ckpj;
 import com.mycode.jxzlpj.jiaoxuepingjia.thpj.service.CkpjService;
-import com.mycode.jxzlpj.jiaoxuepingjia.thpj.service.ThpjService;
 import com.mycode.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,10 +31,10 @@ public class CkpjController {
     }
 
     @ResponseBody
-    @RequestMapping("/getCkpjDetail.do")
-    public JsonResult<Object> getCkpjDetail(Ckpj ckpj){
-        List<Map<String, Object>> mapList = ckpjService.getCkpjDetail(ckpj);
-        return JsonResult.success(mapList);
+    @RequestMapping("/getPjInfo.do")
+    public JsonResult<Object> getPjInfo(@RequestParam("courseCode") String courseCode
+            , @RequestParam("skjsCode") String skjsCode){
+        Map<String, Object> resultMap = ckpjService.getPjInfo(courseCode,skjsCode);
+        return JsonResult.success(resultMap);
     }
-
 }
