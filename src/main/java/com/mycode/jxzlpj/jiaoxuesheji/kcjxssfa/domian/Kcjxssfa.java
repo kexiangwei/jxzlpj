@@ -20,7 +20,10 @@ public class Kcjxssfa extends Course {
     @JsonIgnore
     private Integer pageIndex=1 //页数，默认为第一页
             ,pageSize=10; //页面尺寸，默认每页10条数据
-    private Integer isTxfa; //是否填写方案，可选值【1是2否】
+    private Integer isTxfa //是否填写方案，可选值【1是2否】
+            ,isMineCourse //是否我的课程
+            ,isThpjRequest = 2; //是否同行评教转发过来的请求，默认不是
+
     //业务字段
     private String code; //业务数据编号
     private String accountType

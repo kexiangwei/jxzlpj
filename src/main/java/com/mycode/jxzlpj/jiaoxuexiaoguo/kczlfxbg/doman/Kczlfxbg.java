@@ -14,20 +14,22 @@ public class Kczlfxbg {
     @JsonIgnore
     private Integer pageIndex=1
             ,pageSize=10;
-    private Integer isTxbg; //是否填写报告1是2否
+    private Integer isTxbg //是否填写报告1是2否
+            ,isMineCourse //是否我的课程
+            ,isThpjRequest = 2; //是否同行评教转发过来的请求，默认不是
     private String bgCode; //若已填写则把报告编号返回
     private Integer isSubmit; //是否提交，1是2否
 
     private String code //业务编号
-            ,courseCode //课程编号
-            ,courseName //课程名称
-            ,courseAttr //课程性质：【公共必修课/公共选修课/专业必修课（专业基础课或专业核心课）/专业选修课】
-            ,xn //学年
-            ,xq //学期
-            ,xyName //开课学院（部）
-            ,zyName //系（教研室）
-            ,skjsAll //授课教师：填写该课程的所有讲授教师
-            ,skbjAll; //授课班级：公共选修课无需填写授课班级
+                ,courseCode //课程编号
+                ,courseName //课程名称
+                ,courseAttr //课程性质：【公共必修课/公共选修课/专业必修课（专业基础课或专业核心课）/专业选修课】
+                ,xn //学年
+                ,xq //学期
+                ,xyName //开课学院（部）
+                ,zyName //系（教研室）
+                ,skjsAll //授课教师：填写该课程的所有讲授教师
+                ,skbjAll; //授课班级：公共选修课无需填写授课班级
 
     //二、学生学习达成度分析
         //（一）考核情况分析

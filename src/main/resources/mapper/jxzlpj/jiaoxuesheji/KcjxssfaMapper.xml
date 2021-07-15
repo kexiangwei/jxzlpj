@@ -5,13 +5,24 @@
     <select id="getPageList" resultType="com.mycode.jxzlpj.jiaoxuesheji.kcjxssfa.domian.Kcjxssfa">
         select DISTINCT t2.course_code, t2.course_name, t2.course_attr, t2.xn, t2.xq, t2.xy_name, t2.skjs_code, t2.skjs_name, t2.sk_bj, t2.xsrs, t2.sk_dd
         ,(case when t3.code is not null then 1 else 2 end) as "isTxfa", t3.code
+        ,(case when t1.USER_ID = ${userId} then 1 else 2 end) as "isMineCourse"
         from sys_data_jsrk t1
         left join sys_data_kc t2 on t2.xn = t1.xn and t2.xq = t1.xq and t2.course_code = t1.course_code and t2.skjs_code = t1.user_id
         LEFT JOIN JXSJ_KCJXSSFA t3 on t3.xn = t2.xn and t3.xq = t2.xq and t3.course_code = t2.course_code and t3.skbj = t2.sk_bj and t3.user_id = t2.skjs_code
         <where> 1=1
-            <if test="accountType !=null and accountType == 'teacher'">
-                and t1.user_id = #{userId}
-            </if>
+
+            <choose>
+                <when test="accountType == 'teacher' and isThpjRequest == 1">
+                    and (t3.code is not null and t1.user_id = #{userId})
+                </when>
+                <when test="accountType == 'teacher'">
+                    and (t3.code is not null or t1.user_id = #{userId})
+                </when>
+                <otherwise>
+                    and t3.code is not null
+                </otherwise>
+            </choose>
+
             <if test="courseName != null and courseName != ''">
                 and t2.COURSE_NAME like concat(concat('%',#{courseName}),'%')
             </if>
