@@ -12,7 +12,22 @@
                     ,count(sn.node_code) total_num
                     ,count(item.node_code) exec_num
                     ,max(case when v.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
-                    from v_jxjc_zyjscgj_shenhe v
+                    from (
+
+                select v.code,v.shenhe_code,v.batch_num,v.status
+                from v_jxjc_zyjscgj_shenhe v
+                LEFT JOIN SYS_USER u on u.USER_ID = v.USER_ID
+                WHERE 1=1
+                <choose>
+                    <when test="maxAuthLevel == '6'.toString()">
+                        and u.xy_code = #{xyCode}
+                    </when>
+                    <when test="maxAuthLevel == '7'.toString()">
+                        AND u.zy_code = #{zyCode}
+                    </when>
+                </choose>
+
+                ) v
                     left join common_shenhe_node sn on sn.shenhe_code = v.shenhe_code
                     left join common_shenhe_item item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
                     group by v.code,v.batch_num
@@ -41,7 +56,21 @@
             <otherwise><!-- 提交列表 -->
                 select v.*
                 from v_jxjc_zyjscgj v
+                LEFT JOIN SYS_USER u on u.USER_ID = v.USER_ID
                 <where>1=1
+                    <choose>
+                        <when test="maxAuthLevel == '6'.toString()">
+                            and is_submit = '已提交'
+                            and u.xy_code = #{xyCode}
+                        </when>
+                        <when test="maxAuthLevel == '7'.toString()">
+                            and is_submit = '已提交'
+                            and u.zy_code = #{zyCode}
+                        </when>
+                        <when test="maxAuthLevel == '8'.toString()">
+                            and v.user_id = #{userId}
+                        </when>
+                    </choose>
                     <choose>
                         <when test="status != null and status != '' and status == '待审核'">
                             and shenhe_code is null
@@ -56,9 +85,9 @@
         </choose>
     </select>
     <sql id="queryCondition">
-        <if test="userId != null and userId != ''">
+        <!--<if test="userId != null and userId != ''">
             and v.user_id = #{userId}
-        </if>
+        </if>-->
         <if test="userName != null and userName != ''">
             and v.USERNAME like concat(concat('%',#{userName}),'%')
         </if>

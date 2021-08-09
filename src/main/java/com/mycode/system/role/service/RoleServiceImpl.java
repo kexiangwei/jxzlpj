@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Service
 public class RoleServiceImpl implements RoleService {
 
-    @Autowired
+    @Resource
     private RoleMapper roleMapper;
 
     @Override
@@ -45,7 +46,7 @@ public class RoleServiceImpl implements RoleService {
     public boolean insertOrUpdateRoleMenu(String roleId, String roleName, String[] menuIds) {
         boolean bool = false;
         if(roleId == null || "".equals(roleId)){
-            roleId = String.valueOf(System.currentTimeMillis());
+            roleId = new String("4"+System.currentTimeMillis());
             bool = roleMapper.insertRole(roleId,roleName);
             if(bool){
                 if(menuIds != null && menuIds.length >0){

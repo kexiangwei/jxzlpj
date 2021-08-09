@@ -2,6 +2,7 @@ package com.mycode.jxzlpj.jiaoxuejiangcheng.jsgrcgj.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
@@ -35,7 +36,7 @@ public class JsgrcgjServiceImpl implements JsgrcgjService {
         List<Jsgrcgj> pageList = jsgrcgjMapper.getPageList(jsgrcgj);
         //获取未审核数
         if(StringUtils.isNotEmpty(jsgrcgj.getShenHeUserId())){
-            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum("v_jxjc_jsgrcgj_shenhe", jsgrcgj.getShenHeUserId()));
+            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxjc_jsgrcgj_shenhe, jsgrcgj));
         }
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);

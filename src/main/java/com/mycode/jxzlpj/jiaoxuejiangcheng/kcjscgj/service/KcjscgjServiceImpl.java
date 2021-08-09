@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.jxzlpj.jiaoxuejiangcheng.kcjscgj.domian.Kcjscgj;
 import com.mycode.jxzlpj.jiaoxuejiangcheng.kcjscgj.mapper.KcjscgjMapper;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
@@ -35,7 +36,7 @@ public class KcjscgjServiceImpl implements KcjscgjService {
         List<Kcjscgj> pageList = kcjscgjMapper.getPageList(kcjscgj);
         //获取未审核数
         if(StringUtils.isNotEmpty(kcjscgj.getShenHeUserId())){
-            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum("v_jxjc_kcjscgj_shenhe", kcjscgj.getShenHeUserId()));
+            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxjc_kcjscgj_shenhe, kcjscgj));
         }
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);

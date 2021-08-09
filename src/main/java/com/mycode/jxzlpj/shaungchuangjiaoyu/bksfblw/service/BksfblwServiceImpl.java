@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.jxzlpj.shaungchuangjiaoyu.bksfblw.domian.Bksfblw;
 import com.mycode.jxzlpj.shaungchuangjiaoyu.bksfblw.mapper.BksfblwMapper;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
@@ -11,6 +12,7 @@ import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +23,11 @@ import java.util.Map;
 @Service
 public class BksfblwServiceImpl implements BksfblwService {
 
-    @Autowired
+    @Resource
     private BksfblwMapper bksfblwMapper;
-    @Autowired
+    @Resource
     private ShenHeMapper shenHeMapper;
-    @Autowired
+    @Resource
     private FileMapper fileMapper;
 
     @Override
@@ -35,7 +37,7 @@ public class BksfblwServiceImpl implements BksfblwService {
         List<Bksfblw> pageList = bksfblwMapper.getPageList(bksfblw);
         //获取未审核数
         if(StringUtils.isNotEmpty(bksfblw.getShenHeUserId())){
-            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum("v_scjy_bksfblw_shenhe", bksfblw.getShenHeUserId()));
+            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_scjy_bksfblw_shenhe, bksfblw));
         }
         resultMap.put("totalNum", pageInfo.getTotal());
         resultMap.put("pageList", pageList);

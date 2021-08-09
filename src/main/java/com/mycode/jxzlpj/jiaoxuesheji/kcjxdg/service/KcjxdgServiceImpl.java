@@ -2,6 +2,7 @@ package com.mycode.jxzlpj.jiaoxuesheji.kcjxdg.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
@@ -36,7 +37,7 @@ public class KcjxdgServiceImpl implements KcjxdgService {
         List<Kcjxdg> pageList = kcjxdgMapper.getPageList(kcjxdg);
         //获取未审核数
         if(StringUtils.isNotEmpty(kcjxdg.getShenHeUserId())){
-            map.put("unShenHeNum", shenHeMapper.getNotShenHeNum("v_jxsj_kcjxdg_shenhe", kcjxdg.getShenHeUserId()));
+            map.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxsj_kcjxdg_shenhe, kcjxdg));
         }
         map.put("totalNum", pageInfo.getTotal());
         map.put("pageList", pageList);

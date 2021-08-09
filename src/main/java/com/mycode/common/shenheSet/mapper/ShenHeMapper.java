@@ -26,13 +26,7 @@ public interface ShenHeMapper {
 
     boolean changeStatus(@Param("relationCode") String relationCode, @Param("batchNum") Integer batchNum, @Param("status") String status);
 
-    //有专家审核时调用
-    int getNotShenHeNum(@Param("viewName") String viewName, @Param("shenHeUserId") String shenHeUserId
-            , @Param("isZjshAccount") Integer isZjshAccount, @Param("jwcGly") Integer jwcGly);
-    //有审核流程时调用
-    default int getNotShenHeNum(@Param("viewName") String viewName, @Param("shenHeUserId") String shenHeUserId){
-        return this.getNotShenHeNum(viewName,shenHeUserId,null,null);
-    }
+    int getNotShenHeNum(@Param("viewName") ShenHeV shenHeV, @Param("shenHeObj") ShenHeObj shenHeObj);
 
     @ResultType(Integer.class)
     @Select("SELECT COUNT(0) FROM SYS_USER_ROLE WHERE ROLE_ID = 4 AND USER_ID = #{shenHeUserId}")

@@ -2,6 +2,7 @@ package com.mycode.jxzlpj.jiaoxuejiangcheng.zyjscgj.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
@@ -35,7 +36,7 @@ public class ZyjscgjServiceImpl implements ZyjscgjService {
         List<Zyjscgj> pageList = zyjscgjMapper.getPageList(zyjscgj);
         //获取未审核数
         if(StringUtils.isNotEmpty(zyjscgj.getShenHeUserId())){
-            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum("v_jxjc_zyjscgj_shenhe", zyjscgj.getShenHeUserId()));
+            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxjc_zyjscgj_shenhe, zyjscgj));
         }
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);

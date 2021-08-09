@@ -2,6 +2,7 @@ package com.mycode.jxzlpj.jiaoxueyanjiu.jiaoxuetuandui.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
@@ -11,6 +12,7 @@ import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +20,11 @@ import java.util.Map;
 @Service
 public class JiaoXueTuanDuiProvinceServiceImpl implements JiaoXueTuanDuiProvinceService {
 
-    @Autowired
+    @Resource
     private JiaoXueTuanDuiProvinceMapper jiaoXueTuanDuiProvinceMapper;
-    @Autowired
+    @Resource
     private ShenHeMapper shenHeMapper;
-    @Autowired
+    @Resource
     private FileMapper fileMapper;
 
     @Override
@@ -40,8 +42,8 @@ public class JiaoXueTuanDuiProvinceServiceImpl implements JiaoXueTuanDuiProvince
                 resultMap.put("isJwcGly", jwcGly);
             }
             //获取未审核数
-            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum("v_jxyj_jxtd_province_shenhe"
-                    , jiaoXueTuanDuiProvince.getShenHeUserId(),isZjshAccount,jwcGly));
+            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxyj_jxtd_province_shenhe
+                    , jiaoXueTuanDuiProvince));
         }
         //
         Page<Object> pageInfo = PageHelper.startPage(jiaoXueTuanDuiProvince.getPageIndex(), jiaoXueTuanDuiProvince.getPageSize());

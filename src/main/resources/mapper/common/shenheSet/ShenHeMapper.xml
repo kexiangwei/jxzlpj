@@ -67,14 +67,14 @@
 
     <select id="getNotShenHeNum" resultType="int">
         <choose>
-            <when test="isZjshAccount == 1">
+            <when test="shenHeObj.isZjshAccount == 1">
                 SELECT NVL(sum(case when ZJ.CREATE_DATE is null then 1 else 0 end), 0)
                 FROM ${viewName} ct
                 LEFT JOIN COMMON_SHENHE_ITEM it on IT.RELATION_CODE = ct.code
-                LEFT JOIN COMMON_SHENHE_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM  and ZJ.USER_ID = #{shenHeUserId}
+                LEFT JOIN COMMON_SHENHE_ZJSH zj on zj.XM_CODE = IT.RELATION_CODE and ZJ.BATCH_NUM = IT.BATCH_NUM  and ZJ.USER_ID = #{shenHeObj.shenHeUserId}
                 where IT.SHENHE_TYPE = '初审' and IT.STATUS = '通过'
             </when>
-            <when test="jwcGly == 1">
+            <when test="shenHeObj.isJwcGly == 1">
                 SELECT NVL(sum(case when shenhe_status_first = '未审核' or shenhe_status_final = '未审核' then 1 else 0 end), 0)
                 FROM (
                     SELECT (case when exec_num = exec_level and v.status = '未通过' then '未通过'
@@ -105,7 +105,7 @@
                     where 1=1
                         and exec_num >= exec_level-1
                         and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end)
-                        and ur.user_id = #{shenHeUserId}
+                        and ur.user_id = #{shenHeObj.shenHeUserId}
                 )
             </when>
             <otherwise>
@@ -115,7 +115,22 @@
                         ,count(sn.node_code) total_num
                         ,count(item.node_code) exec_num
                         ,max(case when item.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
-                    from ${viewName} j
+                    from (
+
+                        select v.code,v.shenhe_code,v.batch_num,v.status
+                        from ${viewName} v
+                        LEFT JOIN SYS_USER u on u.USER_ID = v.USER_ID
+                        WHERE 1=1
+                        <choose>
+                            <when test="shenHeObj.maxAuthLevel == '6'.toString()">
+                                and u.xy_code = #{shenHeObj.xyCode}
+                            </when>
+                            <when test="shenHeObj.maxAuthLevel == '7'.toString()">
+                                AND u.zy_code = #{shenHeObj.zyCode}
+                            </when>
+                        </choose>
+
+                    ) j
                     left join COMMON_SHENHE_NODE sn on sn.shenhe_code = j.shenhe_code
                     left join COMMON_SHENHE_ITEM item on item.relation_code = j.code and item.batch_num = j.batch_num and item.node_code = sn.node_code
                     group by j.code,j.batch_num
@@ -127,7 +142,7 @@
                     and exec_num >= exec_level-1 -- 只显示上一级‘已审核’的数据
                     and 1 > (case when sn.exec_level > t.exec_num and state > 0 then 1 else 0 end) -- 排除上一级审核状态为“未通过”，“退回”的数据
                     and exec_level > exec_num
-                    and ur.user_id = #{shenHeUserId}
+                    and ur.user_id = #{shenHeObj.shenHeUserId}
             </otherwise>
         </choose>
     </select>

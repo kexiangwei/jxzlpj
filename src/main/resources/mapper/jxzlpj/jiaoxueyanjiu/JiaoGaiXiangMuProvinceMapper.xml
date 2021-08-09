@@ -39,21 +39,36 @@
                 when exec_num = exec_level and isZjshAll =1 then '未审核' else '待审核' end ) shenhe_status_final
 
                 from (
-                SELECT v.code,v.batch_num
-                ,count(sn.node_code) total_num
-                ,count(item.node_code) exec_num
-                ,max(case when item.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
-                ,max(NVL(isZjshAll, 0)) isZjshAll
+                    SELECT v.code,v.batch_num
+                    ,count(sn.node_code) total_num
+                    ,count(item.node_code) exec_num
+                    ,max(case when item.status = '未通过' or item.status = '退回' then 1 else 0 end ) state
+                    ,max(NVL(isZjshAll, 0)) isZjshAll
+                    from (
+
+                select v.code,v.shenhe_code,v.batch_num,v.status
                 from V_JXYJ_JGXM_PROVINCE_SHENHE v
-                left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
-                left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
-                LEFT JOIN (
-                SELECT xm_code,BATCH_NUM
-                ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = 3) then 1 else 0 end) isZjshAll
-                from COMMON_SHENHE_ZJSH
-                GROUP BY xm_code,BATCH_NUM
-                ) zj on zj.xm_code = v.code and zj.batch_num = v.batch_num
-                GROUP BY v.code,v.batch_num
+                LEFT JOIN SYS_USER u on u.USER_ID = v.USER_ID
+                WHERE 1=1
+                <choose>
+                    <when test="maxAuthLevel == '6'.toString()">
+                        and u.xy_code = #{xyCode}
+                    </when>
+                    <when test="maxAuthLevel == '7'.toString()">
+                        AND u.zy_code = #{zyCode}
+                    </when>
+                </choose>
+
+                ) v
+                    left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
+                    left join COMMON_SHENHE_ITEM item on item.relation_code = v.code and item.batch_num = v.batch_num and item.node_code = sn.node_code
+                    LEFT JOIN (
+                        SELECT xm_code,BATCH_NUM
+                        ,(case when count(0) = (SELECT count(0) FROM SYS_USER_ROLE where role_id = 3) then 1 else 0 end) isZjshAll
+                        from COMMON_SHENHE_ZJSH
+                        GROUP BY xm_code,BATCH_NUM
+                    ) zj on zj.xm_code = v.code and zj.batch_num = v.batch_num
+                    GROUP BY v.code,v.batch_num
                 )t left join V_JXYJ_JGXM_PROVINCE_SHENHE v on v.code = t.code and v.batch_num = t.batch_num
                 left join COMMON_SHENHE_NODE sn on sn.shenhe_code = v.shenhe_code
                 left join sys_user_role ur on ur.role_id = sn.role_id
@@ -113,7 +128,21 @@
             <otherwise>
                 SELECT v.*
                 from V_JXYJ_JGXM_PROVINCE v
+                LEFT JOIN SYS_USER u on u.USER_ID = v.USER_ID
                 <where>1=1
+                    <choose>
+                        <when test="maxAuthLevel == '6'.toString()">
+                            and is_submit = '已提交'
+                            and u.xy_code = #{xyCode}
+                        </when>
+                        <when test="maxAuthLevel == '7'.toString()">
+                            and is_submit = '已提交'
+                            and u.zy_code = #{zyCode}
+                        </when>
+                        <when test="maxAuthLevel == '8'.toString()">
+                            and v.user_id = #{userId}
+                        </when>
+                    </choose>
                     <choose>
                         <when test="status != null and status != '' and status == '待审核'">
                             and shenhe_code is null
@@ -128,9 +157,9 @@
         </choose>
     </select>
     <sql id="queryCondition">
-        <if test="userId != null and userId != ''">
+        <!--<if test="userId != null and userId != ''">
             and v.user_id = #{userId}
-        </if>
+        </if>-->
         <if test="userName != null and userName != ''">
             and v.USERNAME = #{userName}
         </if>

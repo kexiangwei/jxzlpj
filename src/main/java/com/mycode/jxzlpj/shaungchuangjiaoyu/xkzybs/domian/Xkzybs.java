@@ -16,12 +16,6 @@ import java.util.Date;
 @Setter
 public class Xkzybs extends ShenHeObj {
 
-    //查询字段
-    @JsonIgnore
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    private Date zsGrantDateStart
-            ,zsGrantDateEnd;
-
     //业务字段
     private String code //业务数据编号
             ,name //赛事名称
@@ -32,5 +26,11 @@ public class Xkzybs extends ShenHeObj {
     @JsonFormat(pattern="yyyy-MM-dd", locale="zh", timezone="GMT+8")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date zsGrantDate; //证书授予时间
+
+    //查询字段
+    @JsonIgnore
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private Date zsGrantDateStart
+            ,zsGrantDateEnd;
 
 }

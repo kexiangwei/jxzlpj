@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.jxzlpj.jiaoxuejiangcheng.jyjxcgj.domian.Jyjxcgj;
 import com.mycode.jxzlpj.jiaoxuejiangcheng.jyjxcgj.mapper.JyjxcgjMapper;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
@@ -35,7 +36,7 @@ public class JyjxcgjServiceImpl implements JyjxcgjService {
         List<Jyjxcgj> pageList = jyjxcgjMapper.getPageList(jyjxcgj);
         //获取未审核数
         if(StringUtils.isNotEmpty(jyjxcgj.getShenHeUserId())){
-            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum("v_jxjc_jyjxcgj_shenhe", jyjxcgj.getShenHeUserId()));
+            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxjc_jyjxcgj_shenhe, jyjxcgj));
         }
         resultMap.put("totalNum",pageInfo.getTotal());
         resultMap.put("pageList", pageList);

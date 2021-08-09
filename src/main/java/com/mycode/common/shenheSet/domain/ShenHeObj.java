@@ -28,7 +28,8 @@ public class ShenHeObj {
             ,userName
             ,userUnit
             ,maxAuthLevel //最高权限级别
-            ,xyCode; //学院编号
+            ,xyCode //学院编号
+            ,zyCode;
 
     //逻辑字段
     private String isSubmit //提交状态【已提交 | 未提交】

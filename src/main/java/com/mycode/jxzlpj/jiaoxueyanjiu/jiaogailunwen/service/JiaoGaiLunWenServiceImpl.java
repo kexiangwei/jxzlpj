@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaogailunwen.domian.JiaoGaiLunWen;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaogailunwen.mapper.JiaoGaiLunWenMapper;
@@ -11,6 +12,7 @@ import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +23,11 @@ import java.util.Map;
 @Service
 public class JiaoGaiLunWenServiceImpl implements JiaoGaiLunWenService {
 
-    @Autowired
+    @Resource
     private JiaoGaiLunWenMapper jiaoGaiLunWenMapper;
-    @Autowired
+    @Resource
     private ShenHeMapper shenHeMapper;
-    @Autowired
+    @Resource
     private FileMapper fileMapper;
 
     @Override
@@ -35,7 +37,7 @@ public class JiaoGaiLunWenServiceImpl implements JiaoGaiLunWenService {
         List<JiaoGaiLunWen> pageList = jiaoGaiLunWenMapper.getPageList(jiaoGaiLunWen);
         //获取未审核数
         if(StringUtils.isNotEmpty(jiaoGaiLunWen.getShenHeUserId())){
-            map.put("unShenHeNum", shenHeMapper.getNotShenHeNum("V_JXYJ_JGLW_SHENHE", jiaoGaiLunWen.getShenHeUserId()));
+            map.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxyj_jglw_shenhe, jiaoGaiLunWen));
         }
         map.put("totalNum", pageInfo.getTotal());
         map.put("pageList", pageList);

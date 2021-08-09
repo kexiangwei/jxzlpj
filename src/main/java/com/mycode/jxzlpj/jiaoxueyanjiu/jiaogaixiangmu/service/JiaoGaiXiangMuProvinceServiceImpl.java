@@ -2,6 +2,7 @@ package com.mycode.jxzlpj.jiaoxueyanjiu.jiaogaixiangmu.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaogaixiangmu.domain.JiaoGaiXiangMuProvince;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jiaogaixiangmu.mapper.JiaoGaiXiangMuProvinceMapper;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
@@ -36,10 +37,8 @@ public class JiaoGaiXiangMuProvinceServiceImpl implements JiaoGaiXiangMuProvince
                 resultMap.put("isJwcGly", jwcGly);
             }
             //获取未审核数
-            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum("V_JXYJ_JGXM_PROVINCE_SHENHE"
-                    , jiaoGaiXiangMuProvince.getShenHeUserId()
-                    ,isZjshAccount
-                    ,jwcGly));
+            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxyj_jgxm_province_shenhe
+                    , jiaoGaiXiangMuProvince));
         }
         //
         Page<Object> pageInfo = PageHelper.startPage(jiaoGaiXiangMuProvince.getPageIndex(), jiaoGaiXiangMuProvince.getPageSize());

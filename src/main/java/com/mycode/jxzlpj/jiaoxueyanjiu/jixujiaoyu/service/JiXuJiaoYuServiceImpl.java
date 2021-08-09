@@ -4,12 +4,15 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
+import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jixujiaoyu.domian.JiXuJiaoYu;
 import com.mycode.jxzlpj.jiaoxueyanjiu.jixujiaoyu.mapper.JiXuJiaoYuMapper;
 import com.mycode.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,20 +23,22 @@ import java.util.Map;
 @Service
 public class JiXuJiaoYuServiceImpl implements JiXuJiaoYuService {
 
-    @Autowired
+    @Resource
     private JiXuJiaoYuMapper jiXuJiaoYuMapper;
-    @Autowired
+    @Resource
+    private ShenHeMapper shenHeMapper;
+    @Resource
     private FileMapper fileMapper;
 
     @Override
     public Map<String, Object> getPageList(JiXuJiaoYu jiXuJiaoYu) {
         Map<String, Object> map = new HashMap<>();
-        //获取未审核数
-        if(StringUtils.isNotEmpty(jiXuJiaoYu.getShenHeUserId())){
-            map.put("unShenHeNum", jiXuJiaoYuMapper.getNotShenHeNumByAuth(jiXuJiaoYu.getShenHeUserId(),jiXuJiaoYu.getMaxAuthLevel(),jiXuJiaoYu.getXyCode()));
-        }
         Page<Object> pageInfo = PageHelper.startPage(jiXuJiaoYu.getPageIndex(), jiXuJiaoYu.getPageSize());
         List<JiXuJiaoYu> pageList = jiXuJiaoYuMapper.getPageList(jiXuJiaoYu);
+        //获取未审核数
+        if(StringUtils.isNotEmpty(jiXuJiaoYu.getShenHeUserId())){
+            map.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxyj_jxjy_shenhe, jiXuJiaoYu));
+        }
         map.put("totalNum",pageInfo.getTotal());
         map.put("pageList", pageList);
         return map;

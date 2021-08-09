@@ -2,6 +2,7 @@ package com.mycode.jxzlpj.jiaoxuexiaoguo.sybg.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.mycode.common.shenheSet.domain.ShenHeV;
 import com.mycode.common.shenheSet.mapper.ShenHeMapper;
 import com.mycode.common.file.domain.FileInfo;
 import com.mycode.common.file.mapper.FileMapper;
@@ -32,7 +33,7 @@ public class SybgServiceImpl implements SybgService {
         List<Sybg> pageList = sybgMapper.getPageList(sybg);
         //获取未审核数
         if(StringUtils.isNotEmpty(sybg.getShenHeUserId())){
-            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum("v_jxxg_sybg_shenhe", sybg.getShenHeUserId()));
+            resultMap.put("unShenHeNum", shenHeMapper.getNotShenHeNum(ShenHeV.v_jxxg_sybg_shenhe, sybg));
         }
         resultMap.put("totalNum", pageInfo.getTotal());
         resultMap.put("pageList", pageList);
