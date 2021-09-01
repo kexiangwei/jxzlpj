@@ -58,11 +58,12 @@ public class FileController {
                 BufferedImage image = ImageIO.read(multipartFile.getInputStream());
                 if (image != null && image.getWidth() > 600 && image.getHeight() > 450) {
                     Thumbnails.of(image).size(600,500).toFile(new File(filePath.toString()));
-                } else {
-                    FileOutputStream fos = new FileOutputStream(filePath.toString());
+                } else { //保存文件
+                   /* FileOutputStream fos = new FileOutputStream(filePath.toString());
                     fos.write(multipartFile.getBytes());
                     fos.flush();
-                    fos.close();
+                    fos.close();*/
+                    multipartFile.transferTo(new File(filePath.toString()));
                 }
                 // 保存文件信息到数据库
                 fileInfo.setCode(code);
@@ -87,15 +88,21 @@ public class FileController {
             return JsonResult.error("文件不存在！");
         }
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-        response.setContentType("multipart/form-data");
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
+//        response.setContentType("multipart/form-data");
+        /*BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
         OutputStream outputStream = response.getOutputStream();
         byte[] bytes = new byte[1024];
         int length;
         while ((length = bufferedInputStream.read(bytes)) != -1) {
             outputStream.write(bytes,0, length);
         }
-        bufferedInputStream.close();
+        bufferedInputStream.close();*/
+        OutputStream outputStream = response.getOutputStream();
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] bytes = new byte[fileInputStream.available()];
+        fileInputStream.read(bytes);
+        outputStream.write(bytes);
+        //
         outputStream.flush();
         outputStream.close();
         return JsonResult.success("下载成功");
